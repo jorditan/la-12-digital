@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos base La 12 Digital */
+:root {
+  font-family: 'Crimson Pro', Georgia, serif;
+  line-height: 1.5;
+  font-weight: 400;
+  
+  color-scheme: dark;
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* ── Presets tipográficos ────────────────────────────────────────────────────
+   Extraídos de design-system/tokens/typography.ts → textStyles
+   Uso: className="type-section-title text-white mb-4"
+   ──────────────────────────────────────────────────────────────────────────── */
+@layer components {
+  /* Títulos de sección — Crimson Pro Bold 24px */
+  .type-section-title {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.5rem;    /* 24px */
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  /* Títulos de card — Crimson Pro SemiBold 18px */
+  .type-card-title {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.125rem;  /* 18px */
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* Texto cuerpo — Crimson Pro Regular 16px */
+  .type-body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1rem;      /* 16px */
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* Caption / texto secundario — Crimson Pro Regular 14px */
+  .type-caption {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 0.875rem;  /* 14px */
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* Botones y etiquetas de acción — Geist Medium 14px */
+  .type-button {
+    font-family: 'Geist', -apple-system, sans-serif;
+    font-size: 0.875rem;  /* 14px */
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* Stats y números — Geist SemiBold 20px */
+  .type-stat {
+    font-family: 'Geist', -apple-system, sans-serif;
+    font-size: 1.25rem;   /* 20px */
+    font-weight: 600;
+  }
+
+  /* UI labels — Geist SemiBold 12px (badges, cabeceras de tabla) */
+  .type-ui-label {
+    font-family: 'Geist', -apple-system, sans-serif;
+    font-size: 0.75rem;   /* 12px */
+    font-weight: 600;
+    line-height: 1;
+  }
+}
+
+/* Clases custom de utilidad */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Animaciones custom */
+@layer utilities {
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+}

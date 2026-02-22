@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run dev:*)",
+      "mcp__claude_ai_Figma__get_design_context",
+      "mcp__claude_ai_Figma__get_metadata",
+      "mcp__claude_ai_Figma__get_screenshot"
+    ]
+  }
+}

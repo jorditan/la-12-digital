@@ -1,0 +1,1 @@
+export { ProximosPartidos } from './ProximosPartidos';

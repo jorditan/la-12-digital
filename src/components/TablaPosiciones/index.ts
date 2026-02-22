@@ -1,0 +1,1 @@
+export { TablaPosiciones } from './TablaPosiciones';

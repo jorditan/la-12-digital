@@ -1,0 +1,1 @@
+export { UltimosPartidos } from './UltimosPartidos';
