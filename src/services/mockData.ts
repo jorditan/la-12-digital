@@ -1,27 +1,22 @@
-import type { StandingRow, MatchResult, ProximoPartido, Noticia } from './apifootball';
+import type { StandingRow, MatchResult, ProximoPartido, Noticia, VideoYoutube } from './apifootball';
+import { getEscudo } from '../data/equipos';
 
-// Logos generados via ui-avatars garantizan que las siglas coincidan con el nombre real.
-// Reemplazar con URLs reales al conectar la API.
-function logo(initials: string, bg = '1e3a5f', fg = '94a3b8'): string {
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&size=64&background=${bg}&color=${fg}&bold=true&format=svg`;
-}
-
-const BJ  = logo('BJ',  '001529', 'FFD700'); // Boca Juniors
-const RP  = logo('RP',  '991b1b', 'ffffff'); // River Plate
-const RC  = logo('RC',  '1d4ed8', 'ffffff'); // Racing Club
-const SL  = logo('SL',  '1e3a5f', 'e5e7eb'); // San Lorenzo
-const IND = logo('IND', 'ef4444', 'ffffff'); // Independiente
-const TAL = logo('TAL', '1e3a5f', 'e5e7eb'); // Talleres
-const EST = logo('EST', '1d4ed8', 'ffffff'); // Estudiantes
-const RCE = logo('RCE', '16a34a', 'ffffff'); // Rosario Central
-const VEL = logo('VEL', '1e3a5f', 'ffffff'); // Vélez Sársfield
-const HUR = logo('HUR', 'ffffff', '991b1b'); // Huracán
-const LAN = logo('LAN', '16a34a', 'ffffff'); // Lanús
-const BAN = logo('BAN', '1e3a5f', 'e5e7eb'); // Banfield
-const ARG = logo('ARG', 'dc2626', 'ffffff'); // Argentinos Juniors
-const NOB = logo('NOB', 'dc2626', '000000'); // Newell's Old Boys
-const TIG = logo('TIG', '1e3a5f', 'e5e7eb'); // Tigre
-const BEL = logo('BEL', '1e40af', 'ffffff'); // Belgrano
+const BJ  = getEscudo(451); // Boca Juniors
+const RP  = getEscudo(452); // River Plate
+const RC  = getEscudo(435); // Racing Club
+const SL  = getEscudo(442); // San Lorenzo
+const IND = getEscudo(455); // Independiente
+const TAL = getEscudo(449); // Talleres
+const EST = getEscudo(436); // Estudiantes
+const RCE = getEscudo(437); // Rosario Central
+const VEL = getEscudo(440); // Vélez Sársfield
+const HUR = getEscudo(441); // Huracán
+const LAN = getEscudo(453); // Lanús
+const BAN = getEscudo(444); // Banfield
+const ARG = getEscudo(447); // Argentinos Juniors
+const NOB = getEscudo(454); // Newell's Old Boys
+const TIG = getEscudo(486); // Tigre
+const BEL = getEscudo(481); // Belgrano
 
 export const BOCA_ID_MOCK = 451;
 
@@ -119,10 +114,10 @@ export const mockMatches: MatchResult[] = [
   },
 ];
 
-const PLT = logo('PLT', '1e3a5f', 'ffffff'); // Platense
-const DEF = logo('DEF', '1e3a5f', 'e5e7eb'); // Defensa y Justicia
-const RIA = logo('RIA', 'dc2626', 'ffffff'); // Riestra
-const GIM = logo('GIM', '1d4ed8', 'ffffff'); // Gimnasia
+const PLT = getEscudo(463); // Platense
+const DEF = getEscudo(470); // Defensa y Justicia
+const RIA = getEscudo(495); // Riestra
+const GIM = getEscudo(450); // Gimnasia LP
 
 const boca = { id: 451, name: 'Boca Juniors', logo: BJ };
 
@@ -216,6 +211,57 @@ export const mockUpcomingMatches: ProximoPartido[] = [
     awayTeam: boca,
     venueName: 'Estadio Juan Carmelo Zerillo',
     competition: 'Liga Profesional',
+  },
+];
+
+export const mockVideos: VideoYoutube[] = [
+  {
+    id: 'v1',
+    titulo: 'BOCA 3 - 0 TALLERES | Goles y resumen completo | Liga Profesional',
+    thumbnail: 'https://picsum.photos/seed/yt1/600/340',
+    duracion: '7:42',
+    fecha: '8 feb',
+    vistas: '2.1M',
+  },
+  {
+    id: 'v2',
+    titulo: 'Las mejores atajadas del año en La Bombonera',
+    thumbnail: 'https://picsum.photos/seed/yt2/600/340',
+    duracion: '12:05',
+    fecha: '5 feb',
+    vistas: '890K',
+  },
+  {
+    id: 'v3',
+    titulo: 'Cavani y Merentiel: el tridente xeneize que asombra al mundo',
+    thumbnail: 'https://picsum.photos/seed/yt3/600/340',
+    duracion: '9:18',
+    fecha: '2 feb',
+    vistas: '1.4M',
+  },
+  {
+    id: 'v4',
+    titulo: 'SUPERCLÁSICO | Los 10 goles históricos de Boca contra River',
+    thumbnail: 'https://picsum.photos/seed/yt4/600/340',
+    duracion: '15:33',
+    fecha: '28 ene',
+    vistas: '5.2M',
+  },
+  {
+    id: 'v5',
+    titulo: 'Entrenamiento abierto en La Bombonera | Pretemporada 2026',
+    thumbnail: 'https://picsum.photos/seed/yt5/600/340',
+    duracion: '4:56',
+    fecha: '25 ene',
+    vistas: '320K',
+  },
+  {
+    id: 'v6',
+    titulo: 'Copa Libertadores 2007 | El documental completo del último título',
+    thumbnail: 'https://picsum.photos/seed/yt6/600/340',
+    duracion: '28:47',
+    fecha: '20 ene',
+    vistas: '3.8M',
   },
 ];
 

@@ -1,17 +1,40 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { Newspaper, Star, ArrowLeft, ArrowRight } from 'lucide-react';
 import { fetchNoticias, type Noticia } from '../../services/apifootball';
 import { NoticiaCard } from '../NoticiaCard';
 
-const VISIBLE = 3;
+function useVisibleCards() {
+  const [visible, setVisible] = useState(1); // mobile-first: arranca en 1
+
+  useLayoutEffect(() => {
+    const getVisible = () => {
+      if (window.innerWidth >= 1024) return 3;
+      if (window.innerWidth >= 768)  return 2;
+      return 1;
+    };
+    setVisible(getVisible());
+    const handler = () => setVisible(getVisible());
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+
+  return visible;
+}
 
 export function Noticias() {
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [idx, setIdx] = useState(0);
+  const VISIBLE = useVisibleCards();
 
   useEffect(() => {
     fetchNoticias().then(setNoticias);
   }, []);
+
+  // Reajusta idx si VISIBLE cambia y deja el índice fuera de rango
+  useEffect(() => {
+    const maxIdx = Math.max(0, noticias.length - VISIBLE);
+    setIdx(i => Math.min(i, maxIdx));
+  }, [VISIBLE, noticias.length]);
 
   if (noticias.length === 0) return null;
 

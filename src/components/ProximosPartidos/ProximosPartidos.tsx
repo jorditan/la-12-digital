@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, ChevronRight } from 'lucide-react';
 import { fetchUpcomingMatches, BOCA_ID, type ProximoPartido } from '../../services/apifootball';
 import { Badge } from '../Badge';
 
@@ -65,6 +65,17 @@ function ScrollRow({ partidos }: { partidos: ProximoPartido[] }) {
   const dragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
+  const [canScrollLeft, setCanScrollLeft]   = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = () => {
+    if (!ref.current) return;
+    const { scrollLeft: sl, scrollWidth, clientWidth } = ref.current;
+    setCanScrollLeft(sl > 4);
+    setCanScrollRight(sl + clientWidth < scrollWidth - 4);
+  };
+
+  useEffect(() => { checkScroll(); }, [partidos]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     dragging.current = true;
@@ -82,18 +93,33 @@ function ScrollRow({ partidos }: { partidos: ProximoPartido[] }) {
   const stopDrag = () => { dragging.current = false; };
 
   return (
-    <div
-      ref={ref}
-      className="flex gap-4 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
-      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={stopDrag}
-      onPointerLeave={stopDrag}
-    >
-      {partidos.map((p) => (
-        <CardPartido key={p.fixtureId} partido={p} />
-      ))}
+    <div className="relative">
+      <div
+        ref={ref}
+        className="flex gap-4 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+        onScroll={checkScroll}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={stopDrag}
+        onPointerLeave={stopDrag}
+      >
+        {partidos.map((p) => (
+          <CardPartido key={p.fixtureId} partido={p} />
+        ))}
+      </div>
+
+      {/* Gradiente izquierdo */}
+      {canScrollLeft && (
+        <div className="pointer-events-none absolute left-0 top-0 h-[calc(100%-8px)] w-12 bg-gradient-to-r from-[#031d46] to-transparent" />
+      )}
+
+      {/* Gradiente + hint derecho */}
+      {canScrollRight && (
+        <div className="pointer-events-none absolute right-0 top-0 h-[calc(100%-8px)] w-16 bg-gradient-to-l from-[#031d46] to-transparent flex items-center justify-end pr-1">
+          <ChevronRight size={18} className="text-boca-gold/60 animate-pulse" />
+        </div>
+      )}
     </div>
   );
 }

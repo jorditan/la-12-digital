@@ -1,4 +1,4 @@
-import { mockStandings, mockMatches, mockUpcomingMatches, mockNoticias } from './mockData';
+import { mockStandings, mockMatches, mockUpcomingMatches, mockNoticias, mockVideos } from './mockData';
 
 const BASE_URL = 'https://api-football-v1.p.rapidapi.com/v3';
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutos
@@ -44,6 +44,15 @@ export interface Noticia {
   imagen: string;
   categoria: 'mercado' | 'informe' | 'partido' | 'seleccion';
   fecha: string; // "YYYY-MM-DD"
+}
+
+export interface VideoYoutube {
+  id: string;
+  titulo: string;
+  thumbnail: string;
+  duracion: string; // "mm:ss"
+  fecha: string;   // "DD mmm"
+  vistas: string;  // "1.2M", "450K"
 }
 
 // ── Caché ────────────────────────────────────────────────────────────────────
@@ -167,6 +176,14 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
 export async function fetchNoticias(): Promise<Noticia[]> {
   if (USE_MOCK) return mockNoticias;
   // TODO: conectar con API de noticias real
+  return [];
+}
+
+// ── Canal de YouTube ──────────────────────────────────────────────────────────
+
+export async function fetchVideos(): Promise<VideoYoutube[]> {
+  if (USE_MOCK) return mockVideos;
+  // TODO: conectar con YouTube Data API v3
   return [];
 }
 
