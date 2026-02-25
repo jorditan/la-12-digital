@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchStandings, BOCA_ID, type StandingRow } from '../../services/apifootball';
+import { ESCUDO_VACIO } from '../../data/equipos';
 
 type Estado = 'loading' | 'error' | 'ok';
 
@@ -93,6 +94,7 @@ export function TablaPosiciones() {
                             width={16}
                             height={16}
                             className="shrink-0 object-contain"
+                            onError={(e) => { (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO; }}
                           />
                           <span className={`font-sans text-sm truncate max-w-[110px] ${esBoca ? 'text-boca-gold font-semibold' : 'text-white'}`}>
                             {row.team.name}

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { MapPin, ChevronRight } from 'lucide-react';
 import { fetchUpcomingMatches, BOCA_ID, type ProximoPartido } from '../../services/apifootball';
 import { Badge } from '../Badge';
+import { ESCUDO_VACIO } from '../../data/equipos';
 
 type Estado = 'loading' | 'error' | 'ok';
 
@@ -142,6 +143,7 @@ function CardPartido({ partido }: { partido: ProximoPartido }) {
             height={20}
             className="shrink-0 object-contain"
             draggable={false}
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO; }}
           />
           <span className="type-card-title text-white truncate">{rival.name}</span>
         </div>

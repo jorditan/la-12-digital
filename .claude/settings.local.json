@@ -11,7 +11,10 @@
       "mcp__claude_ai_Figma__get_screenshot",
       "WebFetch(domain:www.figma.com)",
       "WebFetch(domain:api.figma.com)",
-      "WebFetch(domain:www.thesportsdb.com)"
+      "WebFetch(domain:www.thesportsdb.com)",
+      "Bash(npm run build:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:en.wikipedia.org)"
     ]
   }
 }

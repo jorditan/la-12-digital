@@ -3,6 +3,10 @@
  * Logos provienen de TheSportsDB CDN (acceso público, sin autenticación).
  */
 
+/** SVG de escudo vacío usado como fallback cuando no se dispone de logo real. */
+export const ESCUDO_VACIO =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120' fill='none'%3E%3Cpath d='M50 6 L92 22 L92 68 Q92 98 50 114 Q8 98 8 68 L8 22 Z' stroke='%23c9a84c' stroke-width='3.5' fill='none' opacity='0.35'/%3E%3C/svg%3E";
+
 export interface Equipo {
   id: number;        // ID de API-Football (usado en fixtures)
   nombre: string;
@@ -32,17 +36,17 @@ export const EQUIPOS: Equipo[] = [
   // ── Resto de Primera División ─────────────────────────────────────────────
   { id: 463, nombre: 'Platense',              apodo: 'El Calamar',         escudo_url: 'https://www.thesportsdb.com/images/media/team/badge/lbs14n1769317149.png' },
   { id: 470, nombre: 'Defensa y Justicia',    apodo: 'El Halcón',          escudo_url: 'https://r2.thesportsdb.com/images/media/team/badge/e5dof21626200467.png' },
-  { id: 450, nombre: 'Gimnasia LP',           apodo: 'El Lobo',            escudo_url: 'https://r2.thesportsdb.com/images/media/team/badge/ikefvs1517768540.png' },
+  { id: 450, nombre: 'Gimnasia LP',           apodo: 'El Lobo',            escudo_url: ESCUDO_VACIO },
   { id: 459, nombre: 'Godoy Cruz',            apodo: 'El Tomba',           escudo_url: 'https://r2.thesportsdb.com/images/media/team/badge/d3c0ds1517768584.png' },
-  { id: 480, nombre: 'San Martín (T)',        apodo: 'Santo',              escudo_url: 'https://r2.thesportsdb.com/images/media/team/badge/vuqpry1517769251.png' },
+  { id: 480, nombre: 'San Martín (T)',        apodo: 'Santo',              escudo_url: ESCUDO_VACIO },
   { id: 488, nombre: 'Instituto',             apodo: 'La Gloria',          escudo_url: 'https://r2.thesportsdb.com/images/media/team/badge/jup59w1578825794.png' },
   { id: 473, nombre: 'Central Córdoba',       apodo: 'El Ferroviario',     escudo_url: 'https://r2.thesportsdb.com/images/media/team/badge/d62xkc1576101576.png' },
   { id: 491, nombre: 'Sarmiento',             apodo: 'El Verde',           escudo_url: 'https://r2.thesportsdb.com/images/media/team/badge/xxofu71677634191.png' },
   { id: 497, nombre: 'Barracas Central',      apodo: "La Acadé",           escudo_url: 'https://r2.thesportsdb.com/images/media/team/badge/rbkjba1707458543.png' },
-  { id: 495, nombre: 'Riestra',               apodo: 'El Matador Villero', escudo_url: 'https://r2.thesportsdb.com/images/media/team/badge/nq0qqh1686247632.png' },
+  { id: 495, nombre: 'Riestra',               apodo: 'El Matador Villero', escudo_url: ESCUDO_VACIO },
 ];
 
-/** Devuelve la URL del escudo por ID de equipo. */
+/** Devuelve la URL del escudo por ID de equipo. Usa escudo vacío como fallback. */
 export function getEscudo(id: number): string {
-  return EQUIPOS.find(e => e.id === id)?.escudo_url ?? '';
+  return EQUIPOS.find(e => e.id === id)?.escudo_url ?? ESCUDO_VACIO;
 }
