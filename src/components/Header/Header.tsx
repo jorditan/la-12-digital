@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Menu, X } from 'lucide-react';
 
-// TODO: reemplazar con asset local (src/assets/logo-boca.svg)
-// URL temporal Figma — expira en 7 días
-const LOGO_SRC = 'https://www.figma.com/api/mcp/asset/ce0fb221-7700-45e3-8db4-8c7ef8b49ea1';
+const LOGO_SRC = '/escudo_boca.png';
 
 type NavId = 'inicio' | 'plantel' | 'asistencia';
 

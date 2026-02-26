@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'destructive';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -34,6 +34,15 @@ const VARIANTS: Record<ButtonVariant, string> = {
     'border border-transparent',
     'hover:border-boca-gold/25 hover:bg-boca-gold/5',
     'active:bg-boca-gold/10',
+    'disabled:opacity-40 disabled:cursor-not-allowed',
+  ].join(' '),
+
+  /** Contorno blanco/neutro — acción de descarte */
+  outline: [
+    'bg-transparent text-white font-medium',
+    'border border-white/30',
+    'hover:border-white/60 hover:bg-white/5',
+    'active:bg-white/10',
     'disabled:opacity-40 disabled:cursor-not-allowed',
   ].join(' '),
 

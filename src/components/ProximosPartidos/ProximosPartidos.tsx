@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapPin, ChevronRight } from 'lucide-react';
+import { MapPin, ChevronRight, LayoutGrid, List } from 'lucide-react';
 import { fetchUpcomingMatches, BOCA_ID, type ProximoPartido } from '../../services/apifootball';
 import { Badge } from '../Badge';
 import { ESCUDO_VACIO } from '../../data/equipos';
+import { FixtureTable } from './FixtureTable';
+
+type Vista = 'cards' | 'tabla';
 
 type Estado = 'loading' | 'error' | 'ok';
 
@@ -14,6 +17,7 @@ function formatFecha(isoDate: string): string {
 export function ProximosPartidos() {
   const [partidos, setPartidos] = useState<ProximoPartido[]>([]);
   const [estado, setEstado] = useState<Estado>('loading');
+  const [vista, setVista] = useState<Vista>('cards');
 
   const cargar = () => {
     setEstado('loading');
@@ -27,10 +31,40 @@ export function ProximosPartidos() {
   return (
     <section aria-label="Próximos partidos" className='bg-[#031d46] border border-[#00396e] rounded-sm overflow-hidden flex flex-col'>
        {/* Header */}
-      <div className="border-b border-[#003d7a] px-6 pt-6 pb-3">
+      <div className="border-b border-[#003d7a] px-6 pt-6 pb-3 flex items-center justify-between gap-3">
         <h2 className="type-section-title text-white">
           Próximos partidos
         </h2>
+
+        {/* Toggle de vista */}
+        {estado === 'ok' && (
+          <div className="flex items-center gap-0.5 bg-boca-blue rounded-sm p-0.5 border border-boca-gold/10">
+            <button
+              aria-label="Vista tarjetas"
+              onClick={() => setVista('cards')}
+              className={[
+                'p-1.5 rounded-[2px] transition-colors',
+                vista === 'cards'
+                  ? 'bg-boca-gold/15 text-boca-gold'
+                  : 'text-text-secondary hover:text-white',
+              ].join(' ')}
+            >
+              <LayoutGrid size={14} />
+            </button>
+            <button
+              aria-label="Vista tabla"
+              onClick={() => setVista('tabla')}
+              className={[
+                'p-1.5 rounded-[2px] transition-colors',
+                vista === 'tabla'
+                  ? 'bg-boca-gold/15 text-boca-gold'
+                  : 'text-text-secondary hover:text-white',
+              ].join(' ')}
+            >
+              <List size={14} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -51,8 +85,12 @@ export function ProximosPartidos() {
           </div>
         )}
 
-        {estado === 'ok' && (
+        {estado === 'ok' && vista === 'cards' && (
           <ScrollRow partidos={partidos} />
+        )}
+
+        {estado === 'ok' && vista === 'tabla' && (
+          <FixtureTable partidos={partidos} />
         )}
       </div>
     </section>
