@@ -1,838 +1,272 @@
-{
-  "version": "1.0",
-  "lastUpdated": "2026-02",
-  "club": "Club Atlético Boca Juniors",
-  "description": "Base de datos de ídolos xeneizes para minijuegos de La 12 Digital",
-  "idols": [
-    {
-      "id": 1,
-      "nombre": "Juan Román Riquelme",
-      "apodo": "Román / El 10 del Pueblo",
-      "posicion": "Mediocampista ofensivo (enganche)",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "San Fernando, Buenos Aires",
-      "añoNacimiento": 1978,
-      "periodos": ["1996-2002", "2007-2012", "2012-2015"],
-      "estadisticas": {
-        "partidos": 388,
-        "goles": 92,
-        "asistencias": 124,
-        "titulos": 11
-      },
-      "logros": [
-        "3 Copas Libertadores",
-        "1 Copa Intercontinental vs Real Madrid (2000)",
-        "5 Torneos Apertura",
-        "Máximo goleador xeneize en Copa Libertadores (25 goles)",
-        "Presidente de Boca desde 2023"
-      ],
-      "dificultad": "facil",
-      "pistas": [
-        "Debutó con 18 años en La Bombonera el 10 de noviembre de 1996 y la multitud lo ovacionó desde el primer día",
-        "Fue el arquitecto del 1-0 al Real Madrid de los Galácticos en la final de la Copa Intercontinental del año 2000 en Tokio",
-        "Es el máximo goleador xeneize en la historia de la Copa Libertadores con 25 tantos",
-        "Jugó brevemente en el FC Barcelona y en el Villarreal, donde llegó a una semifinal histórica de Champions League",
-        "Hoy ocupa el sillón más importante del club como presidente desde diciembre de 2023",
-        "Su apellido tiene 8 letras y es el más cantado en La Bombonera"
-      ],
-      "curiosidades": [
-        "Dijo: 'Algún día voy a volver a Boca, es mi club'",
-        "La CONMEBOL lo reconoció como Leyenda de la Libertadores en 2020",
-        "Sus tiros libres eran una clase magistral de técnica"
-      ],
-      "dorsal": 10,
-      "era": "2000s-2010s"
-    },
-    {
-      "id": 2,
-      "nombre": "Martín Palermo",
-      "apodo": "El Titán / El Loco",
-      "posicion": "Delantero centro",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "La Plata, Buenos Aires",
-      "añoNacimiento": 1973,
-      "periodos": ["1997-2000", "2004-2011"],
-      "estadisticas": {
-        "partidos": 404,
-        "goles": 236,
-        "asistencias": null,
-        "titulos": 13
-      },
-      "logros": [
-        "Máximo goleador histórico del club (236 goles)",
-        "2 Copas Libertadores",
-        "1 Copa Intercontinental",
-        "2 Copas Sudamericanas",
-        "6 torneos locales"
-      ],
-      "dificultad": "facil",
-      "pistas": [
-        "Es el máximo goleador en toda la historia del club con 236 tantos",
-        "Llegó a Boca criticado, pero convirtió 20 goles en sus primeros 19 partidos y no paró más",
-        "Erró 3 penales en un mismo partido con Argentina ante Colombia en la Copa América 1999",
-        "Jugó en Europa (Villarreal, Alavés y Betis) pero siempre volvió a casa",
-        "Anotó goles decisivos en finales de Copa Libertadores que siguen emocionando",
-        "Su apodo hace referencia a su enorme estatura y su espíritu indestructible"
-      ],
-      "curiosidades": [
-        "Fue campeón del mundo con Argentina en el Mundial 2010 a los 37 años",
-        "Superó el récord de goles de Roberto Cherro en 2009",
-        "Su garra y personalidad lo convirtieron en símbolo del espíritu xeneize"
-      ],
-      "dorsal": 9,
-      "era": "2000s"
-    },
-    {
-      "id": 3,
-      "nombre": "Diego Armando Maradona",
-      "apodo": "El Diez / El Dios del Fútbol / Pelusa",
-      "posicion": "Mediocampista ofensivo / Extremo",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Villa Fiorito, Buenos Aires",
-      "añoNacimiento": 1960,
-      "periodos": ["1981-1982", "1995-1997"],
-      "estadisticas": {
-        "partidos": 71,
-        "goles": 35,
-        "asistencias": null,
-        "titulos": 1
-      },
-      "logros": [
-        "Torneo Metropolitano 1981",
-        "Campeón del Mundo con Argentina 1986",
-        "Ídolo eterno aunque ganó solo 1 título en el club"
-      ],
-      "dificultad": "facil",
-      "pistas": [
-        "Nació en Villa Fiorito, uno de los barrios más humildes del Gran Buenos Aires",
-        "Llegó a Boca en 1981 en uno de los traspasos más costosos de Argentina hasta entonces, desde Argentinos Juniors",
-        "En su primera etapa, lideró al equipo a ganar el Torneo Metropolitano 1981 con 17 goles",
-        "Su golazo a River en La Bombonera bajo la lluvia es una postal eterna",
-        "Vistió la camiseta azul y oro en dos etapas, la segunda en 1995 tras su suspensión por dopaje",
-        "El mejor jugador de la historia del fútbol mundial también eligió a Boca como su club del corazón"
-      ],
-      "curiosidades": [
-        "Dijo: 'Yo me inventé mi pase a Boca'",
-        "Maradona es de Boca porque 'gallina no es' — famosa frase de los hinchas",
-        "Falleció el 25 de noviembre de 2020, llanto masivo en La Bombonera"
-      ],
-      "dorsal": 10,
-      "era": "1980s-1990s"
-    },
-    {
-      "id": 4,
-      "nombre": "Carlos Tévez",
-      "apodo": "El Apache / El Carlitos",
-      "posicion": "Delantero",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Ciudadela / criado en Fuerte Apache, Buenos Aires",
-      "añoNacimiento": 1984,
-      "periodos": ["2001-2004", "2015-2019"],
-      "estadisticas": {
-        "partidos": 263,
-        "goles": 94,
-        "asistencias": null,
-        "titulos": 11
-      },
-      "logros": [
-        "Copa Libertadores 2003 (MVP del torneo)",
-        "Copa Intercontinental 2003",
-        "Copa Sudamericana 2004",
-        "Retorno épico en 2015 para cerrar su carrera en Boca"
-      ],
-      "dificultad": "facil",
-      "pistas": [
-        "Debutó en Boca el 21 de octubre de 2001 con apenas 17 años contra Talleres de Córdoba",
-        "Fue elegido MVP de la Copa Libertadores 2003, la primera sin Riquelme ni Palermo",
-        "Se crio en uno de los barrios más difíciles de Buenos Aires — Fuerte Apache",
-        "Tuvo una carrera estelar en Europa: Manchester United, Manchester City, Juventus",
-        "En la Juventus fue finalista de la Champions League y uno de los mejores del mundo",
-        "Volvió a Boca para cerrar su carrera porque nunca olvidó sus raíces"
-      ],
-      "curiosidades": [
-        "La FIFA destacó su 'fútbol bien callejero que enamoró a los hinchas'",
-        "Ganó la Copa Intercontinental 2003 ante el AC Milan de Shevchenko y Kakà",
-        "Hoy es DT y busca volver a ganar títulos como entrenador"
-      ],
-      "dorsal": 11,
-      "era": "2000s-2010s"
-    },
-    {
-      "id": 5,
-      "nombre": "Sebastián Battaglia",
-      "apodo": "El León / La Roca",
-      "posicion": "Mediocampista defensivo / volante central",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "La Plata, Buenos Aires",
-      "añoNacimiento": 1980,
-      "periodos": ["1998-2003", "2005-2011"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": null,
-        "asistencias": null,
-        "titulos": 17
-      },
-      "logros": [
-        "Jugador más ganador en la historia de Boca con 17 títulos",
-        "Múltiples Libertadores e Intercontinentales",
-        "DT campeón de Boca en 2021-2022"
-      ],
-      "dificultad": "media",
-      "pistas": [
-        "Es el jugador con más títulos en la historia del club: 17 conquistas",
-        "Surgió de las divisiones inferiores de Boca y nunca jugó en otro club argentino de primera",
-        "Era el motor silencioso del mediocampo en la era dorada de Bianchi",
-        "Como DT también volvió al club y ganó títulos dirigiendo al primer equipo",
-        "Su apellido tiene 9 letras y lleva el número de la batalla",
-        "Fue compañero de Riquelme, Palermo y Tévez en la época más gloriosa del club"
-      ],
-      "curiosidades": [
-        "Ganó más títulos que cualquier otro jugador en la historia del club",
-        "Superó a Guillermo Barros Schelotto (16 títulos) como el más ganador"
-      ],
-      "dorsal": 5,
-      "era": "2000s"
-    },
-    {
-      "id": 6,
-      "nombre": "Guillermo Barros Schelotto",
-      "apodo": "El Mellizo / Chapita",
-      "posicion": "Delantero / Mediocampista ofensivo",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "La Plata, Buenos Aires",
-      "añoNacimiento": 1973,
-      "periodos": ["1997-2007"],
-      "estadisticas": {
-        "partidos": 300,
-        "goles": 86,
-        "asistencias": null,
-        "titulos": 16
-      },
-      "logros": [
-        "2do más ganador como jugador (16 títulos)",
-        "4 Copas Libertadores",
-        "2 Copas Intercontinentales",
-        "Dupla goleadora icónica con Palermo"
-      ],
-      "dificultad": "media",
-      "pistas": [
-        "Tiene un hermano gemelo (Gustavo) con quien debutó juntos en Boca el 14 de septiembre de 1997",
-        "Él y su hermano son conocidos como 'Los Mellizos'",
-        "Formó la dupla delantera más recordada del club junto a Martín Palermo",
-        "Ganó 16 títulos como jugador, siendo el segundo más ganador del club",
-        "Después de retirarse fue DT exitoso en México y dirigió a la Selección de Paraguay",
-        "Su habilidad técnica y picardía le ganaron el apodo de 'Chapita'"
-      ],
-      "curiosidades": [
-        "Ganó la MLS Cup 2008 con Columbus Crew luego de retirarse de Boca",
-        "Siempre 'jugó como un hincha más', con entrega total"
-      ],
-      "dorsal": 7,
-      "era": "2000s"
-    },
-    {
-      "id": 7,
-      "nombre": "Hugo Gatti",
-      "apodo": "El Loco",
-      "posicion": "Arquero",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Florida, Buenos Aires",
-      "añoNacimiento": 1944,
-      "periodos": ["1976-1988"],
-      "estadisticas": {
-        "partidos": 548,
-        "goles": 0,
-        "asistencias": null,
-        "titulos": 6
-      },
-      "logros": [
-        "2 Copas Libertadores (1977 y 1978)",
-        "1 Copa Intercontinental (1977)",
-        "Récord de más partidos en la historia del club: 548",
-        "Considerado uno de los mejores arqueros del fútbol argentino"
-      ],
-      "dificultad": "media",
-      "pistas": [
-        "Es el jugador con más partidos disputados en la historia del club: 548 encuentros",
-        "Era conocido por su valentía y habilidad con los pies — muy inusual para un arquero de su época",
-        "Defendió el arco de Boca durante más de una década (1976-1988)",
-        "Tenía su propia hinchada: gente que iba solo a verlo a él jugar",
-        "Su estilo extravagante y arriesgado le valió el apodo que es un adjetivo",
-        "Fue parte de los equipos que ganaron 2 Libertadores consecutivas en 1977 y 1978"
-      ],
-      "curiosidades": [
-        "Era célebre por salir con la pelota hasta el medio campo",
-        "Considerado revolucionario del puesto de arquero en Argentina"
-      ],
-      "dorsal": 1,
-      "era": "1970s-1980s"
-    },
-    {
-      "id": 8,
-      "nombre": "Roberto Mouzo",
-      "apodo": "El Toro",
-      "posicion": "Defensor / Lateral",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Banfield, Buenos Aires",
-      "añoNacimiento": 1946,
-      "periodos": ["1964-1982"],
-      "estadisticas": {
-        "partidos": 426,
-        "goles": null,
-        "asistencias": null,
-        "titulos": 6
-      },
-      "logros": [
-        "Segundo jugador con más partidos en la historia del club (426 oficiales)",
-        "2 Copas Libertadores (1977 y 1978)",
-        "1 Copa Intercontinental (1977)",
-        "MVP de la Copa Libertadores 1977"
-      ],
-      "dificultad": "dificil",
-      "pistas": [
-        "Jugó 13 años en el club y es el segundo con más partidos oficiales: 426",
-        "Su estatua está en el interior del club junto a los grandes ídolos",
-        "Fue MVP de la Copa Libertadores 1977, ganada ante Cruzeiro",
-        "Era símbolo de la década del '70 con enorme garra y corazón xeneize",
-        "Su posición era en la defensa y fue capitán en momentos clave",
-        "Ganó los mismos títulos internacionales que los equipos del 77 y 78"
-      ],
-      "curiosidades": [
-        "Es considerado uno de los grandes símbolos de la era dorada de los '70",
-        "Tiene una de las estatuas más icónicas en el hall de los ídolos del club"
-      ],
-      "dorsal": 6,
-      "era": "1970s"
-    },
-    {
-      "id": 9,
-      "nombre": "Antonio Rattín",
-      "apodo": "El Rata",
-      "posicion": "Mediocampista / Volante central",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Tigre, Buenos Aires",
-      "añoNacimiento": 1937,
-      "periodos": ["1956-1970"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": null,
-        "asistencias": null,
-        "titulos": null
-      },
-      "logros": [
-        "Capitán histórico y referente durante la era de los '60",
-        "Símbolo de la década del 60",
-        "Debutó en 1956 y se retiró en 1970 usando solo la camiseta de Boca"
-      ],
-      "dificultad": "dificil",
-      "pistas": [
-        "Pasó TODA su carrera profesional en Boca — debut en 1956, retiro en 1970, sin conocer otros colores",
-        "Era el capitán y referente de los equipos de la década del '60",
-        "Su temperamento aguerrido y liderazgo lo convirtieron en un ídolo del pueblo",
-        "Fue expulsado en el Mundial 1966 de Inglaterra en un partido infame ante los locales",
-        "Su apodo es el nombre de un pequeño roedor",
-        "Símbolo de la mística y el temperamento xeneize"
-      ],
-      "curiosidades": [
-        "Su expulsión ante Inglaterra en el Mundial 1966 es uno de los momentos más polémicos del fútbol",
-        "Era conocido por nunca retroceder ante nadie"
-      ],
-      "dorsal": 5,
-      "era": "1960s"
-    },
-    {
-      "id": 10,
-      "nombre": "Francisco Varallo",
-      "apodo": "Cañoncito / Pancho",
-      "posicion": "Delantero",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "La Plata, Buenos Aires",
-      "añoNacimiento": 1910,
-      "periodos": ["1930-1939"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": 194,
-        "asistencias": null,
-        "titulos": 3
-      },
-      "logros": [
-        "3 títulos de liga en la era del profesionalismo incipiente (1930s)",
-        "2do goleador histórico del club (superado luego por Cherro y Palermo)",
-        "Participó en la final del Mundial 1930 con Argentina"
-      ],
-      "dificultad": "muy_dificil",
-      "pistas": [
-        "Fue el máximo goleador de la historia del club hasta que llegó Roberto Cherro",
-        "Jugó en la final del primer Mundial de la historia en Uruguay 1930 con Argentina",
-        "Sus goles en la década del '30 eran celebrados con remates de enorme potencia",
-        "Su apodo hace referencia al tamaño pequeño pero explosivo de su disparo",
-        "Primer ídolo goleador del Boca profesional de la era del '30",
-        "Vivió más de 100 años y fue el último sobreviviente del primer Mundial de la historia"
-      ],
-      "curiosidades": [
-        "Falleció en 2010 a los 100 años, siendo el último jugador vivo del Mundial 1930",
-        "Considerado una leyenda del fútbol argentino de la primera era"
-      ],
-      "dorsal": null,
-      "era": "1930s"
-    },
-    {
-      "id": 11,
-      "nombre": "Ángel Clemente Rojas",
-      "apodo": "Rojitas",
-      "posicion": "Mediocampista ofensivo / Extremo",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Sarandí, Buenos Aires",
-      "añoNacimiento": 1940,
-      "periodos": ["1959-1972"],
-      "estadisticas": {
-        "partidos": 222,
-        "goles": 79,
-        "asistencias": null,
-        "titulos": 5
-      },
-      "logros": [
-        "5 títulos locales",
-        "Símbolo de los equipos campeones de los '60 y '70",
-        "Ídolo de La Bombonera por su elegancia y técnica"
-      ],
-      "dificultad": "dificil",
-      "pistas": [
-        "Su apodo es diminutivo de su apellido — lo llamaban con cariño en Boca",
-        "Era un jugador elegante y técnico, con habilidad para desequilibrar y asistir",
-        "Jugó más de 222 partidos oficiales y convirtió 79 goles",
-        "Es uno de los grandes ídolos de la década del '60 y principios del '70",
-        "Nació en Sarandí, un municipio del conurbano bonaerense",
-        "Su humildad y amor por la camiseta lo convirtieron en querido por la hinchada"
-      ],
-      "curiosidades": [
-        "Parte de los equipos que ganaron 5 títulos locales entre 1962 y 1970",
-        "Recordado como uno de los jugadores más habilidosos de su generación"
-      ],
-      "dorsal": 10,
-      "era": "1960s-1970s"
-    },
-    {
-      "id": 12,
-      "nombre": "Silvio Marzolini",
-      "apodo": "El Maestro / El Zorro",
-      "posicion": "Lateral izquierdo",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Buenos Aires",
-      "añoNacimiento": 1940,
-      "periodos": ["1958-1972"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": null,
-        "asistencias": null,
-        "titulos": 6
-      },
-      "logros": [
-        "Pilar fundamental en los títulos de 1962, 1964, 1965",
-        "Torneos Nacionales 1969 y 1970",
-        "Copa Argentina 1969",
-        "Considerado uno de los mejores laterales izquierdos de la historia argentina"
-      ],
-      "dificultad": "dificil",
-      "pistas": [
-        "Considerado quizá el mejor lateral izquierdo en la historia de Boca Juniors",
-        "Fue pilar en los títulos de 1962, 1964 y 1965 — era dorada de los '60",
-        "Su elegancia al atacar por el carril izquierdo era característica de su estilo",
-        "Más tarde fue DT de Boca y tuvo a Maradona a su cargo en 1981",
-        "Su nombre tiene solo 6 letras en el apellido",
-        "Nació en 1940 y defendió la camiseta azul y oro durante más de una década"
-      ],
-      "curiosidades": [
-        "Como DT, condujo al equipo campeón del Metropolitano 1981 con Maradona",
-        "Es recordado como un símbolo de elegancia y compromiso"
-      ],
-      "dorsal": 3,
-      "era": "1960s"
-    },
-    {
-      "id": 13,
-      "nombre": "Roberto Cherro",
-      "apodo": "El Torito",
-      "posicion": "Delantero",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Buenos Aires",
-      "añoNacimiento": 1907,
-      "periodos": ["1924-1938"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": 221,
-        "asistencias": null,
-        "titulos": null
-      },
-      "logros": [
-        "2do máximo goleador histórico del club con 221 goles",
-        "Múltiples títulos en la era amateur y los inicios del profesionalismo",
-        "Ídolo de los primeros años del profesionalismo"
-      ],
-      "dificultad": "muy_dificil",
-      "pistas": [
-        "Es el segundo goleador en la historia del club con 221 tantos",
-        "Fue el máximo goleador hasta que Martín Palermo lo superó en 2009",
-        "Jugó en la década del '20 y '30 — los inicios del profesionalismo argentino",
-        "Formó una tripleta goleadora temible junto a Varallo y Benítez Cáceres",
-        "Su apodo alude al carácter bravo y potente de su juego",
-        "Lleva el mismo apellido que un riachuelo del sur de la provincia de Buenos Aires"
-      ],
-      "curiosidades": [
-        "Marcó más de 221 goles en una época en que el fútbol argentino se profesionalizaba",
-        "Parte de la generación que cimentó las bases de Boca como club grande"
-      ],
-      "dorsal": null,
-      "era": "1930s"
-    },
-    {
-      "id": 14,
-      "nombre": "Óscar Córdoba",
-      "apodo": "El Cóndor",
-      "posicion": "Arquero",
-      "nacionalidad": "Colombia",
-      "ciudadNacimiento": "Magangué, Bolívar, Colombia",
-      "añoNacimiento": 1971,
-      "periodos": ["1999-2006"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": 0,
-        "asistencias": null,
-        "titulos": null
-      },
-      "logros": [
-        "Copa Libertadores 2000 y 2001",
-        "Copa Intercontinental 2000 (vs. Real Madrid)",
-        "Copa Intercontinental 2003 (vs. AC Milan)",
-        "Arquero titular de la era dorada de Carlos Bianchi"
-      ],
-      "dificultad": "media",
-      "pistas": [
-        "Es colombiano, nació en Magangué, en el departamento de Bolívar",
-        "Fue el arquero titular durante la era más gloriosa de Boca bajo Bianchi",
-        "Ganó 2 Copas Intercontinentales con Boca (2000 y 2003)",
-        "Su apodo hace referencia a un gran pájaro de los Andes",
-        "Fue parte del famoso trío colombiano junto a Serna y Bermúdez",
-        "Se convirtió en un ídolo extranjero muy querido por la hinchada xeneize"
-      ],
-      "curiosidades": [
-        "El trío colombiano (Córdoba, Serna, Bermúdez) fue clave en la era dorada",
-        "Considerado uno de los mejores arqueros en la historia del fútbol colombiano"
-      ],
-      "dorsal": 1,
-      "era": "2000s"
-    },
-    {
-      "id": 15,
-      "nombre": "Mauricio Serna",
-      "apodo": "Chicho",
-      "posicion": "Mediocampista / Volante",
-      "nacionalidad": "Colombia",
-      "ciudadNacimiento": "Montería, Córdoba, Colombia",
-      "añoNacimiento": 1970,
-      "periodos": ["1997-2005"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": null,
-        "asistencias": null,
-        "titulos": null
-      },
-      "logros": [
-        "Copa Libertadores 2000, 2001, 2003",
-        "Copa Intercontinental 2000 y 2003",
-        "Referente y líder del mediocampo durante la era dorada"
-      ],
-      "dificultad": "media",
-      "pistas": [
-        "Es colombiano, nacido en la ciudad de Montería",
-        "Era conocido por su intensidad, entrega y liderazgo en el mediocampo",
-        "Fue uno de los tres colombianos que marcaron la era dorada del club",
-        "Su apodo es un diminutivo de un nombre que no es el suyo",
-        "Hoy trabaja en la dirigencia del fútbol colombiano",
-        "Era el gladiador del mediocampo que hacía el trabajo sucio para que brillara Riquelme"
-      ],
-      "curiosidades": [
-        "Junto a Bermúdez y Córdoba formaron el 'trío colombiano' ídolo de Boca",
-        "Muy querido por la hinchada por su compromiso y entrega"
-      ],
-      "dorsal": 8,
-      "era": "2000s"
-    },
-    {
-      "id": 16,
-      "nombre": "Jorge Bermúdez",
-      "apodo": "El Patrón / Hacha Bermúdez (hijo)",
-      "posicion": "Defensor central",
-      "nacionalidad": "Colombia",
-      "ciudadNacimiento": "Cartagena, Colombia",
-      "añoNacimiento": 1971,
-      "periodos": ["1998-2003"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": null,
-        "asistencias": null,
-        "titulos": null
-      },
-      "logros": [
-        "Copa Libertadores 2000, 2001, 2003",
-        "Copa Intercontinental 2000",
-        "Capitán y líder defensivo de la era Bianchi"
-      ],
-      "dificultad": "media",
-      "pistas": [
-        "Es hijo del también futbolista colombiano apodado 'Hacha' Bermúdez",
-        "Fue capitán de Boca durante la era más gloriosa del club",
-        "Nació en Cartagena de Indias, la ciudad costera más famosa de Colombia",
-        "Fue defensor central con personalidad arrolladora que le valió su apodo",
-        "Hoy trabaja como miembro del comité de árbitros de la CONMEBOL",
-        "Integra el célebre trío colombiano junto a Serna y Córdoba"
-      ],
-      "curiosidades": [
-        "Su apodo 'El Patrón' lo describe perfectamente — mandaba en la defensa",
-        "Fue uno de los defensores más respetados del fútbol sudamericano"
-      ],
-      "dorsal": 4,
-      "era": "2000s"
-    },
-    {
-      "id": 17,
-      "nombre": "Paulo Valentim",
-      "apodo": "El Verdugo de River",
-      "posicion": "Delantero",
-      "nacionalidad": "Brasil",
-      "ciudadNacimiento": "Río de Janeiro, Brasil",
-      "añoNacimiento": 1934,
-      "periodos": ["1958-1964"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": null,
-        "asistencias": null,
-        "titulos": null
-      },
-      "logros": [
-        "Títulos de liga 1962 y 1964",
-        "Anotó 10 goles ante River Plate — récord histórico de un jugador vs el eterno rival",
-        "Ídolo extranjero querido profundamente por la hinchada"
-      ],
-      "dificultad": "muy_dificil",
-      "pistas": [
-        "Es brasileño, nacido en Río de Janeiro",
-        "Tiene el récord de más goles convertidos ante River Plate por un solo jugador (10 goles)",
-        "Por esa razón su apodo es un titulo que implica que castigó mucho al rival",
-        "Jugó en Boca entre 1958 y 1964 — era de los títulos de los primeros '60",
-        "Es uno de los extranjeros más queridos en la historia del club",
-        "Su apellido es también un nombre propio muy común"
-      ],
-      "curiosidades": [
-        "10 goles ante River en Superclásicos lo convirtieron en leyenda xeneize",
-        "Brasil era potencia mundial y él eligió jugar en el fútbol argentino"
-      ],
-      "dorsal": null,
-      "era": "1960s"
-    },
-    {
-      "id": 18,
-      "nombre": "Carlos Navarro Montoya",
-      "apodo": "El Mono",
-      "posicion": "Arquero",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Buenos Aires",
-      "añoNacimiento": 1963,
-      "periodos": ["1990-1999"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": 0,
-        "asistencias": null,
-        "titulos": null
-      },
-      "logros": [
-        "Torneo Apertura 1992",
-        "Campeón local en la primera era 90s",
-        "Récord de minutos sin goles en contra en la historia del club"
-      ],
-      "dificultad": "media",
-      "pistas": [
-        "Fue el sucesor de Hugo Gatti en el arco de Boca en la década del '90",
-        "Tiene el récord de mayor cantidad de minutos sin recibir goles en la historia del club",
-        "Su apodo hace referencia a una característica física o a su agilidad felina",
-        "Fue campeón local en 1992 con el Torneo Apertura",
-        "Luego de Boca tuvo un paso polémico por Barcelona de España",
-        "Fue referente del arco xeneize durante casi una década"
-      ],
-      "curiosidades": [
-        "Tuvo un breve paso por el FC Barcelona en los '90",
-        "Era conocido por su posicionamiento y seguridad bajo los palos"
-      ],
-      "dorsal": 1,
-      "era": "1990s"
-    },
-    {
-      "id": 19,
-      "nombre": "Delfín Benítez Cáceres",
-      "apodo": "El Paraguayo",
-      "posicion": "Delantero",
-      "nacionalidad": "Paraguay",
-      "ciudadNacimiento": "Asunción, Paraguay",
-      "añoNacimiento": 1912,
-      "periodos": ["1930-1939"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": null,
-        "asistencias": null,
-        "titulos": null
-      },
-      "logros": [
-        "Múltiples títulos de liga en la era amateur y primeros años profesionales",
-        "El extranjero con más goles convertidos en la historia del club",
-        "Integró la delantera más temida de la era del '30"
-      ],
-      "dificultad": "muy_dificil",
-      "pistas": [
-        "Es el extranjero con más goles convertidos en la historia del club",
-        "Es paraguayo, nacido en Asunción",
-        "Integró la delantera letal de los '30 junto a Cherro y Varallo",
-        "Su apellido compuesto tiene dos partes — el primero es también una palabra del mar",
-        "Jugó en la era amateur y los comienzos del profesionalismo argentino",
-        "Es una de las figuras más desconocidas entre los grandes goleadores históricos del Xeneize"
-      ],
-      "curiosidades": [
-        "Siendo extranjero, se convirtió en el máximo goleador internacional de Boca de esa era",
-        "Parte de la generación dorada del fútbol argentino de los años '30"
-      ],
-      "dorsal": null,
-      "era": "1930s"
-    },
-    {
-      "id": 20,
-      "nombre": "Julio Meléndez Calderón",
-      "apodo": "El Zurdo / El Capitán Peruano",
-      "posicion": "Lateral izquierdo",
-      "nacionalidad": "Perú",
-      "ciudadNacimiento": "Lima, Perú",
-      "añoNacimiento": 1944,
-      "periodos": ["1965-1975"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": null,
-        "asistencias": null,
-        "titulos": null
-      },
-      "logros": [
-        "Capitán e ídolo del club en la primera gesta continental (Copa Libertadores 1963)",
-        "Campeonatos locales de 1964, 1965, 1969 y 1970",
-        "Símbolo del Boca del eje de los '60 y '70"
-      ],
-      "dificultad": "muy_dificil",
-      "pistas": [
-        "Es peruano, nacido en Lima — uno de los pocos ídolos xeneizes de ese país",
-        "Fue capitán del equipo durante la primera gran aventura continental del club",
-        "Se destacaba como lateral izquierdo — su pierna hábil era la derecha internacionalmente... o no",
-        "Ganó 4 títulos de liga con el club en la era de los '60 y '70",
-        "Su apellido es un apellido muy común en el mundo hispanohablante",
-        "Participó en la histórica Copa Libertadores 1963 donde Boca llegó muy lejos"
-      ],
-      "curiosidades": [
-        "Es uno de los pocos ídolos peruanos en la historia del club",
-        "Referente de un Boca que empezaba a soñar con América"
-      ],
-      "dorsal": null,
-      "era": "1960s-1970s"
-    },
-    {
-      "id": 21,
-      "nombre": "Rodrigo Palacio",
-      "apodo": "El Trenza",
-      "posicion": "Delantero / Extremo",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Rawson, Chubut",
-      "añoNacimiento": 1982,
-      "periodos": ["2004-2009", "2009"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": null,
-        "asistencias": null,
-        "titulos": null
-      },
-      "logros": [
-        "Máximo goleador histórico de la Recopa Sudamericana",
-        "Reconocible por su característica trenza que llevaba en el pelo",
-        "Surgido del interior del país que llegó a brillar en la élite europea"
-      ],
-      "dificultad": "dificil",
-      "pistas": [
-        "Nació en Rawson, la capital de Chubut, en la Patagonia argentina",
-        "Es el máximo goleador histórico de la Recopa Sudamericana",
-        "Luego de Boca tuvo una larga carrera en Europa: Atlético de Madrid, Inter de Milán, Bologna",
-        "Su apodo hace referencia a su peinado característico e inconfundible",
-        "Fue titular en la Selección Argentina en el Mundial de Brasil 2014",
-        "Su caída en la final de la Eurocopa contra Alemania es uno de los momentos más recordados"
-      ],
-      "curiosidades": [
-        "Jugó en el Inter de Milán durante varios años siendo muy querido por los tifosi",
-        "Su trenza larga era tan icónica como su habilidad"
-      ],
-      "dorsal": 11,
-      "era": "2000s"
-    },
-    {
-      "id": 22,
-      "nombre": "Eduardo Rendo",
-      "apodo": "El Atómico",
-      "posicion": "Delantero",
-      "nacionalidad": "Argentina",
-      "ciudadNacimiento": "Buenos Aires",
-      "añoNacimiento": 1915,
-      "periodos": ["1934-1944"],
-      "estadisticas": {
-        "partidos": null,
-        "goles": null,
-        "asistencias": null,
-        "titulos": 6
-      },
-      "logros": [
-        "6 títulos con Boca (incluyendo 2 a principios de los '40)",
-        "Venció a 'La Máquina' de River en épocas de grandeza millonaria",
-        "Uno de los delanteros más potentes de su generación"
-      ],
-      "dificultad": "muy_dificil",
-      "pistas": [
-        "Su apodo hace referencia a algo extremadamente poderoso y explosivo",
-        "Era conocido por tener uno de los remates más potentes del fútbol de su época",
-        "Venció con Boca nada menos que a 'La Máquina', el River más grande de la historia",
-        "Ganó 6 títulos en la era del '40 — considerado el mejor de su generación en el ataque",
-        "Está entre los máximos goleadores del club en la era amateur/semi-profesional",
-        "Su apellido tiene 5 letras"
-      ],
-      "curiosidades": [
-        "Fue parte del Boca que desafió la supremacía de La Máquina de River en los '40",
-        "Una leyenda casi olvidada del fútbol argentino de mediados del siglo XX"
-      ],
-      "dorsal": null,
-      "era": "1940s"
-    }
-  ],
-  "metadata": {
-    "totalIdols": 22,
-    "dificultades": {
-      "facil": 4,
-      "media": 7,
-      "dificil": 6,
-      "muy_dificil": 5
-    },
-    "eras": ["1930s", "1940s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s"],
-    "nacionalidades": {
-      "Argentina": 15,
-      "Colombia": 3,
-      "Brasil": 1,
-      "Paraguay": 1,
-      "Perú": 1
-    },
-    "posiciones": {
-      "Delantero": 8,
-      "Mediocampista": 6,
-      "Defensor": 3,
-      "Arquero": 3,
-      "Lateral": 2
-    }
+[
+  {
+    "id": 1,
+    "nombre": "Juan Román Riquelme",
+    "posicion": "Mediocampista",
+    "epoca": "1996-2002 / 2007 / 2008-2014",
+    "pista_1": "Fue el gran '10' de la etapa más gloriosa, máximo goleador histórico en la Copa Libertadores con 25 goles y actual presidente de la institución.",
+    "pista_2": "Le hizo a un defensor de River Plate uno de los caños más famosos de la historia del fútbol.",
+    "pista_3": "En el partido de vuelta de la final de la Copa Libertadores 2007, le marcó un doblete inolvidable al Gremio en Brasil para consagrar al equipo."
+  },
+  {
+    "id": 2,
+    "nombre": "Martín Palermo",
+    "posicion": "Delantero",
+    "epoca": "1997-2000 / 2004-2011",
+    "pista_1": "Es el máximo goleador histórico del club con un total de 236 goles en competiciones oficiales.",
+    "pista_2": "Le marcó dos tantos inolvidables al Real Madrid en Japón durante los primeros seis minutos de partido en la Copa Intercontinental.",
+    "pista_3": "Volvió a jugar tras estar seis meses inactivo por una severa lesión de ligamentos, y en su regreso le convirtió un gol histórico a River Plate por la Libertadores."
+  },
+  {
+    "id": 3,
+    "nombre": "Diego Armando Maradona",
+    "posicion": "Mediocampista",
+    "epoca": "1981-1982 / 1995-1997",
+    "pista_1": "Llegó al club en 1981 rechazando una oferta millonaria del clásico rival porque su gran sueño era vestir esta camiseta.",
+    "pista_2": "En su debut oficial el 22 de febrero de 1981 ante Talleres de Córdoba, tuvo una actuación brillante marcando dos goles de penal.",
+    "pista_3": "Tuvo un partido de despedida en el estadio en el año 2001, donde dejó una frase eterna expresando que 'la pelota no se mancha'."
+  },
+  {
+    "id": 4,
+    "nombre": "Carlos Tevez",
+    "posicion": "Delantero",
+    "epoca": "2001-2004 / 2015-2016 / 2018-2021",
+    "pista_1": "Debutó en 2001. Salió de un barrio muy humilde, fue campeón de la Intercontinental 2003 y regresó de Europa en su plenitud.",
+    "pista_2": "En las semifinales de la Copa Libertadores 2004, anotó un gol decisivo en el Monumental e hizo un sancionado festejo imitando a una gallina.",
+    "pista_3": "Logró cosechar un total de 11 títulos con la institución a lo largo de sus tres etapas diferentes en el club."
+  },
+  {
+    "id": 5,
+    "nombre": "Roberto Mouzo",
+    "posicion": "Defensor",
+    "epoca": "1971-1984",
+    "pista_1": "Ningún otro jugador se puso tantas veces la camiseta del club; es el dueño del récord absoluto de presencias con 426 partidos.",
+    "pista_2": "Es uno de los máximos emblemas forjados históricamente en las divisiones inferiores y conserva su récord intocable.",
+    "pista_3": "Fue un pilar indiscutible en la defensa y defendió los colores de manera ininterrumpida desde principios de los 70 hasta mediados de los 80."
+  },
+  {
+    "id": 6,
+    "nombre": "Antonio Rattín",
+    "posicion": "Mediocampista",
+    "epoca": "1956-1970",
+    "pista_1": "Caudillo y gran capitán de los años 60 que jugó toda su carrera (15 años) solo defendiendo esta camiseta.",
+    "pista_2": "En el Mundial de 1966, tras ser expulsado polémicamente, se sentó en la alfombra de la Reina Isabel y estrujó un banderín inglés.",
+    "pista_3": "En una final contra el Santos en 1963, le propuso a su entrenador darle un cachetazo a Pelé para que el árbitro los expulsara a ambos."
+  },
+  {
+    "id": 7,
+    "nombre": "Ángel Clemente Rojas",
+    "posicion": "Delantero",
+    "epoca": "1963-1972",
+    "pista_1": "Gran ídolo de la delantera en los años 60, deslumbraba a todos por su famoso quiebre de cintura y su espectacular gambeta.",
+    "pista_2": "En un amistoso de 1963 le hizo un doblete al Real Madrid y su talento fue tan admirado que hasta fue comparado con el propio Pelé.",
+    "pista_3": "Fue tan inmensamente querido e importante para la historia del club que posee una estatua propia en el Museo de la Pasión Boquense."
+  },
+  {
+    "id": 8,
+    "nombre": "Roberto Cherro",
+    "posicion": "Delantero",
+    "epoca": "1926-1938",
+    "pista_1": "Anotó 218 goles y fue el máximo goleador histórico del club durante más de setenta años hasta que fue superado en 2010.",
+    "pista_2": "Su verdadero apellido no llevaba la letra hache, pero por su origen italiano sonaba distinto y la gente lo popularizó así.",
+    "pista_3": "Además de su enorme capacidad goleadora, especialmente de cabeza, ganó la medalla de plata con la Selección Argentina en los Juegos Olímpicos de 1928."
+  },
+  {
+    "id": 9,
+    "nombre": "Francisco Varallo",
+    "posicion": "Delantero",
+    "epoca": "1931-1939",
+    "pista_1": "Ídolo fundamental del inicio del profesionalismo, anotó 194 goles siendo el tercer máximo artillero histórico de la institución.",
+    "pista_2": "Empató de penal el primer Superclásico de la era profesional en 1931, el cual provocó tanta polémica que el árbitro terminó expulsando a tres rivales.",
+    "pista_3": "Lideró la ofensiva en el primer campeonato logrado por el club durante la naciente era profesional del fútbol argentino en 1931."
+  },
+  {
+    "id": 10,
+    "nombre": "Hugo Orlando Gatti",
+    "posicion": "Arquero",
+    "epoca": "1976-1988",
+    "pista_1": "Es el segundo jugador con más presencias absolutas en la historia de la institución, totalizando 417 partidos jugados.",
+    "pista_2": "Atajó el penal decisivo contra el Cruzeiro de Brasil en 1977, dándole al club su primera Copa Libertadores.",
+    "pista_3": "Tenía un estilo poco convencional para su puesto, arriesgándose a salir constantemente del área y jugando con los pies como un defensor más."
+  },
+  {
+    "id": 11,
+    "nombre": "Sebastián Battaglia",
+    "posicion": "Mediocampista",
+    "epoca": "1998-2011",
+    "pista_1": "Surgido de las divisiones inferiores, es el futbolista que más títulos oficiales ganó en toda la historia del club con 17 campeonatos.",
+    "pista_2": "En una mítica victoria ante el clásico rival en el año 2000, desbordó por el costado y dio la asistencia para el tercer gol histórico.",
+    "pista_3": "Años después de retirarse por lesión, regresó como director técnico del primer equipo y sumó a su palmarés la Copa Argentina y la Copa de la Liga."
+  },
+  {
+    "id": 12,
+    "nombre": "Óscar Córdoba",
+    "posicion": "Arquero",
+    "epoca": "1997-2001",
+    "pista_1": "Extranjero que fue un pilar en la etapa más gloriosa, siendo fundamental en las tandas de penales de las Copas Libertadores 2000 y 2001.",
+    "pista_2": "Fue el inmenso héroe en las semifinales de la Libertadores del año 2000 frente al Palmeiras en Brasil, deteniendo dos remates cruciales.",
+    "pista_3": "Gracias a su gran actuación y seguridad bajo los tres palos, el equipo venció al poderoso Real Madrid en la Intercontinental del año 2000."
+  },
+  {
+    "id": 13,
+    "nombre": "Jorge Bermúdez",
+    "posicion": "Defensor",
+    "epoca": "1997-2001",
+    "pista_1": "Fiero central extranjero que ejecutó el último penal en Brasil para ganar la Libertadores en el mítico estadio Morumbí en el año 2000.",
+    "pista_2": "El reconocido director técnico Carlos Salvador Bilardo fue quien insistió expresamente para fichar a este jugador en la década del 90.",
+    "pista_3": "Fue el gran capitán y líder de la sólida defensa que logró consagrarse campeona del mundo en Japón venciendo a un equipo europeo."
+  },
+  {
+    "id": 14,
+    "nombre": "Rubén Suñé",
+    "posicion": "Mediocampista",
+    "epoca": "1967-1980",
+    "pista_1": "Autor de un histórico gol de tiro libre directo que definió la final del Torneo Nacional 1976 frente al eterno rival.",
+    "pista_2": "Ejerció como el gran capitán del equipo que ganó las primeras dos Copas Libertadores de la institución en los años 70.",
+    "pista_3": "Tras retirarse del fútbol atravesó una profunda depresión que lo llevó a intentar quitarse la vida arrojándose de un séptimo piso, pero afortunadamente se recuperó."
+  },
+  {
+    "id": 15,
+    "nombre": "Carlos Fernando Navarro Montoya",
+    "posicion": "Arquero",
+    "epoca": "1988-1996",
+    "pista_1": "Alcanzó la impresionante marca de 400 partidos resguardando el arco y atajó un penal decisivo en la final de la Supercopa de 1989.",
+    "pista_2": "Además de su enorme trayectoria en el club, ostentó el récord absoluto de la valla invicta sumando 824 minutos sin recibir goles.",
+    "pista_3": "Fue la cara visible del arco de la institución durante casi ocho temporadas ininterrumpidas entre finales de los años 80 y la mitad de los 90."
+  },
+  {
+    "id": 16,
+    "nombre": "Antonio Roma",
+    "posicion": "Arquero",
+    "epoca": "1960-1972",
+    "pista_1": "Mítico portero de los años 60 que fue fundamental por atajar un histórico penal en el año 1962 que valió un campeonato.",
+    "pista_2": "La contención de aquel penal en 1962 cobró mayor leyenda porque el ejecutante reclamó un claro adelantamiento, pero el árbitro lo ignoró.",
+    "pista_3": "Defendió la valla del equipo en más de 300 partidos, consolidándose como uno de los porteros más seguros de toda esa época."
+  },
+  {
+    "id": 17,
+    "nombre": "Sergio Martínez",
+    "posicion": "Delantero",
+    "epoca": "1992-1997",
+    "pista_1": "Goleador uruguayo ídolo en los años 90, muy recordado por treparse a lo alto del alambrado para festejar un tanto en un Superclásico.",
+    "pista_2": "Cuando contó su experiencia colgado del alambrado, bromeó con que casi tira toda la tribuna abajo debido a su peso de 95 kilos.",
+    "pista_3": "Sus goles y empuje fueron determinantes para que el equipo lograra salir campeón del Torneo Apertura 1992, rompiendo una sequía de once años."
+  },
+  {
+    "id": 18,
+    "nombre": "Mauricio Serna",
+    "posicion": "Mediocampista",
+    "epoca": "1998-2002",
+    "pista_1": "Fue el incansable motor del mediocampo del equipo multicampeón a nivel internacional en el inicio de la década de los 2000.",
+    "pista_2": "Aunque fue clave en la época de mayores triunfos internacionales, el director técnico que originalmente solicitó su incorporación fue Héctor Veira.",
+    "pista_3": "Su estilo de gran quite y fiereza lo transformó rápidamente en uno de los jugadores extranjeros más ovacionados por la tribuna popular."
+  },
+  {
+    "id": 19,
+    "nombre": "Blas Giunta",
+    "posicion": "Mediocampista",
+    "epoca": "1989-1997",
+    "pista_1": "Símbolo total del sacrificio; convirtió el último penal que le dio el título de la Supercopa al equipo en el año 1989.",
+    "pista_2": "Exigía tanto a sus compañeros que les gritaba enfurecido a los laterales para que tiraran bien los centros, amenazando con patearlos en las prácticas.",
+    "pista_3": "Su apellido era habitualmente coreado desde las tribunas acompañado de una palabra particular que resaltaba su coraje y enorme despliegue."
+  },
+  {
+    "id": 20,
+    "nombre": "Guillermo Barros Schelotto",
+    "posicion": "Delantero",
+    "epoca": "1997-2007",
+    "pista_1": "Habilidoso extremo que formó una temible dupla ofensiva junto al máximo goleador histórico durante toda una década de éxitos.",
+    "pista_2": "Regresó años más tarde como director técnico y logró darle a la institución un sólido bicampeonato de liga entre 2016 y 2018.",
+    "pista_3": "Su gran picardía y talento para irritar a las defensas solía resultar en amonestaciones y expulsiones para los jugadores rivales."
+  },
+  {
+    "id": 21,
+    "nombre": "Carlos Bianchi",
+    "posicion": "Director Técnico",
+    "epoca": "1998-2004 / 2013-2014",
+    "pista_1": "Es el entrenador más laureado de la historia del club con un impresionante total de 9 títulos oficiales.",
+    "pista_2": "Bajo su brillante conducción, el equipo ganó 3 Copas Libertadores y se coronó bicampeón del mundo al derrotar al Real Madrid y al Milan.",
+    "pista_3": "Además de su gloria internacional, condujo al plantel que estableció el récord de 40 partidos invictos consecutivos en el campeonato argentino."
+  },
+  {
+    "id": 22,
+    "nombre": "Juan Carlos Lorenzo",
+    "posicion": "Director Técnico",
+    "epoca": "1976-1979 / 1987",
+    "pista_1": "Experimentado estratega que llevó a la institución a conquistar sus primeras dos Copas Libertadores de manera consecutiva en los años 70.",
+    "pista_2": "Fue el gestor táctico del primer campeonato intercontinental, logrando un contundente triunfo por 3 a 0 en Alemania.",
+    "pista_3": "Apostó a una formación completamente ofensiva con tres delanteros en esa histórica final intercontinental, lo que sorprendió totalmente al rival europeo."
+  },
+  {
+    "id": 23,
+    "nombre": "Silvio Marzolini",
+    "posicion": "Defensor / Director Técnico",
+    "epoca": "1960-1972",
+    "pista_1": "Defensor histórico que ocupa el tercer lugar en la tabla de presencias absolutas, con 408 partidos disputados.",
+    "pista_2": "Años después de colgar los botines, asumió como director técnico y logró consagrar campeón al equipo que contaba con Diego Maradona en 1981.",
+    "pista_3": "Su estilo refinado y su gran jerarquía lo mantienen vigente como uno de los laterales por izquierda más talentosos y recordados."
+  },
+  {
+    "id": 24,
+    "nombre": "Roberto Abbondanzieri",
+    "posicion": "Arquero",
+    "epoca": "1997-2006 / 2009-2010",
+    "pista_1": "Portero que se consolidó como titular indiscutible en la época más ganadora tras la salida del arquero titular anterior.",
+    "pista_2": "En la Copa Intercontinental del año 2003 frente al Milan, se transformó en la inmensa figura al lograr atajar dos penales decisivos en la tanda.",
+    "pista_3": "Demostró su templanza en la final de la Copa Sudamericana 2005 al decidir ejecutar y convertir el remate definitivo que selló el campeonato."
+  },
+  {
+    "id": 25,
+    "nombre": "Rolando Schiavi",
+    "posicion": "Defensor",
+    "epoca": "2001-2005 / 2011-2012",
+    "pista_1": "Férreo zaguero central que fue la columna vertebral defensiva en múltiples campeonatos de la etapa internacional de la década de 2000.",
+    "pista_2": "Asumió la pesada responsabilidad de ejecutar y convertir su penal en la histórica definición intercontinental contra un equipo italiano en Japón.",
+    "pista_3": "Regresó al club en su etapa final y fue el pilar de la sólida defensa que obtuvo el Torneo Apertura 2011 de manera invicta."
+  },
+  {
+    "id": 26,
+    "nombre": "Marcelo Delgado",
+    "posicion": "Delantero",
+    "epoca": "2000-2003 / 2005-2006",
+    "pista_1": "Atacante sumamente desequilibrante que le dio el triunfo al equipo por 1-0 frente a Cruz Azul en la primera final de la Libertadores 2001.",
+    "pista_2": "Fue el autor del pase magistral de larga distancia que permitió abrir el marcador en los primeros minutos frente al Real Madrid en Tokio.",
+    "pista_3": "Su inconfundible sello técnico consistía en golpear y centrar la pelota de forma muy precisa utilizando la cara externa de su botín derecho."
+  },
+  {
+    "id": 27,
+    "nombre": "Hugo Ibarra",
+    "posicion": "Defensor",
+    "epoca": "1998-2001 / 2002-2003 / 2005-2010",
+    "pista_1": "Formidable lateral derecho que participó en la gran mayoría de los éxitos locales e internacionales del club a partir del año 1998.",
+    "pista_2": "Después de finalizar su etapa como futbolista, dirigió al primer equipo y conquistó el Torneo de la Liga y la Supercopa en 2022.",
+    "pista_3": "Marcó un espectacular gol desde fuera del área con pierna izquierda en el partido de vuelta de la final de la Copa Libertadores del año 2007."
+  },
+  {
+    "id": 28,
+    "nombre": "Alberto Márcico",
+    "posicion": "Mediocampista",
+    "epoca": "1992-1995",
+    "pista_1": "Talentoso armador que abandonó su carrera en el fútbol europeo movilizado exclusivamente por su gran sueño de jugar con estos colores.",
+    "pista_2": "Ejerció como el indiscutible conductor y eje del equipo que se adjudicó el Apertura 1992, acabando con una racha de más de una década sin ligas.",
+    "pista_3": "Hacía valer su robustez física para proteger la pelota con gran maestría, aguantando las fuertes faltas de los defensores rivales en cada partido."
+  },
+  {
+    "id": 29,
+    "nombre": "Natalio Pescia",
+    "posicion": "Mediocampista",
+    "epoca": "1942-1956",
+    "pista_1": "Mediocampista histórico que ostenta el raro mérito de haber jugado la totalidad de su carrera profesional únicamente en este club.",
+    "pista_2": "Con 365 encuentros disputados, tiene asegurado un lugar dentro de los diez jugadores con mayores presencias en la historia.",
+    "pista_3": "Su huella como jugador fue tan imborrable y querida por el público que la segunda bandeja de la popular local del estadio fue bautizada con su nombre."
+  },
+  {
+    "id": 30,
+    "nombre": "Rodrigo Palacio",
+    "posicion": "Delantero",
+    "epoca": "2005-2009",
+    "pista_1": "Ágil y rapidísimo atacante que fue el socio perfecto en la delantera de uno de los mejores equipos de la década del 2000.",
+    "pista_2": "Resultó ser un factor desequilibrante en el equipo que conquistó la liga local, la Recopa y la Copa Sudamericana durante la temporada 2005.",
+    "pista_3": "Más allá de su velocidad asombrosa, era fácilmente reconocible dentro de la cancha porque llevaba un particular y fino mechón de cabello largo."
   }
-}
+]
