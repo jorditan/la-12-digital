@@ -8,6 +8,7 @@ import { Separator } from './components/Separator';
 import { Noticias } from './components/Noticias';
 import { CanalYoutube } from './components/CanalYoutube';
 import { IdolosGame } from './components/IdolosGame';
+import { EquiposGame } from './components/EquiposGame';
 
 function App() {
   return (
@@ -84,6 +85,7 @@ function App() {
           <aside className="w-full lg:w-auto shrink-0 lg:pl-8 self-start lg:sticky lg:top-6">
             <TablaPosiciones />
             <IdolosGame />
+            <EquiposGame />
           </aside>
 
         </div>

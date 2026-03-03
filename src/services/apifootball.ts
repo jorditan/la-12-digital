@@ -181,9 +181,10 @@ export async function fetchNoticias(): Promise<Noticia[]> {
 
 // ── Canal de YouTube ──────────────────────────────────────────────────────────
 
-export async function fetchVideos(): Promise<VideoYoutube[]> {
+export async function fetchVideos(channelId: string): Promise<VideoYoutube[]> {
   if (USE_MOCK) return mockVideos;
-  // TODO: conectar con YouTube Data API v3
+  // TODO: YouTube Data API v3 — GET /youtube/v3/search?channelId=...&order=date&type=video
+  void channelId;
   return [];
 }
 

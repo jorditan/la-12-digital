@@ -1,5 +1,6 @@
 import { BOCA_ID, type ProximoPartido } from '../../services/apifootball';
 import { ESCUDO_VACIO } from '../../data/equipos';
+import { Badge } from '../Badge';
 
 function formatFechaCorta(isoDate: string): string {
   const d = new Date(isoDate);
@@ -143,9 +144,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
 
                 {/* Copa */}
                 <td className="py-2.5 px-3 hidden md:table-cell">
-                  <span className="inline-block text-[10px] font-sans text-boca-gold/60 bg-boca-blue border border-boca-gold/15 px-1.5 py-px rounded-sm whitespace-nowrap">
-                    {p.competition}
-                  </span>
+                  <Badge variant="blue" className="text-[10px] px-1.5 whitespace-nowrap">{p.competition}</Badge>
                 </td>
               </tr>
             );

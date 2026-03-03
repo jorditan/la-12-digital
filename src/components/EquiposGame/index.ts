@@ -1,0 +1,1 @@
+export { EquiposGame } from './EquiposGame';
