@@ -5,8 +5,9 @@ import { ESCUDO_VACIO } from '../../data/equipos';
 type Estado = 'loading' | 'error' | 'ok';
 
 export function TablaPosiciones() {
-  const [rows, setRows] = useState<StandingRow[]>([]);
-  const [estado, setEstado] = useState<Estado>('loading');
+  const [rows, setRows]       = useState<StandingRow[]>([]);
+  const [estado, setEstado]   = useState<Estado>('loading');
+  const [activeZone, setActiveZone] = useState<string>('');
 
   const cargar = () => {
     setEstado('loading');
@@ -18,9 +19,21 @@ export function TablaPosiciones() {
       .catch(() => setEstado('error'));
   };
 
+  useEffect(() => { cargar(); }, []);
+
+  // Zonas únicas presentes en los datos (en orden de aparición)
+  const zoneNames = [...new Set(rows.map(r => r.zone).filter((z): z is string => Boolean(z)))];
+  const hasZones  = zoneNames.length >= 2;
+
+  // Inicializar zona activa al cargar los datos
   useEffect(() => {
-    cargar();
-  }, []);
+    if (hasZones && !zoneNames.includes(activeZone)) {
+      setActiveZone(zoneNames[0]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows]);
+
+  const displayRows = hasZones ? rows.filter(r => r.zone === activeZone) : rows;
 
   return (
     <section aria-label="Tabla de posiciones">
@@ -38,6 +51,25 @@ export function TablaPosiciones() {
             >
               Reintentar
             </button>
+          </div>
+        )}
+
+        {estado === 'ok' && hasZones && (
+          <div className="flex border-b border-boca-gold/15">
+            {zoneNames.map(z => (
+              <button
+                key={z}
+                onClick={() => setActiveZone(z)}
+                className={[
+                  'px-4 py-2.5 text-xs font-semibold font-sans transition-colors',
+                  activeZone === z
+                    ? 'text-boca-gold border-b-2 border-boca-gold'
+                    : 'text-text-secondary hover:text-white',
+                ].join(' ')}
+              >
+                {z}
+              </button>
+            ))}
           </div>
         )}
 
@@ -70,7 +102,7 @@ export function TablaPosiciones() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => {
+                {displayRows.map((row) => {
                   const esBoca = row.team.id === BOCA_ID;
                   return (
                     <tr

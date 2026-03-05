@@ -65,7 +65,12 @@ export function useEquiposGame(): EquiposGameState {
     clearInterval(roundIv.current);
     const selected = pickEquipo();
     setEquipo(selected);
-    setPlayers(selected.equipo_completo.map(name => ({ name, guessed: false })));
+    setPlayers(selected.equipo_completo.map(j => ({
+      name: j.nombre,
+      posicion: j.posicion,
+      rol: j.rol,
+      guessed: false,
+    })));
     setInput('');
     setInputError(false);
     setTimer(ROUND_SECS);

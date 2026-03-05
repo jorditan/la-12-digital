@@ -21,22 +21,24 @@ const BEL = getEscudo(481); // Belgrano
 export const BOCA_ID_MOCK = 451;
 
 export const mockStandings: StandingRow[] = [
-  { rank: 1,  team: { id: 451, name: 'Boca Juniors',       logo: BJ  }, points: 45, all: { played: 22, win: 14, draw: 3, lose: 5  } },
-  { rank: 2,  team: { id: 452, name: 'River Plate',        logo: RP  }, points: 43, all: { played: 22, win: 13, draw: 4, lose: 5  } },
-  { rank: 3,  team: { id: 435, name: 'Racing Club',        logo: RC  }, points: 40, all: { played: 22, win: 12, draw: 4, lose: 6  } },
-  { rank: 4,  team: { id: 442, name: 'San Lorenzo',        logo: SL  }, points: 37, all: { played: 22, win: 11, draw: 4, lose: 7  } },
-  { rank: 5,  team: { id: 455, name: 'Independiente',      logo: IND }, points: 35, all: { played: 22, win: 10, draw: 5, lose: 7  } },
-  { rank: 6,  team: { id: 449, name: 'Talleres',           logo: TAL }, points: 33, all: { played: 22, win: 9,  draw: 6, lose: 7  } },
-  { rank: 7,  team: { id: 436, name: 'Estudiantes',        logo: EST }, points: 32, all: { played: 22, win: 9,  draw: 5, lose: 8  } },
-  { rank: 8,  team: { id: 437, name: 'Rosario Central',    logo: RCE }, points: 30, all: { played: 22, win: 8,  draw: 6, lose: 8  } },
-  { rank: 9,  team: { id: 440, name: 'Vélez Sársfield',    logo: VEL }, points: 28, all: { played: 22, win: 7,  draw: 7, lose: 8  } },
-  { rank: 10, team: { id: 441, name: 'Huracán',            logo: HUR }, points: 27, all: { played: 22, win: 7,  draw: 6, lose: 9  } },
-  { rank: 11, team: { id: 453, name: 'Lanús',              logo: LAN }, points: 25, all: { played: 22, win: 6,  draw: 7, lose: 9  } },
-  { rank: 12, team: { id: 444, name: 'Banfield',           logo: BAN }, points: 24, all: { played: 22, win: 6,  draw: 6, lose: 10 } },
-  { rank: 13, team: { id: 447, name: 'Argentinos Juniors', logo: ARG }, points: 22, all: { played: 22, win: 5,  draw: 7, lose: 10 } },
-  { rank: 14, team: { id: 454, name: "Newell's Old Boys",  logo: NOB }, points: 21, all: { played: 22, win: 5,  draw: 6, lose: 11 } },
-  { rank: 15, team: { id: 486, name: 'Tigre',              logo: TIG }, points: 19, all: { played: 22, win: 4,  draw: 7, lose: 11 } },
-  { rank: 16, team: { id: 481, name: 'Belgrano',           logo: BEL }, points: 18, all: { played: 22, win: 4,  draw: 6, lose: 12 } },
+  // ── Zona A ───────────────────────────────────────────────────────────────
+  { rank: 1, zone: 'Zona A', team: { id: 451, name: 'Boca Juniors',       logo: BJ  }, points: 18, all: { played: 8, win: 5, draw: 3, lose: 0 } },
+  { rank: 2, zone: 'Zona A', team: { id: 452, name: 'River Plate',        logo: RP  }, points: 17, all: { played: 8, win: 5, draw: 2, lose: 1 } },
+  { rank: 3, zone: 'Zona A', team: { id: 435, name: 'Racing Club',        logo: RC  }, points: 15, all: { played: 8, win: 4, draw: 3, lose: 1 } },
+  { rank: 4, zone: 'Zona A', team: { id: 442, name: 'San Lorenzo',        logo: SL  }, points: 13, all: { played: 8, win: 4, draw: 1, lose: 3 } },
+  { rank: 5, zone: 'Zona A', team: { id: 455, name: 'Independiente',      logo: IND }, points: 11, all: { played: 8, win: 3, draw: 2, lose: 3 } },
+  { rank: 6, zone: 'Zona A', team: { id: 449, name: 'Talleres',           logo: TAL }, points: 10, all: { played: 8, win: 2, draw: 4, lose: 2 } },
+  { rank: 7, zone: 'Zona A', team: { id: 436, name: 'Estudiantes',        logo: EST }, points:  8, all: { played: 8, win: 2, draw: 2, lose: 4 } },
+  { rank: 8, zone: 'Zona A', team: { id: 437, name: 'Rosario Central',    logo: RCE }, points:  6, all: { played: 8, win: 1, draw: 3, lose: 4 } },
+  // ── Zona B ───────────────────────────────────────────────────────────────
+  { rank: 1, zone: 'Zona B', team: { id: 440, name: 'Vélez Sársfield',    logo: VEL }, points: 18, all: { played: 8, win: 5, draw: 3, lose: 0 } },
+  { rank: 2, zone: 'Zona B', team: { id: 441, name: 'Huracán',            logo: HUR }, points: 15, all: { played: 8, win: 4, draw: 3, lose: 1 } },
+  { rank: 3, zone: 'Zona B', team: { id: 453, name: 'Lanús',              logo: LAN }, points: 13, all: { played: 8, win: 4, draw: 1, lose: 3 } },
+  { rank: 4, zone: 'Zona B', team: { id: 444, name: 'Banfield',           logo: BAN }, points: 12, all: { played: 8, win: 3, draw: 3, lose: 2 } },
+  { rank: 5, zone: 'Zona B', team: { id: 447, name: 'Argentinos Juniors', logo: ARG }, points: 10, all: { played: 8, win: 3, draw: 1, lose: 4 } },
+  { rank: 6, zone: 'Zona B', team: { id: 454, name: "Newell's Old Boys",  logo: NOB }, points:  9, all: { played: 8, win: 2, draw: 3, lose: 3 } },
+  { rank: 7, zone: 'Zona B', team: { id: 486, name: 'Tigre',              logo: TIG }, points:  7, all: { played: 8, win: 2, draw: 1, lose: 5 } },
+  { rank: 8, zone: 'Zona B', team: { id: 481, name: 'Belgrano',           logo: BEL }, points:  5, all: { played: 8, win: 1, draw: 2, lose: 5 } },
 ];
 
 export const mockMatches: MatchResult[] = [

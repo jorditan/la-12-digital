@@ -4,8 +4,8 @@ import { Button } from '../Button';
 import { type BocaEquipo } from '../../data/bocaEquipos';
 import { type GameState, type PlayerState, type Score, ROUND_SECS } from './types';
 import { TimerBar } from './TimerBar';
-import { PlayerCard, type CardState } from './PlayerCard';
 import { useModalEffects } from '../IdolosGame/hooks/useModalEffects';
+import { FormacionPitch } from './FormacionPitch';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -13,12 +13,6 @@ function formatTime(secs: number): string {
   const m = Math.floor(secs / 60);
   const s = secs % 60;
   return `${m}:${s.toString().padStart(2, '0')}`;
-}
-
-function cardStateFor(player: PlayerState, gameState: GameState): CardState {
-  if (player.guessed) return 'guessed';
-  if (gameState === 'timeout') return 'missed';
-  return 'hidden';
 }
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -53,6 +47,11 @@ function ModalHeader({
         <p className="font-sans text-xs text-text-secondary mt-0.5 leading-snug">
           {equipo.descripcion}
         </p>
+        {equipo.formacion_tactica && !equipo.formacion_tactica.toLowerCase().includes('no especificada') && (
+          <p className="font-sans text-[10px] text-boca-gold/60 mt-1 italic leading-snug">
+            {equipo.formacion_tactica}
+          </p>
+        )}
       </div>
       <div className="flex items-center gap-3 shrink-0 pt-0.5">
         {isFinished && (
@@ -82,20 +81,6 @@ function TimerSection({ timer, gameState }: { timer: number; gameState: GameStat
       <span className="font-sans text-xs text-text-secondary tabular-nums shrink-0 w-8 text-right">
         {formatTime(timer)}
       </span>
-    </div>
-  );
-}
-
-function PlayerGrid({ players, gameState }: { players: PlayerState[]; gameState: GameState }) {
-  return (
-    <div className="grid grid-cols-2 gap-1.5">
-      {players.map((p, i) => (
-        <PlayerCard
-          key={i}
-          name={p.name}
-          cardState={cardStateFor(p, gameState)}
-        />
-      ))}
     </div>
   );
 }
@@ -181,8 +166,8 @@ export function GameModal(props: GameModalProps) {
 
         <TimerSection timer={props.timer} gameState={gameState} />
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          <PlayerGrid players={players} gameState={gameState} />
+        <div className="flex-1 overflow-y-auto p-4">
+          <FormacionPitch players={players} gameState={gameState} />
         </div>
 
         <div className="p-4 border-t border-boca-gold/10 space-y-3">

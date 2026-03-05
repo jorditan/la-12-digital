@@ -1,26 +1,11 @@
 import { Badge } from '../Badge';
+import { useBomboneraWidget } from './hooks/useBomboneraWidget';
 
-// TODO: conectar con API de clima para temperatura/condición real.
-// La imagen del estadio y el countdown se reemplazarán con datos dinámicos.
 const STADIUM_IMG =
   'https://www.figma.com/api/mcp/asset/51c4ad7b-4b7d-48bd-adfc-7cb4a8ef2bd5';
 
-interface MockWeather {
-  temp: number;
-  description: string;
-  icon: string;
-  diasHastaPartido: number;
-}
-
-const MOCK: MockWeather = {
-  temp: 24,
-  description: 'Despejado',
-  icon: '☀️',
-  diasHastaPartido: 5,
-};
-
 export function BomboneraWidget() {
-  const { temp, description, icon, diasHastaPartido } = MOCK;
+  const { weather, diasHastaPartido, loading } = useBomboneraWidget();
 
   return (
     <section
@@ -50,11 +35,22 @@ export function BomboneraWidget() {
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap gap-2">
             <Badge variant="blue">📍 Brandsen 805</Badge>
-            <Badge variant="blue">{temp}°C · {icon} {description}</Badge>
+            {loading ? (
+              <Badge variant="blue" className="animate-pulse">— °C</Badge>
+            ) : weather ? (
+              <Badge variant="blue">
+                {weather.temp}°C · {weather.emoji} {weather.description}
+              </Badge>
+            ) : null}
           </div>
-          <Badge variant="gold" className="w-fit">
-            Próximo partido de local: {diasHastaPartido} días
-          </Badge>
+
+          {!loading && diasHastaPartido !== null && (
+            <Badge variant="gold" className="w-fit">
+              {diasHastaPartido === 0
+                ? '¡Partido de local hoy!'
+                : `Próximo partido de local: ${diasHastaPartido} días`}
+            </Badge>
+          )}
         </div>
       </div>
     </section>

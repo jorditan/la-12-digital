@@ -60,7 +60,7 @@ function App() {
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-0 items-stretch lg:items-start">
 
           {/* Main: todo el contenido desplazable */}
-          <main className="w-full flex-1 min-w-0 lg:pr-8">
+          <main className="w-full flex-1 min-w-0 lg:pr-4">
             <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 mb-8">
               <div className="sm:flex-1 min-w-0">
                 <BomboneraWidget />
@@ -81,17 +81,19 @@ function App() {
           {/* Separator tiene self-stretch internamente, se estira al alto de main */}
           <Separator />
 
-          {/* Aside: sticky en desktop — se queda fijo mientras main scrollea */}
-          <aside className="w-full lg:w-auto shrink-0 lg:pl-8 self-start lg:sticky lg:top-6">
-            <TablaPosiciones />
-            <IdolosGame />
-            <EquiposGame />
+          {/* Aside: sticky en desktop */}
+          <aside className="pl-4 w-full lg:w-80 xl:w-96 shrink-0">
+            <div className="sticky top-8 flex flex-col gap-6">
+              <TablaPosiciones />
+              <IdolosGame />
+              <EquiposGame/>
+            </div>
           </aside>
 
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

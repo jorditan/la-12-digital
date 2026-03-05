@@ -6,10 +6,17 @@
 
 import rawData from '../../boca_equipos.json';
 
+export interface JugadorEquipo {
+  nombre: string;
+  posicion: string;
+  rol: 'Titular' | 'Suplente';
+}
+
 export interface BocaEquipo {
   campeonato: string;
   descripcion: string;
-  equipo_completo: string[];
+  formacion_tactica: string;
+  equipo_completo: JugadorEquipo[];
 }
 
 export const BOCA_EQUIPOS: BocaEquipo[] = rawData as BocaEquipo[];

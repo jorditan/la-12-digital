@@ -14,7 +14,10 @@
       "WebFetch(domain:www.thesportsdb.com)",
       "Bash(npm run build:*)",
       "Bash(curl:*)",
-      "WebFetch(domain:en.wikipedia.org)"
+      "WebFetch(domain:en.wikipedia.org)",
+      "WebFetch(domain:rapidapi.com)",
+      "Bash(python -m json.tool)",
+      "Bash(python -c \":*)"
     ]
   }
 }

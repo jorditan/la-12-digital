@@ -2,6 +2,8 @@ export type GameState = 'waiting' | 'playing' | 'won' | 'timeout';
 
 export interface PlayerState {
   name: string;
+  posicion: string;
+  rol: string;
   guessed: boolean;
 }
 
