@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import { Header } from './components/Header';
 import { BannerMensaje } from './components/BannerMensaje';
 import { UltimosPartidos } from './components/UltimosPartidos';
@@ -90,6 +91,7 @@ function App() {
 
         </div>
       </div>
+      <Analytics />
     </div>
   )
 }
