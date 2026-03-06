@@ -171,6 +171,8 @@ export interface ProcessedFixture {
   date: Date;
   homeTeam: string;
   awayTeam: string;
+  homeTeamId: number;
+  awayTeamId: number;
   homeScore: number | null;
   awayScore: number | null;
   isBocaHome: boolean;

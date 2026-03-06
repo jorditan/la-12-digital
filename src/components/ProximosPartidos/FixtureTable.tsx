@@ -72,7 +72,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
             <th className="py-2 px-3 text-left text-[10px] font-semibold uppercase tracking-wider text-boca-gold/50 w-[50%]">
               Visitante
             </th>
-            <th className="py-2 px-3 text-center text-[10px] font-semibold uppercase tracking-wider text-boca-gold/50 w-14 hidden sm:table-cell">
+            <th className="py-2 px-3 text-center text-[10px] font-semibold uppercase tracking-wider text-boca-gold/50 w-14">
               Hora
             </th>
             <th className="py-2 px-3 text-left text-[10px] font-semibold uppercase tracking-wider text-boca-gold/50 hidden md:table-cell">
@@ -136,7 +136,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                 </td>
 
                 {/* Hora */}
-                <td className="py-2.5 px-3 text-center hidden sm:table-cell">
+                <td className="py-2.5 px-3 text-center whitespace-nowrap">
                   <span className="text-xs text-white tabular-nums font-medium">
                     {p.time}
                   </span>

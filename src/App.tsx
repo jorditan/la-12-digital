@@ -56,7 +56,6 @@ function App() {
       <Header />
       <BannerMensaje />
       <div className="w-full px-4 sm:px-6 py-6 sm:py-8">
-        {/* items-start permite que el aside sea sticky (no se estira al alto de main) */}
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-0 items-stretch lg:items-start">
 
           {/* Main: todo el contenido desplazable */}
@@ -78,7 +77,6 @@ function App() {
             </div>
           </main>
 
-          {/* Separator tiene self-stretch internamente, se estira al alto de main */}
           <Separator />
 
           {/* Aside: sticky en desktop */}

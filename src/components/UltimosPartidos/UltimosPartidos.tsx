@@ -8,8 +8,8 @@ function getResultado(match: MatchResult): Resultado {
   const bocaEsLocal = match.homeTeam.id === BOCA_ID;
   const bocaGano = bocaEsLocal ? match.homeTeam.winner : match.awayTeam.winner;
   if (bocaGano === true) return 'victoria';
-  if (bocaGano === false) return 'derrota';
-  return 'empate';
+  if (match.goalsAway === match.goalsHome) return 'empate';
+  return 'derrota';
 }
 
 function getRival(match: MatchResult) {

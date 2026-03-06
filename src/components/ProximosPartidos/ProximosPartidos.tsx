@@ -195,13 +195,20 @@ function CardPartido({ partido }: { partido: ProximoPartido }) {
         {formatFecha(partido.date)}
       </p>
 
-      {/* Estadio + hora */}
-      <div className="flex items-start gap-1">
-        <MapPin size={11} className="shrink-0 text-white/40 mt-0.5" />
-        <p className="font-sans text-[11px] text-white/50 leading-tight line-clamp-2">
-          {partido.venueName} · {partido.time}
-        </p>
-      </div>
+      {/* Estadio */}
+      {partido.venueName && (
+        <div className="flex items-start gap-1">
+          <MapPin size={11} className="shrink-0 text-white/40 mt-0.5" />
+          <p className="font-sans text-[11px] text-white/50 leading-tight line-clamp-1">
+            {partido.venueName}
+          </p>
+        </div>
+      )}
+
+      {/* Hora */}
+      <p className="font-sans text-xs text-white/60 tabular-nums">
+        {partido.time}
+      </p>
 
       {/* Competición */}
       <Badge variant="blue" className="w-fit text-[10px] px-1.5 py-px">
