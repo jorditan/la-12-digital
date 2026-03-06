@@ -178,7 +178,7 @@ export async function getSofaScoreStandingsData(): Promise<SofaStandingData[]> {
         rank:     row.position,
         teamId:   row.team.id,
         teamName: row.team.name,
-        teamLogo: `/sofascore-api/team/${row.team.id}/image`,
+        teamLogo: `/api/sofascore/team/${row.team.id}/image`,
         points:   row.points,
         played:   row.matches,
         win:      row.wins,
