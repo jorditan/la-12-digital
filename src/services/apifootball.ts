@@ -93,8 +93,8 @@ export async function fetchLastMatches(): Promise<MatchResult[]> {
       return {
         fixtureId: f.id,
         date:      f.date.toISOString(),
-        homeTeam:  { id: homeId, name: f.homeTeam, logo: `/sofascore-api/team/${f.homeTeamId}/image`, winner: homeWinner },
-        awayTeam:  { id: awayId, name: f.awayTeam, logo: `/sofascore-api/team/${f.awayTeamId}/image`, winner: awayWinner },
+        homeTeam:  { id: homeId, name: f.homeTeam, logo: `/api/sofascore/team/${f.homeTeamId}/image`, winner: homeWinner },
+        awayTeam:  { id: awayId, name: f.awayTeam, logo: `/api/sofascore/team/${f.awayTeamId}/image`, winner: awayWinner },
         goalsHome: f.homeScore,
         goalsAway: f.awayScore,
         venueName: f.venue,
@@ -120,8 +120,8 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
         hour: '2-digit', minute: '2-digit',
         timeZone: 'America/Argentina/Buenos_Aires',
       }),
-      homeTeam: { id: f.isBocaHome ? BOCA_ID_EXPORT : 0, name: f.homeTeam, logo: `/sofascore-api/team/${f.homeTeamId}/image` },
-      awayTeam: { id: f.isBocaHome ? 0 : BOCA_ID_EXPORT, name: f.awayTeam, logo: `/sofascore-api/team/${f.awayTeamId}/image` },
+      homeTeam: { id: f.isBocaHome ? BOCA_ID_EXPORT : 0, name: f.homeTeam, logo: `/api/sofascore/team/${f.homeTeamId}/image` },
+      awayTeam: { id: f.isBocaHome ? 0 : BOCA_ID_EXPORT, name: f.awayTeam, logo: `/api/sofascore/team/${f.awayTeamId}/image` },
       venueName:   f.venue,
       competition: 'Liga Profesional',
     }));
