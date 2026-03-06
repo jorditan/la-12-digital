@@ -1,4 +1,5 @@
 import { getSofaScoreLastFixtures, getSofaScoreNextFixtures, getSofaScoreStandingsData } from './sofascoreService';
+import { fetchNewsdataNoticias } from './newsdataService';
 
 // BOCA_ID exportado = 451 (coincide con mock data y con lo que leen los componentes)
 // SofaScore usa 3202; normalizamos en cada mapper.
@@ -40,6 +41,7 @@ export interface Noticia {
   imagen: string;
   categoria: 'mercado' | 'informe' | 'partido' | 'seleccion';
   fecha: string;
+  url?: string;
 }
 
 export interface VideoYoutube {
@@ -112,7 +114,15 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
 // ── Noticias ─────────────────────────────────────────────────────────────────
 
 export async function fetchNoticias(): Promise<Noticia[]> {
-  return [];
+  const articles = await fetchNewsdataNoticias();
+  return articles.map((a, i) => ({
+    id:        i,
+    titulo:    a.titulo,
+    imagen:    a.imagen,
+    categoria: 'partido' as const,
+    fecha:     a.fecha,
+    url:       a.url,
+  }));
 }
 
 // ── Canal de YouTube ──────────────────────────────────────────────────────────
