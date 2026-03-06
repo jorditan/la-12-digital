@@ -21,7 +21,7 @@ export function BomboneraWidget() {
         {/* Foto del estadio con borde dorado */}
         <div className="border border-boca-gold overflow-hidden">
           <img
-            src="public/bombonera.jpg"
+            src="/bombonera.jpg"
             alt="Estadio Alberto J. Armando – La Bombonera"
             className="w-full object-cover block h-full"
             style={{ aspectRatio: '16/9' }}
