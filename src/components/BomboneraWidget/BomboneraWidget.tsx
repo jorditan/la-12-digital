@@ -1,9 +1,6 @@
 import { Badge } from '../Badge';
 import { useBomboneraWidget } from './hooks/useBomboneraWidget';
 
-const STADIUM_IMG =
-  'https://www.figma.com/api/mcp/asset/51c4ad7b-4b7d-48bd-adfc-7cb4a8ef2bd5';
-
 export function BomboneraWidget() {
   const { weather, diasHastaPartido, loading } = useBomboneraWidget();
 
