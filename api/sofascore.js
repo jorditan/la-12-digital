@@ -1,7 +1,6 @@
 export default async function handler(req, res) {
-  const { path: pathSegments } = req.query;
-  const sofascorePath = Array.isArray(pathSegments) ? pathSegments.join('/') : pathSegments ?? '';
-
+  // req.url = /api/sofascore/team/3202/events/next/0
+  const sofascorePath = (req.url || '').replace(/^\/api\/sofascore\/?/, '');
   const url = `https://api.sofascore.com/api/v1/${sofascorePath}`;
 
   try {
@@ -18,6 +17,6 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
     res.status(response.status).json(data);
   } catch (err) {
-    res.status(500).json({ error: 'Proxy error', message: err.message });
+    res.status(500).json({ error: 'Proxy error', message: String(err) });
   }
 }
