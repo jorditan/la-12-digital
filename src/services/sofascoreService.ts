@@ -139,14 +139,15 @@ export async function getSofaScoreStandingsData(): Promise<SofaStandingData[]> {
   );
   const lastData = await fetchSofaScore<{ events: SofaEvent[] }>(
     `/team/${BOCA_TEAM_ID}/events/last/0`,
-    `sofascore_last_5`,
+    `sofascore_last_8`,
     CACHE_DURATION.FIXTURES,
   );
 
   const source = nextData.events?.length ? nextData.events : lastData.events;
   const firstEvent = source?.[0];
   if (!firstEvent?.tournament?.id || !firstEvent?.season?.id) {
-    throw new Error('SofaScore: no se encontró tournament/season ID en los eventos');
+    // Events are empty (API unavailable) – let the caller fall back to mock data.
+    return [];
   }
 
   const { id: tournamentId } = firstEvent.tournament;

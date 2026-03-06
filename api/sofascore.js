@@ -1,7 +1,11 @@
+const EMPTY_RESPONSE = { events: [], standings: [] };
+
 export default async function handler(req, res) {
   // req.url = /api/sofascore/team/3202/events/next/0
   const sofascorePath = (req.url || '').replace(/^\/api\/sofascore\/?/, '');
   const url = `https://api.sofascore.com/api/v1/${sofascorePath}`;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   try {
     const response = await fetch(url, {
@@ -24,12 +28,19 @@ export default async function handler(req, res) {
       },
     });
 
+    if (!response.ok) {
+      // SofaScore blocked the request (e.g. 403); return empty data so the
+      // client falls back to mock data without generating browser console errors.
+      res.status(200).json(EMPTY_RESPONSE);
+      return;
+    }
+
     const data = await response.json();
 
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
-    res.status(response.status).json(data);
+    res.status(200).json(data);
   } catch (err) {
-    res.status(500).json({ error: 'Proxy error', message: String(err) });
+    // Network error – return empty data so the client falls back to mock data.
+    res.status(200).json(EMPTY_RESPONSE);
   }
 }
