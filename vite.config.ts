@@ -15,10 +15,10 @@ export default defineConfig({
     port: 3000,
     open: true,
     proxy: {
-      '/sofascore-api': {
+      '/api/sofascore': {
         target: 'https://api.sofascore.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/sofascore-api/, '/api/v1'),
+        rewrite: (path) => path.replace(/^\/api\/sofascore/, '/api/v1'),
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; La12Digital/1.0)' },
       },
     },

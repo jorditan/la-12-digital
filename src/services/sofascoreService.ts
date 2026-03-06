@@ -1,7 +1,7 @@
 import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
 import type { ProcessedFixture, MatchResult } from '../types/football';
 
-const BASE_URL = '/sofascore-api';
+const BASE_URL = '/api/sofascore';
 const BOCA_TEAM_ID = 3202;
 
 // ── Tipos internos SofaScore ──────────────────────────────────────────────────
@@ -130,15 +130,8 @@ export async function getSofaScoreStandings(): Promise<[]> {
 }
 
 export async function getSofaScoreStandingsData(): Promise<SofaStandingData[]> {
-  // La cache key se construye luego de conocer el seasonId; aquí solo verificamos si ya procesamos
-  // el resultado final (independiente de la season, porque si hay cache reciente ya es correcto).
-  // Se usa una key neutral que se invalida cuando el raw cambia de seasonId.
-  let PROCESSED_KEY = 'sofascore_standings_proc';
-  const cachedProc = getCachedData<SofaStandingData[]>(PROCESSED_KEY, CACHE_DURATION.STANDINGS);
-  if (cachedProc) return cachedProc;
-
-  // Preferir próximos eventos (son los de la temporada actual 2026).
-  // Si no hay próximos, usar los últimos jugados como fallback.
+  // Paso 1: obtener tournament/season ID desde próximos eventos (2026).
+  // Fallback a últimos jugados si no hay próximos programados.
   const nextData = await fetchSofaScore<{ events: SofaEvent[] }>(
     `/team/${BOCA_TEAM_ID}/events/next/0`,
     `sofascore_next_10`,
@@ -158,8 +151,15 @@ export async function getSofaScoreStandingsData(): Promise<SofaStandingData[]> {
 
   const { id: tournamentId } = firstEvent.tournament;
   const { id: seasonId } = firstEvent.season;
+
+  // Paso 2: cache key incluye seasonId → distintas temporadas nunca colisionan
+  const PROCESSED_KEY = `sofascore_standings_${seasonId}`;
+  const cached = getCachedData<SofaStandingData[]>(PROCESSED_KEY, CACHE_DURATION.STANDINGS);
+  if (cached) return cached;
+
   console.log(`🌐 SofaScore Standings: tournament=${tournamentId}, season=${seasonId}`);
 
+  // Paso 3: fetch raw standings
   const standingsData = await fetchSofaScore<{ standings: SofaStandingsGroup[] }>(
     `/tournament/${tournamentId}/season/${seasonId}/standings/total`,
     `sofascore_standings_raw_${seasonId}`,
