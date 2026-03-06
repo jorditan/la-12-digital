@@ -85,11 +85,17 @@ export function ProximosPartidos() {
           </div>
         )}
 
-        {estado === 'ok' && vista === 'cards' && (
+        {estado === 'ok' && partidos.length === 0 && (
+          <p className="font-sans text-sm text-white/50 py-6 text-center">
+            No hay próximos partidos disponibles
+          </p>
+        )}
+
+        {estado === 'ok' && partidos.length > 0 && vista === 'cards' && (
           <ScrollRow partidos={partidos} />
         )}
 
-        {estado === 'ok' && vista === 'tabla' && (
+        {estado === 'ok' && partidos.length > 0 && vista === 'tabla' && (
           <FixtureTable partidos={partidos} />
         )}
       </div>

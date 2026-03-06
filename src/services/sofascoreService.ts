@@ -154,7 +154,7 @@ export async function getSofaScoreStandingsData(): Promise<SofaStandingData[]> {
   const { id: seasonId } = firstEvent.season;
 
   // Paso 2: cache key incluye seasonId → distintas temporadas nunca colisionan
-  const PROCESSED_KEY = `sofascore_standings_${seasonId}`;
+  const PROCESSED_KEY = `v2_sofascore_standings_${seasonId}`;
   const cached = getCachedData<SofaStandingData[]>(PROCESSED_KEY, CACHE_DURATION.STANDINGS);
   if (cached) return cached;
 
@@ -178,7 +178,7 @@ export async function getSofaScoreStandingsData(): Promise<SofaStandingData[]> {
         rank:     row.position,
         teamId:   row.team.id,
         teamName: row.team.name,
-        teamLogo: `/api/sofascore/team/${row.team.id}/image`,
+        teamLogo: `https://api.sofascore.com/api/v1/team/${row.team.id}/image`,
         points:   row.points,
         played:   row.matches,
         win:      row.wins,

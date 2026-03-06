@@ -73,7 +73,13 @@ export function TablaPosiciones() {
           </div>
         )}
 
-        {estado === 'ok' && (
+        {estado === 'ok' && displayRows.length === 0 && (
+          <p className="font-sans text-sm text-white/50 py-8 text-center px-4">
+            No hay datos de posiciones disponibles
+          </p>
+        )}
+
+        {estado === 'ok' && displayRows.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full caption-bottom text-sm">
               <thead>

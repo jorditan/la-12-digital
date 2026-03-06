@@ -1,5 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/api/sofascore/:path*", "destination": "/api/sofascore?p=:path*" }
-  ]
-}

@@ -1,4 +1,3 @@
-import { mockStandings, mockMatches, mockUpcomingMatches, mockNoticias, mockVideos } from './mockData';
 import { getSofaScoreLastFixtures, getSofaScoreNextFixtures, getSofaScoreStandingsData } from './sofascoreService';
 
 // BOCA_ID exportado = 451 (coincide con mock data y con lo que leen los componentes)
@@ -55,93 +54,72 @@ export interface VideoYoutube {
 // ── Tabla de posiciones ──────────────────────────────────────────────────────
 
 export async function fetchStandings(): Promise<StandingRow[]> {
-  try {
-    const data = await getSofaScoreStandingsData();
-    if (!data.length) return mockStandings;
-
-    return data.map(d => ({
-      rank:   d.rank,
-      team:   { id: d.teamId === 3202 ? BOCA_ID_EXPORT : d.teamId, name: d.teamName, logo: d.teamLogo },
-      points: d.points,
-      all:    { played: d.played, win: d.win, draw: d.draw, lose: d.lose },
-      zone:   d.zone,
-    }));
-  } catch (err) {
-    console.warn('[sofascore] fetchStandings falló, usando mock →', err);
-    return mockStandings;
-  }
+  const data = await getSofaScoreStandingsData();
+  return data.map(d => ({
+    rank:   d.rank,
+    team:   { id: d.teamId === 3202 ? BOCA_ID_EXPORT : d.teamId, name: d.teamName, logo: d.teamLogo },
+    points: d.points,
+    all:    { played: d.played, win: d.win, draw: d.draw, lose: d.lose },
+    zone:   d.zone,
+  }));
 }
 
 // ── Últimos partidos ─────────────────────────────────────────────────────────
 
 
 export async function fetchLastMatches(): Promise<MatchResult[]> {
-  try {
-    const fixtures = await getSofaScoreLastFixtures(8);
-    if (!fixtures.length) return mockMatches;
+  const fixtures = await getSofaScoreLastFixtures(8);
+  return fixtures.map(f => {
+    const homeId = f.isBocaHome ? BOCA_ID_EXPORT : 0;
+    const awayId = f.isBocaHome ? 0 : BOCA_ID_EXPORT;
 
-    return fixtures.map(f => {
-      const homeId = f.isBocaHome ? BOCA_ID_EXPORT : 0;
-      const awayId = f.isBocaHome ? 0 : BOCA_ID_EXPORT;
+    let homeWinner: boolean | null = null;
+    let awayWinner: boolean | null = null;
+    if (f.result === 'win')  { homeWinner = f.isBocaHome;  awayWinner = !f.isBocaHome; }
+    if (f.result === 'loss') { homeWinner = !f.isBocaHome; awayWinner = f.isBocaHome;  }
+    if (f.result === 'draw') { homeWinner = false;          awayWinner = false;          }
 
-      let homeWinner: boolean | null = null;
-      let awayWinner: boolean | null = null;
-      if (f.result === 'win')  { homeWinner = f.isBocaHome;  awayWinner = !f.isBocaHome; }
-      if (f.result === 'loss') { homeWinner = !f.isBocaHome; awayWinner = f.isBocaHome;  }
-      if (f.result === 'draw') { homeWinner = false;          awayWinner = false;          }
-
-      return {
-        fixtureId: f.id,
-        date:      f.date.toISOString(),
-        homeTeam:  { id: homeId, name: f.homeTeam, logo: `/api/sofascore/team/${f.homeTeamId}/image`, winner: homeWinner },
-        awayTeam:  { id: awayId, name: f.awayTeam, logo: `/api/sofascore/team/${f.awayTeamId}/image`, winner: awayWinner },
-        goalsHome: f.homeScore,
-        goalsAway: f.awayScore,
-        venueName: f.venue,
-      };
-    });
-  } catch (err) {
-    console.warn('[sofascore] fetchLastMatches falló, usando mock →', err);
-    return mockMatches;
-  }
+    return {
+      fixtureId: f.id,
+      date:      f.date.toISOString(),
+      homeTeam:  { id: homeId, name: f.homeTeam, logo: `https://api.sofascore.com/api/v1/team/${f.homeTeamId}/image`, winner: homeWinner },
+      awayTeam:  { id: awayId, name: f.awayTeam, logo: `https://api.sofascore.com/api/v1/team/${f.awayTeamId}/image`, winner: awayWinner },
+      goalsHome: f.homeScore,
+      goalsAway: f.awayScore,
+      venueName: f.venue,
+    };
+  });
 }
 
 // ── Próximos partidos ────────────────────────────────────────────────────────
 
 export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
-  try {
-    const fixtures = await getSofaScoreNextFixtures(10);
-    if (!fixtures.length) return mockUpcomingMatches;
-
-    return fixtures.map(f => ({
-      fixtureId:   f.id,
-      date:        f.date.toISOString(),
-      time:        f.date.toLocaleTimeString('es-AR', {
-        hour: '2-digit', minute: '2-digit',
-        timeZone: 'America/Argentina/Buenos_Aires',
-      }),
-      homeTeam: { id: f.isBocaHome ? BOCA_ID_EXPORT : 0, name: f.homeTeam, logo: `/api/sofascore/team/${f.homeTeamId}/image` },
-      awayTeam: { id: f.isBocaHome ? 0 : BOCA_ID_EXPORT, name: f.awayTeam, logo: `/api/sofascore/team/${f.awayTeamId}/image` },
-      venueName:   f.venue,
-      competition: 'Liga Profesional',
-    }));
-  } catch (err) {
-    console.warn('[sofascore] fetchUpcomingMatches falló, usando mock →', err);
-    return mockUpcomingMatches;
-  }
+  const fixtures = await getSofaScoreNextFixtures(10);
+  return fixtures.map(f => ({
+    fixtureId:   f.id,
+    date:        f.date.toISOString(),
+    time:        f.date.toLocaleTimeString('es-AR', {
+      hour: '2-digit', minute: '2-digit',
+      timeZone: 'America/Argentina/Buenos_Aires',
+    }),
+    homeTeam: { id: f.isBocaHome ? BOCA_ID_EXPORT : 0, name: f.homeTeam, logo: `https://api.sofascore.com/api/v1/team/${f.homeTeamId}/image` },
+    awayTeam: { id: f.isBocaHome ? 0 : BOCA_ID_EXPORT, name: f.awayTeam, logo: `https://api.sofascore.com/api/v1/team/${f.awayTeamId}/image` },
+    venueName:   f.venue,
+    competition: 'Liga Profesional',
+  }));
 }
 
 // ── Noticias ─────────────────────────────────────────────────────────────────
 
 export async function fetchNoticias(): Promise<Noticia[]> {
-  return mockNoticias;
+  return [];
 }
 
 // ── Canal de YouTube ──────────────────────────────────────────────────────────
 
 export async function fetchVideos(channelId: string): Promise<VideoYoutube[]> {
   void channelId;
-  return mockVideos;
+  return [];
 }
 
 export const BOCA_ID = BOCA_ID_EXPORT;
