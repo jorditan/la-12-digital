@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '../Button';
 import { type Idolo } from '../../data/idolos';
@@ -8,6 +9,7 @@ import { TimerBar } from './TimerBar';
 import { IdoloPlaceholder } from './IdoloPlaceholder';
 import { DificultadBadge } from './DificultadBadge';
 import { useModalEffects } from './hooks/useModalEffects';
+import { fetchIdolImage } from '../../services/wikipediaService';
 
 const TOTAL_CLUES = 6;
 
@@ -95,15 +97,24 @@ function ModalHeader({
 function IdoloImage({
   idolo, revealed, state,
 }: { idolo: Idolo; revealed: boolean; state: Exclude<GameState, 'waiting'> }) {
+  const [resolvedUrl, setResolvedUrl] = useState<string | null>(idolo.imageUrl);
+
+  useEffect(() => {
+    setResolvedUrl(idolo.imageUrl);
+    if (!idolo.imageUrl) {
+      fetchIdolImage(idolo.id).then(url => { if (url) setResolvedUrl(url); });
+    }
+  }, [idolo.id, idolo.imageUrl]);
+
   return (
     <div className="relative h-56 overflow-hidden bg-boca-blue">
-      {idolo.imageUrl ? (
+      {resolvedUrl ? (
         <>
           <img
-            src={idolo.imageUrl}
+            src={resolvedUrl}
             alt={revealed ? `${idolo.nombre} ${idolo.apellido}` : 'Ídolo misterioso'}
             className={[
-              'w-full h-full object-contain transition-all duration-700',
+              'w-full h-full object-contain object-center transition-all duration-700',
               !revealed ? 'blur-2xl scale-110 opacity-50' : 'blur-0 scale-100 opacity-100',
             ].join(' ')}
             onError={e => { (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO; }}
