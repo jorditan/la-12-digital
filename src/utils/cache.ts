@@ -44,7 +44,6 @@ export function getCachedData<T>(key: string, maxAge: number): T | null {
       return null;
     }
 
-    console.log(`✅ Cache HIT: ${key} (age: ${Math.round((Date.now() - timestamp) / 1000 / 60)}min)`);
     return data;
   } catch (error) {
     console.error('Error reading cache:', error);
@@ -62,7 +61,6 @@ export function setCachedData<T>(key: string, data: T): void {
       timestamp: Date.now(),
     };
     localStorage.setItem(key, JSON.stringify(cached));
-    console.log(`💾 Cache SAVE: ${key}`);
   } catch (error) {
     console.error('Error saving cache:', error);
   }
@@ -94,10 +92,6 @@ export function clearExpiredCache(): void {
       cleared++;
     }
   });
-
-  if (cleared > 0) {
-    console.log(`🧹 Cleared ${cleared} expired cache entries`);
-  }
 }
 
 /**
@@ -110,7 +104,6 @@ export function clearAllCache(): void {
       localStorage.removeItem(key);
     }
   });
-  console.log('🗑️ All cache cleared');
 }
 
 /**

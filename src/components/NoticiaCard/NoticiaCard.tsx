@@ -51,8 +51,8 @@ export function NoticiaCard({ noticia, className = '' }: NoticiaCardProps) {
       </div>
 
       {/* Footer oscuro con título */}
-      <div className="bg-[#002140] border-b border-[#003d7a] px-6 pt-6 pb-3 shrink-0 w-full">
-        <p className="font-serif font-normal text-base text-[#e0e7ff] leading-6 tracking-normal line-clamp-2">
+      <div className="bg-[#002140] border-b border-[#003d7a] px-6 pt-4 pb-3 shrink-0 w-full">
+        <p className="font-serif min-h-12 items-start font-normal text-base text-[#e0e7ff] leading-6 tracking-normal line-clamp-2">
           {noticia.titulo}
         </p>
       </div>

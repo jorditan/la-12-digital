@@ -7,7 +7,10 @@ interface CardVideoProps {
 
 export function CardVideo({ video, className = '' }: CardVideoProps) {
   return (
-    <article
+    <a
+      href={`https://www.youtube.com/watch?v=${video.id}`}
+      target="_blank"
+      rel="noopener noreferrer"
       className={[
         'group flex flex-col overflow-hidden px-2 py-2 rounded-sm transition-all duration-200',
         'hover:border-boca-gold',
@@ -41,6 +44,6 @@ export function CardVideo({ video, className = '' }: CardVideoProps) {
           {video.titulo}
         </p>
       </div>
-    </article>
+    </a>
   );
 }

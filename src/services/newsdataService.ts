@@ -25,17 +25,16 @@ export interface NoticiaRaw {
 }
 
 export async function fetchNewsdataNoticias(): Promise<NoticiaRaw[]> {
-  const CACHE_KEY = 'newsdata_boca_noticias';
-  const cached = getCachedData<NoticiaRaw[]>(CACHE_KEY, CACHE_DURATION.FIXTURES);
-  if (cached) return cached;
+  const CACHE_KEY = 'v3_newsdata_boca_noticias';
 
   const params = new URLSearchParams({
     apikey: API_KEY,
     q: 'Boca Juniors',
+    country: 'ar',
     language: 'es',
     category: 'sports',
     image: '1',
-    size: '10',
+    size: '9',
   });
 
   const res = await fetch(`${BASE_URL}?${params}`);
@@ -46,6 +45,7 @@ export async function fetchNewsdataNoticias(): Promise<NoticiaRaw[]> {
 
   const result: NoticiaRaw[] = data.results
     .filter(a => a.image_url)
+    .filter((a, i, arr) => arr.findIndex(b => b.article_id === a.article_id) === i)
     .map(a => ({
       id:     a.article_id,
       titulo: a.title,

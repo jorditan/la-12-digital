@@ -33,16 +33,13 @@ export function useBomboneraWidget(): BomboneraWidgetData {
         if (cancelled) return;
 
         if (weatherResult.status === 'fulfilled') {
-          console.log('[BomboneraWidget] weather →', weatherResult.value);
           setWeather(weatherResult.value);
         } else {
           console.error('[BomboneraWidget] weather error →', weatherResult.reason);
         }
 
         if (upcomingResult.status === 'fulfilled') {
-          console.log('[BomboneraWidget] upcoming (todos) →', upcomingResult.value);
           const homeGames = upcomingResult.value.filter(m => m.homeTeam.id === BOCA_ID);
-          console.log('[BomboneraWidget] próximos locales →', homeGames);
           setProximoLocal(homeGames[0] ?? null);
         } else {
           console.error('[BomboneraWidget] upcoming error →', upcomingResult.reason);

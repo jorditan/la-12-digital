@@ -1,5 +1,6 @@
 import { getSofaScoreLastFixtures, getSofaScoreNextFixtures, getSofaScoreStandingsData } from './sofascoreService';
 import { fetchNewsdataNoticias } from './newsdataService';
+import { fetchYoutubeVideos, type VideoItem } from './youtubeService';
 
 // BOCA_ID exportado = 451 (coincide con mock data y con lo que leen los componentes)
 // SofaScore usa 3202; normalizamos en cada mapper.
@@ -44,14 +45,7 @@ export interface Noticia {
   url?: string;
 }
 
-export interface VideoYoutube {
-  id: string;
-  titulo: string;
-  thumbnail: string;
-  duracion: string;
-  fecha: string;
-  vistas: string;
-}
+export type VideoYoutube = VideoItem;
 
 // ── Tabla de posiciones ──────────────────────────────────────────────────────
 
@@ -127,9 +121,8 @@ export async function fetchNoticias(): Promise<Noticia[]> {
 
 // ── Canal de YouTube ──────────────────────────────────────────────────────────
 
-export async function fetchVideos(channelId: string): Promise<VideoYoutube[]> {
-  void channelId;
-  return [];
+export async function fetchVideos(handle: string): Promise<VideoYoutube[]> {
+  return fetchYoutubeVideos(handle);
 }
 
 export const BOCA_ID = BOCA_ID_EXPORT;

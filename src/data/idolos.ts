@@ -190,7 +190,7 @@ export const IDOLOS: Idolo[] = [
       'Arquero titular de la era dorada de Bianchi. Héroe en la Copa Intercontinental 2003 atajando dos penales al Milan. Cerró la Sudamericana 2005 convirtiendo el penal decisivo desde los doce pasos.',
     dificultad: 'media',
     era: '2000s',
-    imageUrl: null,
+    imageUrl: 'https://r2.thesportsdb.com/images/media/player/cutout/52ky7p1676572731.png',
     pistas: [
       'Fue arquero titular de Boca durante casi una década, en la era más exitosa del club',
       'Ganó la Copa Libertadores en tres ocasiones y dos Copas Intercontinentales',
@@ -689,7 +689,7 @@ export const IDOLOS: Idolo[] = [
       'Patagónico de Rawson, Chubut. Factor clave en el equipo del 2005. Brilló en Europa con Inter de Milán y Bologna. Su trenza era tan icónica como su juego. Finalista del Mundial 2014.',
     dificultad: 'dificil',
     era: '2000s',
-    imageUrl: null,
+    imageUrl: 'https://r2.thesportsdb.com/images/media/player/cutout/igkdxs1586286546.png',
     pistas: [
       'Nació en Rawson, la capital de Chubut, en la Patagonia argentina',
       'Luego de Boca tuvo una larga carrera en Europa: Atlético de Madrid, Inter de Milán, Bologna',
