@@ -1,4 +1,4 @@
-import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
+import { setCachedData } from '../utils/cache';
 
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY as string;
 const BASE_URL = 'https://newsdata.io/api/1/news';
