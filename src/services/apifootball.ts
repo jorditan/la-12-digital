@@ -11,6 +11,17 @@ import {
 // SofaScore usa 3202; normalizamos en cada mapper.
 const BOCA_ID_EXPORT = 451;
 
+// Build a URL for a SofaScore team image. When VITE_SOFASCORE_PROXY_URL is set
+// (production), route the image through the Cloudflare Worker so the same origin
+// serves both JSON data and images without CORS issues.
+function sofaTeamLogoUrl(teamId: number): string {
+  const proxyBase: string = import.meta.env.VITE_SOFASCORE_PROXY_URL ?? '';
+  if (proxyBase) {
+    return `${proxyBase}/team/${teamId}/image`;
+  }
+  return `https://api.sofascore.com/api/v1/team/${teamId}/image`;
+}
+
 // ── Tipos públicos ───────────────────────────────────────────────────────────
 
 export interface StandingRow {
@@ -93,8 +104,8 @@ export async function fetchLastMatches(): Promise<MatchResult[]> {
         return {
           fixtureId: f.id,
           date:      f.date.toISOString(),
-          homeTeam:  { id: homeId, name: f.homeTeam, logo: `https://api.sofascore.com/api/v1/team/${f.homeTeamId}/image`, winner: homeWinner },
-          awayTeam:  { id: awayId, name: f.awayTeam, logo: `https://api.sofascore.com/api/v1/team/${f.awayTeamId}/image`, winner: awayWinner },
+          homeTeam:  { id: homeId, name: f.homeTeam, logo: sofaTeamLogoUrl(f.homeTeamId), winner: homeWinner },
+          awayTeam:  { id: awayId, name: f.awayTeam, logo: sofaTeamLogoUrl(f.awayTeamId), winner: awayWinner },
           goalsHome: f.homeScore,
           goalsAway: f.awayScore,
           venueName: f.venue,
@@ -121,8 +132,8 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
           hour: '2-digit', minute: '2-digit',
           timeZone: 'America/Argentina/Buenos_Aires',
         }),
-        homeTeam: { id: f.isBocaHome ? BOCA_ID_EXPORT : 0, name: f.homeTeam, logo: `https://api.sofascore.com/api/v1/team/${f.homeTeamId}/image` },
-        awayTeam: { id: f.isBocaHome ? 0 : BOCA_ID_EXPORT, name: f.awayTeam, logo: `https://api.sofascore.com/api/v1/team/${f.awayTeamId}/image` },
+        homeTeam: { id: f.isBocaHome ? BOCA_ID_EXPORT : 0, name: f.homeTeam, logo: sofaTeamLogoUrl(f.homeTeamId) },
+        awayTeam: { id: f.isBocaHome ? 0 : BOCA_ID_EXPORT, name: f.awayTeam, logo: sofaTeamLogoUrl(f.awayTeamId) },
         venueName:   f.venue,
         competition: 'Liga Profesional',
       }));
