@@ -40,3 +40,6 @@ coverage
 # Misc
 .DS_Store
 Thumbs.db
+
+# Claude Code worktrees
+.claude/worktrees/
