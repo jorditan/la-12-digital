@@ -8,7 +8,7 @@
 
 - **React 18** + **Vite** + **TypeScript**
 - **Tailwind CSS** con design tokens propios
-- **SofaScore API** (proxy server-side via Vercel Functions)
+- **SofaScore API** (proxy via Cloudflare Worker — ver abajo)
 - **Crimson Pro** (serif) + **Inter** (sans-serif)
 
 ## Características
@@ -29,17 +29,18 @@
 ```
 la-12-digital/
 ├── api/
-│   └── sofascore.js        # Vercel Function — proxy SofaScore (evita CORS)
+│   └── sofascore/[...path].js  # Vercel Function (fallback when CF Worker not configured)
+├── cf-worker/
+│   └── index.js                # Cloudflare Worker — proxy SofaScore
 ├── src/
-│   ├── components/         # Componentes por feature
+│   ├── components/             # Componentes por feature
 │   ├── services/
-│   │   ├── sofascoreService.ts   # Integración SofaScore API
-│   │   └── apifootball.ts        # Adaptador → interfaces de componentes
-│   ├── types/              # Tipos TypeScript compartidos
-│   └── utils/              # Cache (localStorage), helpers
-├── design-system/          # Tokens y guías de diseño
-├── vercel.json             # Rewrite /api/sofascore/* → Vercel Function
-└── vite.config.ts          # Proxy dev: /api/sofascore → api.sofascore.com
+│   │   ├── sofascoreService.ts # Integración SofaScore API
+│   │   └── apifootball.ts      # Adaptador → interfaces de componentes
+│   ├── types/                  # Tipos TypeScript compartidos
+│   └── utils/                  # Cache (localStorage), helpers
+├── design-system/              # Tokens y guías de diseño
+└── vite.config.ts              # Proxy dev: /api/sofascore → api.sofascore.com
 ```
 
 ## Desarrollo local
@@ -49,13 +50,39 @@ npm install
 npm run dev       # http://localhost:3000
 ```
 
-El proxy de Vite redirige `/api/sofascore/*` a `api.sofascore.com` durante el desarrollo, sin necesidad de variables de entorno.
+El proxy de Vite redirige `/api/sofascore/*` → `api.sofascore.com/api/v1/*` durante el desarrollo, sin necesidad de variables de entorno.
 
-## Deploy
+## Configuración del Cloudflare Worker
 
-El proyecto está configurado para Vercel. Cada push a `main` genera un deploy automático.
+SofaScore usa Cloudflare Bot Management que **bloquea peticiones desde los servidores de Vercel** (IPs de datacenter). Para que los datos se carguen en producción, se usa un **Cloudflare Worker** como proxy: al correr en la red de Cloudflare, las peticiones no son detectadas como bots.
 
-En producción, `vercel.json` redirige todas las llamadas a `/api/sofascore/*` a la Vercel Function `api/sofascore.js`, que actúa como proxy server-side hacia SofaScore (sin CORS).
+### Pasos (5 minutos, plan gratuito de Cloudflare)
+
+1. **Crear cuenta** en [dash.cloudflare.com](https://dash.cloudflare.com) (gratuito, no requiere tarjeta).
+
+2. **Crear el Worker**:
+   - Ir a **Workers & Pages → Create application → Create Worker**
+   - Nombre: `sofascore-proxy` (o el que quieras)
+   - Hacer click en **Deploy**
+
+3. **Pegar el código**:
+   - Hacer click en **Edit code**
+   - Borrar el contenido por defecto
+   - Copiar y pegar el contenido de [`cf-worker/index.js`](cf-worker/index.js)
+   - Hacer click en **Deploy**
+
+4. **Copiar la URL del Worker**, que tiene el formato:
+   ```
+   https://sofascore-proxy.TU-NOMBRE.workers.dev
+   ```
+
+5. **Agregar la URL como variable de entorno en Vercel**:
+   - Ir a tu proyecto en [vercel.com](https://vercel.com) → **Settings → Environment Variables**
+   - Nombre: `VITE_SOFASCORE_PROXY_URL`
+   - Valor: la URL del Worker del paso anterior
+   - Hacer click en **Save** y luego **Redeploy**
+
+Con eso los tres widgets de fútbol (últimos partidos, próximos partidos y tabla) leerán datos reales de SofaScore en producción.
 
 ---
 

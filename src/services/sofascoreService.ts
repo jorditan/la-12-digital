@@ -1,7 +1,11 @@
 import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
 import type { ProcessedFixture, MatchResult } from '../types/football';
 
-const BASE_URL = '/api/sofascore';
+// In development the Vite proxy forwards /api/sofascore/* → api.sofascore.com/api/v1/*
+// In production set VITE_SOFASCORE_PROXY_URL to your Cloudflare Worker URL
+// (e.g. https://sofascore-proxy.yourname.workers.dev) so requests bypass
+// Cloudflare's bot-protection, which blocks Vercel/AWS datacenter IPs.
+const BASE_URL: string = import.meta.env.VITE_SOFASCORE_PROXY_URL ?? '/api/sofascore';
 const BOCA_TEAM_ID = 3202;
 
 // ── Tipos internos SofaScore ──────────────────────────────────────────────────
@@ -178,7 +182,7 @@ export async function getSofaScoreStandingsData(): Promise<SofaStandingData[]> {
         rank:     row.position,
         teamId:   row.team.id,
         teamName: row.team.name,
-        teamLogo: `https://api.sofascore.com/api/v1/team/${row.team.id}/image`,
+        teamLogo: `${BASE_URL}/team/${row.team.id}/image`,
         points:   row.points,
         played:   row.matches,
         win:      row.wins,
