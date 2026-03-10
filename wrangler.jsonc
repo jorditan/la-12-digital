@@ -20,11 +20,7 @@
   },
   "compatibility_flags": [
     "nodejs_compat"
-  ],
-  // Variables used by worker.js proxy handlers at runtime.
-  // VITE_* build-time vars (BOCA_TEAM_ID, etc.) live in .env and are baked into the bundle.
-  "vars": {
-    "VITE_YOUTUBE_KEY": "AIzaSyDQtM05QjR57zwHQP6KTSleLQmikiOkuSg",
-    "VITE_NEWS_API_KEY": "pub_8eda92d20ddb4f1d88f379efbc6ec349"
-  }
+  ]
+  // API keys for the proxy handlers are stored as Cloudflare secrets (wrangler secret put).
+  // They are NOT in this file — secrets persist through deploys and are never committed to git.
 }
