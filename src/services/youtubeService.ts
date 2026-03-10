@@ -50,7 +50,10 @@ async function getUploadsPlaylistId(handle: string): Promise<string> {
     part: 'contentDetails',
   });
   const res = await fetch(`${BASE}/channels?${params}`);
-  if (!res.ok) throw new Error(`YouTube channels error: ${res.status}`);
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`YouTube channels error: ${res.status} — ${body.slice(0, 200)}`);
+  }
   const data = await res.json();
   const playlistId: string | undefined = data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
   if (!playlistId) throw new Error(`No uploads playlist found for handle: ${handle}`);
@@ -72,7 +75,10 @@ async function getPlaylistItems(playlistId: string, maxResults = 12): Promise<Pl
     maxResults: String(maxResults),
   });
   const res = await fetch(`${BASE}/playlistItems?${params}`);
-  if (!res.ok) throw new Error(`YouTube playlistItems error: ${res.status}`);
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`YouTube playlistItems error: ${res.status} — ${body.slice(0, 200)}`);
+  }
   const data = await res.json();
 
   return (data.items ?? []).map((item: {
@@ -122,12 +128,12 @@ async function getVideoDetails(ids: string[]): Promise<Map<string, VideoDetail>>
 export async function fetchYoutubeVideos(handle: string): Promise<VideoItem[]> {
   if (!handle || !API_KEY) return [];
 
-  const CACHE_KEY = `v3_yt_videos_${handle}`;
+  const CACHE_KEY = `v4_yt_videos_${handle}`;
   const cached = getCachedData<VideoItem[]>(CACHE_KEY, CACHE_DURATION.FIXTURES);
   if (cached) return cached;
 
   const playlistId = await getUploadsPlaylistId(handle);
-  const items = await getPlaylistItems(playlistId);
+  const items = await getPlaylistItems(playlistId, 25);
 
   if (items.length === 0) return [];
 
