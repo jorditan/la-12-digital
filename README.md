@@ -28,10 +28,15 @@
 
 ```
 la-12-digital/
+├── worker.js                   # ⭐ Cloudflare Worker entry point (proxy + SPA)
+├── wrangler.jsonc              # Cloudflare Workers configuration
 ├── api/
-│   └── sofascore/[...path].js  # Vercel Function (fallback when CF Worker not configured)
+│   └── sofascore/[...path].js  # Vercel Function (fallback para despliegues en Vercel)
+├── functions/
+│   └── api/sofascore/
+│       └── [[path]].js         # Cloudflare Pages Function (fallback para Pages)
 ├── cf-worker/
-│   └── index.js                # Cloudflare Worker — proxy SofaScore
+│   └── index.js                # Standalone Worker independiente (referencia)
 ├── src/
 │   ├── components/             # Componentes por feature
 │   ├── services/
@@ -52,37 +57,34 @@ npm run dev       # http://localhost:3000
 
 El proxy de Vite redirige `/api/sofascore/*` → `api.sofascore.com/api/v1/*` durante el desarrollo, sin necesidad de variables de entorno.
 
-## Configuración del Cloudflare Worker
+## Despliegue en Cloudflare Workers (recomendado)
 
-SofaScore usa Cloudflare Bot Management que **bloquea peticiones desde los servidores de Vercel** (IPs de datacenter). Para que los datos se carguen en producción, se usa un **Cloudflare Worker** como proxy: al correr en la red de Cloudflare, las peticiones no son detectadas como bots.
+El proyecto usa **Cloudflare Workers** con **Workers Assets** para servir la SPA estática y manejar el proxy de SofaScore. El archivo `wrangler.jsonc` ya está incluido en el repo con toda la configuración necesaria.
 
-### Pasos (5 minutos, plan gratuito de Cloudflare)
+### Configuración en el dashboard de Cloudflare
 
-1. **Crear cuenta** en [dash.cloudflare.com](https://dash.cloudflare.com) (gratuito, no requiere tarjeta).
+1. **Verificar la configuración de build** en tu Worker → Settings → Builds:
+   - Build command: `npm run build`
+   - Deploy command: `npx wrangler versions upload`
 
-2. **Crear el Worker**:
-   - Ir a **Workers & Pages → Create application → Create Worker**
-   - Nombre: `sofascore-proxy` (o el que quieras)
-   - Hacer click en **Deploy**
+2. **Variables de entorno** (Settings → Environment Variables → Production):
 
-3. **Pegar el código**:
-   - Hacer click en **Edit code**
-   - Borrar el contenido por defecto
-   - Copiar y pegar el contenido de [`cf-worker/index.js`](cf-worker/index.js)
-   - Hacer click en **Deploy**
+   | Variable | Descripción | Requerida |
+   |----------|-------------|-----------|
+   | `VITE_YOUTUBE_KEY` | [Google YouTube Data API v3](https://console.cloud.google.com/) | ✅ Para videos |
+   | `VITE_NEWS_API_KEY` | [NewsData.io](https://newsdata.io/) | ✅ Para noticias |
+   | `VITE_OPENWEATHER_KEY` | [OpenWeatherMap](https://openweathermap.org/api) | ⚠️ Opcional (hay mock) |
 
-4. **Copiar la URL del Worker**, que tiene el formato:
-   ```
-   https://sofascore-proxy.TU-NOMBRE.workers.dev
-   ```
+   > **Importante**: las variables `VITE_*` se inyectan en build-time. Después de guardarlas, hacer un nuevo **Redeploy** desde el dashboard.
 
-5. **Agregar la URL como variable de entorno en Vercel**:
-   - Ir a tu proyecto en [vercel.com](https://vercel.com) → **Settings → Environment Variables**
-   - Nombre: `VITE_SOFASCORE_PROXY_URL`
-   - Valor: la URL del Worker del paso anterior
-   - Hacer click en **Save** y luego **Redeploy**
+3. **Los datos de fútbol (SofaScore) funcionan solos** — `worker.js` proxea `/api/sofascore/*` automáticamente sin configuración adicional.
 
-Con eso los tres widgets de fútbol (últimos partidos, próximos partidos y tabla) leerán datos reales de SofaScore en producción.
+### Deploy manual desde CLI
+
+```bash
+npm install
+npm run deploy    # = tsc + vite build + wrangler deploy
+```
 
 ---
 
