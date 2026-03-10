@@ -1,4 +1,4 @@
-import { setCachedData } from '../utils/cache';
+import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
 
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY as string;
 const BASE_URL = 'https://newsdata.io/api/1/news';
@@ -26,6 +26,13 @@ export interface NoticiaRaw {
 
 export async function fetchNewsdataNoticias(): Promise<NoticiaRaw[]> {
   const CACHE_KEY = 'v3_newsdata_boca_noticias';
+
+  // Return early with empty array if API key is not configured
+  if (!API_KEY) return [];
+
+  // Return cached data if still fresh (reuse same TTL as fixtures: 2 hours)
+  const cached = getCachedData<NoticiaRaw[]>(CACHE_KEY, CACHE_DURATION.FIXTURES);
+  if (cached) return cached;
 
   const params = new URLSearchParams({
     apikey: API_KEY,

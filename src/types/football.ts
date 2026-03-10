@@ -150,8 +150,8 @@ export interface Injury {
 
 export interface APIResponse<T> {
   get: string;
-  parameters: Record<string, any>;
-  errors: any[];
+  parameters: Record<string, unknown>;
+  errors: unknown[];
   results: number;
   paging: {
     current: number;

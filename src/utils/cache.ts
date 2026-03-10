@@ -71,7 +71,6 @@ export function setCachedData<T>(key: string, data: T): void {
  */
 export function clearExpiredCache(): void {
   const keys = Object.keys(localStorage);
-  let cleared = 0;
 
   keys.forEach(key => {
     if (!key.startsWith('api_')) return;
@@ -84,12 +83,10 @@ export function clearExpiredCache(): void {
       // Si tiene más de 24 horas, eliminar
       if (Date.now() - timestamp > 24 * 60 * 60 * 1000) {
         localStorage.removeItem(key);
-        cleared++;
       }
     } catch (error) {
       // Si hay error parseando, eliminar
       localStorage.removeItem(key);
-      cleared++;
     }
   });
 }

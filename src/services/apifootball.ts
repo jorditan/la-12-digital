@@ -11,15 +11,13 @@ import {
 // SofaScore usa 3202; normalizamos en cada mapper.
 const BOCA_ID_EXPORT = 451;
 
-// Build a URL for a SofaScore team image. When VITE_SOFASCORE_PROXY_URL is set
-// (production), route the image through the Cloudflare Worker so the same origin
-// serves both JSON data and images without CORS issues.
+// Build a URL for a SofaScore team image via the proxy.
+// Defaults to the built-in proxy path (/api/sofascore) so images are always
+// served through the Cloudflare Worker — avoids direct sofascore.com requests
+// that can be blocked by bot protection or cause CORS/403 errors in production.
 function sofaTeamLogoUrl(teamId: number): string {
-  const proxyBase: string = import.meta.env.VITE_SOFASCORE_PROXY_URL ?? '';
-  if (proxyBase) {
-    return `${proxyBase}/team/${teamId}/image`;
-  }
-  return `https://api.sofascore.com/api/v1/team/${teamId}/image`;
+  const proxyBase: string = import.meta.env.VITE_SOFASCORE_PROXY_URL ?? '/api/sofascore';
+  return `${proxyBase}/team/${teamId}/image`;
 }
 
 // ── Tipos públicos ───────────────────────────────────────────────────────────
