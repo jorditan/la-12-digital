@@ -43,3 +43,8 @@ Thumbs.db
 
 # Claude Code worktrees
 .claude/worktrees/
+
+# Wrangler build artifacts
+.wrangler
+.dev.vars
+!.dev.vars.example

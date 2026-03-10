@@ -28,13 +28,15 @@
 
 ```
 la-12-digital/
+├── worker.js                   # ⭐ Cloudflare Worker entry point (proxy + SPA)
+├── wrangler.jsonc              # Cloudflare Workers configuration
 ├── api/
 │   └── sofascore/[...path].js  # Vercel Function (fallback para despliegues en Vercel)
 ├── functions/
 │   └── api/sofascore/
-│       └── [[path]].js         # Cloudflare Pages Function — proxy SofaScore (automático)
+│       └── [[path]].js         # Cloudflare Pages Function (fallback para Pages)
 ├── cf-worker/
-│   └── index.js                # Cloudflare Worker independiente (opcional, máximo rendimiento)
+│   └── index.js                # Standalone Worker independiente (referencia)
 ├── src/
 │   ├── components/             # Componentes por feature
 │   ├── services/
@@ -55,19 +57,17 @@ npm run dev       # http://localhost:3000
 
 El proxy de Vite redirige `/api/sofascore/*` → `api.sofascore.com/api/v1/*` durante el desarrollo, sin necesidad de variables de entorno.
 
-## Despliegue en Cloudflare Pages
+## Despliegue en Cloudflare Workers (recomendado)
 
-El proyecto está optimizado para **Cloudflare Pages**. La Pages Function en `functions/api/sofascore/[[path]].js` proxea automáticamente las peticiones a SofaScore sin configuración adicional.
+El proyecto usa **Cloudflare Workers** con **Workers Assets** para servir la SPA estática y manejar el proxy de SofaScore. El archivo `wrangler.jsonc` ya está incluido en el repo con toda la configuración necesaria.
 
-### Configuración en Cloudflare Pages
+### Configuración en el dashboard de Cloudflare
 
-1. **Conectar el repositorio** en [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages → Create application → Pages**
-
-2. **Configurar el build**:
+1. **Verificar la configuración de build** en tu Worker → Settings → Builds:
    - Build command: `npm run build`
-   - Build output directory: `dist`
+   - Deploy command: `npx wrangler versions upload`
 
-3. **Variables de entorno** (Settings → Environment Variables → Production):
+2. **Variables de entorno** (Settings → Environment Variables → Production):
 
    | Variable | Descripción | Requerida |
    |----------|-------------|-----------|
@@ -75,37 +75,16 @@ El proyecto está optimizado para **Cloudflare Pages**. La Pages Function en `fu
    | `VITE_NEWS_API_KEY` | [NewsData.io](https://newsdata.io/) | ✅ Para noticias |
    | `VITE_OPENWEATHER_KEY` | [OpenWeatherMap](https://openweathermap.org/api) | ⚠️ Opcional (hay mock) |
 
-   > **Importante**: al ser variables `VITE_*`, se inyectan en build-time. Después de guardar las variables, hacer un nuevo **Redeploy** desde el dashboard.
+   > **Importante**: las variables `VITE_*` se inyectan en build-time. Después de guardarlas, hacer un nuevo **Redeploy** desde el dashboard.
 
-4. **Los datos de fútbol (SofaScore) funcionan solos** — la Pages Function en `functions/api/sofascore/[[path]].js` se encarga del proxy automáticamente.
+3. **Los datos de fútbol (SofaScore) funcionan solos** — `worker.js` proxea `/api/sofascore/*` automáticamente sin configuración adicional.
 
----
+### Deploy manual desde CLI
 
-## Cloudflare Worker independiente (opcional)
-
-Si preferís máximo rendimiento o usás Vercel en vez de Cloudflare Pages, podés desplegar un Worker independiente como proxy de SofaScore.
-
-### Pasos (5 minutos, plan gratuito de Cloudflare)
-
-1. **Crear el Worker**:
-   - Ir a **Workers & Pages → Create application → Create Worker**
-   - Nombre: `sofascore-proxy`
-   - Hacer click en **Deploy**
-
-2. **Pegar el código**:
-   - Hacer click en **Edit code**
-   - Copiar y pegar el contenido de [`cf-worker/index.js`](cf-worker/index.js)
-   - Hacer click en **Deploy**
-
-3. **Copiar la URL del Worker**:
-   ```
-   https://sofascore-proxy.TU-NOMBRE.workers.dev
-   ```
-
-4. **Agregar la URL como variable de entorno** en tu hosting (Cloudflare Pages o Vercel):
-   - Nombre: `VITE_SOFASCORE_PROXY_URL`
-   - Valor: la URL del Worker del paso anterior
-   - Hacer **Redeploy**
+```bash
+npm install
+npm run deploy    # = tsc + vite build + wrangler deploy
+```
 
 ---
 

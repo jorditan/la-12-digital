@@ -1,0 +1,24 @@
+{
+  // Cloudflare Workers configuration for La 12 Digital.
+  // Build & deploy: npm run deploy
+  //   (runs: tsc && vite build && wrangler deploy)
+  //
+  // The Worker serves:
+  //   /api/sofascore/*  → proxied to api.sofascore.com (see worker.js)
+  //   everything else   → React SPA from ./dist via Workers Assets
+  "name": "la-12-digital",
+  "main": "worker.js",
+  "compatibility_date": "2025-09-27",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    // Vite builds the React SPA into ./dist — Workers Assets serves it.
+    "directory": "./dist",
+    // Serve index.html for any path not matched by a static file (SPA routing).
+    "not_found_handling": "single-page-application"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
