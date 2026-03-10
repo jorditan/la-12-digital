@@ -1,7 +1,10 @@
-import { setCachedData } from '../utils/cache';
+import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
 
-const API_KEY = import.meta.env.VITE_NEWS_API_KEY as string;
-const BASE_URL = 'https://newsdata.io/api/1/news';
+// In production the Worker injects the key server-side (Cloudflare secret).
+// In dev we call Newsdata directly using the VITE_ key from .env.
+const isDev = import.meta.env.DEV;
+const API_KEY = isDev ? (import.meta.env.VITE_NEWS_API_KEY as string) : '';
+const BASE_URL = isDev ? 'https://newsdata.io/api/1/news' : '/api/newsdata';
 
 interface NewsdataArticle {
   article_id: string;
@@ -27,15 +30,19 @@ export interface NoticiaRaw {
 export async function fetchNewsdataNoticias(): Promise<NoticiaRaw[]> {
   const CACHE_KEY = 'v3_newsdata_boca_noticias';
 
-  const params = new URLSearchParams({
-    apikey: API_KEY,
+  const cached = getCachedData<NoticiaRaw[]>(CACHE_KEY, CACHE_DURATION.SQUAD);
+  if (cached) return cached;
+
+  const paramsObj: Record<string, string> = {
     q: 'Boca Juniors',
     country: 'ar',
     language: 'es',
     category: 'sports',
     image: '1',
     size: '9',
-  });
+  };
+  if (isDev) paramsObj.apikey = API_KEY;
+  const params = new URLSearchParams(paramsObj);
 
   const res = await fetch(`${BASE_URL}?${params}`);
   if (!res.ok) throw new Error(`Newsdata error: ${res.status}`);

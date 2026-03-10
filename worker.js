@@ -32,10 +32,89 @@ export default {
       return handleSofascoreProxy(request, url);
     }
 
+    // Route YouTube API calls through the proxy (key stored as Cloudflare secret).
+    if (url.pathname.startsWith('/api/youtube/')) {
+      return handleYoutubeProxy(request, url, env);
+    }
+
+    // Route Newsdata.io API calls through the proxy (key stored as Cloudflare secret).
+    if (url.pathname === '/api/newsdata') {
+      return handleNewsdataProxy(request, url, env);
+    }
+
     // Everything else is served by Workers Assets (the React SPA in ./dist).
     return env.ASSETS.fetch(request);
   },
 };
+
+async function handleYoutubeProxy(request, url, env) {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+  if (request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405 });
+  }
+
+  const subpath = url.pathname.replace(/^\/api\/youtube\//, '');
+  const params = new URLSearchParams(url.search);
+  params.set('key', env.VITE_YOUTUBE_KEY ?? '');
+
+  let upstreamRes;
+  try {
+    upstreamRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/${subpath}?${params}`,
+    );
+  } catch (err) {
+    console.error('[youtube-proxy] upstream fetch failed:', err);
+    return new Response(JSON.stringify({ error: 'upstream_error' }), {
+      status: 502,
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    });
+  }
+
+  const body = await upstreamRes.text();
+  return new Response(body, {
+    status: upstreamRes.status,
+    headers: {
+      'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
+      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      ...CORS_HEADERS,
+    },
+  });
+}
+
+async function handleNewsdataProxy(request, url, env) {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+  if (request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405 });
+  }
+
+  const params = new URLSearchParams(url.search);
+  params.set('apikey', env.VITE_NEWS_API_KEY ?? '');
+
+  let upstreamRes;
+  try {
+    upstreamRes = await fetch(`https://newsdata.io/api/1/news?${params}`);
+  } catch (err) {
+    console.error('[newsdata-proxy] upstream fetch failed:', err);
+    return new Response(JSON.stringify({ error: 'upstream_error' }), {
+      status: 502,
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    });
+  }
+
+  const body = await upstreamRes.text();
+  return new Response(body, {
+    status: upstreamRes.status,
+    headers: {
+      'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
+      'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600',
+      ...CORS_HEADERS,
+    },
+  });
+}
 
 async function handleSofascoreProxy(request, url) {
   // ── CORS preflight ────────────────────────────────────────────────────────
@@ -99,14 +178,18 @@ async function handleSofascoreProxy(request, url) {
   // ── Build response ────────────────────────────────────────────────────────
   const contentType = sofaResponse.headers.get('content-type') ?? 'application/json';
 
-  // For non-OK JSON responses return empty data so the client gracefully falls
-  // back to TheSportsDB without generating browser console errors.
+  // Log upstream status so it's visible in Cloudflare Observability.
+  console.log(`[sofascore-proxy] ${sofaResponse.status} ${sofaPath}`);
+
+  // For non-OK JSON responses return 502 so sofascoreService.ts throws an error
+  // and does NOT cache empty data. The client falls back to TheSportsDB.
   if (!sofaResponse.ok && !isImageRequest) {
+    console.warn(`[sofascore-proxy] upstream error: ${sofaResponse.status} ${sofaPath}`);
     return new Response(JSON.stringify({ events: [], standings: [] }), {
-      status: 200,
+      status: 502,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+        'Cache-Control': 'no-store',
         ...CORS_HEADERS,
       },
     });

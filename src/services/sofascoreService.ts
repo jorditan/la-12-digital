@@ -93,16 +93,31 @@ function mapEvent(ev: SofaEvent): ProcessedFixture {
   };
 }
 
+// Deduplicate concurrent fetches: if two calls hit the same endpoint before the
+// first resolves, they share a single in-flight Promise instead of firing twice.
+const pending = new Map<string, Promise<unknown>>();
+
 async function fetchSofaScore<T>(endpoint: string, cacheKey: string, cacheDuration: number): Promise<T> {
   const cached = getCachedData<T>(cacheKey, cacheDuration);
   if (cached) return cached;
 
-  console.log(`🌐 SofaScore Request: ${endpoint}`);
-  const res = await fetch(`${BASE_URL}${endpoint}`);
-  if (!res.ok) throw new Error(`SofaScore error ${res.status}: ${endpoint}`);
-  const data = await res.json() as T;
-  setCachedData(cacheKey, data);
-  return data;
+  if (pending.has(cacheKey)) return pending.get(cacheKey) as Promise<T>;
+
+  const promise = (async () => {
+    console.log(`🌐 SofaScore Request: ${endpoint}`);
+    const res = await fetch(`${BASE_URL}${endpoint}`);
+    if (!res.ok) throw new Error(`SofaScore error ${res.status}: ${endpoint}`);
+    const data = await res.json() as T;
+    // Don't cache empty event arrays — SofaScore might be temporarily blocked.
+    const d = data as Record<string, unknown>;
+    const isEmpty = Array.isArray(d.events) && (d.events as unknown[]).length === 0;
+    if (!isEmpty) setCachedData(cacheKey, data);
+    return data;
+  })();
+
+  pending.set(cacheKey, promise);
+  promise.finally(() => pending.delete(cacheKey));
+  return promise;
 }
 
 // ── Funciones públicas ────────────────────────────────────────────────────────
@@ -110,7 +125,7 @@ async function fetchSofaScore<T>(endpoint: string, cacheKey: string, cacheDurati
 export async function getSofaScoreLastFixtures(count: number = 5): Promise<ProcessedFixture[]> {
   const data = await fetchSofaScore<{ events: SofaEvent[] }>(
     `/team/${BOCA_TEAM_ID}/events/last/0`,
-    `sofascore_last_${count}`,
+    `v2_sofascore_last_${count}`,
     CACHE_DURATION.FIXTURES,
   );
   return data.events
@@ -122,7 +137,7 @@ export async function getSofaScoreLastFixtures(count: number = 5): Promise<Proce
 export async function getSofaScoreNextFixtures(count: number = 4): Promise<ProcessedFixture[]> {
   const data = await fetchSofaScore<{ events: SofaEvent[] }>(
     `/team/${BOCA_TEAM_ID}/events/next/0`,
-    `sofascore_next_${count}`,
+    `v2_sofascore_next_${count}`,
     CACHE_DURATION.FIXTURES,
   );
   return data.events.slice(0, count).map(mapEvent);
@@ -138,12 +153,12 @@ export async function getSofaScoreStandingsData(): Promise<SofaStandingData[]> {
   // Fallback a últimos jugados si no hay próximos programados.
   const nextData = await fetchSofaScore<{ events: SofaEvent[] }>(
     `/team/${BOCA_TEAM_ID}/events/next/0`,
-    `sofascore_next_10`,
+    `v2_sofascore_next_10`,
     CACHE_DURATION.FIXTURES,
   );
   const lastData = await fetchSofaScore<{ events: SofaEvent[] }>(
     `/team/${BOCA_TEAM_ID}/events/last/0`,
-    `sofascore_last_8`,
+    `v2_sofascore_last_8`,
     CACHE_DURATION.FIXTURES,
   );
 

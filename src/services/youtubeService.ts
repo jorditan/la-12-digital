@@ -9,8 +9,11 @@ export interface VideoItem {
   vistas: string;
 }
 
-const API_KEY = import.meta.env.VITE_YOUTUBE_KEY as string;
-const BASE = 'https://www.googleapis.com/youtube/v3';
+// In production the Worker injects the key server-side (Cloudflare secret).
+// In dev we call Google directly using the VITE_ key from .env.
+const isDev = import.meta.env.DEV;
+const API_KEY = isDev ? (import.meta.env.VITE_YOUTUBE_KEY as string) : '';
+const BASE = isDev ? 'https://www.googleapis.com/youtube/v3' : '/api/youtube';
 
 // ── Helpers de formato ────────────────────────────────────────────────────────
 
@@ -126,7 +129,7 @@ async function getVideoDetails(ids: string[]): Promise<Map<string, VideoDetail>>
 // ── Función principal ─────────────────────────────────────────────────────────
 
 export async function fetchYoutubeVideos(handle: string): Promise<VideoItem[]> {
-  if (!handle || !API_KEY) return [];
+  if (!handle || (isDev && !API_KEY)) return [];
 
   const CACHE_KEY = `v4_yt_videos_${handle}`;
   const cached = getCachedData<VideoItem[]>(CACHE_KEY, CACHE_DURATION.FIXTURES);
