@@ -6,8 +6,6 @@ import type { ProcessedFixture, MatchResult } from '../types/football';
 // In dev we call LiveScore directly using the VITE_ keys from .env.
 const isDev     = import.meta.env.DEV;
 const BASE_URL  = isDev ? 'https://livescore-api.com/api-client' : '/api/livescore';
-const KEY       = isDev ? (import.meta.env.VITE_LIVESCORE_KEY as string) : '';
-const SECRET    = isDev ? (import.meta.env.VITE_LIVESCORE_SECRET as string) : '';
 const COMPETITION = '23';   // Liga Profesional Argentina
 const BOCA_ID     = '934';  // Confirmed via API standings response
 const BOCA_RE     = /boca/i;
@@ -93,9 +91,6 @@ export interface StandingData {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function auth(): Record<string, string> {
-  return { key: KEY, secret: SECRET };
-}
 
 function n(v: number | string | undefined): number {
   return v !== undefined ? Number(v) : 0;
