@@ -2,9 +2,12 @@ import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
 import type { ProcessedFixture, MatchResult } from '../types/football';
 
 // Live Score API — https://livescore-api.com/
-const BASE_URL    = 'https://livescore-api.com/api-client';
-const KEY         = import.meta.env.VITE_LIVESCORE_KEY as string;
-const SECRET      = import.meta.env.VITE_LIVESCORE_SECRET as string;
+// In production the Worker injects the credentials server-side (Cloudflare secrets).
+// In dev we call LiveScore directly using the VITE_ keys from .env.
+const isDev     = import.meta.env.DEV;
+const BASE_URL  = isDev ? 'https://livescore-api.com/api-client' : '/api/livescore';
+const KEY       = isDev ? (import.meta.env.VITE_LIVESCORE_KEY as string) : '';
+const SECRET    = isDev ? (import.meta.env.VITE_LIVESCORE_SECRET as string) : '';
 const COMPETITION = '23';   // Liga Profesional Argentina
 const BOCA_ID     = '934';  // Confirmed via API standings response
 const BOCA_RE     = /boca/i;
@@ -91,6 +94,8 @@ export interface StandingData {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function auth(): Record<string, string> {
+  // In production the Worker proxy injects key+secret; nothing sent from the browser.
+  if (!isDev) return {};
   return { key: KEY, secret: SECRET };
 }
 
