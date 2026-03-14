@@ -54,7 +54,7 @@ export function UltimosPartidos() {
         {/* Loading */}
         {estado === 'loading' && (
           <div className="flex flex-col">
-            {Array.from({ length: 5 }, (_, i) => <SkeletonRow key={i} />)}
+            {Array.from({ length: 8 }, (_, i) => <SkeletonRow key={i} />)}
           </div>
         )}
 

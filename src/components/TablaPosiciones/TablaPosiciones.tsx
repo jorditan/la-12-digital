@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchStandings, BOCA_ID, type StandingRow } from '../../services/apifootball';
+import { fetchStandings, type StandingRow } from '../../services/apifootball';
 import { ESCUDO_VACIO } from '../../data/equipos';
 
 type Estado = 'loading' | 'error' | 'ok';
@@ -25,10 +25,11 @@ export function TablaPosiciones() {
   const zoneNames = [...new Set(rows.map(r => r.zone).filter((z): z is string => Boolean(z)))];
   const hasZones  = zoneNames.length >= 2;
 
-  // Inicializar zona activa al cargar los datos
+  // Inicializar zona activa: preferir la zona donde está Boca, si no la última
   useEffect(() => {
     if (hasZones && !zoneNames.includes(activeZone)) {
-      setActiveZone(zoneNames[0]);
+      const bocaZone = rows.find(r => /boca/i.test(r.team.name))?.zone;
+      setActiveZone(bocaZone && zoneNames.includes(bocaZone) ? bocaZone : zoneNames[zoneNames.length - 1]);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows]);
@@ -55,21 +56,16 @@ export function TablaPosiciones() {
         )}
 
         {estado === 'ok' && hasZones && (
-          <div className="flex border-b border-boca-gold/15">
-            {zoneNames.map(z => (
-              <button
-                key={z}
-                onClick={() => setActiveZone(z)}
-                className={[
-                  'px-4 py-2.5 text-xs font-semibold font-sans transition-colors',
-                  activeZone === z
-                    ? 'text-boca-gold border-b-2 border-boca-gold'
-                    : 'text-text-secondary hover:text-white',
-                ].join(' ')}
-              >
-                {z}
-              </button>
-            ))}
+          <div className="px-3 pt-3 pb-1">
+            <select
+              value={activeZone}
+              onChange={e => setActiveZone(e.target.value)}
+              className="w-full bg-white/5 border border-boca-gold/20 rounded px-3 py-2 text-xs font-semibold font-sans text-white focus:outline-none focus:border-boca-gold/50 cursor-pointer"
+            >
+              {zoneNames.map(z => (
+                <option key={z} value={z} className="bg-[#0d1b2a]">{z}</option>
+              ))}
+            </select>
           </div>
         )}
 
@@ -109,7 +105,7 @@ export function TablaPosiciones() {
               </thead>
               <tbody>
                 {displayRows.map((row) => {
-                  const esBoca = row.team.id === BOCA_ID;
+                  const esBoca = /boca/i.test(row.team.name);
                   return (
                     <tr
                       key={row.team.id}

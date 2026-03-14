@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getSofaScoreLastFixtures, getSofaScoreNextFixtures } from '../services/sofascoreService';
+import { getLastFixtures as getSofaScoreLastFixtures, getNextFixtures as getSofaScoreNextFixtures } from '../services/footballApiService';
 import type { ProcessedFixture } from '../types/football';
 
 function formatDate(date: Date): string {

@@ -229,7 +229,7 @@ function CardPartido({ partido }: { partido: ProximoPartido }) {
 function SkeletonRow() {
   return (
     <div className="flex gap-4 overflow-hidden pb-2">
-      {Array.from({ length: 4 }, (_, i) => (
+      {Array.from({ length: 8 }, (_, i) => (
         <div
           key={i}
           className="animate-pulse flex flex-col gap-3 p-4 bg-boca-blue-light border border-boca-gold/5 rounded-sm shrink-0 w-48"

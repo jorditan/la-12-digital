@@ -96,7 +96,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
               >
                 {/* Fecha */}
                 <td className="py-2.5 px-3">
-                  <div className="flex flex-col leading-tight">
+                  <div className="flex flex-col leading-tight w-full">
                     <span className="text-[10px] uppercase text-boca-gold/40 font-medium">
                       {formatDia(p.date)}
                     </span>
