@@ -5,32 +5,28 @@ interface CardVideoProps {
   className?: string;
 }
 
-export function CardVideo({ video, className = '' }: CardVideoProps) {
+export function CardVideo({ video }: CardVideoProps) {
   return (
     <a
       href={`https://www.youtube.com/watch?v=${video.id}`}
       target="_blank"
       rel="noopener noreferrer"
-      className={[
-        'group flex flex-col overflow-hidden px-2 py-2 rounded-sm transition-all duration-200',
-        'hover:border-boca-gold',
-        'hover:bg-boca-gold',
-        'hover:bg-boca-gold',
-        'hover:text-boca-blue',
-        'focus-within:outline focus-within:outline-2 focus-within:outline-violet-500',
-        'transition-[border-color] duration-200',
-        className,
-      ].join(' ')}
+      className="
+        group flex flex-col overflow-hidden rounded-sm transition-all duration-200 bg-[#002140] 
+        hover:border-boca-gold
+        border-[#00396e] border-2 hover:shadow-sm
+        focus-within:outline focus-within:outline-2 focus-within:outline-boca-gold
+      "
     >
       {/* Thumbnail — edge-to-edge, 16:9, sin padding ni marco */}
-      <div className="relative aspect-video border-boca-gold border-2 overflow-hidden bg-boca-blue">
-        <img
-          src={video.thumbnail}
-          alt={video.titulo}
-          className="absolute inset-0 p-4 w-full h-full object-cover"
-          loading="lazy"
-          draggable={false}
-        />
+      <div className="relative aspect-video overflow-hidden">
+          <img
+            src={video.thumbnail}
+            alt={video.titulo}
+            className="absolute inset-0 border-b-2 border-[#00396e] w-full h-full object-cover"
+            loading="lazy"
+            draggable={false}
+          />
 
         {/* Duration badge — rojo estilo YouTube */}
         <span className="absolute bottom-2 right-2 bg-[#cc0000] text-white font-serif text-[11px] font-semibold px-1.5 py-0.5 rounded-sm tabular-nums">
@@ -40,7 +36,7 @@ export function CardVideo({ video, className = '' }: CardVideoProps) {
 
       {/* Título — blanco en default, dorado en hover */}
       <div className="px-3 py-3">
-        <p className="font-serif font-medium text-lg leading-[1.4] uppercase tracking-wide text-white group-hover:text-boca-blue transition-colors duration-200 line-clamp-3">
+        <p className="font-serif font-medium text-md leading-[1.4] uppercase tracking-wide text-white  transition-colors duration-200 line-clamp-3">
           {video.titulo}
         </p>
       </div>

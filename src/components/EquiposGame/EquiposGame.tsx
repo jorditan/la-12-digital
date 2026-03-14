@@ -21,30 +21,35 @@ export function EquiposGame() {
           )}
         </div>
 
-        <div className="relative bg-boca-blue-light border border-boca-gold/10 rounded-sm overflow-hidden">
+        <div className="relative bg-boca-blue-light border border-boca-gold/30 rounded-sm overflow-hidden shadow-[0_0_24px_rgba(255,193,7,0.06)] hover:border-boca-gold/60 transition-colors">
           {/* Overlay degradado */}
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: 'linear-gradient(to top, #031428 30%, transparent 100%)' }}
+            style={{ background: 'linear-gradient(to top, #031428 40%, transparent 100%)' }}
             aria-hidden="true"
           />
 
           {/* Contenido */}
-          <div className="relative flex flex-col items-center gap-4 py-6 px-4 text-center">
-            <div className="space-y-1">
-              <p className="font-serif text-lg font-semibold text-white leading-snug">
+          <div className="relative flex flex-col items-center gap-4 py-8 px-4 text-center">
+            <div className="space-y-2">
+              <p className="font-serif text-xl font-bold text-white leading-snug">
                 ¿Podés completar el plantel?
               </p>
               <p className="font-sans text-xs text-text-secondary">
                 {gameState === 'waiting'
-                  ? '3 minutos para recordar a todos los jugadores'
+                  ? '11 titulares + suplentes · 3 minutos'
                   : <span className="text-boca-gold font-semibold animate-pulse">¡Desafío en curso!</span>
                 }
               </p>
+              {gameState === 'waiting' && score.total > 0 && (
+                <p className="font-sans text-[11px] text-boca-gold/70">
+                  Último: {score.guessed}/{score.total} jugadores ✓
+                </p>
+              )}
             </div>
 
             <Button
-              size="md"
+              size="lg"
               variant={gameState === 'waiting' ? 'primary' : 'secondary'}
               onClick={gameState === 'waiting' ? startGame : closeModal}
             >

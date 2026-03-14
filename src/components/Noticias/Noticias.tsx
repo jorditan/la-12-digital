@@ -48,10 +48,10 @@ export function Noticias() {
     <section aria-label="Noticias" className="w-full">
       <div className="flex items-center gap-4 mb-4">
         <Newspaper size={24} className="text-boca-gold shrink-0" />
-        <h2 className="font-serif font-bold text-[32px] leading-10 text-boca-gold tracking-tight">Noticias</h2>
+        <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight sm:leading-10 text-boca-gold tracking-tight">Noticias</h2>
       </div>
       <div className="w-full h-px bg-boca-gold/30 mb-4" />
-      <div className="flex gap-4 h-[282px]">
+      <div className="flex gap-4 h-[260px] sm:h-[340px]">
         {Array.from({ length: 3 }, (_, i) => (
           <div key={i} className="flex-1 animate-pulse bg-boca-gold/10 border border-boca-gold/10 rounded-sm" />
         ))}
@@ -63,7 +63,7 @@ export function Noticias() {
     <section aria-label="Noticias" className="w-full">
       <div className="flex items-center gap-4 mb-4">
         <Newspaper size={24} className="text-boca-gold shrink-0" />
-        <h2 className="font-serif font-bold text-[32px] leading-10 text-boca-gold tracking-tight">Noticias</h2>
+        <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight sm:leading-10 text-boca-gold tracking-tight">Noticias</h2>
       </div>
       <div className="w-full h-px bg-boca-gold/30 mb-4" />
       <div className="flex items-center gap-3 py-8 px-4 border border-boca-gold/10 rounded-sm">
@@ -98,10 +98,17 @@ export function Noticias() {
       {/* Separador dorado */}
       <div className="w-full h-px bg-boca-gold/30 mb-4" />
 
-      {/* Carrusel */}
-      <div className="flex flex-col gap-3">
+      {/* Mobile: scroll nativo con snap */}
+      <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2 -mx-4 px-4 scroll-smooth">
+        {noticias.map((noticia) => (
+          <NoticiaCard key={noticia.id} noticia={noticia} className="snap-start shrink-0 w-[85vw] h-[260px]" />
+        ))}
+      </div>
+
+      {/* Desktop: carrusel con botones */}
+      <div className="hidden md:flex flex-col gap-3">
         {/* Fila: botón ← | cards | botón → */}
-        <div className="flex items-stretch gap-4 h-[282px]">
+        <div className="flex items-stretch gap-4 h-[340px]">
           <button
             onClick={() => setIdx(Math.max(0, currentPage - 1) * VISIBLE)}
             disabled={!canPrev}

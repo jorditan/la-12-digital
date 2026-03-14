@@ -55,12 +55,12 @@ function App() {
       </div>
       <Header />
       <BannerMensaje />
-      <div className="w-full px-4 sm:px-6 py-6 sm:py-8">
+      <div className="w-full px-3 md:px-4 sm:px-6 py-3 sm:py-8">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-0 items-stretch lg:items-start">
 
           {/* Main: todo el contenido desplazable */}
           <main className="w-full flex-1 min-w-0 lg:pr-4">
-            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-5 sm:mb-8">
               <div className="sm:flex-1 min-w-0">
                 <BomboneraWidget />
               </div>
@@ -69,10 +69,10 @@ function App() {
               </div>
             </div>
             <ProximosPartidos />
-            <div className="mt-10">
+            <div className="mt-6 sm:mt-10">
               <Noticias />
             </div>
-            <div className="mt-10">
+            <div className="mt-6 sm:mt-10">
               <CanalYoutube />
             </div>
           </main>

@@ -30,7 +30,7 @@ export function NoticiaCard({ noticia, className = '' }: NoticiaCardProps) {
       className={`
         group
         bg-boca-gold border border-[#00396e] rounded-sm
-        h-[282px] flex flex-col justify-between overflow-hidden
+        h-[340px] flex flex-col justify-between overflow-hidden
         pt-3 px-0
         hover:border-boca-gold hover:shadow-card
         transition-[border-color,box-shadow] duration-300

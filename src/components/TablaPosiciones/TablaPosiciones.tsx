@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchStandings, type StandingRow } from '../../services/apifootball';
 import { ESCUDO_VACIO } from '../../data/equipos';
+import { SelectDropdown } from '../SelectDropdown';
 
 type Estado = 'loading' | 'error' | 'ok';
 
@@ -56,16 +57,13 @@ export function TablaPosiciones() {
         )}
 
         {estado === 'ok' && hasZones && (
-          <div className="px-3 pt-3 pb-1">
-            <select
+          <div className="px-3 pb-1">
+            <SelectDropdown
+              options={zoneNames.map(z => ({ value: z, label: z }))}
               value={activeZone}
-              onChange={e => setActiveZone(e.target.value)}
-              className="w-full bg-white/5 border border-boca-gold/20 rounded px-3 py-2 text-xs font-semibold font-sans text-white focus:outline-none focus:border-boca-gold/50 cursor-pointer"
-            >
-              {zoneNames.map(z => (
-                <option key={z} value={z} className="bg-[#0d1b2a]">{z}</option>
-              ))}
-            </select>
+              onChange={setActiveZone}
+              className="w-full"
+            />
           </div>
         )}
 

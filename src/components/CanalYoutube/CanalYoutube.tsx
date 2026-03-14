@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Youtube } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Youtube, ChevronRight } from 'lucide-react';
 import { fetchVideos, type VideoYoutube } from '../../services/apifootball';
 import { CANAL_DEFAULT, CANALES_YOUTUBE } from '../../data/canalesYoutube';
 import { CardVideo } from '../CardVideo';
@@ -24,19 +24,18 @@ export function CanalYoutube() {
   return (
     <section aria-label="Videos de YouTube" className="w-full">
       {/* Fila 1: icono + título + selector + link al canal */}
-      <div className="flex items-center justify-between gap-4 mb-3">
-        <div className="flex gap-4 items-center">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-3">
+        <div className="flex flex-wrap gap-x-4 gap-y-2 items-center">
           <Youtube size={24} className="text-boca-gold shrink-0" />
-          <h2 className="font-serif font-bold text-[32px] leading-10 text-boca-gold tracking-tight">
+          <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight sm:leading-10 text-boca-gold tracking-tight">
             Videos bosteros
           </h2>
-        <CanalSelector
-          canales={CANALES_YOUTUBE}
-          selected={canal}
-          onChange={setCanal}
-        />
+          <CanalSelector
+            canales={CANALES_YOUTUBE}
+            selected={canal}
+            onChange={setCanal}
+          />
         </div>
-
 
         <a
           href={`https://www.youtube.com/${canal.handle}`}
@@ -74,13 +73,85 @@ export function CanalYoutube() {
       )}
 
       {estado === 'ok' && videos.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {videos.map((video) => (
-            <CardVideo key={video.id} video={video} />
-          ))}
-        </div>
+        <>
+          {/* Mobile: scroll horizontal con fade + hint */}
+          <div className="sm:hidden">
+            <VideoScrollRow videos={videos} />
+          </div>
+          {/* Desktop: grid */}
+          <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {videos.map((video) => (
+              <CardVideo key={video.id} video={video} />
+            ))}
+          </div>
+        </>
       )}
     </section>
+  );
+}
+
+function VideoScrollRow({ videos }: { videos: VideoYoutube[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+
+  const checkScroll = () => {
+    if (!ref.current) return;
+    const { scrollLeft: sl, scrollWidth, clientWidth } = ref.current;
+    setCanScrollLeft(sl > 4);
+    setCanScrollRight(sl + clientWidth < scrollWidth - 4);
+  };
+
+  useEffect(() => { checkScroll(); }, [videos]);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    dragging.current = true;
+    startX.current = e.clientX;
+    scrollLeft.current = ref.current!.scrollLeft;
+    ref.current!.setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!dragging.current) return;
+    ref.current!.scrollLeft = scrollLeft.current - (e.clientX - startX.current);
+  };
+
+  const stopDrag = () => { dragging.current = false; };
+
+  return (
+    <div className="relative">
+      <div
+        ref={ref}
+        className="flex gap-3 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+        onScroll={checkScroll}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={stopDrag}
+        onPointerLeave={stopDrag}
+      >
+        {videos.map((video) => (
+          <div key={video.id} className="shrink-0 w-64">
+            <CardVideo video={video} />
+          </div>
+        ))}
+      </div>
+
+      {/* Gradiente izquierdo */}
+      {canScrollLeft && (
+        <div className="pointer-events-none absolute left-0 top-0 h-[calc(100%-8px)] w-10 bg-gradient-to-r from-[#001529] to-transparent" />
+      )}
+
+      {/* Gradiente + hint derecho */}
+      {canScrollRight && (
+        <div className="pointer-events-none absolute right-0 top-0 h-[calc(100%-8px)] w-14 bg-gradient-to-l from-[#001529] to-transparent flex items-center justify-end pr-1">
+          <ChevronRight size={18} className="text-boca-gold/60 animate-pulse" />
+        </div>
+      )}
+    </div>
   );
 }
 

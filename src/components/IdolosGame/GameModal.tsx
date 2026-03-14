@@ -139,8 +139,8 @@ function IdoloImage({
 }
 
 function PlayingContent({
-  idolo, timer, visibleClues, input, inputError, inputRef, onInputChange, onSubmit,
-}: Pick<GameModalProps, 'idolo' | 'timer' | 'visibleClues' | 'input' | 'inputError' | 'inputRef' | 'onInputChange' | 'onSubmit'>) {
+  idolo, timer, visibleClues, input, inputError, inputRef, onInputChange, onSubmit, onPlayNext,
+}: Pick<GameModalProps, 'idolo' | 'timer' | 'visibleClues' | 'input' | 'inputError' | 'inputRef' | 'onInputChange' | 'onSubmit' | 'onPlayNext'>) {
   return (
     <>
       <div className="flex items-center justify-between gap-3">
@@ -190,6 +190,13 @@ function PlayingContent({
           ¡Dale Bo!
         </Button>
       </form>
+      <button
+        type="button"
+        onClick={onPlayNext}
+        className="w-full text-center font-sans text-xs text-text-secondary hover:text-white transition-colors py-1"
+      >
+        Otro ídolo →
+      </button>
     </>
   );
 }
@@ -251,7 +258,7 @@ export function GameModal(props: GameModalProps) {
         <IdoloImage idolo={idolo} revealed={revealed} state={state} />
 
         <div className="p-4 space-y-3">
-          {state === 'playing' && <PlayingContent {...props} />}
+          {state === 'playing' && <PlayingContent {...props} onPlayNext={props.onPlayNext} />}
           {revealed && <RevealedContent {...props} />}
         </div>
       </div>

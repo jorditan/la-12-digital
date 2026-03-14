@@ -86,29 +86,38 @@ function TimerSection({ timer, gameState }: { timer: number; gameState: GameStat
 }
 
 function PlayingInput({
-  input, inputError, inputRef, onInputChange, onSubmit,
-}: Pick<GameModalProps, 'input' | 'inputError' | 'inputRef' | 'onInputChange' | 'onSubmit'>) {
+  input, inputError, inputRef, onInputChange, onSubmit, onPlayNext,
+}: Pick<GameModalProps, 'input' | 'inputError' | 'inputRef' | 'onInputChange' | 'onSubmit' | 'onPlayNext'>) {
   return (
-    <form onSubmit={onSubmit} className="flex gap-2">
-      <input
-        ref={inputRef}
-        value={input}
-        onChange={onInputChange}
-        placeholder="Nombre o apellido..."
-        autoComplete="off"
-        className={[
-          'flex-1 min-w-0 px-3 py-2 text-sm font-sans',
-          'bg-boca-blue rounded-sm text-white placeholder:text-text-secondary',
-          'focus:outline-none transition-colors',
-          inputError
-            ? 'border border-red-500 focus:border-red-400'
-            : 'border border-boca-gold/20 focus:border-boca-gold/50',
-        ].join(' ')}
-      />
-      <Button type="submit" size="sm" variant="primary">
-        ¡Dale Bo!
-      </Button>
-    </form>
+    <div className="space-y-2">
+      <form onSubmit={onSubmit} className="flex gap-2">
+        <input
+          ref={inputRef}
+          value={input}
+          onChange={onInputChange}
+          placeholder="Nombre o apellido..."
+          autoComplete="off"
+          className={[
+            'flex-1 min-w-0 px-3 py-2 text-sm font-sans',
+            'bg-boca-blue rounded-sm text-white placeholder:text-text-secondary',
+            'focus:outline-none transition-colors',
+            inputError
+              ? 'border border-red-500 focus:border-red-400'
+              : 'border border-boca-gold/20 focus:border-boca-gold/50',
+          ].join(' ')}
+        />
+        <Button type="submit" size="sm" variant="primary">
+          ¡Dale Bo!
+        </Button>
+      </form>
+      <button
+        type="button"
+        onClick={onPlayNext}
+        className="w-full text-center font-sans text-xs text-text-secondary hover:text-white transition-colors py-1"
+      >
+        Otro equipo →
+      </button>
+    </div>
   );
 }
 
@@ -178,6 +187,7 @@ export function GameModal(props: GameModalProps) {
               inputRef={props.inputRef}
               onInputChange={props.onInputChange}
               onSubmit={props.onSubmit}
+              onPlayNext={props.onPlayNext}
             />
           )}
           {isFinished && (

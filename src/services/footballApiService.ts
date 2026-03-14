@@ -1,10 +1,10 @@
 import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
 import type { ProcessedFixture, MatchResult } from '../types/football';
 
-// Live Score API — https://livescore-api.com/
-const BASE_URL    = 'https://livescore-api.com/api-client';
-const KEY         = import.meta.env.VITE_LIVESCORE_KEY as string;
-const SECRET      = import.meta.env.VITE_LIVESCORE_SECRET as string;
+// Live Score API — proxied through Cloudflare Worker at /api/livescore/
+// Credentials are injected by the worker (LIVESCORE_KEY / LIVESCORE_SECRET secrets).
+// In dev, vite.config.ts proxies /api/livescore/ → livescore-api.com and injects VITE_LIVESCORE_* from .env.
+const BASE_URL    = '/api/livescore';
 const COMPETITION = '23';   // Liga Profesional Argentina
 const BOCA_ID     = '934';  // Confirmed via API standings response
 const BOCA_RE     = /boca/i;
@@ -89,10 +89,6 @@ export interface StandingData {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function auth(): Record<string, string> {
-  return { key: KEY, secret: SECRET };
-}
 
 function n(v: number | string | undefined): number {
   return v !== undefined ? Number(v) : 0;
@@ -204,7 +200,7 @@ async function fetchLS<T>(
   if (pending.has(cacheKey)) return pending.get(cacheKey) as Promise<T>;
 
   const promise = (async () => {
-    const qs  = new URLSearchParams({ ...auth(), ...params }).toString();
+    const qs  = new URLSearchParams(params).toString();
     const url = `${BASE_URL}${endpoint}?${qs}`;
     console.log(`🌐 LiveScore: ${endpoint}`, params);
     const res = await fetch(url);

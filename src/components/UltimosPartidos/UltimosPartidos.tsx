@@ -23,10 +23,10 @@ function formatFecha(isoDate: string): string {
   return `${day}/${month}`;
 }
 
-const ROW_BG: Record<Resultado, string> = {
-  victoria: 'bg-[#1A4D2E]',
-  derrota:  'bg-[#7A1F1F]',
-  empate:   'bg-[#4A5568]',
+const ROW_STYLE: Record<Resultado, string> = {
+  victoria: 'border-l-2 border-l-green-400 bg-green-500/[0.2]',
+  derrota:  'border-l-2 border-l-red-400 bg-red-500/[0.2]',
+  empate:   'border-l-2 border-l-slate-400 bg-slate-500/[0.2]',
 };
 
 export function UltimosPartidos() {
@@ -47,7 +47,7 @@ export function UltimosPartidos() {
       <div className="bg-[#031d46] border border-[#00396e] rounded-sm overflow-hidden flex flex-col">
 
         {/* Header */}
-        <div className="border-b border-[#003d7a] px-6 pt-6 pb-3">
+        <div className="border-b border-[#003d7a] px-4 pt-4 pb-2 sm:px-6 sm:pt-6 sm:pb-3">
           <h2 className="type-section-title text-white">Últimos partidos</h2>
         </div>
 
@@ -80,13 +80,13 @@ export function UltimosPartidos() {
 
         {/* Table */}
         {estado === 'ok' && partidos.length > 0 && (
-          <div className="overflow-x-auto pl-8 pr-8 pb-8">
+          <div className="overflow-x-auto px-3 pb-3 sm:px-8 sm:pb-8">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-[#003d7a]">
-                  <th className="px-6 py-2 text-left font-sans font-medium text-sm text-[#64748b]">Día</th>
-                  <th className="px-3 py-2 text-left font-sans font-medium text-sm text-[#64748b]">Rival</th>
-                  <th className="px-6 py-2 text-right font-sans font-medium text-sm text-[#64748b]">Resultado</th>
+                  <th className="px-2 sm:px-6 py-2 text-left font-sans font-medium text-sm text-[#64748b]">Día</th>
+                  <th className="px-2 sm:px-3 py-2 text-left font-sans font-medium text-sm text-[#64748b]">Rival</th>
+                  <th className="px-2 sm:px-6 py-2 text-right font-sans font-medium text-sm text-[#64748b]">Resultado</th>
                 </tr>
               </thead>
               <tbody>
@@ -100,15 +100,15 @@ export function UltimosPartidos() {
                   return (
                     <tr
                       key={match.fixtureId}
-                      className={`${ROW_BG[resultado]}${idx < partidos.length - 1 ? ' border-b border-black/20' : ''}`}
+                      className={`${ROW_STYLE[resultado]}${idx < partidos.length - 1 ? ' border-b border-white/[0.04]' : ''}`}
                     >
-                      <td className="px-6 py-3 font-sans font-medium text-sm text-white whitespace-nowrap">
+                      <td className="px-2 sm:px-6 py-2 sm:py-3 font-sans font-medium text-sm text-white whitespace-nowrap">
                         {formatFecha(match.date)}
                       </td>
-                      <td className="px-3 py-3 font-sans font-normal text-sm text-white">
+                      <td className="px-2 sm:px-3 py-2 sm:py-3 font-sans font-normal text-sm text-white max-w-[110px] truncate" title={rival.name}>
                         {rival.name}
                       </td>
-                      <td className="px-6 py-3 font-sans font-normal text-sm text-white text-right whitespace-nowrap">
+                      <td className="px-2 sm:px-6 py-2 sm:py-3 font-sans font-normal text-sm text-white text-right whitespace-nowrap">
                         {golesBoca ?? '-'} - {golesRival ?? '-'}
                       </td>
                     </tr>

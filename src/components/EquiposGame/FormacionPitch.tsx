@@ -132,6 +132,7 @@ export function FormacionPitch({ players, gameState }: FormacionPitchProps) {
                 key={i}
                 name={p.name}
                 cardState={cardStateFor(p, gameState)}
+                isSuplente
               />
             ))}
           </div>
