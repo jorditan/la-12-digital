@@ -116,6 +116,21 @@ export function UltimosPartidos() {
                 })}
               </tbody>
             </table>
+            {/* Leyenda de colores */}
+            <div className="flex items-center gap-4 mt-3 text-xs text-white/40">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-green-400/70 inline-block shrink-0" />
+                <span>Victoria</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-slate-400/60 inline-block shrink-0" />
+                <span>Empate</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-red-400/70 inline-block shrink-0" />
+                <span>Derrota</span>
+              </div>
+            </div>
           </div>
         )}
 

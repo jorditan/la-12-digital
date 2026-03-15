@@ -42,5 +42,6 @@ export const mockUpcomingMatches: ProximoPartido[] = [
     awayTeam: { id: 453, name: 'San Lorenzo', logo: '' },
     venueName: 'La Bombonera',
     competition: 'Liga Profesional',
+    rivalApiId: 453,
   },
 ];

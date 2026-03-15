@@ -211,11 +211,9 @@ async function fetchLS<T>(
   const promise = (async () => {
     const qs  = new URLSearchParams({ ...auth(), ...params }).toString();
     const url = `${BASE_URL}${endpoint}?${qs}`;
-    console.log(`🌐 LiveScore: ${endpoint}`, params);
     const res = await fetch(url);
     if (!res.ok) throw new Error(`LiveScore error ${res.status}: ${endpoint}`);
     const json = await res.json() as { success: boolean; data: T; error?: string };
-    console.log(`📦 LiveScore [${endpoint}]:`, json.data);
     if (!json.success) throw new Error(`LiveScore API error: ${json.error ?? 'unknown'}`);
     setCachedData(cacheKey, json.data);
     return json.data;
@@ -224,6 +222,17 @@ async function fetchLS<T>(
   pending.set(cacheKey, promise);
   promise.finally(() => pending.delete(cacheKey));
   return promise;
+}
+
+// ── Tipos públicos adicionales ────────────────────────────────────────────────
+
+export interface H2HMatch {
+  date: string;          // ISO
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number | null;
+  awayScore: number | null;
+  result: MatchResult;
 }
 
 // ── Funciones públicas ────────────────────────────────────────────────────────
@@ -238,8 +247,6 @@ export async function getLastFixtures(count: number = 8): Promise<ProcessedFixtu
   );
 
   const matches = data.match ?? data.data ?? [];
-  if (matches.length > 0) console.log('🔍 match[0]:', matches[0]);
-  console.log(`✅ Boca history matches: ${matches.length}`);
   // API returns newest first
   return matches.slice(0, count).map(mapMatch);
 }
@@ -254,9 +261,30 @@ export async function getNextFixtures(count: number = 8): Promise<ProcessedFixtu
   );
 
   const fixtures = data.fixtures ?? data.fixture ?? [];
-  if (fixtures.length > 0) console.log('🔍 fixture[0]:', fixtures[0]);
-  console.log(`✅ Boca upcoming fixtures: ${fixtures.length}`);
   return fixtures.slice(0, count).map(mapFixture);
+}
+
+/**
+ * Historial de enfrentamientos directos Boca vs rival.
+ * @param rivalApiId  El campo `rivalApiId` del ProximoPartido correspondiente.
+ */
+export async function fetchHeadToHead(rivalApiId: number): Promise<H2HMatch[]> {
+  const data = await fetchLS<{ match?: LSMatch[]; data?: LSMatch[] }>(
+    '/matches/h2h.json',
+    { team1_id: BOCA_ID, team2_id: String(rivalApiId) },
+    `ls_h2h_${BOCA_ID}_${rivalApiId}`,
+    CACHE_DURATION.FIXTURES,
+  );
+
+  const matches = data.match ?? data.data ?? [];
+  return matches.slice(0, 10).map(mapMatch).map(f => ({
+    date:      f.date.toISOString(),
+    homeTeam:  f.homeTeam,
+    awayTeam:  f.awayTeam,
+    homeScore: f.homeScore,
+    awayScore: f.awayScore,
+    result:    f.result,
+  }));
 }
 
 export async function getStandingsData(): Promise<StandingData[]> {

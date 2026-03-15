@@ -52,7 +52,7 @@ export function SelectDropdown({ options, value, onChange, className }: SelectDr
           'border transition-colors duration-150',
           open
             ? 'bg-boca-gold/10 border-boca-gold/60 text-boca-gold'
-            : 'bg-boca-blue border-boca-gold/30 text-boca-gold hover:border-boca-gold/55 hover:bg-boca-gold/5',
+            : 'bg-boca-blue border-boca-gold/30 text-boca-gold hover:border-boca-gold/55 hover:bg-boca-gold/5 focus-visible:ring-2 focus-visible:ring-boca-gold/40 focus-visible:outline-none',
         ].join(' ')}
       >
         <span className="flex-1 text-left truncate">{selected?.label ?? value}</span>

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { TrofeoIcon, type TrofeoType } from '../TrofeoIcon';
 
 // Orden de rotación: cambia cada día (día del año % 4)
@@ -36,14 +37,20 @@ const MENSAJES_SEMANALES: Record<number, string> = {
 export function BannerMensaje() {
   const mensajeHoy  = MENSAJES_SEMANALES[new Date().getDay()];
   const trofeoHoy   = getTrofeoDelDia();
+  const [paused, setPaused] = useState(false);
 
   return (
     <section aria-label="Banner Boca Juniors">
       {/* ── Sección A: Ticker himno (fondo dorado) ── */}
-      <div className="bg-boca-gold overflow-hidden p-[10px]">
+      <div
+        className="bg-boca-gold overflow-hidden p-[10px]"
+        aria-hidden="true"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
         <div
           className="flex whitespace-nowrap"
-          style={{ animation: 'marquee 35s linear infinite' }}
+          style={{ animation: 'marquee 40s linear infinite', animationPlayState: paused ? 'paused' : 'running' }}
         >
           {/* Texto duplicado para loop continuo sin salto */}
           <span className="font-serif font-normal truncate text-base leading-6 text-[#0052a3] pr-16">

@@ -42,6 +42,8 @@ export interface ProximoPartido {
   awayTeam: { id: number; name: string; logo: string };
   venueName: string;
   competition: string;
+  /** ID interno de LiveScore del equipo rival — necesario para fetchHeadToHead() */
+  rivalApiId: number;
 }
 
 export interface Noticia {
@@ -109,6 +111,7 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
     awayTeam: { id: f.isBocaHome ? 0 : BOCA_ID_EXPORT, name: f.awayTeam, logo: teamLogoUrl(f.awayTeamId, f.awayLogo) },
     venueName:   f.venue,
     competition: 'Liga Profesional',
+    rivalApiId:  f.isBocaHome ? f.awayTeamId : f.homeTeamId,
   }));
 }
 

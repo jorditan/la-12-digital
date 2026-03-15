@@ -1,64 +1,95 @@
 /**
  * WEATHER SERVICE — La 12 Digital
- * Proveedor: OpenWeatherMap (Current Weather API)
- * Docs: https://openweathermap.org/current
- *
- * En producción las llamadas se enrutan a través del proxy /api/weather
- * (Cloudflare Worker) donde la clave se inyecta del lado del servidor.
- * En desarrollo el proxy de Vite en vite.config.ts hace lo mismo desde .env.
- * Si no hay clave configurada, la request fallará y se usarán datos mock.
+ * Proveedor: Open-Meteo (https://open-meteo.com)
+ *   - Gratis, sin API key, hasta 16 días de forecast horario
+ *   - CORS-friendly → se llama directamente desde el browser (sin proxy)
+ *   - Coordenadas: La Bombonera, CABA
  */
 
-const CACHE_TTL = 30 * 60 * 1000; // 30 minutos
+const OPEN_METEO_URL =
+  'https://api.open-meteo.com/v1/forecast' +
+  '?latitude=-34.6345&longitude=-58.3699' +
+  '&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,windspeed_10m,winddirection_10m,weathercode' +
+  '&forecast_days=16&timezone=America%2FArgentina%2FBuenos_Aires';
 
-// Coordenadas de La Bombonera, CABA
-const LAT = -34.6358;
-const LON = -58.3705;
+const CACHE_KEY = 'cache:openmeteo';
+const CACHE_TTL = 60 * 60 * 1000; // 1 hora
 
-// ── Tipos ─────────────────────────────────────────────────────────────────────
+// ── Tipos públicos ─────────────────────────────────────────────────────────────
 
-export interface WeatherData {
-  temp: number;         // °C redondeado
-  feelsLike: number;    // sensación térmica
-  description: string;  // ej: "cielo claro"
-  emoji: string;        // emoji representativo
-  humidity: number;     // %
-  windKmh: number;      // km/h
+export interface HourlyForecast {
+  time: string;                    // "YYYY-MM-DDTHH:MM" en tz Argentina
+  tempC: number;
+  humidityPct: number;
+  precipitationProbPct: number;
+  windSpeedKmh: number;
+  windDir: string;                 // "N", "NE", "E", etc.
+  weatherCode: number;             // WMO code
+  description: string;
+  isGoodConditions: boolean;       // tempC > 5 && precip < 40 && wind < 50
 }
 
-// ── Mock ──────────────────────────────────────────────────────────────────────
+export interface MatchForecast {
+  slotBefore: HourlyForecast | null;
+  slotMatch:  HourlyForecast | null;
+  slotAfter:  HourlyForecast | null;
+  dateLabel: string;   // "22 de marzo"
+  timeLabel: string;   // "20:00"
+}
 
-const MOCK_WEATHER: WeatherData = {
-  temp: 24,
-  feelsLike: 23,
-  description: 'Despejado',
-  emoji: '☀️',
-  humidity: 55,
-  windKmh: 12,
-};
+// ── Tipo interno de la respuesta de Open-Meteo ────────────────────────────────
+
+interface OpenMeteoHourly {
+  time:                    string[];
+  temperature_2m:          number[];
+  relative_humidity_2m:    number[];
+  precipitation_probability: number[];
+  windspeed_10m:           number[];
+  winddirection_10m:       number[];
+  weathercode:             number[];
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function conditionEmoji(code: number): string {
-  if (code >= 200 && code < 300) return '⛈️';
-  if (code >= 300 && code < 400) return '🌦️';
-  if (code >= 500 && code < 600) return '🌧️';
-  if (code >= 600 && code < 700) return '❄️';
-  if (code >= 700 && code < 800) return '🌫️';
-  if (code === 800)               return '☀️';
-  if (code === 801)               return '🌤️';
-  if (code === 802)               return '⛅';
-  if (code >= 803)                return '☁️';
-  return '🌡️';
+function windDirFromDeg(deg: number): string {
+  const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
+  return dirs[Math.round(deg / 45) % 8];
 }
 
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
+function wmoDescription(code: number): string {
+  if (code === 0)  return 'Cielo despejado';
+  if (code <= 3)   return 'Parcialmente nublado';
+  if (code <= 48)  return 'Niebla';
+  if (code <= 55)  return 'Llovizna';
+  if (code <= 65)  return 'Lluvia';
+  if (code <= 82)  return 'Chaparrones';
+  if (code === 95) return 'Tormenta';
+  return 'Variable';
+}
+
+function mapSlot(i: number, h: OpenMeteoHourly): HourlyForecast {
+  const temp    = h.temperature_2m[i];
+  const precip  = h.precipitation_probability[i];
+  const windKmh = Math.round(h.windspeed_10m[i]);
+  return {
+    time:                 h.time[i],
+    tempC:                Math.round(temp),
+    humidityPct:          h.relative_humidity_2m[i],
+    precipitationProbPct: precip,
+    windSpeedKmh:         windKmh,
+    windDir:              windDirFromDeg(h.winddirection_10m[i]),
+    weatherCode:          h.weathercode[i],
+    description:          wmoDescription(h.weathercode[i]),
+    isGoodConditions:     temp > 5 && precip < 40 && windKmh < 50,
+  };
+}
+
+// Timestamp UTC de un slot (su time + offset fijo Argentina -03:00)
+function slotTs(time: string): number {
+  return new Date(time + ':00-03:00').getTime();
 }
 
 // ── Caché (localStorage) ─────────────────────────────────────────────────────
-
-const CACHE_KEY = 'cache:weather';
 
 interface CacheEntry<T> { data: T; timestamp: number; }
 
@@ -78,41 +109,95 @@ function setCache<T>(key: string, data: T): void {
   } catch { /* storage lleno — ignorar */ }
 }
 
-// ── Fetch ─────────────────────────────────────────────────────────────────────
+// ── Mock fallback ──────────────────────────────────────────────────────────────
 
-// Evita reintentar si la request ya falló en esta sesión de página
+function makeMockForecast(matchIso: string): MatchForecast {
+  const matchDate = new Date(matchIso);
+  const makeSlot = (offsetH: number): HourlyForecast => {
+    const d = new Date(matchDate.getTime() + offsetH * 3600_000);
+    const time = d.toLocaleString('sv-SE', { timeZone: 'America/Argentina/Buenos_Aires' })
+      .slice(0, 16).replace(' ', 'T');
+    return {
+      time,
+      tempC:                22 - Math.abs(offsetH),
+      humidityPct:          55,
+      precipitationProbPct: 5,
+      windSpeedKmh:         12,
+      windDir:              'NE',
+      weatherCode:          0,
+      description:          'Cielo despejado',
+      isGoodConditions:     true,
+    };
+  };
+  return {
+    slotBefore: makeSlot(-2),
+    slotMatch:  makeSlot(0),
+    slotAfter:  makeSlot(2),
+    dateLabel: matchDate.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' }),
+    timeLabel: matchDate.toLocaleTimeString('es-AR', {
+      hour: '2-digit', minute: '2-digit',
+      timeZone: 'America/Argentina/Buenos_Aires',
+    }),
+  };
+}
+
+// ── Fetch interno ──────────────────────────────────────────────────────────────
+
+// Evita reintentar si la request ya falló en esta sesión
 let sessionFailed = false;
 
-export async function fetchWeather(): Promise<WeatherData> {
-  if (sessionFailed) return MOCK_WEATHER;
-
-  const cached = getCached<WeatherData>(CACHE_KEY);
+async function fetchAllSlots(): Promise<HourlyForecast[]> {
+  const cached = getCached<HourlyForecast[]>(CACHE_KEY);
   if (cached) return cached;
 
+  if (sessionFailed) return [];
+
   try {
-    const url = `/api/weather?lat=${LAT}&lon=${LON}&units=metric&lang=es`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`OpenWeatherMap error ${res.status}`);
+    const res = await fetch(OPEN_METEO_URL);
+    if (!res.ok) throw new Error(`Open-Meteo error ${res.status}`);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const json = await res.json() as any;
+    const json = await res.json() as { hourly: OpenMeteoHourly };
+    const h = json.hourly;
 
-    const data: WeatherData = {
-      temp:        Math.round(json.main.temp),
-      feelsLike:   Math.round(json.main.feels_like),
-      description: capitalize(json.weather[0].description),
-      emoji:       conditionEmoji(json.weather[0].id),
-      humidity:    json.main.humidity,
-      windKmh:     Math.round(json.wind.speed * 3.6),
-    };
-
-    setCache(CACHE_KEY, data);
-    return data;
-  } catch {
-    // Key inválida, red caída o key nueva (OWM tarda ~2h en activar)
-    // Marca la sesión para no reintentar hasta recargar la página
+    const slots: HourlyForecast[] = h.time.map((_, i) => mapSlot(i, h));
+    setCache(CACHE_KEY, slots);
+    return slots;
+  } catch (err) {
     sessionFailed = true;
-    console.warn('[weather] request falló — usando mock hasta recargar la página');
-    return MOCK_WEATHER;
+    console.warn('[open-meteo] request falló — usando mock hasta recargar', err);
+    return [];
   }
+}
+
+// ── API pública ────────────────────────────────────────────────────────────────
+
+export async function fetchMatchForecast(matchIso: string): Promise<MatchForecast> {
+  const matchDate = new Date(matchIso);
+  const dateLabel = matchDate.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
+  const timeLabel = matchDate.toLocaleTimeString('es-AR', {
+    hour: '2-digit', minute: '2-digit',
+    timeZone: 'America/Argentina/Buenos_Aires',
+  });
+
+  const slots = await fetchAllSlots();
+
+  if (slots.length === 0) {
+    return makeMockForecast(matchIso);
+  }
+
+  // Encontrar el índice del slot más cercano al horario del partido
+  const matchTs = matchDate.getTime();
+  const matchIdx = slots.reduce((best, _, i) =>
+    Math.abs(slotTs(slots[i].time) - matchTs) < Math.abs(slotTs(slots[best].time) - matchTs)
+      ? i : best,
+  0);
+
+  return {
+    slotBefore: matchIdx >= 2    ? slots[matchIdx - 2]             : null,
+    slotMatch:  slots[matchIdx]  ?? null,
+    slotAfter:  matchIdx + 2 < slots.length ? slots[matchIdx + 2]  : null,
+    dateLabel,
+    timeLabel,
+  };
 }

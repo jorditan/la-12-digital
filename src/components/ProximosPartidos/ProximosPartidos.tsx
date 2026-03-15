@@ -177,24 +177,30 @@ function CardPartido({ partido }: { partido: ProximoPartido }) {
 
   return (
     <article className="flex flex-col gap-3 p-4 bg-boca-blue-light border border-boca-gold/10 rounded-sm shrink-0 w-60 hover:border-boca-gold/25 transition-colors">
-      {/* Rival + L/V */}
+      {/* Ambos escudos VS */}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex flex-col items-center gap-1">
+          <img src="/escudo_boca.png" alt="Boca Juniors" width={44} height={44} className="object-contain w-11 h-11" draggable={false} />
+          <span className="font-sans text-[10px] text-white/50">Boca</span>
+        </div>
+        <span className="text-white/70 font-semibold text-xs">VS</span>
+        <div className="flex flex-col items-center gap-1">
           <img
             src={rival.logo}
             alt={rival.name}
-            width={20}
-            height={20}
-            className="shrink-0 object-contain"
+            width={36}
+            height={36}
+            className="object-contain w-9 h-9"
             draggable={false}
             onError={(e) => { (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO; }}
           />
-          <span className="type-card-title text-white truncate">{rival.name}</span>
+          <span className="font-sans text-[10px] text-white/50 truncate max-w-[60px] text-center">{rival.name}</span>
         </div>
-        <Badge variant="blue" className="shrink-0 text-[10px] px-1.5 py-px">
-          {bocaEsLocal ? 'L' : 'V'}
-        </Badge>
       </div>
+      {/* Badge Local/Visitante */}
+      <Badge variant={bocaEsLocal ? 'local' : 'visitante'} className="w-fit text-[10px] px-2 py-px">
+        {bocaEsLocal ? 'Local' : 'Visitante'}
+      </Badge>
 
       {/* Fecha */}
       <p className="font-serif font-semibold text-base text-white leading-tight">

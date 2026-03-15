@@ -84,7 +84,7 @@ function App() {
             <div className="sticky top-8 flex flex-col gap-6">
               <TablaPosiciones />
               <IdolosGame />
-              <EquiposGame/>
+              <EquiposGame />
             </div>
           </aside>
 

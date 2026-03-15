@@ -1,13 +1,23 @@
 import { useState, useEffect } from 'react';
-import { fetchWeather, type WeatherData } from '../../../services/weather';
+import { fetchMatchForecast, type MatchForecast } from '../../../services/weather';
 import { fetchUpcomingMatches, type ProximoPartido, BOCA_ID } from '../../../services/apifootball';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+export function isMatchDayMode(date: string): boolean {
+  const diffMs = new Date(date).getTime() - Date.now();
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+  return diffDays >= 0 && diffDays <= 1;
+}
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
 
 export interface BomboneraWidgetData {
-  weather: WeatherData | null;
   proximoLocal: ProximoPartido | null;
+  proximosLocales: ProximoPartido[];   // siguientes partidos de local (sin el primero)
   diasHastaPartido: number | null;
+  matchForecast: MatchForecast | null;
+  matchDayMode: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -15,49 +25,45 @@ export interface BomboneraWidgetData {
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
 export function useBomboneraWidget(): BomboneraWidgetData {
-  const [weather, setWeather]           = useState<WeatherData | null>(null);
-  const [proximoLocal, setProximoLocal] = useState<ProximoPartido | null>(null);
-  const [loading, setLoading]           = useState(true);
-  const [error, setError]               = useState<string | null>(null);
+  const [proximoLocal, setProximoLocal]     = useState<ProximoPartido | null>(null);
+  const [proximosLocales, setProximosLocales] = useState<ProximoPartido[]>([]);
+  const [matchForecast, setMatchForecast]   = useState<MatchForecast | null>(null);
+  const [loading, setLoading]             = useState(true);
+  const [error, setError]                 = useState<string | null>(null);
 
+  // Carga el próximo partido de local
   useEffect(() => {
     let cancelled = false;
 
-    async function load() {
-      try {
-        const [weatherResult, upcomingResult] = await Promise.allSettled([
-          fetchWeather(),
-          fetchUpcomingMatches(),
-        ]);
-
+    fetchUpcomingMatches()
+      .then(matches => {
         if (cancelled) return;
-
-        if (weatherResult.status === 'fulfilled') {
-          setWeather(weatherResult.value);
-        } else {
-          console.error('[BomboneraWidget] weather error →', weatherResult.reason);
+        const homeGames = matches.filter(m => m.homeTeam.id === BOCA_ID);
+        setProximoLocal(homeGames[0] ?? null);
+        setProximosLocales(homeGames.slice(1, 3));
+      })
+      .catch(err => {
+        if (!cancelled) {
+          console.error('[BomboneraWidget] upcoming error →', err);
+          setError('No se pudieron cargar los partidos');
         }
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
 
-        if (upcomingResult.status === 'fulfilled') {
-          const homeGames = upcomingResult.value.filter(m => m.homeTeam.id === BOCA_ID);
-          setProximoLocal(homeGames[0] ?? null);
-        } else {
-          console.error('[BomboneraWidget] upcoming error →', upcomingResult.reason);
-        }
-
-        const anyFailed =
-          weatherResult.status === 'rejected' && upcomingResult.status === 'rejected';
-        if (anyFailed) setError('No se pudieron cargar los datos');
-      } catch {
-        if (!cancelled) setError('Error inesperado al cargar datos');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    load();
     return () => { cancelled = true; };
   }, []);
+
+  // Carga el pronóstico una vez que conocemos el partido
+  useEffect(() => {
+    if (!proximoLocal) return;
+    let cancelled = false;
+
+    fetchMatchForecast(proximoLocal.date)
+      .then(data => { if (!cancelled) setMatchForecast(data); })
+      .catch(err => { console.error('[BomboneraWidget] forecast error →', err); });
+
+    return () => { cancelled = true; };
+  }, [proximoLocal]);
 
   const diasHastaPartido = proximoLocal
     ? Math.max(0, Math.ceil(
@@ -65,5 +71,7 @@ export function useBomboneraWidget(): BomboneraWidgetData {
       ))
     : null;
 
-  return { weather, proximoLocal, diasHastaPartido, loading, error };
+  const matchDayMode = proximoLocal ? isMatchDayMode(proximoLocal.date) : false;
+
+  return { proximoLocal, proximosLocales, diasHastaPartido, matchForecast, matchDayMode, loading, error };
 }

@@ -53,7 +53,7 @@ export function NoticiaCard({ noticia, className = '' }: NoticiaCardProps) {
       {/* Footer oscuro con título */}
       <div className="bg-[#002140] border-b border-[#003d7a] px-6 pt-4 pb-3 shrink-0 w-full">
         <p className="font-serif min-h-12 items-start font-normal text-base text-[#e0e7ff] leading-6 tracking-normal line-clamp-2">
-          {noticia.titulo}
+          {noticia.titulo.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
         </p>
       </div>
     </Tag>

@@ -5,17 +5,21 @@ const LOGO_SRC = '/escudo_boca.png';
 
 type NavId = 'inicio' | 'plantel' | 'asistencia';
 
-interface HeaderProps {
-  activePage?: NavId;
-}
-
 const NAV_ITEMS: { id: NavId; label: string; href: string }[] = [
   { id: 'inicio',     label: 'Inicio',               href: '/' },
   { id: 'plantel',    label: 'Plantel',              href: '/plantel' },
   { id: 'asistencia', label: 'Asistencia a partidos', href: '/asistencia' },
 ];
 
-export function Header({ activePage = 'inicio' }: HeaderProps) {
+function getActivePage(): NavId {
+  const path = window.location.pathname;
+  if (path.startsWith('/plantel')) return 'plantel';
+  if (path.startsWith('/asistencia')) return 'asistencia';
+  return 'inicio';
+}
+
+export function Header() {
+  const [activePage] = useState<NavId>(getActivePage);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -67,7 +71,7 @@ export function Header({ activePage = 'inicio' }: HeaderProps) {
                         'transition-colors duration-normal',
                         'focus:outline-none focus-visible:ring-2 focus-visible:ring-boca-gold',
                         isActive
-                          ? 'text-boca-gold'
+                          ? 'text-boca-gold border-b-2 border-boca-gold'
                           : 'text-[#e0e7ff] hover:text-boca-gold',
                       ].join(' ')}
                     >
@@ -86,6 +90,7 @@ export function Header({ activePage = 'inicio' }: HeaderProps) {
           <div
             className="flex items-center gap-2 text-boca-gold shrink-0"
             aria-label="3 Copas Libertadores"
+            title="3 Copas Libertadores"
           >
             <Star size={16} fill="currentColor" aria-hidden="true" />
             <Star size={16} fill="currentColor" aria-hidden="true" />
@@ -125,7 +130,7 @@ export function Header({ activePage = 'inicio' }: HeaderProps) {
                       'font-serif text-sm font-medium leading-5',
                       'transition-colors duration-normal',
                       isActive
-                        ? 'text-boca-gold'
+                        ? 'text-boca-gold border-b-2 border-boca-gold'
                         : 'text-[#e0e7ff] hover:text-boca-gold',
                     ].join(' ')}
                   >

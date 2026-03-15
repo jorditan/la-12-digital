@@ -31,19 +31,7 @@ export default defineConfig(({ mode }) => {
             });
           },
         },
-        // In dev, proxy /api/weather → api.openweathermap.org and inject key from .env
-        '/api/weather': {
-          target: 'https://api.openweathermap.org',
-          changeOrigin: true,
-          configure: (proxy) => {
-            proxy.on('proxyReq', (proxyReq, req) => {
-              const [, search] = (req.url ?? '').split('?');
-              const params = new URLSearchParams(search ?? '');
-              params.set('appid', env.VITE_OPENWEATHER_KEY ?? '');
-              proxyReq.path = `/data/2.5/weather?${params}`;
-            });
-          },
-        },
+        // Open-Meteo (weather) is called directly from the browser — no proxy needed.
       },
     },
   };

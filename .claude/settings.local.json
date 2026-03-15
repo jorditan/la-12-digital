@@ -36,7 +36,9 @@
       "mcp__claude_ai_Cloudflare_Developer_Platform__accounts_list",
       "mcp__claude_ai_Cloudflare_Developer_Platform__workers_list",
       "mcp__claude_ai_Cloudflare_Developer_Platform__set_active_account",
-      "mcp__claude_ai_Cloudflare_Developer_Platform__workers_get_worker_code"
+      "mcp__claude_ai_Cloudflare_Developer_Platform__workers_get_worker_code",
+      "Bash(find /e/Desarrollo/React/la-12-digital -type f -name vite.config.ts -o -name *.worker.js -o -name _worker.js -o -name worker.js)",
+      "Bash(find /e/Desarrollo/React/la-12-digital -type f -name *.go -o -name go.mod -o -name go.sum)"
     ]
   }
 }
