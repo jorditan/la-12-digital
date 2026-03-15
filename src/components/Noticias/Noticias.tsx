@@ -1,5 +1,5 @@
-import { useState, useEffect, useLayoutEffect } from 'react';
-import { Newspaper, Star, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { Newspaper, Star, ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
 import { fetchNoticias, type Noticia } from '../../services/apifootball';
 import { NoticiaCard } from '../NoticiaCard';
 
@@ -21,6 +21,69 @@ function useVisibleCards() {
   }, []);
 
   return visible;
+}
+
+function NoticiasMobileSlider({ noticias }: { noticias: Noticia[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+  const [canScrollLeft, setCanScrollLeft]   = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = () => {
+    if (!ref.current) return;
+    const { scrollLeft: sl, scrollWidth, clientWidth } = ref.current;
+    setCanScrollLeft(sl > 4);
+    setCanScrollRight(sl + clientWidth < scrollWidth - 4);
+  };
+
+  useEffect(() => { checkScroll(); }, [noticias]);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    dragging.current = true;
+    startX.current = e.clientX;
+    scrollLeft.current = ref.current!.scrollLeft;
+    ref.current!.setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!dragging.current) return;
+    ref.current!.scrollLeft = scrollLeft.current - (e.clientX - startX.current);
+  };
+
+  const stopDrag = () => { dragging.current = false; };
+
+  return (
+    <div className="md:hidden relative">
+      <div
+        ref={ref}
+        className="flex gap-3 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+        onScroll={checkScroll}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={stopDrag}
+        onPointerLeave={stopDrag}
+      >
+        {noticias.map((noticia) => (
+          <div key={noticia.id} className="shrink-0 w-[65vw]">
+            <NoticiaCard noticia={noticia} className="h-[220px]" />
+          </div>
+        ))}
+      </div>
+
+      {canScrollLeft && (
+        <div className="pointer-events-none absolute left-0 top-0 h-[calc(100%-8px)] w-10 bg-gradient-to-r from-[#001529] to-transparent" />
+      )}
+
+      {canScrollRight && (
+        <div className="pointer-events-none absolute right-0 top-0 h-[calc(100%-8px)] w-14 bg-gradient-to-l from-[#001529] to-transparent flex items-center justify-end pr-1">
+          <ChevronRight size={18} className="text-boca-gold/60 animate-pulse" />
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function Noticias() {
@@ -98,12 +161,8 @@ export function Noticias() {
       {/* Separador dorado */}
       <div className="w-full h-px bg-boca-gold/30 mb-4" />
 
-      {/* Mobile: scroll nativo con snap */}
-      <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2 -mx-4 px-4 scroll-smooth">
-        {noticias.map((noticia) => (
-          <NoticiaCard key={noticia.id} noticia={noticia} className="snap-start shrink-0 w-[85vw] h-[260px]" />
-        ))}
-      </div>
+      {/* Mobile: slider con drag y fade */}
+      <NoticiasMobileSlider noticias={noticias} />
 
       {/* Desktop: carrusel con botones */}
       <div className="hidden md:flex flex-col gap-3">
