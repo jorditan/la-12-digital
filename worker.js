@@ -5,6 +5,7 @@
  *   /api/youtube/*    → proxied to googleapis.com/youtube/v3 (key from VITE_YOUTUBE_KEY secret)
  *   /api/newsdata     → proxied to newsdata.io/api/1/news (key from VITE_NEWS_API_KEY secret)
  *   /api/livescore/*  → proxied to livescore-api.com (key+secret from Cloudflare secrets)
+ *   /api/weather      → proxied to api.openweathermap.org (key from VITE_OPENWEATHER_KEY secret)
  *   everything else   → served by Workers Assets (the Vite-built React SPA).
  *
  * Note: SofaScore is called directly from the browser in production.
@@ -27,21 +28,25 @@ const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+  // Tell browsers to enforce HTTPS for one year (including subdomains).
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  // Prevent cross-origin windows from retaining a reference to this page.
+  'Cross-Origin-Opener-Policy': 'same-origin',
   // CSP: restrict execution contexts while allowing the fonts and external APIs the
   // app actually needs. 'unsafe-inline' on style-src covers React inline style props
   // and Tailwind. Scripts are module-only (no inline scripts in the Vite build).
   // Note: these headers only run inside the Cloudflare Worker (production). In
   // development Vite serves without this worker, so no CSP applies there.
-  // In production all API calls (YouTube, NewsData, LiveScore) are routed through
-  // the /api/* proxy handlers on 'self', so connect-src only needs the two services
-  // still called directly from the browser: OpenWeatherMap and Wikipedia.
+  // In production all API calls (YouTube, NewsData, LiveScore, OpenWeatherMap) are
+  // routed through the /api/* proxy handlers on 'self', so connect-src only needs
+  // the one service still called directly from the browser: Wikipedia.
   'Content-Security-Policy': [
     "default-src 'self'",
     "script-src 'self'",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' https: data:",
-    "connect-src 'self' https://api.openweathermap.org https://*.wikipedia.org",
+    "connect-src 'self' https://*.wikipedia.org",
     "frame-ancestors 'none'",
     "object-src 'none'",
   ].join('; '),
@@ -64,6 +69,11 @@ export default {
     // Route LiveScore API calls through the proxy (credentials stored as Cloudflare secrets).
     if (url.pathname.startsWith('/api/livescore/')) {
       return handleLivescoreProxy(request, url, env);
+    }
+
+    // Route OpenWeatherMap calls through the proxy (key stored as VITE_OPENWEATHER_KEY secret).
+    if (url.pathname === '/api/weather') {
+      return handleWeatherProxy(request, url, env);
     }
 
     // Everything else is served by Workers Assets (the React SPA in ./dist).
@@ -198,6 +208,54 @@ async function handleLivescoreProxy(request, url, env) {
     headers: {
       'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
       'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      ...CORS_HEADERS,
+    },
+  });
+}
+
+async function handleWeatherProxy(request, url, env) {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+  if (request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405 });
+  }
+
+  // Forward safe query params (lat, lon, units, lang) and inject the API key server-side.
+  const apiKey = env.VITE_OPENWEATHER_KEY ?? '';
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: 'weather_key_not_configured' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    });
+  }
+
+  const params = new URLSearchParams();
+  for (const key of ['lat', 'lon', 'units', 'lang']) {
+    const value = url.searchParams.get(key);
+    if (value !== null) params.set(key, value);
+  }
+  params.set('appid', apiKey);
+
+  let upstreamRes;
+  try {
+    upstreamRes = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?${params}`,
+    );
+  } catch (err) {
+    console.error('[weather-proxy] upstream fetch failed:', err);
+    return new Response(JSON.stringify({ error: 'upstream_error' }), {
+      status: 502,
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    });
+  }
+
+  const body = await upstreamRes.text();
+  return new Response(body, {
+    status: upstreamRes.status,
+    headers: {
+      'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
+      'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600',
       ...CORS_HEADERS,
     },
   });

@@ -3,13 +3,12 @@
  * Proveedor: OpenWeatherMap (Current Weather API)
  * Docs: https://openweathermap.org/current
  *
- * Env var requerida: VITE_OPENWEATHER_KEY
- * Sin key → usa datos mock (sin errores en desarrollo).
+ * En producción las llamadas se enrutan a través del proxy /api/weather
+ * (Cloudflare Worker) donde la clave se inyecta del lado del servidor.
+ * En desarrollo el proxy de Vite en vite.config.ts hace lo mismo desde .env.
+ * Si no hay clave configurada, la request fallará y se usarán datos mock.
  */
 
-const BASE_URL = 'https://api.openweathermap.org/data/2.5';
-const API_KEY: string = import.meta.env.VITE_OPENWEATHER_KEY ?? '';
-const USE_MOCK = !API_KEY;
 const CACHE_TTL = 30 * 60 * 1000; // 30 minutos
 
 // Coordenadas de La Bombonera, CABA
@@ -85,20 +84,18 @@ function setCache<T>(key: string, data: T): void {
 let sessionFailed = false;
 
 export async function fetchWeather(): Promise<WeatherData> {
-  if (USE_MOCK || sessionFailed) return MOCK_WEATHER;
+  if (sessionFailed) return MOCK_WEATHER;
 
   const cached = getCached<WeatherData>(CACHE_KEY);
   if (cached) return cached;
 
   try {
-    const url = `${BASE_URL}/weather?lat=${LAT}&lon=${LON}&appid=${API_KEY}&units=metric&lang=es`;
+    const url = `/api/weather?lat=${LAT}&lon=${LON}&units=metric&lang=es`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`OpenWeatherMap error ${res.status}`);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json = await res.json() as any;
-
-    console.log('[weather] raw API response →', json);
 
     const data: WeatherData = {
       temp:        Math.round(json.main.temp),
@@ -109,7 +106,6 @@ export async function fetchWeather(): Promise<WeatherData> {
       windKmh:     Math.round(json.wind.speed * 3.6),
     };
 
-    console.log('[weather] procesado →', data);
     setCache(CACHE_KEY, data);
     return data;
   } catch {
