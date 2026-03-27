@@ -32,8 +32,7 @@ export function IdolosGame() {
           )}
           {/* Overlay degradado */}
           <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ background: 'linear-gradient(to top, #031428 40%, transparent 100%)' }}
+            className="absolute inset-0 pointer-events-none bg-overlay-game"
             aria-hidden="true"
           />
 

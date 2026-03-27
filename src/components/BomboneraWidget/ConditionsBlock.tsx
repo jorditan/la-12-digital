@@ -21,10 +21,10 @@ function conditionsText(slot: HourlyForecast): string {
 export function ConditionsBlock({ slot }: { slot: HourlyForecast }) {
   return (
     <div className="bg-boca-gold/[0.05] border border-boca-gold/10 rounded-sm px-3 py-2.5">
-      <p className="type-ui-label text-boca-gold mb-1" style={{ fontSize: '10px', letterSpacing: '0.08em' }}>
+      <p className="type-ui-label text-boca-gold mb-1 text-[10px] tracking-[0.08em]">
         CONDICIONES DEL PARTIDO
       </p>
-      <p className="type-ui-label text-text-secondary" style={{ fontSize: '11px' }}>
+      <p className="type-ui-label text-text-secondary text-[11px]">
         {conditionsText(slot)}
       </p>
     </div>

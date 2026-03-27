@@ -53,11 +53,11 @@ export function BannerMensaje() {
           style={{ animation: 'marquee 40s linear infinite', animationPlayState: paused ? 'paused' : 'running' }}
         >
           {/* Texto duplicado para loop continuo sin salto */}
-          <span className="font-serif font-normal truncate text-base leading-6 text-[#0052a3] pr-16">
+          <span className="font-serif font-normal truncate text-base leading-6 text-text-on-gold pr-16">
             {BOCA_HYMN}
           </span>
           <span
-            className="font-serif font-normal text-base leading-6 text-[#0052a3] pr-16"
+            className="font-serif font-normal text-base leading-6 text-text-on-gold pr-16"
             aria-hidden="true"
           >
             {BOCA_HYMN}
@@ -75,7 +75,7 @@ export function BannerMensaje() {
         {/* Divisor vertical sutil */}
         <span className="h-4 w-px bg-boca-gold/25 shrink-0" aria-hidden="true" />
 
-        <p className="font-serif text-[16px] text-text-primary">
+        <p className="font-serif text-base text-text-primary">
           {mensajeHoy}
         </p>
       </div>

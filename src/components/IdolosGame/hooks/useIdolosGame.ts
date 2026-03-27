@@ -1,12 +1,10 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { IDOLOS, type Idolo } from '../../../data/idolos';
 import { type GameState, type Score, ROUND_SECS, RESULT_SECS } from '../types';
+import { normalize } from '../../../utils/stringMatch';
+import { INPUT_FOCUS_DELAY_MS, INPUT_ERROR_DURATION_MS } from '../../../utils/gameConfig';
 
 // ── Helpers puros ─────────────────────────────────────────────────────────────
-
-function normalize(s: string) {
-  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
 
 function isMatch(raw: string, idolo: Idolo): boolean {
   const n = normalize(raw.trim());
@@ -134,7 +132,7 @@ export function useIdolosGame(): IdolosGameState {
   // Focus en input al abrir el modal
   useEffect(() => {
     if (state !== 'playing') return;
-    const t = setTimeout(() => inputRef.current?.focus(), 50);
+    const t = setTimeout(() => inputRef.current?.focus(), INPUT_FOCUS_DELAY_MS);
     return () => clearTimeout(t);
   }, [state]);
 
@@ -153,7 +151,7 @@ export function useIdolosGame(): IdolosGameState {
         setInputError(false);
         setInput('');
         inputRef.current?.focus();
-      }, 600);
+      }, INPUT_ERROR_DURATION_MS);
     }
   };
 

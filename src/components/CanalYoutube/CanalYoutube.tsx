@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Youtube, ChevronRight } from 'lucide-react';
+import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 import { fetchVideos, type VideoYoutube } from '../../services/apifootball';
 import { CANAL_DEFAULT, CANALES_YOUTUBE } from '../../data/canalesYoutube';
 import { CardVideo } from '../CardVideo';
@@ -91,35 +92,7 @@ export function CanalYoutube() {
 }
 
 function VideoScrollRow({ videos }: { videos: VideoYoutube[] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-
-  const checkScroll = () => {
-    if (!ref.current) return;
-    const { scrollLeft: sl, scrollWidth, clientWidth } = ref.current;
-    setCanScrollLeft(sl > 4);
-    setCanScrollRight(sl + clientWidth < scrollWidth - 4);
-  };
-
-  useEffect(() => { checkScroll(); }, [videos]);
-
-  const onPointerDown = (e: React.PointerEvent) => {
-    dragging.current = true;
-    startX.current = e.clientX;
-    scrollLeft.current = ref.current!.scrollLeft;
-    ref.current!.setPointerCapture(e.pointerId);
-  };
-
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!dragging.current) return;
-    ref.current!.scrollLeft = scrollLeft.current - (e.clientX - startX.current);
-  };
-
-  const stopDrag = () => { dragging.current = false; };
+  const { ref, canScrollLeft, canScrollRight, onPointerDown, onPointerMove, stopDrag } = useHorizontalScroll();
 
   return (
     <div className="relative">
@@ -127,7 +100,6 @@ function VideoScrollRow({ videos }: { videos: VideoYoutube[] }) {
         ref={ref}
         className="flex gap-3 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
-        onScroll={checkScroll}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={stopDrag}
@@ -142,12 +114,12 @@ function VideoScrollRow({ videos }: { videos: VideoYoutube[] }) {
 
       {/* Gradiente izquierdo */}
       {canScrollLeft && (
-        <div className="pointer-events-none absolute left-0 top-0 h-[calc(100%-8px)] w-10 bg-gradient-to-r from-[#001529] to-transparent" />
+        <div className="pointer-events-none absolute left-0 top-0 h-[calc(100%-8px)] w-10 bg-gradient-to-r from-boca-blue to-transparent" />
       )}
 
       {/* Gradiente + hint derecho */}
       {canScrollRight && (
-        <div className="pointer-events-none absolute right-0 top-0 h-[calc(100%-8px)] w-14 bg-gradient-to-l from-[#001529] to-transparent flex items-center justify-end pr-1">
+        <div className="pointer-events-none absolute right-0 top-0 h-[calc(100%-8px)] w-14 bg-gradient-to-l from-boca-blue to-transparent flex items-center justify-end pr-1">
           <ChevronRight size={18} className="text-boca-gold/60 animate-pulse" />
         </div>
       )}

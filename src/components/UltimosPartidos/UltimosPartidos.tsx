@@ -44,10 +44,10 @@ export function UltimosPartidos() {
 
   return (
     <section aria-label="Últimos partidos">
-      <div className="bg-[#031d46] border border-[#00396e] rounded-sm overflow-hidden flex flex-col">
+      <div className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col">
 
         {/* Header */}
-        <div className="border-b border-[#003d7a] px-4 pt-4 pb-2 sm:px-6 sm:pt-6 sm:pb-3">
+        <div className="border-b border-boca-border-card px-4 pt-4 pb-2 sm:px-6 sm:pt-6 sm:pb-3">
           <h2 className="type-section-title text-white">Últimos partidos</h2>
         </div>
 
@@ -83,10 +83,10 @@ export function UltimosPartidos() {
           <div className="overflow-x-auto px-3 pb-3 sm:px-8 sm:pb-8">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b border-[#003d7a]">
-                  <th className="px-2 sm:px-6 py-2 text-left font-sans font-medium text-sm text-[#64748b]">Día</th>
-                  <th className="px-2 sm:px-3 py-2 text-left font-sans font-medium text-sm text-[#64748b]">Rival</th>
-                  <th className="px-2 sm:px-6 py-2 text-right font-sans font-medium text-sm text-[#64748b]">Resultado</th>
+                <tr className="border-b border-boca-border-card">
+                  <th className="px-2 sm:px-6 py-2 text-left font-sans font-medium text-sm text-text-muted">Día</th>
+                  <th className="px-2 sm:px-3 py-2 text-left font-sans font-medium text-sm text-text-muted">Rival</th>
+                  <th className="px-2 sm:px-6 py-2 text-right font-sans font-medium text-sm text-text-muted">Resultado</th>
                 </tr>
               </thead>
               <tbody>

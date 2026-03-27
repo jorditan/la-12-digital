@@ -13,25 +13,20 @@ import { EquiposGame } from './components/EquiposGame';
 function App() {
   return (
     <div
-      className="min-h-screen text-white font-serif relative overflow-x-hidden"
-      style={{
-        background: 'linear-gradient(166.99deg, #001529 1%, rgb(0,35,68) 72.17%, rgb(0,62,121) 101.68%, rgb(0,73,143) 111.31%)',
-      }}
+      className="min-h-screen text-white font-serif relative overflow-x-hidden bg-app-bg"
     >
       {/* ── Estrella decorativa de fondo (motivo Boca) ── */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <svg
           viewBox="0 0 200 200"
           xmlns="http://www.w3.org/2000/svg"
-          className="absolute"
+          className="absolute opacity-[0.035] fill-deco-star"
           style={{
             width: '680px',
             height: '680px',
             right: '-120px',
             top: '50%',
             transform: 'translateY(-30%) rotate(15deg)',
-            opacity: 0.035,
-            fill: '#4a9edd',
           }}
         >
           <polygon points="100,0 122,69 194,69 137,112 159,181 100,138 41,181 63,112 6,69 78,69" />
@@ -39,15 +34,13 @@ function App() {
         <svg
           viewBox="0 0 200 200"
           xmlns="http://www.w3.org/2000/svg"
-          className="absolute"
+          className="absolute opacity-[0.025] fill-deco-star"
           style={{
             width: '320px',
             height: '320px',
             left: '-60px',
             bottom: '8%',
             transform: 'rotate(-10deg)',
-            opacity: 0.025,
-            fill: '#4a9edd',
           }}
         >
           <polygon points="100,0 122,69 194,69 137,112 159,181 100,138 41,181 63,112 6,69 78,69" />

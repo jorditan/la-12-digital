@@ -12,9 +12,9 @@ export function CardVideo({ video }: CardVideoProps) {
       target="_blank"
       rel="noopener noreferrer"
       className="
-        group flex flex-col overflow-hidden rounded-sm transition-all duration-200 bg-[#002140] 
+        group flex flex-col overflow-hidden rounded-sm transition-all duration-200 bg-boca-blue-light 
         hover:border-boca-gold
-        border-[#00396e] border-2 hover:shadow-sm
+        border-boca-border border-2 hover:shadow-sm
         focus-within:outline focus-within:outline-2 focus-within:outline-boca-gold
       "
     >
@@ -23,13 +23,13 @@ export function CardVideo({ video }: CardVideoProps) {
           <img
             src={video.thumbnail}
             alt={video.titulo}
-            className="absolute inset-0 border-b-2 border-[#00396e] w-full h-full object-cover"
+            className="absolute inset-0 border-b-2 border-boca-border w-full h-full object-cover"
             loading="lazy"
             draggable={false}
           />
 
         {/* Duration badge — rojo estilo YouTube */}
-        <span className="absolute bottom-2 right-2 bg-[#cc0000] text-white font-serif text-[11px] font-semibold px-1.5 py-0.5 rounded-sm tabular-nums">
+        <span className="absolute bottom-2 right-2 bg-youtube-red text-white font-serif text-[11px] font-semibold px-1.5 py-0.5 rounded-sm tabular-nums">
           {video.duracion}
         </span>
       </div>

@@ -7,12 +7,11 @@ export function StatsGrid({ slot }: { slot: HourlyForecast }) {
       {/* Temperatura — columna izquierda grande */}
       <div className="bg-boca-gold/[0.07] border border-boca-gold/10 rounded-sm px-4 flex flex-col justify-center min-w-[88px]">
         <p
-          className="font-bold text-boca-gold leading-none"
-          style={{ fontSize: '2.4rem', fontFamily: 'Geist, sans-serif' }}
+          className="font-bold text-boca-gold leading-none text-[2.4rem] font-sans"
         >
           {slot.tempC}°
         </p>
-        <p className="type-ui-label text-text-secondary mt-1.5" style={{ fontSize: '10px', letterSpacing: '0.06em' }}>
+        <p className="type-ui-label text-text-secondary mt-1.5 text-[10px] tracking-[0.06em]">
           TEMP.
         </p>
       </div>

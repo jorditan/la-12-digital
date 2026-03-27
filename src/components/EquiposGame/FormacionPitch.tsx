@@ -100,8 +100,7 @@ export function FormacionPitch({ players, gameState }: FormacionPitchProps) {
     <div className="space-y-3">
       {/* Cancha */}
       <div
-        className="relative rounded-sm overflow-hidden"
-        style={{ background: 'linear-gradient(180deg, #0d5c2a 0%, #0a4a22 100%)' }}
+        className="relative rounded-sm overflow-hidden bg-pitch-field"
       >
         <PitchLines />
 

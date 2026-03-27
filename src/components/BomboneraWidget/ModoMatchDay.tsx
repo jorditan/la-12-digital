@@ -48,7 +48,7 @@ export function ModoMatchDay({
                 <img src="/escudo_boca.png" alt="Boca Juniors" className="w-6 h-6 object-contain" />
               </div>
               <span className="type-ui-label text-text-secondary">vs</span>
-              <div className="w-8 h-8 rounded-[3px] bg-[#003d7a] flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-[3px] bg-boca-border-card flex items-center justify-center flex-shrink-0">
                 <img
                   src={rival.logo}
                   alt={rival.name}
@@ -58,7 +58,7 @@ export function ModoMatchDay({
               </div>
               <div>
                 <p className="font-serif text-white font-semibold text-base leading-tight">{rival.name}</p>
-                <p className="type-ui-label text-text-secondary mt-0.5" style={{ fontSize: '14px' }}>
+                <p className="type-ui-label text-text-secondary mt-0.5 text-sm">
                   {isToday ? 'Hoy' : 'Mañana'} · {proximoLocal.time} hs · {proximoLocal.competition}
                 </p>
               </div>
@@ -72,7 +72,7 @@ export function ModoMatchDay({
         {/* Stats + label */}
         {slotMatch ? (
           <>
-            <p className="type-ui-label font-serif text-text-secondary" style={{ fontSize: '14px', letterSpacing: '0.06em' }}>
+            <p className="type-ui-label font-serif text-text-secondary text-sm tracking-[0.06em]">
               Pronóstico para ese día · {matchForecast!.timeLabel} HS
             </p>
             <StatsGrid slot={slotMatch} />

@@ -1,4 +1,5 @@
 import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
+import { fetchWithTimeout } from '../utils/fetchWithTimeout';
 
 // In production the Worker injects the key server-side (Cloudflare secret).
 // In dev we call Newsdata directly using the VITE_ key from .env.
@@ -24,7 +25,18 @@ export interface NoticiaRaw {
   titulo: string;
   imagen: string;
   fecha: string;
-  url: string;
+  url: string | undefined;
+}
+
+/** FIX: Verify URL uses http/https protocol (prevents javascript:, data:, etc.) */
+function isSafeUrl(url: string | null | undefined): url is string {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+  } catch {
+    return false;
+  }
 }
 
 export async function fetchNewsdataNoticias(): Promise<NoticiaRaw[]> {
@@ -44,7 +56,8 @@ export async function fetchNewsdataNoticias(): Promise<NoticiaRaw[]> {
   if (isDev) paramsObj.apikey = API_KEY;
   const params = new URLSearchParams(paramsObj);
 
-  const res = await fetch(`${BASE_URL}?${params}`);
+  // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
+  const res = await fetchWithTimeout(`${BASE_URL}?${params}`);
   if (!res.ok) throw new Error(`Newsdata error: ${res.status}`);
 
   const data: NewsdataResponse = await res.json();
@@ -56,10 +69,12 @@ export async function fetchNewsdataNoticias(): Promise<NoticiaRaw[]> {
     .map(a => ({
       id:     a.article_id,
       titulo: a.title,
-      imagen: a.image_url!,
+      // FIX: Validate external URLs to prevent javascript:/data: injection
+      imagen: isSafeUrl(a.image_url) ? a.image_url : '',
       fecha:  a.pubDate,
-      url:    a.link,
-    }));
+      url:    isSafeUrl(a.link) ? a.link : undefined,
+    }))
+    .filter(a => a.imagen !== '');
 
   if (result.length) setCachedData(CACHE_KEY, result);
   return result;

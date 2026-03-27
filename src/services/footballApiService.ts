@@ -1,4 +1,5 @@
 import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
+import { fetchWithTimeout } from '../utils/fetchWithTimeout';
 import type { ProcessedFixture, MatchResult } from '../types/football';
 
 // Live Score API — https://livescore-api.com/
@@ -211,7 +212,8 @@ async function fetchLS<T>(
   const promise = (async () => {
     const qs  = new URLSearchParams({ ...auth(), ...params }).toString();
     const url = `${BASE_URL}${endpoint}?${qs}`;
-    const res = await fetch(url);
+    // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
+    const res = await fetchWithTimeout(url);
     if (!res.ok) throw new Error(`LiveScore error ${res.status}: ${endpoint}`);
     const json = await res.json() as { success: boolean; data: T; error?: string };
     if (!json.success) throw new Error(`LiveScore API error: ${json.error ?? 'unknown'}`);

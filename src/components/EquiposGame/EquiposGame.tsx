@@ -24,8 +24,7 @@ export function EquiposGame() {
         <div className="relative bg-boca-blue-light border border-boca-gold/30 rounded-sm overflow-hidden shadow-[0_0_24px_rgba(255,193,7,0.06)] hover:border-boca-gold/60 transition-colors">
           {/* Overlay degradado */}
           <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ background: 'linear-gradient(to top, #031428 40%, transparent 100%)' }}
+            className="absolute inset-0 pointer-events-none bg-overlay-game"
             aria-hidden="true"
           />
 

@@ -1,3 +1,5 @@
+import { fetchWithTimeout } from '../utils/fetchWithTimeout';
+
 /**
  * WEATHER SERVICE — La 12 Digital
  * Proveedor: Open-Meteo (https://open-meteo.com)
@@ -153,7 +155,8 @@ async function fetchAllSlots(): Promise<HourlyForecast[]> {
   if (sessionFailed) return [];
 
   try {
-    const res = await fetch(OPEN_METEO_URL);
+    // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
+    const res = await fetchWithTimeout(OPEN_METEO_URL);
     if (!res.ok) throw new Error(`Open-Meteo error ${res.status}`);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

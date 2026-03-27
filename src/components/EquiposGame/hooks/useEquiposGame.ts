@@ -1,12 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BOCA_EQUIPOS, type BocaEquipo } from '../../../data/bocaEquipos';
 import { type GameState, type PlayerState, type Score, ROUND_SECS } from '../types';
+import { normalize } from '../../../utils/stringMatch';
+import { INPUT_FOCUS_DELAY_MS, INPUT_ERROR_DURATION_MS } from '../../../utils/gameConfig';
 
 // ── Helpers puros ─────────────────────────────────────────────────────────────
-
-function normalize(s: string) {
-  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
 
 function isMatchPlayer(raw: string, fullName: string): boolean {
   const n = normalize(raw.trim());
@@ -110,7 +108,7 @@ export function useEquiposGame(): EquiposGameState {
   // Focus input al abrir
   useEffect(() => {
     if (gameState !== 'playing') return;
-    const t = setTimeout(() => inputRef.current?.focus(), 50);
+    const t = setTimeout(() => inputRef.current?.focus(), INPUT_FOCUS_DELAY_MS);
     return () => clearTimeout(t);
   }, [gameState]);
 
@@ -141,7 +139,7 @@ export function useEquiposGame(): EquiposGameState {
         setInputError(false);
         setInput('');
         inputRef.current?.focus();
-      }, 600);
+      }, INPUT_ERROR_DURATION_MS);
     }
   };
 

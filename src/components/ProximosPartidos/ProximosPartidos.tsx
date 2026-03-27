@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapPin, ChevronRight, LayoutGrid, List } from 'lucide-react';
+import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 import { fetchUpcomingMatches, BOCA_ID, type ProximoPartido } from '../../services/apifootball';
 import { Badge } from '../Badge';
 import { ESCUDO_VACIO } from '../../data/equipos';
@@ -29,9 +30,9 @@ export function ProximosPartidos() {
   useEffect(() => { cargar(); }, []);
 
   return (
-    <section aria-label="Próximos partidos" className='bg-[#031d46] border border-[#00396e] rounded-sm overflow-hidden flex flex-col'>
+    <section aria-label="Próximos partidos" className='bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col'>
        {/* Header */}
-      <div className="border-b border-[#003d7a] px-6 pt-6 pb-3 flex items-center justify-between gap-3">
+      <div className="border-b border-boca-border-card px-6 pt-6 pb-3 flex items-center justify-between gap-3">
         <h2 className="type-section-title text-white">
           Próximos partidos
         </h2>
@@ -106,36 +107,7 @@ export function ProximosPartidos() {
 // ── Fila scrolleable con drag ─────────────────────────────────────────────────
 
 function ScrollRow({ partidos }: { partidos: ProximoPartido[] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
-  const [canScrollLeft, setCanScrollLeft]   = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-
-  const checkScroll = () => {
-    if (!ref.current) return;
-    const { scrollLeft: sl, scrollWidth, clientWidth } = ref.current;
-    setCanScrollLeft(sl > 4);
-    setCanScrollRight(sl + clientWidth < scrollWidth - 4);
-  };
-
-  useEffect(() => { checkScroll(); }, [partidos]);
-
-  const onPointerDown = (e: React.PointerEvent) => {
-    dragging.current = true;
-    startX.current = e.clientX;
-    scrollLeft.current = ref.current!.scrollLeft;
-    ref.current!.setPointerCapture(e.pointerId);
-  };
-
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!dragging.current) return;
-    const delta = e.clientX - startX.current;
-    ref.current!.scrollLeft = scrollLeft.current - delta;
-  };
-
-  const stopDrag = () => { dragging.current = false; };
+  const { ref, canScrollLeft, canScrollRight, onPointerDown, onPointerMove, stopDrag } = useHorizontalScroll();
 
   return (
     <div className="relative">
@@ -143,7 +115,6 @@ function ScrollRow({ partidos }: { partidos: ProximoPartido[] }) {
         ref={ref}
         className="flex gap-4 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
-        onScroll={checkScroll}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={stopDrag}
@@ -156,12 +127,12 @@ function ScrollRow({ partidos }: { partidos: ProximoPartido[] }) {
 
       {/* Gradiente izquierdo */}
       {canScrollLeft && (
-        <div className="pointer-events-none absolute left-0 top-0 h-[calc(100%-8px)] w-12 bg-gradient-to-r from-[#031d46] to-transparent" />
+        <div className="pointer-events-none absolute left-0 top-0 h-[calc(100%-8px)] w-12 bg-gradient-to-r from-boca-blue-mid to-transparent" />
       )}
 
       {/* Gradiente + hint derecho */}
       {canScrollRight && (
-        <div className="pointer-events-none absolute right-0 top-0 h-[calc(100%-8px)] w-16 bg-gradient-to-l from-[#031d46] to-transparent flex items-center justify-end pr-1">
+        <div className="pointer-events-none absolute right-0 top-0 h-[calc(100%-8px)] w-16 bg-gradient-to-l from-boca-blue-mid to-transparent flex items-center justify-end pr-1">
           <ChevronRight size={18} className="text-boca-gold/60 animate-pulse" />
         </div>
       )}

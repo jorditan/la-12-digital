@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { Button } from '../Button';
 import { type Idolo } from '../../data/idolos';
 import { ESCUDO_VACIO } from '../../data/equipos';
-import { type GameState, type Score, RESULT_SECS } from './types';
+import { type GameState, type Score, RESULT_SECS, ROUND_SECS } from './types';
 import { TimerBar } from './TimerBar';
 import { IdoloPlaceholder } from './IdoloPlaceholder';
 import { DificultadBadge } from './DificultadBadge';
@@ -144,7 +144,7 @@ function PlayingContent({
   return (
     <>
       <div className="flex items-center justify-between gap-3">
-        <TimerBar timer={timer} />
+        <TimerBar timer={timer} total={ROUND_SECS} />
         <span className="font-sans text-xs text-text-secondary tabular-nums shrink-0 w-6 text-right">
           {timer}s
         </span>
@@ -246,7 +246,7 @@ export function GameModal(props: GameModalProps) {
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0, 10, 29, 0.85)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'var(--color-modal-backdrop)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
       <div

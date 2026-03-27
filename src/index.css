@@ -14,6 +14,53 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* ── UI TOKENS ──────────────────────────────────────────────────────────────
+     Variables CSS del design system La 12 Digital.
+     Uso: var(--color-bg-card), etc.
+     ────────────────────────────────────────────────────────────────────────── */
+
+  /* Backgrounds */
+  --color-bg-primary: #001529;
+  --color-bg-card: #002140;
+  --color-bg-mid-card: #031d46;
+  --color-bg-widget-accent: #003d7a;
+  --color-bg-overlay: #031428;
+  --color-modal-backdrop: rgba(0, 10, 29, 0.85);
+  --color-modal-backdrop-dark: rgba(0, 10, 29, 0.88);
+
+  /* Borders */
+  --color-border-subtle: #00396e;
+  --color-border-card: #003d7a;
+  --color-border-gold: rgba(255, 215, 0, 0.15);
+  --color-border-gold-hover: rgba(255, 215, 0, 0.35);
+
+  /* Text */
+  --color-text-primary: #FFFFFF;
+  --color-text-nav: #e0e7ff;
+  --color-text-on-gold: #0052a3;
+  --color-text-secondary: #8BA3C7;
+  --color-text-muted: #64748b;
+
+  /* Brand */
+  --color-gold: #FFD700;
+  --color-blue: #001529;
+
+  /* Decorative */
+  --color-deco-star: #4a9edd;
+
+  /* Game/Pitch */
+  --color-pitch-green: #0d5c2a;
+  --color-pitch-green-dark: #0a4a22;
+
+  /* External brands */
+  --color-youtube-red: #cc0000;
+  --color-status-negative: #f87171;
+
+  /* Gradients */
+  --gradient-app-bg: linear-gradient(166.99deg, #001529 1%, rgb(0,35,68) 72.17%, rgb(0,62,121) 101.68%, rgb(0,73,143) 111.31%);
+  --gradient-overlay-game: linear-gradient(to top, #031428 40%, transparent 100%);
+  --gradient-pitch: linear-gradient(180deg, #0d5c2a 0%, #0a4a22 100%);
 }
 
 body {

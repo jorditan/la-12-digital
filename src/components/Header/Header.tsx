@@ -72,7 +72,7 @@ export function Header() {
                         'focus:outline-none focus-visible:ring-2 focus-visible:ring-boca-gold',
                         isActive
                           ? 'text-boca-gold border-b-2 border-boca-gold'
-                          : 'text-[#e0e7ff] hover:text-boca-gold',
+                          : 'text-text-nav hover:text-boca-gold',
                       ].join(' ')}
                     >
                       {label}
@@ -131,7 +131,7 @@ export function Header() {
                       'transition-colors duration-normal',
                       isActive
                         ? 'text-boca-gold border-b-2 border-boca-gold'
-                        : 'text-[#e0e7ff] hover:text-boca-gold',
+                        : 'text-text-nav hover:text-boca-gold',
                     ].join(' ')}
                   >
                     {label}

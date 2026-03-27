@@ -16,11 +16,27 @@
  *   npx wrangler deploy    # bundle worker.js + upload dist/ as assets
  */
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+// FIX: Restrict CORS to known origins instead of wildcard
+const ALLOWED_ORIGINS = [
+  'https://la12digital.com',
+  'https://www.la12digital.com',
+  'https://la-12-digital.matiasowjordan.workers.dev',
+  'http://localhost:5173',    // dev
+  'http://localhost:4173',    // preview
+];
+
+function getCorsOrigin(request) {
+  const origin = request.headers.get('Origin') || '';
+  return ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+}
+
+function getCorsHeaders(request) {
+  return {
+    'Access-Control-Allow-Origin': getCorsOrigin(request),
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+}
 
 // Security headers added to every HTML (SPA) response.
 const SECURITY_HEADERS = {
@@ -51,9 +67,44 @@ const SECURITY_HEADERS = {
   ].join('; '),
 };
 
+/** FIX: Simple in-memory rate limiter (resets per worker isolate restart) */
+const _rlStore = new Map();
+
+/**
+ * Returns true if the IP has exceeded the limit.
+ * @param {string} ip
+ * @param {number} limit - max requests per window
+ * @param {number} windowMs - window in ms
+ */
+function isRateLimited(ip, limit = 60, windowMs = 60_000) {
+  const now = Date.now();
+  const entry = _rlStore.get(ip) ?? { count: 0, resetAt: now + windowMs };
+  if (now > entry.resetAt) {
+    entry.count = 0;
+    entry.resetAt = now + windowMs;
+  }
+  entry.count++;
+  _rlStore.set(ip, entry);
+  return entry.count > limit;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    // FIX: Rate limiting for /api/* routes
+    if (url.pathname.startsWith('/api/')) {
+      const clientIp = request.headers.get('CF-Connecting-IP') ?? 'unknown';
+      if (isRateLimited(clientIp)) {
+        return new Response('Too Many Requests', {
+          status: 429,
+          headers: {
+            'Retry-After': '60',
+            'Content-Type': 'text/plain',
+          },
+        });
+      }
+    }
 
     // Route YouTube API calls through the proxy (key stored as VITE_YOUTUBE_KEY secret).
     if (url.pathname.startsWith('/api/youtube/')) {
@@ -89,8 +140,9 @@ export default {
 };
 
 async function handleYoutubeProxy(request, url, env) {
+  const corsHeaders = getCorsHeaders(request);
   if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
   if (request.method !== 'GET') {
     return new Response('Method Not Allowed', { status: 405 });
@@ -110,7 +162,7 @@ async function handleYoutubeProxy(request, url, env) {
     console.error('[youtube-proxy] upstream fetch failed:', err);
     return new Response(JSON.stringify({ error: 'upstream_error' }), {
       status: 502,
-      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
   }
 
@@ -120,14 +172,15 @@ async function handleYoutubeProxy(request, url, env) {
     headers: {
       'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
       'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-      ...CORS_HEADERS,
+      ...corsHeaders,
     },
   });
 }
 
 async function handleNewsdataProxy(request, url, env) {
+  const corsHeaders = getCorsHeaders(request);
   if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
   if (request.method !== 'GET') {
     return new Response('Method Not Allowed', { status: 405 });
@@ -143,7 +196,7 @@ async function handleNewsdataProxy(request, url, env) {
     console.error('[newsdata-proxy] upstream fetch failed:', err);
     return new Response(JSON.stringify({ error: 'upstream_error' }), {
       status: 502,
-      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
   }
 
@@ -153,7 +206,7 @@ async function handleNewsdataProxy(request, url, env) {
     headers: {
       'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
       'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600',
-      ...CORS_HEADERS,
+      ...corsHeaders,
     },
   });
 }
@@ -165,8 +218,9 @@ async function handleNewsdataProxy(request, url, env) {
 const SAFE_LIVESCORE_PATH = /^(\/[a-zA-Z0-9][a-zA-Z0-9_\-.]*)+$/;
 
 async function handleLivescoreProxy(request, url, env) {
+  const corsHeaders = getCorsHeaders(request);
   if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
   if (request.method !== 'GET') {
     return new Response('Method Not Allowed', { status: 405 });
@@ -180,8 +234,8 @@ async function handleLivescoreProxy(request, url, env) {
 
   // Inject credentials server-side so they are never exposed to the browser.
   const params = new URLSearchParams(url.search);
-  params.set('key', env.VITE_LIVESCORE_KEY ?? '');
-  params.set('secret', env.VITE_LIVESCORE_SECRET ?? '');
+  params.set('key', env.LIVESCORE_KEY ?? '');
+  params.set('secret', env.LIVESCORE_SECRET ?? '');
 
   let upstreamRes;
   try {
@@ -192,7 +246,7 @@ async function handleLivescoreProxy(request, url, env) {
     console.error('[livescore-proxy] upstream fetch failed:', err);
     return new Response(JSON.stringify({ error: 'upstream_error' }), {
       status: 502,
-      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
   }
 
@@ -202,7 +256,7 @@ async function handleLivescoreProxy(request, url, env) {
     headers: {
       'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
       'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-      ...CORS_HEADERS,
+      ...corsHeaders,
     },
   });
 }

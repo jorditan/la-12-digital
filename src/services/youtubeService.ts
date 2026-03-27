@@ -1,4 +1,5 @@
 import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
+import { fetchWithTimeout } from '../utils/fetchWithTimeout';
 
 export interface VideoItem {
   id: string;
@@ -52,10 +53,13 @@ async function getUploadsPlaylistId(handle: string): Promise<string> {
     forHandle: handle.replace('@', ''),
     part: 'contentDetails',
   });
-  const res = await fetch(`${BASE}/channels?${params}`);
+  // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
+  const res = await fetchWithTimeout(`${BASE}/channels?${params}`);
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`YouTube channels error: ${res.status} — ${body.slice(0, 200)}`);
+    // FIX: Only include response details in development to avoid leaking internal info
+    const detail = import.meta.env?.DEV ? ` — ${body.slice(0, 200)}` : '';
+    throw new Error(`YouTube channels error: ${res.status}${detail}`);
   }
   const data = await res.json();
   const playlistId: string | undefined = data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
@@ -77,10 +81,13 @@ async function getPlaylistItems(playlistId: string, maxResults = 12): Promise<Pl
     part: 'snippet',
     maxResults: String(maxResults),
   });
-  const res = await fetch(`${BASE}/playlistItems?${params}`);
+  // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
+  const res = await fetchWithTimeout(`${BASE}/playlistItems?${params}`);
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`YouTube playlistItems error: ${res.status} — ${body.slice(0, 200)}`);
+    // FIX: Only include response details in development to avoid leaking internal info
+    const detail = import.meta.env?.DEV ? ` — ${body.slice(0, 200)}` : '';
+    throw new Error(`YouTube playlistItems error: ${res.status}${detail}`);
   }
   const data = await res.json();
 
@@ -110,7 +117,8 @@ async function getVideoDetails(ids: string[]): Promise<Map<string, VideoDetail>>
     id: ids.join(','),
     part: 'contentDetails,statistics',
   });
-  const res = await fetch(`${BASE}/videos?${params}`);
+  // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
+  const res = await fetchWithTimeout(`${BASE}/videos?${params}`);
   if (!res.ok) throw new Error(`YouTube videos error: ${res.status}`);
   const data = await res.json();
 

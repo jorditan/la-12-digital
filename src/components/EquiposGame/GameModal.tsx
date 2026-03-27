@@ -159,7 +159,7 @@ export function GameModal(props: GameModalProps) {
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0, 10, 29, 0.88)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'var(--color-modal-backdrop-dark)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
       <div
