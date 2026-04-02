@@ -40,7 +40,7 @@ export function CanalYoutube() {
               className={`
                 font-sans text-xs font-medium px-3 py-1.5 rounded-full border transition-colors
                 ${canal.handle === c.handle
-                  ? 'bg-boca-gold text-on-gold border-boca-gold'
+                  ? 'bg-boca-gold text-boca-blue font-semibold border-boca-gold'
                   : 'border-boca-border text-text-nav hover:border-boca-gold/50 hover:text-boca-gold'}
               `}
             >
@@ -90,9 +90,9 @@ export function CanalYoutube() {
             <VideoScrollRow videos={videos} />
           </div>
           {/* Desktop: bento layout */}
-          <div className="hidden sm:grid gap-3" style={{ gridTemplateColumns: '2fr 1fr 1fr', gridTemplateRows: 'auto auto' }}>
+          <div className="hidden sm:grid gap-3" style={{ gridTemplateColumns: '2fr 1fr 1fr', gridTemplateRows: '1fr 1fr' }}>
             {/* Video destacado — ocupa 2 filas */}
-            <div className="row-span-2">
+            <div className="row-span-2 h-full">
               <CardVideo video={videos[0]} featured />
             </div>
             {/* Hasta 4 videos secundarios */}

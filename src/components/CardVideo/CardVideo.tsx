@@ -12,15 +12,16 @@ export function CardVideo({ video, featured }: CardVideoProps) {
       href={`https://www.youtube.com/watch?v=${video.id}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="
-        group flex flex-col overflow-hidden rounded-sm transition-all duration-200 bg-boca-blue-light 
+      className={`
+        group flex flex-col overflow-hidden rounded-sm transition-all duration-200 bg-boca-blue-light
         hover:border-boca-gold
         border-boca-border border-2 hover:shadow-sm
         focus-within:outline focus-within:outline-2 focus-within:outline-boca-gold
-      "
+        ${featured ? 'h-full' : ''}
+      `}
     >
-      {/* Thumbnail — edge-to-edge, 16:9, sin padding ni marco */}
-      <div className="relative aspect-video overflow-hidden">
+      {/* Thumbnail — edge-to-edge, 16:9 en cards normales; flex-1 en featured */}
+      <div className={`relative overflow-hidden ${featured ? 'flex-1 min-h-0' : 'aspect-video'}`}>
           <img
             src={video.thumbnail}
             alt={video.titulo}
@@ -36,7 +37,7 @@ export function CardVideo({ video, featured }: CardVideoProps) {
       </div>
 
       {/* Título — blanco en default, dorado en hover */}
-      <div className="px-3 py-3">
+      <div className="px-3 py-3 shrink-0">
         <p className={`font-serif font-medium leading-[1.4] uppercase tracking-wide text-white transition-colors duration-200 line-clamp-3 ${featured ? 'text-xl' : 'text-md'}`}>
           {video.titulo}
         </p>
