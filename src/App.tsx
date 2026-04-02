@@ -1,14 +1,13 @@
 import { Header } from './components/Header';
 import { BannerMensaje } from './components/BannerMensaje';
 import { UltimosPartidos } from './components/UltimosPartidos';
-import { TablaPosiciones } from './components/TablaPosiciones';
 import { BomboneraWidget } from './components/BomboneraWidget';
 import { ProximosPartidos } from './components/ProximosPartidos';
-import { Separator } from './components/Separator';
 import { Noticias } from './components/Noticias';
 import { CanalYoutube } from './components/CanalYoutube';
 import { IdolosGame } from './components/IdolosGame';
 import { EquiposGame } from './components/EquiposGame';
+import { Sidebar } from './components/Sidebar';
 
 function App() {
   return (
@@ -48,43 +47,30 @@ function App() {
       </div>
       <Header />
       <BannerMensaje />
-      <div className="w-full px-3 md:px-4 sm:px-6 py-3 sm:py-8">
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-0 items-stretch lg:items-start">
-
-          {/* Main: todo el contenido desplazable */}
-          <main className="w-full flex-1 min-w-0 lg:pr-4">
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-5 sm:mb-8">
-              <div className="sm:flex-1 min-w-0">
-                <BomboneraWidget />
-              </div>
-              <div className="sm:flex-1 min-w-0">
-                <UltimosPartidos />
-              </div>
+      <Sidebar />
+      <div className="w-full px-3 md:px-4 sm:px-6 py-3 sm:py-8 lg:mr-80 xl:mr-96">
+        <main className="w-full">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-5 sm:mb-8">
+            <div className="sm:flex-1 min-w-0">
+              <BomboneraWidget />
             </div>
-            <ProximosPartidos />
-            <div className="mt-6 sm:mt-10">
-              <Noticias />
+            <div className="sm:flex-1 min-w-0">
+              <UltimosPartidos />
             </div>
-            {/* ── Minijuegos ── */}
-            <div className="mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <IdolosGame />
-              <EquiposGame />
-            </div>
-            <div className="mt-6 sm:mt-10">
-              <CanalYoutube />
-            </div>
-          </main>
-
-          <Separator />
-
-          {/* Aside: sticky en desktop */}
-          <aside className="pl-4 w-full lg:w-80 xl:w-96 shrink-0">
-            <div className="sticky top-8 flex flex-col gap-6">
-              <TablaPosiciones />
-            </div>
-          </aside>
-
-        </div>
+          </div>
+          <ProximosPartidos />
+          <div className="mt-6 sm:mt-10">
+            <Noticias />
+          </div>
+          {/* ── Minijuegos ── */}
+          <div className="mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <IdolosGame />
+            <EquiposGame />
+          </div>
+          <div className="mt-6 sm:mt-10">
+            <CanalYoutube />
+          </div>
+        </main>
       </div>
     </div>
   )
