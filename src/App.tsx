@@ -65,6 +65,11 @@ function App() {
             <div className="mt-6 sm:mt-10">
               <Noticias />
             </div>
+            {/* ── Minijuegos ── */}
+            <div className="mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <IdolosGame />
+              <EquiposGame />
+            </div>
             <div className="mt-6 sm:mt-10">
               <CanalYoutube />
             </div>
@@ -76,8 +81,6 @@ function App() {
           <aside className="pl-4 w-full lg:w-80 xl:w-96 shrink-0">
             <div className="sticky top-8 flex flex-col gap-6">
               <TablaPosiciones />
-              <IdolosGame />
-              <EquiposGame />
             </div>
           </aside>
 
