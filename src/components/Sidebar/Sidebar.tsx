@@ -33,20 +33,51 @@ export function Sidebar() {
           ${collapsed ? 'w-10' : 'w-80 xl:w-96'}
         `}
       >
-        <button
-          onClick={toggle}
-          aria-label={collapsed ? 'Expandir panel' : 'Colapsar panel'}
-          className="absolute -left-3 top-20 z-10 w-6 h-6 rounded-full
-            bg-boca-blue-light border border-boca-border
-            flex items-center justify-center
-            text-text-nav hover:text-boca-gold transition-colors"
-        >
-          {collapsed ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
-        </button>
+        {collapsed ? (
+          /* Tab vertical clickeable */
+          <button
+            onClick={toggle}
+            aria-label="Expandir tabla de posiciones"
+            className="
+              absolute top-1/2 -translate-y-1/2 right-0
+              flex flex-col items-center justify-center gap-2
+              w-10 py-5 rounded-l-lg
+              bg-boca-blue-light border border-r-0 border-boca-border
+              text-text-nav hover:text-boca-gold hover:bg-boca-blue
+              transition-colors cursor-pointer
+            "
+          >
+            <ChevronLeft size={14} />
+            <span
+              className="font-sans text-[10px] font-semibold tracking-[0.15em] text-current uppercase"
+              style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+            >
+              TABLA
+            </span>
+            <LayoutList size={14} />
+          </button>
+        ) : (
+          <>
+            {/* Header del panel */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-boca-border shrink-0">
+              <span className="font-sans text-xs font-semibold uppercase tracking-widest text-text-nav">
+                Tabla de posiciones
+              </span>
+              <button
+                onClick={toggle}
+                aria-label="Colapsar panel"
+                className="w-6 h-6 rounded flex items-center justify-center text-text-nav hover:text-boca-gold hover:bg-white/5 transition-colors"
+              >
+                <ChevronRight size={14} />
+              </button>
+            </div>
 
-        <div className={`flex-1 overflow-y-auto p-4 ${collapsed ? 'hidden' : 'block'}`}>
-          <TablaPosiciones />
-        </div>
+            {/* Contenido */}
+            <div className="flex-1 overflow-y-auto p-4">
+              <TablaPosiciones />
+            </div>
+          </>
+        )}
       </aside>
 
       {/* ── MOBILE: FAB + drawer ── */}
