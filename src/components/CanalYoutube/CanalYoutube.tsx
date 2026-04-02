@@ -4,7 +4,6 @@ import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 import { fetchVideos, type VideoYoutube } from '../../services/apifootball';
 import { CANAL_DEFAULT, CANALES_YOUTUBE } from '../../data/canalesYoutube';
 import { CardVideo } from '../CardVideo';
-import { CanalSelector } from '../CanalSelector';
 
 type Estado = 'loading' | 'error' | 'ok';
 
@@ -24,25 +23,36 @@ export function CanalYoutube() {
 
   return (
     <section aria-label="Videos de YouTube" className="w-full">
-      {/* Fila 1: icono + título + selector + link al canal */}
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-3">
-        <div className="flex flex-wrap gap-x-4 gap-y-2 items-center">
-          <Youtube size={24} className="text-boca-gold shrink-0" />
-          <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight sm:leading-10 text-boca-gold tracking-tight">
+      {/* Header: icono + título + pills de canal + link al canal */}
+      <div className="flex flex-col gap-3 mb-4">
+        <div className="flex items-center gap-3">
+          <Youtube size={20} className="text-boca-gold shrink-0" />
+          <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight text-boca-gold tracking-tight">
             Videos bosteros
           </h2>
-          <CanalSelector
-            canales={CANALES_YOUTUBE}
-            selected={canal}
-            onChange={setCanal}
-          />
         </div>
-
+        {/* Pills de canal */}
+        <div className="flex flex-wrap gap-2">
+          {CANALES_YOUTUBE.map(c => (
+            <button
+              key={c.handle}
+              onClick={() => setCanal(c)}
+              className={`
+                font-sans text-xs font-medium px-3 py-1.5 rounded-full border transition-colors
+                ${canal.handle === c.handle
+                  ? 'bg-boca-gold text-on-gold border-boca-gold'
+                  : 'border-boca-border text-text-nav hover:border-boca-gold/50 hover:text-boca-gold'}
+              `}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
         <a
           href={`https://www.youtube.com/${canal.handle}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="shrink-0 font-sans text-sm font-medium text-boca-gold border border-boca-gold/30 rounded-sm px-5 py-2 hover:bg-boca-gold/10 transition-colors"
+          className="self-start font-sans text-sm font-medium text-boca-gold border border-boca-gold/30 rounded-sm px-5 py-2 hover:bg-boca-gold/10 transition-colors"
         >
           Ver canal →
         </a>
@@ -79,9 +89,14 @@ export function CanalYoutube() {
           <div className="sm:hidden">
             <VideoScrollRow videos={videos} />
           </div>
-          {/* Desktop: grid */}
-          <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {videos.map((video) => (
+          {/* Desktop: bento layout */}
+          <div className="hidden sm:grid gap-3" style={{ gridTemplateColumns: '2fr 1fr 1fr', gridTemplateRows: 'auto auto' }}>
+            {/* Video destacado — ocupa 2 filas */}
+            <div className="row-span-2">
+              <CardVideo video={videos[0]} featured />
+            </div>
+            {/* Hasta 4 videos secundarios */}
+            {videos.slice(1, 5).map(video => (
               <CardVideo key={video.id} video={video} />
             ))}
           </div>

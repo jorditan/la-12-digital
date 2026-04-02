@@ -3,9 +3,10 @@ import type { VideoYoutube } from '../../services/apifootball';
 interface CardVideoProps {
   video: VideoYoutube;
   className?: string;
+  featured?: boolean;
 }
 
-export function CardVideo({ video }: CardVideoProps) {
+export function CardVideo({ video, featured }: CardVideoProps) {
   return (
     <a
       href={`https://www.youtube.com/watch?v=${video.id}`}
@@ -36,7 +37,7 @@ export function CardVideo({ video }: CardVideoProps) {
 
       {/* Título — blanco en default, dorado en hover */}
       <div className="px-3 py-3">
-        <p className="font-serif font-medium text-md leading-[1.4] uppercase tracking-wide text-white  transition-colors duration-200 line-clamp-3">
+        <p className={`font-serif font-medium leading-[1.4] uppercase tracking-wide text-white transition-colors duration-200 line-clamp-3 ${featured ? 'text-xl' : 'text-md'}`}>
           {video.titulo}
         </p>
       </div>
