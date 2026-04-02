@@ -36,61 +36,91 @@ export function ModoNormal({
       aria-label="La Bombonera hoy"
       className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col h-full"
     >
+      {/* Header */}
       <div className="border-b border-boca-border-card px-6 pt-6 pb-3">
         <h2 className="type-section-title text-white">Días restantes para ir a la bombonera</h2>
       </div>
 
-      <div className="px-6 pt-4 pb-6 flex flex-col gap-4 flex-1">
+      <div className="px-6 pt-5 pb-6 flex flex-col gap-5 flex-1">
 
-        {/* Match row — rival + countdown */}
+        {/* ── Contador + Rival ─────────────────────────────────────────── */}
         {proximoLocal && rival && diasHastaPartido !== null ? (
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-[3px] bg-boca-border-card flex items-center justify-center overflow-hidden flex-shrink-0">
-                <img
-                  src={rival.logo}
-                  alt={rival.name}
-                  className="w-6 h-6 object-contain"
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO; }}
-                />
-              </div>
-              <div>
-                <p className="font-serif text-white font-semibold text-base leading-tight">vs {rival.name}</p>
-                <p className="type-ui-label text-text-secondary mt-0.5 text-[10px]">
-                  {formatFechaLarga(proximoLocal.date).toUpperCase()} · {proximoLocal.time} HS
-                </p>
-                <p className="type-ui-label text-text-secondary text-[10px]">
-                  {proximoLocal.competition}
-                </p>
-              </div>
-            </div>
-            <div className="text-right flex-shrink-0">
-              <p className="font-bold text-boca-gold leading-none text-[2rem] font-sans">
+          <div className="flex items-stretch gap-4">
+
+            {/* Contador de días — protagonista visual */}
+            <div className="bg-boca-gold/5 border border-boca-gold/10 rounded-md px-4 py-3 flex flex-col items-center justify-center flex-shrink-0 min-w-[80px]">
+              <p className="font-bold text-boca-gold leading-none text-7xl font-sans tabular-nums">
                 {diasHastaPartido}
               </p>
-              <p className="type-ui-label text-text-secondary text-[10px]">
+              <p className="type-ui-label text-text-secondary mt-2 text-[10px] tracking-[0.14em]">
                 {diasHastaPartido === 1 ? 'DÍA' : 'DÍAS'}
               </p>
             </div>
+
+            {/* Info del partido */}
+            <div className="flex flex-col justify-center gap-2.5 flex-1 min-w-0">
+              {/* Escudo + nombre del rival */}
+              <div className="flex items-center gap-2.5">
+                <div className="w-12 h-12 rounded-[4px] bg-boca-border-card ring-1 ring-boca-border-card flex items-center justify-center overflow-hidden flex-shrink-0">
+                  <img
+                    src={rival.logo}
+                    alt={rival.name}
+                    className="w-8 h-8 object-contain"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO; }}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <p className="type-ui-label text-text-secondary text-[10px] tracking-[0.08em] mb-0.5">
+                    PRÓXIMO LOCAL
+                  </p>
+                  <p className="font-serif text-white font-semibold text-base leading-tight truncate">
+                    vs {rival.name}
+                  </p>
+                </div>
+              </div>
+
+              {/* Fecha + hora como badges */}
+              <div className="flex flex-wrap gap-1.5">
+                <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-[3px] px-2 py-0.5 type-ui-label text-text-secondary text-[10px] tracking-[0.05em]">
+                  {formatFechaLarga(proximoLocal.date).toUpperCase()}
+                </span>
+                <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-[3px] px-2 py-0.5 type-ui-label text-boca-gold text-[10px] tracking-[0.05em]">
+                  {proximoLocal.time} HS
+                </span>
+                <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-[3px] px-2 py-0.5 type-ui-label text-text-secondary text-[10px] tracking-[0.05em]">
+                  {proximoLocal.competition}
+                </span>
+              </div>
+            </div>
           </div>
         ) : (
-          <div className="flex items-center gap-3 animate-pulse">
-            <div className="w-9 h-9 rounded-[3px] bg-white/5 flex-shrink-0" />
-            <div className="flex flex-col gap-1.5">
-              <div className="h-3 w-32 bg-white/5 rounded" />
-              <div className="h-2.5 w-24 bg-white/5 rounded" />
+          /* Skeleton — refleja nuevo layout */
+          <div className="flex items-stretch gap-4 animate-pulse">
+            <div className="bg-white/5 rounded-md min-w-[80px] min-h-[96px]" />
+            <div className="flex flex-col justify-center gap-3 flex-1">
+              <div className="flex items-center gap-2.5">
+                <div className="w-12 h-12 rounded-[4px] bg-white/5 flex-shrink-0" />
+                <div className="flex flex-col gap-1.5">
+                  <div className="h-2 w-16 bg-white/5 rounded" />
+                  <div className="h-3.5 w-28 bg-white/5 rounded" />
+                </div>
+              </div>
+              <div className="flex gap-1.5">
+                <div className="h-5 w-24 bg-white/5 rounded-[3px]" />
+                <div className="h-5 w-14 bg-white/5 rounded-[3px]" />
+              </div>
             </div>
           </div>
         )}
 
-        {/* Separador + pronóstico */}
+        {/* ── Pronóstico del partido ───────────────────────────────────── */}
         <div>
-          <div className="border-t border-boca-border-card mb-3" />
+          <div className="border-t border-boca-border-card mb-4" />
 
-          <p className="type-ui-label text-text-secondary mb-3 text-sm tracking-[0.06em]">
+          <p className="type-ui-label text-text-secondary mb-3 text-[10px] tracking-[0.10em]">
             {matchForecast
-              ? `Pronóstico para ese día · ${matchForecast.timeLabel} HS`
-              : 'Pronóstico del estadio'}
+              ? `CONDICIONES DEL DÍA DEL PARTIDO · ${matchForecast.timeLabel} HS`
+              : 'CONDICIONES DEL DÍA DEL PARTIDO'}
           </p>
 
           {slotMatch ? (
@@ -106,33 +136,37 @@ export function ModoNormal({
 
           <ForecastRows forecast={matchForecast} />
 
-          {slotMatch && <ConditionsBlock slot={slotMatch} />}
+          {slotMatch && (
+            <div className="mt-3">
+              <ConditionsBlock slot={slotMatch} />
+            </div>
+          )}
         </div>
 
-        {/* Próximos partidos de local */}
+        {/* ── Próximos en casa ─────────────────────────────────────────── */}
         {proximosLocales.length > 0 && (
           <div>
             <div className="border-t border-boca-border-card mb-3" />
-            <p className="type-ui-label font-serif text-text-secondary mb-2 text-xs tracking-[0.06em]">
-              Próximos en casa
+            <p className="type-ui-label text-text-secondary mb-2.5 text-[10px] tracking-[0.10em]">
+              PRÓXIMOS EN CASA
             </p>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col divide-y divide-boca-border-card/60">
               {proximosLocales.map(p => {
-                const rival = p.homeTeam.id === BOCA_ID ? p.awayTeam : p.homeTeam;
+                const rivalItem = p.homeTeam.id === BOCA_ID ? p.awayTeam : p.homeTeam;
                 return (
-                  <div key={p.fixtureId} className="flex items-center gap-2.5 px-1">
+                  <div key={p.fixtureId} className="flex items-center gap-2.5 py-1.5 first:pt-0 last:pb-0">
                     <div className="w-6 h-6 rounded-[3px] bg-boca-border-card flex items-center justify-center flex-shrink-0">
                       <img
-                        src={rival.logo}
-                        alt={rival.name}
+                        src={rivalItem.logo}
+                        alt={rivalItem.name}
                         className="w-4 h-4 object-contain"
                         onError={(e) => { (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO; }}
                       />
                     </div>
-                    <p className="type-ui-label text-white flex-1 leading-none text-[11px]">
-                      vs {rival.name}
+                    <p className="type-ui-label text-text-nav flex-1 leading-none text-[11px] truncate">
+                      vs {rivalItem.name}
                     </p>
-                    <p className="type-ui-label text-text-secondary tabular-nums text-[10px]">
+                    <p className="type-ui-label text-text-secondary tabular-nums text-[10px] flex-shrink-0">
                       {formatFechaCorta(p.date).toUpperCase()}
                     </p>
                   </div>
