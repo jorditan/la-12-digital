@@ -38,7 +38,7 @@ export function ModoNormal({
     >
       {/* Header */}
       <div className="border-b border-boca-border-card px-6 pt-6 pb-3">
-        <h2 className="type-section-title text-white">Días restantes para ir a la bombonera</h2>
+        <h2 className="font-serif font-bold italic text-2xl leading-tight text-white">Días restantes para ir a la bombonera</h2>
       </div>
 
       <div className="px-6 pt-5 pb-6 flex flex-col gap-5 flex-1">

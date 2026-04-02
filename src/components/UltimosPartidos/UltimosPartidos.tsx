@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchLastMatches, BOCA_ID, type MatchResult } from '../../services/apifootball';
+import { Badge } from '../Badge';
 
 type Estado = 'loading' | 'error' | 'ok';
 type Resultado = 'victoria' | 'derrota' | 'empate';
@@ -54,7 +55,7 @@ export function UltimosPartidos() {
         {/* Loading */}
         {estado === 'loading' && (
           <div className="flex flex-col">
-            {Array.from({ length: 8 }, (_, i) => <SkeletonRow key={i} />)}
+            {Array.from({ length: 12 }, (_, i) => <SkeletonRow key={i} />)}
           </div>
         )}
 
@@ -86,6 +87,7 @@ export function UltimosPartidos() {
                 <tr className="border-b border-boca-border-card">
                   <th className="px-2 sm:px-6 py-2 text-left font-sans font-medium text-sm text-text-muted">Día</th>
                   <th className="px-2 sm:px-3 py-2 text-left font-sans font-medium text-sm text-text-muted">Rival</th>
+                  <th className="hidden sm:table-cell px-2 py-2 text-left font-sans font-medium text-sm text-text-muted max-w-[70px]">Copa</th>
                   <th className="px-2 sm:px-6 py-2 text-right font-sans font-medium text-sm text-text-muted">Resultado</th>
                 </tr>
               </thead>
@@ -107,6 +109,16 @@ export function UltimosPartidos() {
                       </td>
                       <td className="px-2 sm:px-3 py-2 sm:py-3 font-sans font-normal text-sm text-white max-w-[110px] truncate" title={rival.name}>
                         {rival.name}
+                      </td>
+                      <td className="hidden sm:table-cell px-2 py-2 sm:py-3 max-w-[70px]">
+                        {match.competition && (
+                          <Badge
+                            variant={match.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
+                            className="text-[9px] px-1.5 py-px whitespace-nowrap"
+                          >
+                            {match.competition === 'Copa Libertadores' ? 'Libertadores' : 'Liga'}
+                          </Badge>
+                        )}
                       </td>
                       <td className="px-2 sm:px-6 py-2 sm:py-3 font-sans font-normal text-sm text-white text-right whitespace-nowrap">
                         {golesBoca ?? '-'} - {golesRival ?? '-'}
