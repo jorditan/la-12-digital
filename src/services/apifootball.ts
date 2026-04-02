@@ -112,6 +112,7 @@ function mapFixtureToMatchResult(f: import('../types/football').ProcessedFixture
 }
 
 export async function fetchLastMatches(): Promise<MatchResult[]> {
+  const currentYear = new Date().getFullYear();
   const [ligaFixtures, libFixtures] = await Promise.all([
     getLastFixtures(10),
     getLibertadoresLastFixtures(10),
@@ -121,8 +122,9 @@ export async function fetchLastMatches(): Promise<MatchResult[]> {
   const lib  = libFixtures.map(f => mapFixtureToMatchResult(f, 'Copa Libertadores'));
 
   return [...liga, ...lib]
+    .filter(m => new Date(m.date).getFullYear() === currentYear)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 16);
+    .slice(0, 10);
 }
 
 // ── Próximos partidos ────────────────────────────────────────────────────────
