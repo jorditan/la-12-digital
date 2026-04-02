@@ -50,11 +50,11 @@ function App() {
       <Sidebar />
       <div className="w-full px-3 md:px-4 sm:px-6 py-3 sm:py-8 lg:mr-80 xl:mr-96">
         <main className="w-full">
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-5 sm:mb-8">
-            <div className="sm:flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-5 sm:mb-8 sm:items-stretch">
+            <div className="sm:flex-1 min-w-0 flex flex-col">
               <BomboneraWidget />
             </div>
-            <div className="sm:flex-1 min-w-0">
+            <div className="sm:flex-1 min-w-0 flex flex-col">
               <UltimosPartidos />
             </div>
           </div>

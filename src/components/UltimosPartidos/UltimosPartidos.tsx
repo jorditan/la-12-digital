@@ -43,8 +43,8 @@ export function UltimosPartidos() {
   useEffect(() => { cargar(); }, []);
 
   return (
-    <section aria-label="Últimos partidos">
-      <div className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col">
+    <section aria-label="Últimos partidos" className="h-full">
+      <div className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col h-full">
 
         {/* Header */}
         <div className="border-b border-boca-border-card px-4 pt-4 pb-2 sm:px-6 sm:pt-6 sm:pb-3">
