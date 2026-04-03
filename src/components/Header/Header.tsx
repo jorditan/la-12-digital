@@ -3,18 +3,18 @@ import { Star, Menu, X } from 'lucide-react';
 
 const LOGO_SRC = '/escudo_boca.png';
 
-type NavId = 'inicio' | 'plantel' | 'asistencia';
+type NavId = 'inicio' | 'plantel' | 'historial';
 
 const NAV_ITEMS: { id: NavId; label: string; href: string }[] = [
-  { id: 'inicio',     label: 'Inicio',               href: '/' },
-  { id: 'plantel',    label: 'Plantel',              href: '/plantel' },
-  { id: 'asistencia', label: 'Asistencia a partidos', href: '/asistencia' },
+  { id: 'inicio',    label: 'Inicio',         href: '/' },
+  { id: 'plantel',   label: 'Plantel',        href: '/plantel' },
+  { id: 'historial', label: 'Mi Historial',   href: '/mi-historial' },
 ];
 
 function getActivePage(): NavId {
   const path = window.location.pathname;
   if (path.startsWith('/plantel')) return 'plantel';
-  if (path.startsWith('/asistencia')) return 'asistencia';
+  if (path.startsWith('/mi-historial')) return 'historial';
   return 'inicio';
 }
 

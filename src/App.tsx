@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { BannerMensaje } from './components/BannerMensaje';
 import { UltimosPartidos } from './components/UltimosPartidos';
@@ -9,6 +9,9 @@ import { CanalYoutube } from './components/CanalYoutube';
 import { IdolosGame } from './components/IdolosGame';
 import { EquiposGame } from './components/EquiposGame';
 import { Sidebar } from './components/Sidebar';
+import { MiHistorial, AttendanceDashboardCard } from './components/MiHistorial';
+import { useAuth } from './hooks/useAuth';
+import { useMatchAttendance } from './hooks/useMatchAttendance';
 
 const STORAGE_KEY = 'sidebar-collapsed';
 
@@ -16,6 +19,25 @@ function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     () => localStorage.getItem(STORAGE_KEY) === 'true'
   );
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  const navigate = (path: string) => {
+    window.history.pushState({}, '', path);
+    setCurrentPath(path);
+  };
+
+  useEffect(() => {
+    const handler = () => setCurrentPath(window.location.pathname);
+    window.addEventListener('popstate', handler);
+    return () => window.removeEventListener('popstate', handler);
+  }, []);
+
+  const { user } = useAuth();
+  const { totalAttended } = useMatchAttendance(user?.id ?? null);
+
+  if (currentPath === '/mi-historial') {
+    return <MiHistorial onNavigateHome={() => navigate('/')} />;
+  }
 
   return (
     <div
@@ -72,6 +94,10 @@ function App() {
               </div>
             </div>
 
+            <AttendanceDashboardCard
+              total={totalAttended}
+              onNavigate={() => navigate('/mi-historial')}
+            />
             <ProximosPartidos />
           </div>
 
