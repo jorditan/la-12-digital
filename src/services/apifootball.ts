@@ -2,6 +2,7 @@ import {
   getLastFixtures,
   getNextFixtures,
   getStandingsData,
+  getAnnualStandingsData,
   getLibertadoresLastFixtures,
   getLibertadoresNextFixtures,
   getLibertadoresStandingsData,
@@ -79,6 +80,11 @@ function mapStandingData(d: import('./footballApiService').StandingData): Standi
 
 export async function fetchStandings(): Promise<StandingRow[]> {
   const data = await getStandingsData();
+  return data.map(mapStandingData);
+}
+
+export async function fetchAnnualStandings(): Promise<StandingRow[]> {
+  const data = await getAnnualStandingsData();
   return data.map(mapStandingData);
 }
 

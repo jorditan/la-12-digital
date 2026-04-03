@@ -158,3 +158,17 @@ body {
     animation: fadeIn 0.3s ease-out;
   }
 }
+
+#equiposJuego {
+  background-image: url("https://uacdra.com.ar/images/noticias/46_1670940392.jpeg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#idoloJuego {
+  background-image: url("https://media.lmneuquen.com/p/cd2f5b265248075e72e6fd02b02c8723/adjuntos/195/imagenes/005/187/0005187467/1200x675/smart/boca.png");
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

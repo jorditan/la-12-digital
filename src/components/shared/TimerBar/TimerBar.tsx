@@ -6,7 +6,7 @@ interface TimerBarProps {
 export function TimerBar({ timer, total }: TimerBarProps) {
   const pct = (timer / total) * 100;
   const color =
-    pct > 50 ? 'bg-boca-gold' : pct > 25 ? 'bg-orange-400' : 'bg-red-500';
+    pct > 50 ? 'bg-boca-gold' : pct > 25 ? 'bg-boca-gold/60' : 'bg-status-negative';
 
   return (
     <div className="h-1 w-full bg-boca-blue rounded-full overflow-hidden">

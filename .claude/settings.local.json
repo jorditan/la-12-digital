@@ -38,7 +38,17 @@
       "mcp__claude_ai_Cloudflare_Developer_Platform__set_active_account",
       "mcp__claude_ai_Cloudflare_Developer_Platform__workers_get_worker_code",
       "Bash(find /e/Desarrollo/React/la-12-digital -type f -name vite.config.ts -o -name *.worker.js -o -name _worker.js -o -name worker.js)",
-      "Bash(find /e/Desarrollo/React/la-12-digital -type f -name *.go -o -name go.mod -o -name go.sum)"
+      "Bash(find /e/Desarrollo/React/la-12-digital -type f -name *.go -o -name go.mod -o -name go.sum)",
+      "Bash(tail:*)",
+      "Bash(cd:*)",
+      "Bash(grep -v \"^//\")",
+      "Bash(mv boca_equipos.json .claude/data/)",
+      "Bash(mv boca_idols.json .claude/data/)",
+      "Bash(mv SPECS/SPEC.md .claude/specs/)",
+      "Bash(mv SPECS/SPEC_JUEGO_EQUIPO.md .claude/specs/)",
+      "Bash(mv SPECS/SPEC_MEJORAS_DESIGN.md .claude/specs/)",
+      "Bash(xargs wc:*)",
+      "Bash(wc:*)"
     ]
   }
 }

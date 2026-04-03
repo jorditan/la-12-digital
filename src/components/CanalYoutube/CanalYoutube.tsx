@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Youtube, ChevronRight } from 'lucide-react';
-import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
+import { Youtube } from 'lucide-react';
 import { fetchVideos, type VideoYoutube } from '../../services/apifootball';
 import { CANAL_DEFAULT, CANALES_YOUTUBE } from '../../data/canalesYoutube';
 import { CardVideo } from '../CardVideo';
@@ -48,14 +47,6 @@ export function CanalYoutube() {
             </button>
           ))}
         </div>
-        <a
-          href={`https://www.youtube.com/${canal.handle}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="self-start font-sans text-sm font-medium text-boca-gold border border-boca-gold/30 rounded-sm px-5 py-2 hover:bg-boca-gold/10 transition-colors"
-        >
-          Ver canal →
-        </a>
       </div>
 
       {/* Separador dorado */}
@@ -87,17 +78,12 @@ export function CanalYoutube() {
         <>
           {/* Mobile: scroll horizontal con fade + hint */}
           <div className="sm:hidden">
-            <VideoScrollRow videos={videos} />
+            <VideoStack videos={videos} />
           </div>
-          {/* Desktop: bento layout */}
-          <div className="hidden sm:grid gap-3" style={{ gridTemplateColumns: '2fr 1fr 1fr', gridTemplateRows: '1fr 1fr' }}>
-            {/* Video destacado — ocupa 2 filas */}
-            <div className="row-span-2 h-full">
-              <CardVideo video={videos[0]} featured />
-            </div>
-            {/* Hasta 4 videos secundarios */}
-            {videos.slice(1, 5).map(video => (
-              <CardVideo key={video.id} video={video} />
+          {/* Desktop: grid homogéneo, sin hero sobredimensionado */}
+          <div className="hidden sm:grid grid-cols-3 xl:grid-cols-4 gap-3">
+            {videos.slice(0, 12).map(video => (
+              <CardVideo key={video.id} video={video} compact />
             ))}
           </div>
         </>
@@ -106,45 +92,34 @@ export function CanalYoutube() {
   );
 }
 
-function VideoScrollRow({ videos }: { videos: VideoYoutube[] }) {
-  const { ref, canScrollLeft, canScrollRight, onPointerDown, onPointerMove, stopDrag } = useHorizontalScroll();
-
+function VideoStack({ videos }: { videos: VideoYoutube[] }) {
   return (
-    <div className="relative">
+    <div className="space-y-3">
+      <div className="flex items-center justify-between px-1">
+        <p className="font-serif text-[12px] ">
+          Desliza hacia abajo
+        </p>
+        <p className="font-serif text-[12px] text-text-secondary">
+          {Math.min(videos.length, 8)} videos
+        </p>
+      </div>
       <div
-        ref={ref}
-        className="flex gap-3 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
+        className="max-h-[32rem] space-y-3 overflow-y-auto overscroll-contain pr-1 snap-y snap-mandatory"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={stopDrag}
-        onPointerLeave={stopDrag}
       >
-        {videos.map((video) => (
-          <div key={video.id} className="shrink-0 w-64">
-            <CardVideo video={video} />
+        {videos.slice(0, 8).map((video) => (
+          <div key={video.id} className="snap-start">
+            <CardVideo video={video} compact />
           </div>
         ))}
       </div>
-
-      {/* Gradiente izquierdo */}
-      {canScrollLeft && (
-        <div className="pointer-events-none absolute left-0 top-0 h-[calc(100%-8px)] w-10 bg-gradient-to-r from-boca-blue to-transparent" />
-      )}
-
-      {/* Gradiente + hint derecho */}
-      {canScrollRight && (
-        <div className="pointer-events-none absolute right-0 top-0 h-[calc(100%-8px)] w-14 bg-gradient-to-l from-boca-blue to-transparent flex items-center justify-end pr-1">
-          <ChevronRight size={18} className="text-boca-gold/60 animate-pulse" />
-        </div>
-      )}
     </div>
   );
 }
 
 function SkeletonVideos() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 animate-pulse">
       {Array.from({ length: 6 }, (_, i) => (
         <div key={i} className="rounded-sm overflow-hidden bg-white/5">
           <div className="aspect-video bg-white/10" />

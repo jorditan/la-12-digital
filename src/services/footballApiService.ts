@@ -9,8 +9,9 @@ const isDev     = import.meta.env.DEV;
 const BASE_URL  = isDev ? 'https://livescore-api.com/api-client' : '/api/livescore';
 const KEY       = isDev ? (import.meta.env.VITE_LIVESCORE_KEY as string) : '';
 const SECRET    = isDev ? (import.meta.env.VITE_LIVESCORE_SECRET as string) : '';
-const COMPETITION = '23';   // Liga Profesional Argentina
-const BOCA_ID     = '934';  // Confirmed via API standings response
+const COMPETITION               = '23';   // Liga Profesional Argentina
+const LIBERTADORES_COMPETITION  = '329';  // Copa Libertadores
+const BOCA_ID                   = '934';  // Confirmed via API standings response
 const BOCA_RE     = /boca/i;
 
 // ── Interfaces de respuesta ───────────────────────────────────────────────────
@@ -92,6 +93,20 @@ export interface StandingData {
   zone?: string;
 }
 
+export interface AnnualStandingData extends StandingData {
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDiff: number;
+  breakdown: {
+    stage: string;
+    points: number;
+    played: number;
+    win: number;
+    draw: number;
+    lose: number;
+  }[];
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function auth(): Record<string, string> {
@@ -118,6 +133,239 @@ function mapStageName(name: string, index: number): string {
   if (lower.includes('1') || lower.includes('first') || lower.includes('apertura')) return 'Apertura';
   if (lower.includes('2') || lower.includes('second') || lower.includes('clausura')) return 'Clausura';
   return index === 0 ? 'Apertura' : index === 1 ? 'Clausura' : name;
+}
+
+function mapStandingRow(row: LSGroupStanding, zone?: string): StandingData {
+  return {
+    rank:     n(row.rank),
+    teamId:   Number(row.team.id),
+    teamName: row.team.name,
+    teamLogo: row.team.logo ?? '',
+    points:   n(row.points),
+    played:   n(row.matches ?? row.played),
+    win:      n(row.won),
+    draw:     n(row.drawn),
+    lose:     n(row.lost),
+    zone,
+  };
+}
+
+function getStageRows(apiStage: LSAPIStage): Array<{ row: LSGroupStanding; zone?: string }> {
+  const stageName = apiStage.stage?.name ?? '';
+  const mappedStage = mapStageName(stageName, 0);
+  const groups = apiStage.groups ?? [];
+
+  if (groups.length > 0) {
+    return groups.flatMap((group) => {
+      const rows = group.standings ?? group.table ?? [];
+      const zoneName = `${mappedStage} - Zona ${group.name}`;
+      return rows.map((row) => ({ row, zone: zoneName }));
+    });
+  }
+
+  const rows = apiStage.table ?? apiStage.rows ?? [];
+  return rows.map((row) => ({ row, zone: mappedStage || undefined }));
+}
+
+function isAnnualStageCandidate(stageName: string): boolean {
+  const lower = stageName.trim().toLowerCase();
+  if (!lower) return true;
+  return (
+    lower.includes('apertura') ||
+    lower.includes('clausura') ||
+    lower.includes('phase 1') ||
+    lower.includes('phase 2') ||
+    lower.includes('first') ||
+    lower.includes('second') ||
+    lower === '1' ||
+    lower === '2'
+  );
+}
+
+function mapLeagueStandings(data: { stages?: LSAPIStage[]; table?: LSGroupStanding[] }): StandingData[] {
+  const result: StandingData[] = [];
+  const stages = data.stages ?? [];
+
+  for (const [stageIndex, apiStage] of stages.entries()) {
+    const stageName   = apiStage.stage?.name ?? '';
+    const mappedStage = mapStageName(stageName, stageIndex);
+    const groups      = apiStage.groups ?? [];
+
+    if (groups.length > 0) {
+      for (const group of groups) {
+        const rows     = group.standings ?? group.table ?? [];
+        const zoneName = `${mappedStage} - Zona ${group.name}`;
+        for (const row of rows) {
+          result.push(mapStandingRow(row, zoneName));
+        }
+      }
+    } else {
+      const rows = apiStage.table ?? apiStage.rows ?? [];
+      for (const row of rows) {
+        result.push(mapStandingRow(row, mappedStage || undefined));
+      }
+    }
+  }
+
+  if (stages.length === 0 && data.table) {
+    for (const row of data.table) {
+      result.push(mapStandingRow(row));
+    }
+  }
+
+  return result;
+}
+
+function formatLibertadoresGroupName(groupName: string): string {
+  const trimmed = groupName.trim();
+  if (!trimmed) return 'Grupo';
+  return /^grupo\b/i.test(trimmed) ? trimmed : `Grupo ${trimmed}`;
+}
+
+function mapLibertadoresStandings(data: { stages?: LSAPIStage[]; table?: LSGroupStanding[] }): StandingData[] {
+  const result: StandingData[] = [];
+  const stages = data.stages ?? [];
+
+  for (const apiStage of stages) {
+    const stageName = apiStage.stage?.name?.trim();
+    const groups = apiStage.groups ?? [];
+
+    if (groups.length > 0) {
+      for (const group of groups) {
+        const rows = group.standings ?? group.table ?? [];
+        const zoneName = formatLibertadoresGroupName(group.name);
+        for (const row of rows) {
+          result.push(mapStandingRow(row, zoneName));
+        }
+      }
+      continue;
+    }
+
+    const rows = apiStage.table ?? apiStage.rows ?? [];
+    for (const row of rows) {
+      result.push(mapStandingRow(row, stageName || undefined));
+    }
+  }
+
+  if (stages.length === 0 && data.table) {
+    for (const row of data.table) {
+      result.push(mapStandingRow(row));
+    }
+  }
+
+  return result;
+}
+
+function mapAnnualStandings(data: { stages?: LSAPIStage[]; table?: LSGroupStanding[] }): AnnualStandingData[] {
+  const stages = data.stages ?? [];
+  const selectedStages = stages.filter((apiStage) => isAnnualStageCandidate(apiStage.stage?.name ?? ''));
+  const stagesToAggregate = selectedStages.length > 0 ? selectedStages : stages;
+  const annualMap = new Map<number, AnnualStandingData>();
+
+  for (const [stageIndex, apiStage] of stagesToAggregate.entries()) {
+    const stageLabel = mapStageName(apiStage.stage?.name ?? '', stageIndex) || `Etapa ${stageIndex + 1}`;
+    const stageRows = getStageRows(apiStage);
+
+    for (const { row } of stageRows) {
+      const teamId = Number(row.team.id);
+      const existing = annualMap.get(teamId);
+      const points = n(row.points);
+      const played = n(row.matches ?? row.played);
+      const win = n(row.won);
+      const draw = n(row.drawn);
+      const lose = n(row.lost);
+      const goalsFor = n(row.goals_scored);
+      const goalsAgainst = n(row.goals_conceded);
+      const goalDiff = n(row.goal_diff);
+
+      if (existing) {
+        existing.points += points;
+        existing.played += played;
+        existing.win += win;
+        existing.draw += draw;
+        existing.lose += lose;
+        existing.goalsFor += goalsFor;
+        existing.goalsAgainst += goalsAgainst;
+        existing.goalDiff += goalDiff;
+        existing.breakdown.push({
+          stage: stageLabel,
+          points,
+          played,
+          win,
+          draw,
+          lose,
+        });
+        continue;
+      }
+
+      annualMap.set(teamId, {
+        rank: 0,
+        teamId,
+        teamName: row.team.name,
+        teamLogo: row.team.logo ?? '',
+        points,
+        played,
+        win,
+        draw,
+        lose,
+        zone: undefined,
+        goalsFor,
+        goalsAgainst,
+        goalDiff,
+        breakdown: [
+          {
+            stage: stageLabel,
+            points,
+            played,
+            win,
+            draw,
+            lose,
+          },
+        ],
+      });
+    }
+  }
+
+  if (annualMap.size === 0 && data.table) {
+    return data.table
+      .map((row) => ({
+        ...mapStandingRow(row),
+        zone: undefined,
+        goalsFor: n(row.goals_scored),
+        goalsAgainst: n(row.goals_conceded),
+        goalDiff: n(row.goal_diff),
+        breakdown: [
+          {
+            stage: 'Tabla general',
+            points: n(row.points),
+            played: n(row.matches ?? row.played),
+            win: n(row.won),
+            draw: n(row.drawn),
+            lose: n(row.lost),
+          },
+        ],
+      }))
+      .sort((a, b) => (
+        b.points - a.points ||
+        b.goalDiff - a.goalDiff ||
+        b.goalsFor - a.goalsFor ||
+        a.teamName.localeCompare(b.teamName)
+      ))
+      .map((row, index) => ({ ...row, rank: index + 1 }));
+  }
+
+  return Array.from(annualMap.values())
+    .sort((a, b) => (
+      b.points - a.points ||
+      b.goalDiff - a.goalDiff ||
+      b.goalsFor - a.goalsFor ||
+      a.teamName.localeCompare(b.teamName)
+    ))
+    .map((row, index) => ({
+      ...row,
+      rank: index + 1,
+      breakdown: row.breakdown.sort((a, b) => a.stage.localeCompare(b.stage)),
+    }));
 }
 
 function matchResult(
@@ -296,71 +544,49 @@ export async function getStandingsData(): Promise<StandingData[]> {
     `ls_table_${COMPETITION}`,
     CACHE_DURATION.STANDINGS,
   );
+  return mapLeagueStandings(data);
+}
 
-  const result: StandingData[] = [];
-  const stages = data.stages ?? [];
+export async function getLibertadoresLastFixtures(count: number = 8): Promise<ProcessedFixture[]> {
+  const data = await fetchLS<{ match?: LSMatch[]; data?: LSMatch[] }>(
+    '/matches/history.json',
+    { competition_id: LIBERTADORES_COMPETITION, team_id: BOCA_ID },
+    `ls_history_boca_lib_${BOCA_ID}`,
+    CACHE_DURATION.FIXTURES,
+  );
 
-  for (const [stageIndex, apiStage] of stages.entries()) {
-    const stageName   = apiStage.stage?.name ?? '';
-    const mappedStage = mapStageName(stageName, stageIndex);
-    const groups      = apiStage.groups ?? [];
+  const matches = data.match ?? data.data ?? [];
+  return matches.slice(0, count).map(mapMatch);
+}
 
-    if (groups.length > 0) {
-      for (const group of groups) {
-        const rows     = group.standings ?? group.table ?? [];
-        const zoneName = `${mappedStage} - Zona ${group.name}`;
-        for (const row of rows) {
-          result.push({
-            rank:     n(row.rank),
-            teamId:   Number(row.team.id),
-            teamName: row.team.name,
-            teamLogo: row.team.logo ?? '',
-            points:   n(row.points),
-            played:   n(row.matches ?? row.played),
-            win:      n(row.won),
-            draw:     n(row.drawn),
-            lose:     n(row.lost),
-            zone:     zoneName,
-          });
-        }
-      }
-    } else {
-      // Fallback: stage con standings directos sin groups
-      const rows = apiStage.table ?? apiStage.rows ?? [];
-      for (const row of rows) {
-        result.push({
-          rank:     n(row.rank),
-          teamId:   Number(row.team.id),
-          teamName: row.team.name,
-          teamLogo: row.team.logo ?? '',
-          points:   n(row.points),
-          played:   n(row.matches ?? row.played),
-          win:      n(row.won),
-          draw:     n(row.drawn),
-          lose:     n(row.lost),
-          zone:     mappedStage || undefined,
-        });
-      }
-    }
-  }
+export async function getLibertadoresNextFixtures(count: number = 8): Promise<ProcessedFixture[]> {
+  const data = await fetchLS<{ fixtures?: LSFixture[]; fixture?: LSFixture[] }>(
+    '/fixtures/list.json',
+    { competition_id: LIBERTADORES_COMPETITION, team: BOCA_ID },
+    `ls_fixtures_boca_lib_${BOCA_ID}`,
+    CACHE_DURATION.FIXTURES,
+  );
 
-  // Fallback global: respuesta con table directo (sin stages)
-  if (stages.length === 0 && data.table) {
-    for (const row of data.table) {
-      result.push({
-        rank:     n(row.rank),
-        teamId:   Number(row.team.id),
-        teamName: row.team.name,
-        teamLogo: row.team.logo ?? '',
-        points:   n(row.points),
-        played:   n(row.matches ?? row.played),
-        win:      n(row.won),
-        draw:     n(row.drawn),
-        lose:     n(row.lost),
-        zone:     undefined,
-      });
-    }
-  }
+  const fixtures = data.fixtures ?? data.fixture ?? [];
+  return fixtures.slice(0, count).map(mapFixture);
+}
 
-  return result;
+export async function getLibertadoresStandingsData(): Promise<StandingData[]> {
+  const data = await fetchLS<{ stages?: LSAPIStage[]; table?: LSGroupStanding[] }>(
+    '/competitions/table.json',
+    { competition_id: LIBERTADORES_COMPETITION },
+    `ls_table_${LIBERTADORES_COMPETITION}`,
+    CACHE_DURATION.STANDINGS,
+  );
+  return mapLibertadoresStandings(data);
+}
+
+export async function getAnnualStandingsData(): Promise<AnnualStandingData[]> {
+  const data = await fetchLS<{ stages?: LSAPIStage[]; table?: LSGroupStanding[] }>(
+    '/competitions/table.json',
+    { competition_id: COMPETITION },
+    `ls_annual_table_${COMPETITION}`,
+    CACHE_DURATION.STANDINGS,
+  );
+  return mapAnnualStandings(data);
 }

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Header } from './components/Header';
 import { BannerMensaje } from './components/BannerMensaje';
 import { UltimosPartidos } from './components/UltimosPartidos';
@@ -9,7 +10,13 @@ import { IdolosGame } from './components/IdolosGame';
 import { EquiposGame } from './components/EquiposGame';
 import { Sidebar } from './components/Sidebar';
 
+const STORAGE_KEY = 'sidebar-collapsed';
+
 function App() {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    () => localStorage.getItem(STORAGE_KEY) === 'true'
+  );
+
   return (
     <div
       className="min-h-screen text-white font-serif relative overflow-x-hidden bg-app-bg"
@@ -47,22 +54,30 @@ function App() {
       </div>
       <Header />
       <BannerMensaje />
-      <Sidebar />
-      <div className="w-full px-3 md:px-4 sm:px-6 py-3 sm:py-8 lg:mr-80 xl:mr-96">
+      <Sidebar onCollapsedChange={setSidebarCollapsed} />
+      <div
+        className={[
+          'w-full px-3 py-3 md:px-4 sm:px-6 sm:py-8 lg:px-10 transition-[margin] duration-300',
+          sidebarCollapsed ? 'lg:mr-20 xl:mr-24' : 'lg:mr-[23rem] xl:mr-[27rem]',
+        ].join(' ')}
+      >
         <main className="w-full">
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-5 sm:mb-8 sm:items-stretch">
-            <div className="sm:flex-1 min-w-0 flex flex-col">
-              <BomboneraWidget />
+          <div className="flex flex-col gap-4 sm:gap-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:gap-8 sm:items-stretch">
+              <div className="min-w-0 sm:flex-1 flex flex-col">
+                <BomboneraWidget />
+              </div>
+              <div className="min-w-0 sm:flex-1 flex flex-col">
+                <UltimosPartidos />
+              </div>
             </div>
-            <div className="sm:flex-1 min-w-0 flex flex-col">
-              <UltimosPartidos />
-            </div>
+
+            <ProximosPartidos />
           </div>
-          <ProximosPartidos />
+
           <div className="mt-6 sm:mt-10">
             <Noticias />
           </div>
-          {/* ── Minijuegos ── */}
           <div className="mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
             <IdolosGame />
             <EquiposGame />
@@ -73,7 +88,7 @@ function App() {
         </main>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

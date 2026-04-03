@@ -40,13 +40,13 @@ const RESULT_BADGE: Record<'correct' | 'timeout', { bg: string; border: string; 
   correct: {
     bg:     'bg-status-win-subtle',
     border: 'border border-status-win',
-    text:   'text-green-400',
+    text:   'text-status-win',
     label:  '¡Correcto!',
   },
   timeout: {
     bg:     'bg-status-loss-subtle',
     border: 'border border-status-loss',
-    text:   'text-red-400',
+    text:   'text-status-negative',
     label:  'Tiempo agotado',
   },
 };
@@ -245,14 +245,15 @@ export function GameModal(props: GameModalProps) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
       style={{ background: 'var(--color-modal-backdrop)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-sm bg-boca-blue-light border border-boca-gold/20 rounded-sm overflow-hidden shadow-2xl animate-fade-in"
+        className="relative w-full max-w-none bg-boca-blue-light border border-boca-gold/20 rounded-t-2xl sm:rounded-sm overflow-hidden shadow-2xl animate-fade-in max-h-[88dvh] sm:max-w-sm sm:max-h-none"
         onClick={e => e.stopPropagation()}
       >
+        <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1 sm:hidden" />
         <ModalHeader idolo={idolo} score={props.score} onClose={onClose} />
 
         <IdoloImage idolo={idolo} revealed={revealed} state={state} />

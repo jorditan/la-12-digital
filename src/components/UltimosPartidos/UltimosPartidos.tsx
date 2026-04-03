@@ -116,7 +116,7 @@ export function UltimosPartidos() {
                             variant={match.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
                             className="text-[9px] px-1.5 py-px whitespace-nowrap"
                           >
-                            {match.competition === 'Copa Libertadores' ? 'Libertadores' : 'Liga'}
+                            {match.competition === 'Copa Libertadores' ? 'Libertadores' : 'Liga profesional'}
                           </Badge>
                         )}
                       </td>

@@ -194,7 +194,10 @@ function CardPartido({ partido }: { partido: ProximoPartido }) {
       </p>
 
       {/* Competición */}
-      <Badge variant="blue" className="w-fit text-[10px] px-1.5 py-px">
+      <Badge
+        variant={partido.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
+        className="w-fit text-[10px] px-1.5 py-px"
+      >
         {partido.competition}
       </Badge>
     </article>

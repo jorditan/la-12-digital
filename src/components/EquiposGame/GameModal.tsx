@@ -130,8 +130,8 @@ function ResultFooter({
       <div className={[
         'flex items-center gap-2 px-3 py-2 rounded-sm font-sans text-sm font-semibold',
         won
-          ? 'bg-status-win-subtle border border-status-win text-green-400'
-          : 'bg-status-loss-subtle border border-status-loss text-red-400',
+          ? 'bg-status-win-subtle border border-status-win text-status-win'
+          : 'bg-status-loss-subtle border border-status-loss text-status-negative',
       ].join(' ')}>
         <span>{won ? '¡Campeón! ' : 'Tiempo agotado · '}</span>
         <span className="tabular-nums">{score.guessed}/{score.total} jugadores</span>
@@ -158,14 +158,15 @@ export function GameModal(props: GameModalProps) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
       style={{ background: 'var(--color-modal-backdrop-dark)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md bg-boca-blue-light border border-boca-gold/20 rounded-sm overflow-hidden shadow-2xl animate-fade-in flex flex-col max-h-[90dvh]"
+        className="relative w-full max-w-none bg-boca-blue-light border border-boca-gold/20 rounded-t-2xl sm:rounded-sm overflow-hidden shadow-2xl animate-fade-in flex flex-col max-h-[88dvh] sm:max-w-md sm:max-h-[90dvh]"
         onClick={e => e.stopPropagation()}
       >
+        <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1 sm:hidden" />
         <ModalHeader
           equipo={equipo}
           score={props.score}

@@ -48,9 +48,9 @@ const VARIANTS: Record<ButtonVariant, string> = {
 
   /** Fondo rojo — acción destructiva */
   destructive: [
-    'bg-red-800 text-white font-semibold',
-    'border border-red-800',
-    'hover:bg-red-700 hover:border-red-700',
+    'bg-status-loss text-white font-semibold',
+    'border border-status-loss',
+    'hover:brightness-110 hover:border-status-loss',
     'active:brightness-90',
     'disabled:opacity-40 disabled:cursor-not-allowed',
   ].join(' '),

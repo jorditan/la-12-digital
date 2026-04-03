@@ -11,7 +11,7 @@ export function StatsGrid({ slot }: { slot: HourlyForecast }) {
         >
           {slot.tempC}°
         </p>
-        <p className="type-ui-label text-text-secondary mt-1.5 text-[10px] tracking-[0.06em]">
+        <p className="type-ui-label text-text-secondary mt-1.5 tracking-[0.06em]">
           TEMP.
         </p>
       </div>

@@ -42,7 +42,7 @@ function formatViews(n: number): string {
 }
 
 function isShort(title: string, durationIso: string): boolean {
-  return title.includes('#') || totalSeconds(durationIso) < 60;
+  return title.includes('#') || totalSeconds(durationIso) < 300;
 }
 
 // ── Llamadas a la API ─────────────────────────────────────────────────────────
@@ -144,7 +144,7 @@ export async function fetchYoutubeVideos(handle: string): Promise<VideoItem[]> {
   if (cached) return cached;
 
   const playlistId = await getUploadsPlaylistId(handle);
-  const items = await getPlaylistItems(playlistId, 25);
+  const items = await getPlaylistItems(playlistId, 50);
 
   if (items.length === 0) return [];
 
@@ -155,7 +155,7 @@ export async function fetchYoutubeVideos(handle: string): Promise<VideoItem[]> {
       const detail = details.get(item.videoId);
       return detail ? !isShort(item.title, detail.duration) : false;
     })
-    .slice(0, 6)
+    .slice(0, 12)
     .map(item => {
       const detail = details.get(item.videoId)!;
       return {

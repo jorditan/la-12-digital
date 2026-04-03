@@ -60,22 +60,22 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
         {/* Cabecera */}
         <thead>
           <tr className="border-b border-boca-gold/15">
-            <th className="py-2 px-3 text-left text-[10px] font-semibold uppercase tracking-wider text-boca-gold/50 w-[72px]">
+            <th className="py-2 px-3 text-left type-ui-label uppercase tracking-wider text-boca-gold/50 w-[72px]">
               Fecha
             </th>
-            <th className="py-2 px-3 text-right text-[10px] font-semibold uppercase tracking-wider text-boca-gold/50 w-[50%]">
+            <th className="py-2 px-3 text-right type-ui-label uppercase tracking-wider text-boca-gold/50 w-[50%]">
               Local
             </th>
-            <th className="py-2 px-1 text-center text-[10px] font-semibold uppercase tracking-wider text-boca-gold/30 w-8">
+            <th className="py-2 px-1 text-center type-ui-label uppercase tracking-wider text-boca-gold/30 w-8">
               vs
             </th>
-            <th className="py-2 px-3 text-left text-[10px] font-semibold uppercase tracking-wider text-boca-gold/50 w-[50%]">
+            <th className="py-2 px-3 text-left type-ui-label uppercase tracking-wider text-boca-gold/50 w-[50%]">
               Visitante
             </th>
-            <th className="py-2 px-3 text-center text-[10px] font-semibold uppercase tracking-wider text-boca-gold/50 w-14">
+            <th className="py-2 px-3 text-center type-ui-label uppercase tracking-wider text-boca-gold/50 w-14">
               Hora
             </th>
-            <th className="py-2 px-3 text-left text-[10px] font-semibold uppercase tracking-wider text-boca-gold/50 hidden md:table-cell">
+            <th className="py-2 px-3 text-left type-ui-label uppercase tracking-wider text-boca-gold/50 hidden md:table-cell">
               Copa
             </th>
           </tr>
@@ -97,7 +97,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                 {/* Fecha */}
                 <td className="py-2.5 px-3">
                   <div className="flex flex-col leading-tight w-full">
-                    <span className="text-[10px] uppercase text-boca-gold/40 font-medium">
+                    <span className="type-ui-label uppercase text-boca-gold/40">
                       {formatDia(p.date)}
                     </span>
                     <span className="text-xs text-text-secondary tabular-nums">
@@ -120,7 +120,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
 
                 {/* vs */}
                 <td className="py-2.5 px-1 text-center">
-                  <span className="text-[10px] font-bold text-boca-gold/25 tracking-tight">
+                  <span className="type-ui-label text-boca-gold/25 tracking-tight">
                     vs
                   </span>
                 </td>
@@ -144,7 +144,12 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
 
                 {/* Copa */}
                 <td className="py-2.5 px-3 hidden md:table-cell">
-                  <Badge variant="blue" className="text-[10px] px-1.5 whitespace-nowrap">{p.competition}</Badge>
+                  <Badge
+                    variant={p.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
+                    className="px-1.5 whitespace-nowrap"
+                  >
+                    {p.competition}
+                  </Badge>
                 </td>
               </tr>
             );

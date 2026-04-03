@@ -40,7 +40,7 @@ export function Header() {
     <div className={['sticky top-0 z-sticky', 'transition-shadow duration-normal', isScrolled && !isMenuOpen ? 'shadow-md' : ''].join(' ')}>
       <header
         role="banner"
-        className="h-[60px] bg-boca-blue-light border-b border-boca-gold flex items-center justify-between px-4 sm:px-[10px]"
+        className="h-[60px] bg-boca-blue-light  flex items-center justify-between px-4 sm:px-[10px]"
       >
         {/* ── Logo + Navegación desktop ── */}
         <div className="flex items-center gap-4">
@@ -71,7 +71,7 @@ export function Header() {
                         'transition-colors duration-normal',
                         'focus:outline-none focus-visible:ring-2 focus-visible:ring-boca-gold',
                         isActive
-                          ? 'text-boca-gold border-b-2 border-boca-gold'
+                          ? 'text-boca-gold'
                           : 'text-text-nav hover:text-boca-gold',
                       ].join(' ')}
                     >

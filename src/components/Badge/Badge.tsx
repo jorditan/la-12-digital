@@ -9,8 +9,8 @@ interface BadgeProps {
 const VARIANTS = {
   blue:      'bg-boca-border-card text-white',
   gold:      'bg-boca-blue text-boca-gold',
-  local:     'bg-green-900/50 text-green-300 border border-green-700/60',
-  visitante: 'bg-boca-border/60 text-blue-200 border border-boca-border',
+  local:     'bg-status-win-subtle text-green-500 border border-status-win',
+  visitante: 'bg-boca-border/60 text-text-nav border border-boca-border',
 };
 
 export function Badge({ variant = 'blue', children, className = '' }: BadgeProps) {
