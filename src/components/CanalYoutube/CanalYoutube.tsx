@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Youtube } from 'lucide-react';
 import { fetchVideos, type VideoYoutube } from '../../services/apifootball';
 import { CANAL_DEFAULT, CANALES_YOUTUBE } from '../../data/canalesYoutube';
+import { Button } from '../Button';
 import { CardVideo } from '../CardVideo';
 
 type Estado = 'loading' | 'error' | 'ok';
@@ -33,18 +34,20 @@ export function CanalYoutube() {
         {/* Pills de canal */}
         <div className="flex flex-wrap gap-2">
           {CANALES_YOUTUBE.map(c => (
-            <button
+            <Button
               key={c.handle}
               onClick={() => setCanal(c)}
+              variant="ghost"
+              size="sm"
               className={`
-                font-sans text-xs font-medium px-3 py-1.5 rounded-full border transition-colors
+                rounded-full border transition-colors
                 ${canal.handle === c.handle
                   ? 'bg-boca-gold text-boca-blue font-semibold border-boca-gold'
                   : 'border-boca-border text-text-nav hover:border-boca-gold/50 hover:text-boca-gold'}
               `}
             >
               {c.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -59,12 +62,13 @@ export function CanalYoutube() {
           <p className="font-sans text-sm text-text-secondary">
             No se pudieron cargar los videos
           </p>
-          <button
+          <Button
             onClick={() => cargar(canal.handle)}
-            className="font-sans text-sm font-medium text-boca-gold rounded px-4 py-2 hover:bg-boca-gold/10 transition-colors"
+            variant="text"
+            className="text-sm text-boca-gold rounded px-4 py-2 hover:bg-boca-gold/10"
           >
             Reintentar
-          </button>
+          </Button>
         </div>
       )}
 

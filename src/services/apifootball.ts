@@ -133,6 +133,19 @@ export async function fetchLastMatches(): Promise<MatchResult[]> {
     .slice(0, 10);
 }
 
+export async function fetchMatchesForHistorial(): Promise<MatchResult[]> {
+  const [ligaFixtures, libFixtures] = await Promise.all([
+    getLastFixtures(25),
+    getLibertadoresLastFixtures(25),
+  ]);
+
+  const liga = ligaFixtures.map(f => mapFixtureToMatchResult(f, 'Liga Profesional'));
+  const lib  = libFixtures.map(f => mapFixtureToMatchResult(f, 'Copa Libertadores'));
+
+  return [...liga, ...lib]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
 // ── Próximos partidos ────────────────────────────────────────────────────────
 
 function mapFixtureToProximoPartido(f: import('../types/football').ProcessedFixture, competition: string): ProximoPartido {

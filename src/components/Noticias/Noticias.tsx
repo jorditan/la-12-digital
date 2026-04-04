@@ -2,6 +2,7 @@ import { useState, useEffect, useLayoutEffect } from 'react';
 import { Newspaper, Star, ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
 import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 import { fetchNoticias, type Noticia } from '../../services/apifootball';
+import { Button } from '../Button';
 import { NoticiaCard } from '../NoticiaCard';
 
 type Estado = 'loading' | 'error' | 'ok';
@@ -103,12 +104,13 @@ export function Noticias() {
       <div className="w-full h-px bg-boca-gold/30 mb-4" />
       <div className="flex items-center gap-3 py-8 px-4 border border-boca-gold/10 rounded-sm">
         <p className="font-sans text-sm text-white/50 flex-1">No se pudieron cargar las noticias</p>
-        <button
+        <Button
           onClick={cargar}
-          className="font-sans text-sm font-medium text-boca-gold border border-boca-gold/30 rounded px-4 py-2 hover:bg-boca-gold/10 transition-colors shrink-0"
+          variant="text"
+          className="text-sm text-boca-gold border border-boca-gold/30 rounded px-4 py-2 hover:bg-boca-gold/10 shrink-0"
         >
           Reintentar
-        </button>
+        </Button>
       </div>
     </section>
   );
@@ -140,14 +142,15 @@ export function Noticias() {
       <div className="hidden md:flex flex-col gap-3">
         {/* Fila: botón ← | cards | botón → */}
         <div className="flex items-stretch gap-4 h-[340px]">
-          <button
+          <Button
             onClick={() => setIdx(Math.max(0, currentPage - 1) * VISIBLE)}
             disabled={!canPrev}
             aria-label="Noticia anterior"
-            className="bg-boca-blue-light border border-boca-gold px-2 shrink-0 disabled:opacity-25 hover:bg-boca-gold/10 transition-colors"
+            variant="secondary"
+            className="bg-boca-blue-light px-2 shrink-0 disabled:opacity-25 hover:bg-boca-gold/10"
           >
             <ArrowLeft size={24} className="text-boca-gold" />
-          </button>
+          </Button>
 
           <div className="flex flex-1 gap-4 min-w-0">
             {noticias.slice(idx, idx + VISIBLE).map((noticia) => (
@@ -155,31 +158,34 @@ export function Noticias() {
             ))}
           </div>
 
-          <button
+          <Button
             onClick={() => setIdx(Math.min(pageCount - 1, currentPage + 1) * VISIBLE)}
             disabled={!canNext}
             aria-label="Noticia siguiente"
-            className="bg-boca-blue-light border border-boca-gold px-2 shrink-0 disabled:opacity-25 hover:bg-boca-gold/10 transition-colors"
+            variant="secondary"
+            className="bg-boca-blue-light px-2 shrink-0 disabled:opacity-25 hover:bg-boca-gold/10"
           >
             <ArrowRight size={24} className="text-boca-gold" />
-          </button>
+          </Button>
         </div>
 
         {/* Indicador de estrellas */}
         <div className="flex items-center justify-center gap-2">
           {Array.from({ length: pageCount }, (_, page) => (
-            <button
+            <Button
               key={page}
               onClick={() => setIdx(page * VISIBLE)}
               aria-label={`Ir a página ${page + 1}`}
-              className="text-boca-gold hover:scale-110 transition-transform"
+              variant="ghost"
+              size="icon"
+              className="text-boca-gold hover:scale-110"
             >
               <Star
                 size={16}
                 fill={page === currentPage ? 'currentColor' : 'none'}
                 strokeWidth={page === currentPage ? 0 : 1.5}
               />
-            </button>
+            </Button>
           ))}
         </div>
       </div>

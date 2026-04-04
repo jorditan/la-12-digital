@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { TablaPosiciones } from '../TablaPosiciones';
+import { Button } from '../Button';
 import { DesktopSidebarBubble } from './DesktopSidebarBubble';
 import { MobileSidebarButton } from './MobileSidebarButton';
 
@@ -48,13 +49,15 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
           <div className="h-full overflow-y-auto rounded-sm shadow-[0_16px_40px_rgba(0,0,0,0.28)]">
             <TablaPosiciones
               headerAction={(
-                <button
+                <Button
                   onClick={toggle}
+                  variant="ghost"
+                  size="icon"
                   aria-label="Achicar sidebar"
-                  className="size-7 rounded-sm border border-boca-gold/15 text-text-nav hover:text-boca-gold hover:bg-white/5 transition-colors flex items-center justify-center"
+                  className="size-7 border border-boca-gold/15 text-text-nav hover:text-boca-gold hover:bg-white/5"
                 >
                   <ChevronRight size={14} />
-                </button>
+                </Button>
               )}
             />
           </div>

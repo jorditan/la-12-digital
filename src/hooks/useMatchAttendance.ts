@@ -66,9 +66,30 @@ export function useMatchAttendance(userId: string | null): UseMatchAttendanceRet
       });
   }, [userId]);
 
-  const upsert = useCallback(async ({ matchId, attended, note }: UpsertAttendancePayload) => {
+  const upsert = useCallback(async ({ matchId, attended, note, matchData }: UpsertAttendancePayload) => {
     if (!userId) return;
     setError(null);
+
+    // Cachear datos del partido en la tabla matches antes de insertar la asistencia.
+    // Esto garantiza integridad referencial con el FK y que los datos estén disponibles
+    // aunque la API externa esté caída.
+    if (matchData) {
+      await supabase.from('matches').upsert({
+        id: matchId,
+        date: matchData.date,
+        home_team_id: matchData.homeTeamId,
+        home_team_name: matchData.homeTeamName,
+        home_team_logo: matchData.homeTeamLogo ?? null,
+        away_team_id: matchData.awayTeamId,
+        away_team_name: matchData.awayTeamName,
+        away_team_logo: matchData.awayTeamLogo ?? null,
+        goals_home: matchData.goalsHome ?? null,
+        goals_away: matchData.goalsAway ?? null,
+        venue: matchData.venue ?? null,
+        competition: matchData.competition ?? null,
+        synced_at: new Date().toISOString(),
+      }, { onConflict: 'id' });
+    }
 
     const { data, error: upsertError } = await supabase
       .from('match_attendance')

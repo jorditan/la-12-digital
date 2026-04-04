@@ -18,7 +18,13 @@ export function AuthGate({ children }: AuthGateProps) {
   }
 
   if (!user) {
-    return <LoginForm onLogin={login} onRegister={register} error={error} />;
+    return (
+      <LoginForm
+        onLogin={async (email, pw) => { await login(email, pw); }}
+        onRegister={async (email, pw) => { await register(email, pw, ''); }}
+        error={error}
+      />
+    );
   }
 
   return <>{children({ user, logout })}</>;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchLastMatches, BOCA_ID, type MatchResult } from '../../services/apifootball';
 import { Badge } from '../Badge';
+import { Button } from '../Button';
 
 type Estado = 'loading' | 'error' | 'ok';
 type Resultado = 'victoria' | 'derrota' | 'empate';
@@ -63,12 +64,13 @@ export function UltimosPartidos() {
         {estado === 'error' && (
           <div className="flex flex-col items-center gap-3 py-10 text-center px-6">
             <p className="font-sans text-sm text-white/50">No se pudieron cargar los partidos</p>
-            <button
+            <Button
               onClick={cargar}
-              className="font-sans text-xs font-medium text-boca-gold border border-boca-gold/30 rounded px-4 py-2 hover:bg-boca-gold/10 transition-colors"
+              variant="text"
+              className="text-xs text-boca-gold border border-boca-gold/30 rounded px-4 py-2 hover:bg-boca-gold/10"
             >
               Reintentar
-            </button>
+            </Button>
           </div>
         )}
 
