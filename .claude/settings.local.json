@@ -48,7 +48,11 @@
       "Bash(mv SPECS/SPEC_JUEGO_EQUIPO.md .claude/specs/)",
       "Bash(mv SPECS/SPEC_MEJORAS_DESIGN.md .claude/specs/)",
       "Bash(xargs wc:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(npx vite:*)",
+      "mcp__claude_ai_Supabase__list_projects",
+      "mcp__claude_ai_Supabase__list_tables",
+      "mcp__claude_ai_Supabase__apply_migration"
     ]
   }
 }

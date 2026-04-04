@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from '../Button';
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => Promise<void>;
@@ -62,21 +63,23 @@ export function LoginForm({ onLogin, onRegister, error }: LoginFormProps) {
             <p className="type-caption text-status-negative text-center">{error}</p>
           )}
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-boca-gold text-text-on-gold type-button font-bold py-2.5 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            variant="primary"
+            className="w-full py-2.5 rounded-lg"
           >
             {loading ? 'Cargando...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
-          </button>
+          </Button>
         </form>
 
-        <button
+        <Button
           onClick={() => setMode(m => m === 'login' ? 'register' : 'login')}
-          className="w-full mt-4 type-caption text-text-muted hover:text-text-nav transition-colors text-center"
+          variant="text"
+          className="w-full mt-4 type-caption text-text-muted hover:text-text-nav text-center"
         >
           {mode === 'login' ? '¿No tenés cuenta? Registrate' : '¿Ya tenés cuenta? Iniciá sesión'}
-        </button>
+        </Button>
       </div>
     </div>
   );

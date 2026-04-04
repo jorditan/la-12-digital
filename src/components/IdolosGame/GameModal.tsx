@@ -190,13 +190,15 @@ function PlayingContent({
           ¡Dale Bo!
         </Button>
       </form>
-      <button
+      <Button
         type="button"
         onClick={onPlayNext}
-        className="w-full text-center font-sans text-xs text-text-secondary hover:text-white transition-colors py-1"
+        variant="text"
+        size="xs"
+        className="w-full text-center text-text-secondary hover:text-white py-1"
       >
         Otro ídolo →
-      </button>
+      </Button>
     </>
   );
 }

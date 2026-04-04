@@ -1,6 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { fetchStandings, fetchAnnualStandings, fetchLibertadoresStandings, type StandingRow } from '../../services/apifootball';
 import { ESCUDO_VACIO } from '../../data/equipos';
+import { Button } from '../Button';
+import { SegmentedTabs } from '../SegmentedTabs';
 import { SelectDropdown } from '../SelectDropdown';
 
 type Estado = 'loading' | 'error' | 'ok';
@@ -11,6 +13,12 @@ type TablaPosicionesProps = {
 };
 
 export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
+  const competitionOptions = [
+    { value: 'liga', label: 'Liga' },
+    { value: 'anual', label: 'Anual' },
+    { value: 'libertadores', label: 'Copa Lib.' },
+  ] as const;
+
   const [rows, setRows] = useState<StandingRow[]>([]);
   const [estado, setEstado] = useState<Estado>('loading');
   const [activeZone, setActiveZone] = useState<string>('');
@@ -116,41 +124,12 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
         </h2>
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-0.5 bg-boca-blue rounded-sm p-0.5 border border-boca-gold/10 w-fit shrink-0">
-            <button
-              onClick={() => handleCompeticionChange('liga')}
-              className={[
-                'px-2.5 py-1 rounded-[2px] font-sans text-xs font-medium transition-colors',
-                competicion === 'liga'
-                  ? 'bg-boca-gold/15 text-boca-gold'
-                  : 'text-text-secondary hover:text-white',
-              ].join(' ')}
-            >
-              Liga
-            </button>
-            <button
-              onClick={() => handleCompeticionChange('anual')}
-              className={[
-                'px-2.5 py-1 rounded-[2px] font-sans text-xs font-medium transition-colors',
-                competicion === 'anual'
-                  ? 'bg-boca-gold/15 text-boca-gold'
-                  : 'text-text-secondary hover:text-white',
-              ].join(' ')}
-            >
-              Anual
-            </button>
-            <button
-              onClick={() => handleCompeticionChange('libertadores')}
-              className={[
-                'px-2.5 py-1 rounded-[2px] font-sans text-xs font-medium transition-colors',
-                competicion === 'libertadores'
-                  ? 'bg-boca-gold/15 text-boca-gold'
-                  : 'text-text-secondary hover:text-white',
-              ].join(' ')}
-            >
-              Copa Lib.
-            </button>
-          </div>
+          <SegmentedTabs
+            options={competitionOptions}
+            value={competicion}
+            onChange={handleCompeticionChange}
+            className="shrink-0"
+          />
           {headerAction}
         </div>
       </div>
@@ -163,7 +142,7 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
             <p className="font-sans text-sm text-text-secondary">
               No se pudo cargar la tabla
             </p>
-            <button
+            <Button
               onClick={
                 competicion === 'liga'
                   ? cargar
@@ -171,10 +150,11 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
                     ? cargarAnual
                     : cargarLibertadores
               }
-              className="font-sans text-sm font-medium text-boca-gold rounded px-4 py-2 hover:bg-boca-gold/10 transition-colors"
+              variant="text"
+              className="text-sm text-boca-gold rounded px-4 py-2 hover:bg-boca-gold/10"
             >
               Reintentar
-            </button>
+            </Button>
           </div>
         )}
 

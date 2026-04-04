@@ -3,6 +3,7 @@ import { MapPin, ChevronRight, LayoutGrid, List } from 'lucide-react';
 import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 import { fetchUpcomingMatches, BOCA_ID, type ProximoPartido } from '../../services/apifootball';
 import { Badge } from '../Badge';
+import { Button } from '../Button';
 import { ESCUDO_VACIO } from '../../data/equipos';
 import { FixtureTable } from './FixtureTable';
 
@@ -40,30 +41,34 @@ export function ProximosPartidos() {
         {/* Toggle de vista */}
         {estado === 'ok' && (
           <div className="flex items-center gap-0.5 bg-boca-blue rounded-sm p-0.5 border border-boca-gold/10">
-            <button
+            <Button
               aria-label="Vista tarjetas"
               onClick={() => setVista('cards')}
+              variant="ghost"
+              size="icon"
               className={[
-                'p-1.5 rounded-[2px] transition-colors',
+                'rounded-[2px] transition-colors',
                 vista === 'cards'
                   ? 'bg-boca-gold/15 text-boca-gold'
                   : 'text-text-secondary hover:text-white',
               ].join(' ')}
             >
               <LayoutGrid size={14} />
-            </button>
-            <button
+            </Button>
+            <Button
               aria-label="Vista tabla"
               onClick={() => setVista('tabla')}
+              variant="ghost"
+              size="icon"
               className={[
-                'p-1.5 rounded-[2px] transition-colors',
+                'rounded-[2px] transition-colors',
                 vista === 'tabla'
                   ? 'bg-boca-gold/15 text-boca-gold'
                   : 'text-text-secondary hover:text-white',
               ].join(' ')}
             >
               <List size={14} />
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -77,12 +82,13 @@ export function ProximosPartidos() {
             <p className="font-sans text-sm text-text-secondary flex-1">
               No se pudieron cargar los próximos partidos
             </p>
-            <button
+            <Button
               onClick={cargar}
-              className="type-button text-boca-gold border border-boca-gold/30 rounded px-3 py-1.5 hover:bg-boca-gold/10 transition-colors shrink-0"
+              variant="text"
+              className="type-button text-boca-gold border border-boca-gold/30 rounded px-3 py-1.5 hover:bg-boca-gold/10 shrink-0"
             >
               Reintentar
-            </button>
+            </Button>
           </div>
         )}
 

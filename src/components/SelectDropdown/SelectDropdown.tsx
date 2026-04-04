@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
+import { Button } from '../Button';
 
 export interface SelectOption {
   value: string;
@@ -42,14 +43,15 @@ export function SelectDropdown({ options, value, onChange, className }: SelectDr
 
   return (
     <div ref={ref} className={`relative inline-block ${className ?? ''}`}>
-      <button
+      <Button
         type="button"
         onClick={() => setOpen(v => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
+        variant="ghost"
+        size="sm"
         className={[
-          'flex items-center gap-2 font-sans text-sm px-3 py-1.5 rounded-sm w-full',
-          'border transition-colors duration-150',
+          'w-full border',
           open
             ? 'bg-boca-gold/10 border-boca-gold/60 text-boca-gold'
             : 'bg-boca-blue border-boca-gold/30 text-boca-gold hover:border-boca-gold/55 hover:bg-boca-gold/5 focus-visible:ring-2 focus-visible:ring-boca-gold/40 focus-visible:outline-none',
@@ -60,7 +62,7 @@ export function SelectDropdown({ options, value, onChange, className }: SelectDr
           size={14}
           className={`shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
         />
-      </button>
+      </Button>
 
       {open && (
         <ul

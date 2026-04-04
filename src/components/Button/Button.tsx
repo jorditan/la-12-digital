@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'destructive';
-export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'destructive' | 'text';
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'icon';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -54,9 +54,19 @@ const VARIANTS: Record<ButtonVariant, string> = {
     'active:brightness-90',
     'disabled:opacity-40 disabled:cursor-not-allowed',
   ].join(' '),
+
+  /** Acción textual, sin caja visible por defecto */
+  text: [
+    'bg-transparent text-text-muted font-medium',
+    'border border-transparent shadow-none',
+    'hover:text-boca-gold hover:bg-transparent',
+    'active:bg-transparent',
+    'disabled:opacity-40 disabled:cursor-not-allowed',
+  ].join(' '),
 };
 
 const SIZES: Record<ButtonSize, string> = {
+  xs:   'px-2 py-1 text-xs rounded-sm',
   sm:   'px-3 py-1.5 text-xs rounded-sm',
   md:   'px-4 py-2 text-sm rounded-sm',
   lg:   'px-6 py-3 text-base rounded-sm',
@@ -75,7 +85,9 @@ export function Button({
       className={[
         'inline-flex items-center justify-center gap-2',
         'font-sans cursor-pointer',
-        'transition-colors duration-150',
+        'transition-all duration-150',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-boca-gold focus-visible:ring-offset-1 focus-visible:ring-offset-boca-blue',
+        'active:scale-[0.97]',
         VARIANTS[variant],
         SIZES[size],
         className,
