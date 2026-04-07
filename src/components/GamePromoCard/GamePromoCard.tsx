@@ -12,7 +12,6 @@ type GamePromoCardProps = {
 
 export function GamePromoCard({
   backgroundImageUrl,
-  backgroundOpacity = 'opacity-25',
   contentId,
   score,
   title,
@@ -20,46 +19,100 @@ export function GamePromoCard({
   cta,
 }: GamePromoCardProps) {
   return (
-    <div className="mt-6">
-      <div className="relative overflow-hidden rounded-sm" style={{ minHeight: '180px' }}>
-        {backgroundImageUrl && (
+    <div className="mt-6 group">
+      <div
+        id={contentId}
+        className="relative overflow-hidden rounded-sm"
+        style={{ minHeight: '188px' }}
+      >
+
+        {/* ── Capa base ─────────────────────────────────────────────── */}
+        <div className="absolute inset-0 bg-boca-blue-mid" />
+
+        {/* ── Foto con diagonal clip ─────────────────────────────────── */}
+        {backgroundImageUrl ? (
           <div
-            className={`absolute inset-0 scale-110 blur-lg bg-center bg-cover bg-no-repeat ${backgroundOpacity}`}
-            style={{ backgroundImage: `url(${backgroundImageUrl})` }}
+            className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+            style={{
+              backgroundImage: `url(${backgroundImageUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              clipPath: 'polygon(42% 0, 100% 0, 100% 100%, 28% 100%)',
+              opacity: 0.45,
+            }}
+            aria-hidden="true"
+          />
+        ) : (
+          /* Sin foto: trama de rombos como fondo decorativo */
+          <div
+            className="absolute inset-0 opacity-[0.035]"
+            style={{
+              backgroundImage:
+                'repeating-linear-gradient(45deg, #FFD700 0px, #FFD700 1px, transparent 1px, transparent 14px),' +
+                'repeating-linear-gradient(-45deg, #FFD700 0px, #FFD700 1px, transparent 1px, transparent 14px)',
+            }}
             aria-hidden="true"
           />
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-boca-blue via-boca-blue/80 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,193,7,0.18),transparent_40%)]" />
-        <div className="absolute inset-0 rounded-sm ring-1 ring-boca-gold/30 hover:ring-boca-gold/60 transition-all duration-300" />
+        {/* ── Gradientes de cohesión ────────────────────────────────── */}
+        <div className="absolute inset-0 bg-gradient-to-r from-boca-blue-mid via-boca-blue-mid/90 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-boca-blue/50 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_0%,rgba(255,215,0,0.09),transparent_55%)]" />
 
+        {/* ── Borde dorado superior ─────────────────────────────────── */}
+        <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-boca-gold/80 via-boca-gold/25 to-transparent" />
+
+        {/* ── Borde perimetral con hover ────────────────────────────── */}
+        <div className="absolute inset-0 rounded-sm ring-1 ring-inset ring-boca-gold/20 group-hover:ring-boca-gold/45 transition-all duration-300" />
+
+        {/* ── Esquina decorativa (trama diagonal) ──────────────────── */}
         <div
-          id={contentId}
-          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          className="absolute top-0 right-0 w-28 h-28 pointer-events-none"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(-45deg, rgba(255,215,0,0.055) 0px, rgba(255,215,0,0.055) 1px, transparent 1px, transparent 6px)',
+            clipPath: 'polygon(100% 0, 100% 100%, 0 0)',
+          }}
+          aria-hidden="true"
         />
 
-        <div className="relative flex flex-col gap-3 p-5">
-          <div className="flex items-center justify-between">
-            <div />
+        {/* ── Contenido ─────────────────────────────────────────────── */}
+        <div className="relative flex flex-col justify-between p-5 gap-3" style={{ minHeight: '188px' }}>
+
+          {/* Fila 1: etiqueta + score */}
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-sans text-[9px] font-bold uppercase tracking-[0.2em] text-boca-gold/45">
+              ● Desafío
+            </span>
+
             {score && (
-              <span className="font-sans text-xs text-boca-gold tabular-nums font-bold">
-                {score}
-              </span>
+              <div className="flex items-center gap-1.5 bg-black/40 border border-boca-gold/30 rounded-[2px] px-2 py-0.5 backdrop-blur-sm">
+                <span className="size-1.5 rounded-full bg-boca-gold animate-pulse shrink-0" />
+                <span className="font-mono text-[11px] font-bold text-boca-gold tabular-nums tracking-widest">
+                  {score}
+                </span>
+              </div>
             )}
           </div>
 
-          <div>
+          {/* Fila 2: título */}
+          <div className="flex-1 flex flex-col justify-center">
             {title}
           </div>
 
-          {decoration && (
-            <div className="flex items-center gap-2">
-              {decoration}
+          {/* Fila 3: decoración + CTA */}
+          <div className="flex items-end justify-between gap-3">
+            {decoration && (
+              <div className="flex items-center gap-1.5 opacity-60">
+                {decoration}
+              </div>
+            )}
+            <div className={!decoration ? 'w-full' : 'shrink-0'}>
+              {cta}
             </div>
-          )}
+          </div>
 
-          {cta}
         </div>
       </div>
     </div>
