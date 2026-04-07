@@ -10,58 +10,51 @@ import { CanalYoutube } from './components/CanalYoutube';
 import { IdolosGame } from './components/IdolosGame';
 import { EquiposGame } from './components/EquiposGame';
 import { Sidebar } from './components/Sidebar';
+import { TablaPosiciones } from './components/TablaPosiciones';
 import { MiHistorial } from './components/MiHistorial';
 import { Configuracion } from './components/Configuracion';
 import { AuthModal } from './components/Auth';
 import { useAuth } from './hooks/useAuth';
 import { Toaster } from 'sonner';
 
-const STORAGE_KEY = 'sidebar-collapsed';
-
-
-function DashboardPage({ sidebarCollapsed, onSidebarCollapsedChange }: { sidebarCollapsed: boolean; onSidebarCollapsedChange: (collapsed: boolean) => void }) {
+function DashboardPage() {
   return (
     <>
-      <Sidebar onCollapsedChange={onSidebarCollapsedChange} />
-      <div
-        className={[
-          'w-full px-3 py-3 md:px-4 sm:px-6 sm:py-8 lg:px-10 transition-[margin] duration-300',
-          sidebarCollapsed ? 'lg:mr-20 xl:mr-24' : 'lg:mr-[23rem] xl:mr-[27rem]',
-        ].join(' ')}
-      >
-        <main className="w-full">
-          <div className="flex flex-col gap-4 sm:gap-8">
-            <ProximosPartidos />
-            <div className="flex flex-col gap-4 sm:flex-row sm:gap-8 sm:items-stretch">
-              <div className="min-w-0 sm:flex-1 flex flex-col">
-                <BomboneraWidget />
-              </div>
-              <div className="min-w-0 sm:flex-1 flex flex-col">
-                <UltimosPartidos />
-              </div>
+      <div className="flex">
+        {/* Contenido principal */}
+        <main className="flex-1 min-w-0 px-3 py-3 sm:px-6 sm:py-8 lg:px-10 flex flex-col gap-4 sm:gap-8">
+          <ProximosPartidos />
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-8 sm:items-stretch">
+            <div className="min-w-0 sm:flex-1 flex flex-col">
+              <BomboneraWidget />
+            </div>
+            <div className="min-w-0 sm:flex-1 flex flex-col">
+              <UltimosPartidos />
             </div>
           </div>
-
-          <div className="mt-6 sm:mt-10">
-            <Noticias />
-          </div>
-          <div className="mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Noticias />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <IdolosGame />
             <EquiposGame />
           </div>
-          <div className="mt-6 sm:mt-10">
-            <CanalYoutube />
-          </div>
+          <CanalYoutube />
         </main>
+
+        {/* Tabla Posiciones — sticky dentro del mismo contenedor que main */}
+        <aside className="hidden lg:block w-[21rem] xl:w-[24rem] shrink-0 border-l border-boca-border">
+          <div className="sticky top-[60px] h-[calc(100vh-60px)] overflow-y-auto flex flex-col p-4 sm:p-6">
+            <TablaPosiciones />
+          </div>
+        </aside>
       </div>
+
+      {/* Mobile: botón flotante + drawer para la tabla */}
+      <Sidebar />
     </>
   );
 }
 
 function AppInner() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(
-    () => localStorage.getItem(STORAGE_KEY) === 'true'
-  );
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   const {
@@ -83,18 +76,18 @@ function AppInner() {
   }, [user]);
 
   return (
-    <div className="min-h-screen text-white font-serif relative overflow-x-hidden bg-app-bg">
+    <div className="min-h-screen text-white font-serif relative overflow-x-clip bg-app-bg">
       <Header user={user} onLoginClick={() => setShowLoginModal(true)} onLogout={logout} onUploadAvatar={uploadAvatar} />
       <BannerMensaje />
 
       <Routes>
         <Route
           path="/"
-          element={<DashboardPage sidebarCollapsed={sidebarCollapsed} onSidebarCollapsedChange={setSidebarCollapsed} />}
+          element={<DashboardPage />}
         />
         <Route
           path="/plantel"
-          element={<DashboardPage sidebarCollapsed={sidebarCollapsed} onSidebarCollapsedChange={setSidebarCollapsed} />}
+          element={<DashboardPage />}
         />
         <Route
           path="/mi-historial"
@@ -115,7 +108,7 @@ function AppInner() {
         />
         <Route
           path="*"
-          element={<DashboardPage sidebarCollapsed={sidebarCollapsed} onSidebarCollapsedChange={setSidebarCollapsed} />}
+          element={<DashboardPage />}
         />
       </Routes>
 

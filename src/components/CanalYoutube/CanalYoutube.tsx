@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Youtube } from 'lucide-react';
 import { fetchVideos, type VideoYoutube } from '../../services/apifootball';
 import { CANAL_DEFAULT, CANALES_YOUTUBE } from '../../data/canalesYoutube';
+import { Badge } from '../Badge';
 import { Button } from '../Button';
 import { CardVideo } from '../CardVideo';
 
@@ -34,20 +35,15 @@ export function CanalYoutube() {
         {/* Pills de canal */}
         <div className="flex flex-wrap gap-2">
           {CANALES_YOUTUBE.map(c => (
-            <Button
+            <Badge
               key={c.handle}
               onClick={() => setCanal(c)}
-              variant="ghost"
-              size="sm"
-              className={`
-                rounded-full border transition-colors
-                ${canal.handle === c.handle
-                  ? 'bg-boca-gold text-boca-blue font-semibold border-boca-gold'
-                  : 'border-boca-border text-text-nav hover:border-boca-gold/50 hover:text-boca-gold'}
-              `}
+              selectable
+              selected={canal.handle === c.handle}
+              className="rounded-full"
             >
               {c.label}
-            </Button>
+            </Badge>
           ))}
         </div>
       </div>

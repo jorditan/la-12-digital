@@ -1,139 +1,52 @@
-import { useEffect, useState, type ReactNode } from 'react';
-import { fetchStandings, fetchAnnualStandings, fetchLibertadoresStandings, type StandingRow } from '../../services/apifootball';
+import type { ReactNode } from 'react';
 import { ESCUDO_VACIO } from '../../data/equipos';
 import { Button } from '../Button';
-import { SegmentedTabs } from '../SegmentedTabs';
 import { SelectDropdown } from '../SelectDropdown';
-
-type Estado = 'loading' | 'error' | 'ok';
-type Competicion = 'liga' | 'anual' | 'libertadores';
+import { Tab } from '../Tab';
+import { useTablaPosiciones, COMPETITION_OPTIONS } from './useTablaPosiciones';
 
 type TablaPosicionesProps = {
   headerAction?: ReactNode;
 };
 
 export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
-  const competitionOptions = [
-    { value: 'liga', label: 'Liga' },
-    { value: 'anual', label: 'Anual' },
-    { value: 'libertadores', label: 'Copa Lib.' },
-  ] as const;
-
-  const [rows, setRows] = useState<StandingRow[]>([]);
-  const [estado, setEstado] = useState<Estado>('loading');
-  const [activeZone, setActiveZone] = useState<string>('');
-  const [competicion, setCompeticion] = useState<Competicion>('liga');
-  const [annualRows, setAnnualRows] = useState<StandingRow[] | null>(null);
-  const [annualEstado, setAnnualEstado] = useState<Estado>('loading');
-  const [libRows, setLibRows] = useState<StandingRow[] | null>(null);
-  const [libEstado, setLibEstado] = useState<Estado>('loading');
-
-  const cargar = () => {
-    setEstado('loading');
-    fetchStandings()
-      .then((data) => {
-        setRows(data);
-        setEstado('ok');
-      })
-      .catch(() => setEstado('error'));
-  };
-
-  const cargarLibertadores = () => {
-    setLibEstado('loading');
-    fetchLibertadoresStandings()
-      .then((data) => {
-        setLibRows(data);
-        setLibEstado('ok');
-      })
-      .catch(() => setLibEstado('error'));
-  };
-
-  const cargarAnual = () => {
-    setAnnualEstado('loading');
-    fetchAnnualStandings()
-      .then((data) => {
-        setAnnualRows(data);
-        setAnnualEstado('ok');
-      })
-      .catch(() => setAnnualEstado('error'));
-  };
-
-  useEffect(() => { cargar(); }, []);
-
-  useEffect(() => {
-    if (competicion === 'anual' && annualRows === null) {
-      cargarAnual();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [competicion]);
-
-  useEffect(() => {
-    if (competicion === 'libertadores' && libRows === null) {
-      cargarLibertadores();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [competicion]);
-
-  const activeRows =
-    competicion === 'liga'
-      ? rows
-      : competicion === 'anual'
-        ? (annualRows ?? [])
-        : (libRows ?? []);
-  const activeEstado =
-    competicion === 'liga'
-      ? estado
-      : competicion === 'anual'
-        ? annualEstado
-        : libEstado;
-
-  const zoneNames = [...new Set(activeRows.map(r => r.zone).filter((z): z is string => Boolean(z)))];
-  const hasZones = zoneNames.length >= 2;
-  const bocaZone = activeRows.find((r) => /boca/i.test(r.team.name))?.zone ?? '';
-  const isLibertadores = competicion === 'libertadores';
-  const shouldLockToBocaZone = isLibertadores && Boolean(bocaZone);
-  const shouldShowZoneSelector = hasZones && !shouldLockToBocaZone;
-
-  useEffect(() => {
-    if (hasZones && !zoneNames.includes(activeZone)) {
-      setActiveZone(bocaZone && zoneNames.includes(bocaZone) ? bocaZone : zoneNames[zoneNames.length - 1]);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeRows]);
-
-  const displayRows = shouldLockToBocaZone
-    ? activeRows.filter((r) => r.zone === bocaZone)
-    : hasZones
-      ? activeRows.filter((r) => r.zone === activeZone)
-      : activeRows;
-  const activeZoneLabel = shouldLockToBocaZone ? bocaZone : activeZone;
-
-  const handleCompeticionChange = (comp: Competicion) => {
-    setCompeticion(comp);
-    setActiveZone('');
-  };
+  const {
+    competicion,
+    handleCompeticionChange,
+    activeEstado,
+    displayRows,
+    shouldShowZoneSelector,
+    zoneNames,
+    activeZone,
+    setActiveZone,
+    isLibertadores,
+    activeZoneLabel,
+    retry,
+  } = useTablaPosiciones();
 
   return (
     <section
       aria-label="Posiciones"
       className="h-full bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col"
     >
+      {/* Header */}
       <div className="sticky top-0 z-10 border-b border-boca-border-card bg-boca-blue-mid px-4 pt-4 pb-3 sm:px-6 sm:pt-6 sm:pb-3 flex items-center justify-between gap-3">
-        <h2 className="type-section-title text-white">
+        <h2 className="type-section-title text-white shrink-0">
           Posiciones
         </h2>
-
-        <div className="flex items-center gap-2">
-          <SegmentedTabs
-            options={competitionOptions}
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+          <Tab
+            options={COMPETITION_OPTIONS}
             value={competicion}
             onChange={handleCompeticionChange}
-            className="shrink-0"
+            fullWidth
+            className="min-w-0 flex-1 max-w-[11rem]"
           />
           {headerAction}
         </div>
       </div>
 
+      {/* Contenido */}
       <div className="flex-1 min-h-0 px-2 pb-3 pt-3 sm:px-3 sm:pb-4 flex flex-col">
         {activeEstado === 'loading' && <SkeletonTabla />}
 
@@ -143,13 +56,7 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
               No se pudo cargar la tabla
             </p>
             <Button
-              onClick={
-                competicion === 'liga'
-                  ? cargar
-                  : competicion === 'anual'
-                    ? cargarAnual
-                    : cargarLibertadores
-              }
+              onClick={retry}
               variant="text"
               className="text-sm text-boca-gold rounded px-4 py-2 hover:bg-boca-gold/10"
             >
@@ -190,27 +97,13 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
             <table className="w-full table-fixed caption-bottom text-sm">
               <thead>
                 <tr>
-                  <th className="h-10 w-8 px-2 text-left align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">
-                    #
-                  </th>
-                  <th className="h-10 px-2 text-left align-middle font-sans text-[11px] font-medium tracking-wide text-text-secondary">
-                    Equipos
-                  </th>
-                  <th className="h-10 w-10 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-boca-gold">
-                    PTS
-                  </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">
-                    PJ
-                  </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">
-                    G
-                  </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">
-                    E
-                  </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">
-                    P
-                  </th>
+                  <th className="h-10 w-8 px-2 text-left align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">#</th>
+                  <th className="h-10 px-2 text-left align-middle font-sans text-[11px] font-medium tracking-wide text-text-secondary">Equipos</th>
+                  <th className="h-10 w-10 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-boca-gold">PTS</th>
+                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">PJ</th>
+                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">G</th>
+                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">E</th>
+                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">P</th>
                 </tr>
               </thead>
               <tbody>
@@ -220,11 +113,8 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
                     <tr
                       key={row.team.id}
                       className={[
-                        'border-b border-boca-gold/5 transition-colors last:border-b-0',
-                        'hover:bg-white/[0.03]',
-                        esBoca
-                          ? 'bg-boca-gold/[0.07] border-2 border-l-boca-gold hover:bg-boca-gold/[0.10]'
-                          : '',
+                        'border-b border-boca-gold/5 transition-colors last:border-b-0 hover:bg-white/[0.03]',
+                        esBoca ? 'bg-boca-gold/[0.07] border-2 border-l-boca-gold hover:bg-boca-gold/[0.10]' : '',
                       ].join(' ')}
                     >
                       <td className={`px-2 py-2.5 align-middle font-sans text-sm ${esBoca ? 'text-boca-gold font-semibold' : 'text-text-secondary'}`}>
@@ -248,18 +138,10 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
                       <td className={`px-1 py-2.5 align-middle text-center font-sans text-sm font-semibold tabular-nums ${esBoca ? 'text-boca-gold' : 'text-white'}`}>
                         {row.points}
                       </td>
-                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
-                        {row.all.played}
-                      </td>
-                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
-                        {row.all.win}
-                      </td>
-                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
-                        {row.all.draw}
-                      </td>
-                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
-                        {row.all.lose}
-                      </td>
+                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">{row.all.played}</td>
+                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">{row.all.win}</td>
+                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">{row.all.draw}</td>
+                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">{row.all.lose}</td>
                     </tr>
                   );
                 })}

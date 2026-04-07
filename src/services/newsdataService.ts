@@ -65,6 +65,7 @@ export async function fetchNewsdataNoticias(): Promise<NoticiaRaw[]> {
 
   const result: NoticiaRaw[] = data.results
     .filter(a => a.image_url)
+    .filter(a => !/river\s*plate/i.test(a.title))
     .filter((a, i, arr) => arr.findIndex(b => b.article_id === a.article_id) === i)
     .map(a => ({
       id:     a.article_id,

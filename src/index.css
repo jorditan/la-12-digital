@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Sonner toasts ───────────────────────────────────────────────────────────
+   Fuerza contraste adecuado en título y descripción sobre fondo oscuro.
+   ──────────────────────────────────────────────────────────────────────────── */
+[data-sonner-toast] [data-title] {
+  color: #e0e7ff !important;
+  font-weight: 500;
+}
+[data-sonner-toast] [data-description] {
+  color: #94a3b8 !important;
+}
+
 /* Estilos base La 12 Digital */
 :root {
   font-family: 'Crimson Pro', Georgia, serif;

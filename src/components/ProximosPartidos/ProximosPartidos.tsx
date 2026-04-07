@@ -16,6 +16,14 @@ function formatFecha(isoDate: string): string {
   return d.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
 }
 
+function getDaysUntil(isoDate: string): number {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const matchDate = new Date(isoDate);
+  matchDate.setHours(0, 0, 0, 0);
+  return Math.round((matchDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+}
+
 export function ProximosPartidos() {
   const [partidos, setPartidos] = useState<ProximoPartido[]>([]);
   const [estado, setEstado] = useState<Estado>('loading');
@@ -148,12 +156,46 @@ function ScrollRow({ partidos }: { partidos: ProximoPartido[] }) {
 
 // ── Card individual ───────────────────────────────────────────────────────────
 
+function UrgencyBadge({ days }: { days: number }) {
+  if (days < 0) return null;
+  if (days === 0) return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm bg-boca-gold text-boca-blue text-[10px] font-bold uppercase tracking-wide">
+      <span className="size-1.5 rounded-full bg-boca-blue animate-pulse" />
+      ¡HOY!
+    </span>
+  );
+  if (days === 1) return (
+    <span className="inline-flex items-center px-2 py-0.5 rounded-sm bg-boca-gold/20 text-boca-gold text-[10px] font-semibold uppercase tracking-wide border border-boca-gold/30">
+      Mañana
+    </span>
+  );
+  if (days <= 7) return (
+    <span className="inline-flex items-center px-2 py-0.5 rounded-sm bg-white/5 text-white/60 text-[10px] font-medium uppercase tracking-wide border border-white/10">
+      En {days} días
+    </span>
+  );
+  return null;
+}
+
 function CardPartido({ partido }: { partido: ProximoPartido }) {
   const bocaEsLocal = partido.homeTeam.id === BOCA_ID;
   const rival = bocaEsLocal ? partido.awayTeam : partido.homeTeam;
+  const days = getDaysUntil(partido.date);
+  const isUrgent = days >= 0 && days <= 1;
 
   return (
-    <article className="flex flex-col gap-3 p-4 bg-boca-blue-light border border-boca-gold/10 rounded-sm shrink-0 w-60 hover:border-boca-gold/25 transition-colors">
+    <article className={[
+      'flex flex-col gap-3 p-4 bg-boca-blue-light border rounded-sm shrink-0 w-60 transition-colors',
+      isUrgent
+        ? 'border-boca-gold/40 hover:border-boca-gold/60'
+        : 'border-boca-gold/10 hover:border-boca-gold/25',
+    ].join(' ')}>
+      {/* Indicador de urgencia */}
+      {days >= 0 && days <= 7 && (
+        <div>
+          <UrgencyBadge days={days} />
+        </div>
+      )}
       {/* Ambos escudos VS */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex flex-col items-center gap-1">
