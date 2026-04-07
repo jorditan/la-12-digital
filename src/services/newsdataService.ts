@@ -10,6 +10,7 @@ const BASE_URL = isDev ? 'https://newsdata.io/api/1/news' : '/api/newsdata';
 interface NewsdataArticle {
   article_id: string;
   title: string;
+  description: string | null;
   link: string;
   image_url: string | null;
   pubDate: string;
