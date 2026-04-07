@@ -63,8 +63,11 @@ export async function fetchNewsdataNoticias(): Promise<NoticiaRaw[]> {
   const data: NewsdataResponse = await res.json();
   if (data.status !== 'success') throw new Error('Newsdata API error');
 
+  const RIVER_RE = /river\s*plate|los\s*millonarios|el\s*millo\b/i;
+
   const result: NoticiaRaw[] = data.results
     .filter(a => a.image_url)
+    .filter(a => !RIVER_RE.test(a.title) && !RIVER_RE.test(a.description ?? ''))
     .filter((a, i, arr) => arr.findIndex(b => b.article_id === a.article_id) === i)
     .map(a => ({
       id:     a.article_id,

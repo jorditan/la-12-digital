@@ -1,8 +1,3 @@
-/**
- * Ídolos históricos del Club Atlético Boca Juniors.
- * Fuente: boca_idols.json — datos verificados.
- * Usados en el juego "¿Qué ídolo es?" de La 12 Digital.
- */
 
 export type Dificultad = 'facil' | 'media' | 'dificil' | 'muy_dificil';
 

@@ -18,16 +18,18 @@ export function EquiposGame() {
             <span className="text-boca-gold"> el plantel?</span>
           </p>
         )}
-        decoration={[9, '?', '?', '?'].map((n, i) => (
+        decoration={[10, 9, 7, 11].map((n, i) => (
           <span
             key={i}
-            className={`font-serif font-black leading-none select-none ${
+            className={`font-serif font-black leading-none select-none tabular-nums ${
               i === 0
-                ? 'text-4xl text-boca-gold/30'
+                ? 'text-4xl text-boca-gold/35'
+                : i === 1
+                ? 'text-3xl text-boca-gold/20'
                 : 'text-2xl text-boca-gold/10'
             }`}
           >
-            {n}
+            #{n}
           </span>
         ))}
         cta={(

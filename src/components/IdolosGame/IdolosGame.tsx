@@ -1,3 +1,4 @@
+import { Star } from 'lucide-react';
 import { Button } from '../Button';
 import { GamePromoCard } from '../GamePromoCard/GamePromoCard';
 import { GameModal } from './GameModal';
@@ -19,14 +20,14 @@ export function IdolosGame() {
             <span className="text-boca-gold"> es?</span>
           </p>
         )}
-        decoration={['?', '?', '?'].map((q, i) => (
-          <span
+        decoration={[20, 16, 12].map((size, i) => (
+          <Star
             key={i}
-            className="font-serif text-3xl font-black text-boca-gold/20 leading-none select-none"
-            style={{ animationDelay: `${i * 0.2}s` }}
-          >
-            {q}
-          </span>
+            size={size}
+            className="text-boca-gold select-none shrink-0"
+            style={{ opacity: 0.15 + i * 0.08 }}
+            fill="currentColor"
+          />
         ))}
         cta={(
           <Button

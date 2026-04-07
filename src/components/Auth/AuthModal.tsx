@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { X, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../Button';
-import { SegmentedTabs } from '../SegmentedTabs';
+import { Tab } from '../Tab';
 import { useAuthModal } from './useAuthModal';
 
 interface AuthModalProps {
@@ -63,7 +63,7 @@ export function AuthModal({ onLogin, onRegister, onClose }: AuthModalProps) {
             </p>
           </div>
 
-          <SegmentedTabs
+          <Tab
             options={modeOptions}
             value={mode}
             onChange={setMode}
