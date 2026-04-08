@@ -1,6 +1,8 @@
+import { CalendarPlus } from 'lucide-react';
 import { BOCA_ID, type ProximoPartido } from '../../services/apifootball';
 import { ESCUDO_VACIO } from '../../data/equipos';
 import { Badge } from '../Badge';
+import { buildGCalLink } from '../../utils/calendarLink';
 
 function formatFechaCorta(isoDate: string): string {
   const d = new Date(isoDate);
@@ -78,6 +80,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
             <th className="py-2 px-3 text-left type-ui-label uppercase tracking-wider text-boca-gold/50 hidden md:table-cell">
               Copa
             </th>
+            <th className="py-2 px-3 w-10" aria-label="Agregar al calendario" />
           </tr>
         </thead>
 
@@ -150,6 +153,19 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                   >
                     {p.competition}
                   </Badge>
+                </td>
+
+                {/* Agregar al calendario */}
+                <td className="py-2.5 px-2 text-center">
+                  <a
+                    href={buildGCalLink(p)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Agregar ${p.homeTeam.name} vs ${p.awayTeam.name} a Google Calendar`}
+                    className="inline-flex items-center justify-center text-white/25 hover:text-boca-gold transition-colors"
+                  >
+                    <CalendarPlus size={14} />
+                  </a>
                 </td>
               </tr>
             );

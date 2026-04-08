@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { MapPin, ChevronRight, LayoutGrid, List } from 'lucide-react';
+import { MapPin, ChevronRight, LayoutGrid, List, Download } from 'lucide-react';
 import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 import { fetchUpcomingMatches, BOCA_ID, type ProximoPartido } from '../../services/apifootball';
 import { Badge } from '../Badge';
 import { Button } from '../Button';
 import { ESCUDO_VACIO } from '../../data/equipos';
 import { FixtureTable } from './FixtureTable';
+import { buildGCalLink, downloadIcsFile } from '../../utils/calendarLink';
 
 type Vista = 'cards' | 'tabla';
 
@@ -46,9 +47,23 @@ export function ProximosPartidos() {
           Próximos partidos
         </h2>
 
-        {/* Toggle de vista */}
-        {estado === 'ok' && (
-          <div className="flex items-center gap-0.5 bg-boca-blue rounded-sm p-0.5 border border-boca-gold/10">
+        {/* Controles de header */}
+        {estado === 'ok' && partidos.length > 0 && (
+          <div className="flex items-center gap-2">
+            {/* Exportar .ics */}
+            <Button
+              onClick={() => downloadIcsFile(partidos)}
+              variant="ghost"
+              size="icon"
+              aria-label="Descargar todos los partidos como .ics"
+              title="Exportar al calendario (.ics)"
+              className="text-text-secondary hover:text-boca-gold transition-colors"
+            >
+              <Download size={14} />
+            </Button>
+
+            {/* Toggle de vista */}
+            <div className="flex items-center gap-0.5 bg-boca-blue rounded-sm p-0.5 border border-boca-gold/10">
             <Button
               aria-label="Vista tarjetas"
               onClick={() => setVista('cards')}
@@ -77,6 +92,7 @@ export function ProximosPartidos() {
             >
               <List size={14} />
             </Button>
+            </div>
           </div>
         )}
       </div>
@@ -245,8 +261,29 @@ function CardPartido({ partido }: { partido: ProximoPartido }) {
         {partido.competition}
       </Badge>
 
-      {/* Indicador de urgencia */}
-      {days >= 0 && days <= 7 && <UrgencyBadge days={days} />}
+      {/* Footer: urgencia + calendario */}
+      <div className="mt-auto pt-2.5 border-t justify-center border-white/[0.06] flex items-center justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          {days >= 0 && days <= 7 && <UrgencyBadge days={days} />}
+        </div>
+        <a
+          href={buildGCalLink(partido)}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Agregar partido a Google Calendar"
+          className="group flex items-center gap-1.5 px-2 py-1 rounded-sm bg-white/[0.04] border border-white/[0.08] hover:bg-[#1a73e8]/10 hover:border-[#1a73e8]/30 transition-all duration-200 shrink-0"
+        >
+          <img
+            src="/google_calendar_icon.png"
+            alt=""
+            aria-hidden="true"
+            className="w-3.5 h-3.5 object-contain shrink-0"
+          />
+          <span className="font-sans text-[10px] text-white/35 group-hover:text-white/70 transition-colors whitespace-nowrap">
+            Agregar al calendario
+          </span>
+        </a>
+      </div>
     </article>
   );
 }
