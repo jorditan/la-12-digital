@@ -42,6 +42,8 @@ export function useHorizontalScroll(): UseHorizontalScrollReturn {
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     const el = ref.current;
     if (!el) return;
+    // No interceptar clicks en elementos interactivos (links, botones)
+    if ((e.target as Element).closest('a, button')) return;
     dragging.current = true;
     startX.current = e.clientX;
     scrollLeft.current = el.scrollLeft;
