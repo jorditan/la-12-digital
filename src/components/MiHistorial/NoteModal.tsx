@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 
 const MAX_LENGTH = 280;
 

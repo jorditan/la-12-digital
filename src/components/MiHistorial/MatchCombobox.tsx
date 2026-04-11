@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import type { MatchResult } from '@/services/apifootball';
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 import { formatOptionLabel } from './useMiHistorial';
+import { useClickOutside } from '../../hooks/useClickOutside';
 
 interface MatchComboboxProps {
   matches: MatchResult[];
@@ -26,13 +27,7 @@ export const MatchCombobox = ({ matches, value, onChange }: MatchComboboxProps) 
     setQuery('');
   }, []);
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) handleClose();
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [handleClose]);
+  useClickOutside(containerRef, handleClose);
 
   const handleSelect = (id: string) => {
     onChange(id);

@@ -1,4 +1,4 @@
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 import { GamePromoCard } from '../GamePromoCard/GamePromoCard';
 import { GameModal } from './GameModal';
 import { useEquiposGame } from './hooks/useEquiposGame';

@@ -1,6 +1,6 @@
 import { CalendarPlus, History } from 'lucide-react';
 import type { ProximoPartido } from '../../services/apifootball';
-import { Badge } from '../Badge';
+import { Badge } from '../ui/Badge';
 import { buildGCalLink } from '../../utils/calendarLink';
 import { H2HModal } from './H2HModal';
 import { useFixtureTableH2H } from './hooks/useFixtureTableH2H';

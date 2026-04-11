@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import { Button } from '../Button';
+import { useState, useRef } from 'react';
+import { Button } from '../ui/Button';
 import { DateQuickFilter } from './DateQuickFilter';
+import { useClickOutside } from '../../hooks/useClickOutside';
 
 const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DAYS_ES   = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
@@ -58,14 +59,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
   const [hover, setHover]         = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+  useClickOutside(containerRef, () => setOpen(false));
 
   // When opening, jump to the month of 'from' (or today)
   const handleToggle = () => {

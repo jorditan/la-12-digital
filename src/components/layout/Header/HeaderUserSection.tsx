@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { LogOut, Star, User } from 'lucide-react';
-import { Button } from '../Button';
+import { Button } from '../../ui/Button';
 import { UserAvatar } from './UserAvatar';
 import type { HeaderProps } from './types';
 

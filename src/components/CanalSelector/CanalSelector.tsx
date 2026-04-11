@@ -1,5 +1,5 @@
 import type { CanalYoutube } from '../../data/canalesYoutube';
-import { SelectDropdown } from '../SelectDropdown';
+import { SelectDropdown } from '../ui/SelectDropdown';
 
 interface CanalSelectorProps {
   canales: CanalYoutube[];

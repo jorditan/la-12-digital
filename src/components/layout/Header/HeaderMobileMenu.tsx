@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { LogOut, User } from 'lucide-react';
-import { Button } from '../Button';
+import { Button } from '../../ui/Button';
 import { NAV_ITEMS } from './constants';
 import { UserAvatar } from './UserAvatar';
 import type { HeaderProps } from './types';

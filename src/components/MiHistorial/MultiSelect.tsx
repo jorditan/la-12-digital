@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import { Button } from '../Button';
+import { useState, useRef } from 'react';
+import { Button } from '../ui/Button';
 import { QuickFilter } from './QuickFilter';
+import { useClickOutside } from '../../hooks/useClickOutside';
 
 interface MultiSelectProps {
   options: string[];
@@ -13,13 +14,7 @@ export const MultiSelect = ({ options, selected, onChange, placeholder = 'Selecc
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+  useClickOutside(containerRef, () => setOpen(false));
 
   const toggle = (value: string) => {
     onChange(selected.includes(value) ? selected.filter(v => v !== value) : [...selected, value]);

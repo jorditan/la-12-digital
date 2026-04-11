@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { X, Eye, EyeOff } from 'lucide-react';
-import { Button } from '../Button';
-import { Tab } from '../Tab';
+import { Button } from '../ui/Button';
+import { Tab } from '../ui/Tab';
 import { useAuthModal } from './useAuthModal';
 
 interface AuthModalProps {

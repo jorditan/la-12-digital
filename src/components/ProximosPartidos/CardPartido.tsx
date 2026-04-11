@@ -1,6 +1,6 @@
 import { MapPin, History } from 'lucide-react';
 import type { ProximoPartido } from '../../services/apifootball';
-import { Badge } from '../Badge';
+import { Badge } from '../ui/Badge';
 import { ESCUDO_VACIO } from '../../data/equipos';
 import { H2HModal } from './H2HModal';
 import { useCardPartido } from './hooks/useCardPartido';

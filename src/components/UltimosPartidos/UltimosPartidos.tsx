@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchLastMatches, BOCA_ID, type MatchResult } from '../../services/apifootball';
-import { Badge } from '../Badge';
-import { Button } from '../Button';
+import { Badge } from '../ui/Badge';
+import { Button } from '../ui/Button';
 
 type Estado = 'loading' | 'error' | 'ok';
 type Resultado = 'victoria' | 'derrota' | 'empate';

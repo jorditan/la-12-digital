@@ -1,5 +1,5 @@
 import { ChevronLeft } from 'lucide-react';
-import { Button } from '../Button';
+import { Button } from '../../ui/Button';
 
 type DesktopSidebarBubbleProps = {
   onClick: () => void;

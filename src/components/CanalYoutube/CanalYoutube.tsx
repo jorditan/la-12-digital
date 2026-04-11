@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { Youtube } from 'lucide-react';
 import { fetchVideos, type VideoYoutube } from '../../services/apifootball';
 import { CANAL_DEFAULT, CANALES_YOUTUBE } from '../../data/canalesYoutube';
-import { Badge } from '../Badge';
-import { Button } from '../Button';
+import { Badge } from '../ui/Badge';
+import { Button } from '../ui/Button';
 import { CardVideo } from '../CardVideo';
 
 type Estado = 'loading' | 'error' | 'ok';

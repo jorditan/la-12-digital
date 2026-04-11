@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 import { Button } from '../Button';
+import { useClickOutside } from '../../../hooks/useClickOutside';
 
 export interface SelectOption {
   value: string;
@@ -18,14 +19,7 @@ export function SelectDropdown({ options, value, onChange, className }: SelectDr
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    function onClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener('mousedown', onClickOutside);
-    return () => document.removeEventListener('mousedown', onClickOutside);
-  }, [open]);
+  useClickOutside(ref, () => setOpen(false));
 
   useEffect(() => {
     if (!open) return;
