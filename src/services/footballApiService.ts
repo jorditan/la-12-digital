@@ -35,6 +35,7 @@ interface LSFixture {
   location?: string;
   round?: string;
   status?: string;
+  competition_name?: string; // present in H2H responses
   // Scores are nested in history responses: scores: { score, ft_score, ht_score, ... }
   scores?: {
     score?: string;    // "X - X" final
@@ -46,6 +47,22 @@ interface LSFixture {
 
 // Alias for history usage
 type LSMatch = LSFixture;
+
+// Flat match structure returned by the v4 head-to-head endpoint
+interface LSFlatMatch {
+  id: string | number;
+  date: string;           // "YYYY-MM-DD"
+  home_name: string;
+  away_name: string;
+  home_id: string | number;
+  away_id: string | number;
+  score?: string;         // "X - X"
+  ft_score?: string;
+  ht_score?: string;
+  scheduled?: string;     // "HH:MM"
+  location?: string;
+  competition?: { id: string | number; name: string };
+}
 
 // Standings row inside a group (from /competitions/table.json → stages[].groups[].standings)
 interface LSGroupStanding {
@@ -483,6 +500,7 @@ export interface H2HMatch {
   homeScore: number | null;
   awayScore: number | null;
   result: MatchResult;
+  competition?: string;  // e.g. "Liga Profesional 2024"
 }
 
 // ── Funciones públicas ────────────────────────────────────────────────────────
@@ -514,27 +532,46 @@ export async function getNextFixtures(count: number = 8): Promise<ProcessedFixtu
   return fixtures.slice(0, count).map(mapFixture);
 }
 
+function mapFlatMatch(m: LSFlatMatch): H2HMatch {
+  const isBocaHome = String(m.home_id) === BOCA_ID || BOCA_RE.test(m.home_name);
+  const [homeScore, awayScore] = parseScoreStr(m.ft_score ?? m.score);
+  const timeStr = m.scheduled && m.scheduled.length >= 5 ? m.scheduled.substring(0, 5) : '00:00';
+  const date = new Date(`${m.date}T${timeStr}:00Z`);
+  return {
+    date:        date.toISOString(),
+    homeTeam:    m.home_name,
+    awayTeam:    m.away_name,
+    homeScore,
+    awayScore,
+    result:      matchResult(homeScore, awayScore, isBocaHome),
+    competition: m.competition?.name,
+  };
+}
+
 /**
  * Historial de enfrentamientos directos Boca vs rival.
- * @param rivalApiId  El campo `rivalApiId` del ProximoPartido correspondiente.
+ * Usa el endpoint api-client/teams/head2head.json.
+ * En dev pasa por el proxy /api/livescore y en producción por el Worker.
  */
 export async function fetchHeadToHead(rivalApiId: number): Promise<H2HMatch[]> {
-  const data = await fetchLS<{ match?: LSMatch[]; data?: LSMatch[] }>(
-    '/matches/h2h.json',
+  const cacheKey = `ls_h2h_v5_${BOCA_ID}_${rivalApiId}`;
+  const data = await fetchLS<{
+    h2h?: LSFlatMatch[];
+    team1?: unknown;
+    team2?: unknown;
+    team1_last_6?: LSFlatMatch[];
+    team2_last_6?: LSFlatMatch[];
+    fixture?: unknown;
+  }>(
+    '/teams/head2head.json',
     { team1_id: BOCA_ID, team2_id: String(rivalApiId) },
-    `ls_h2h_${BOCA_ID}_${rivalApiId}`,
+    cacheKey,
     CACHE_DURATION.FIXTURES,
   );
 
-  const matches = data.match ?? data.data ?? [];
-  return matches.slice(0, 10).map(mapMatch).map(f => ({
-    date:      f.date.toISOString(),
-    homeTeam:  f.homeTeam,
-    awayTeam:  f.awayTeam,
-    homeScore: f.homeScore,
-    awayScore: f.awayScore,
-    result:    f.result,
-  }));
+  const matches = data.h2h ?? [];
+  matches.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  return matches.slice(0, 5).map(mapFlatMatch);
 }
 
 export async function getStandingsData(): Promise<StandingData[]> {

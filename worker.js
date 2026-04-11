@@ -121,6 +121,11 @@ export default {
       return handleLivescoreProxy(request, url, env);
     }
 
+    // Route Head-to-Head calls: /api/h2h/{team1_id}/{team2_id}
+    if (url.pathname.startsWith('/api/h2h/')) {
+      return handleH2HProxy(request, url, env);
+    }
+
     // Everything else is served by Workers Assets (the React SPA in ./dist).
     // Attach security headers to HTML responses so the SPA gets a proper security policy.
     const assetResponse = await env.ASSETS.fetch(request);
@@ -216,6 +221,50 @@ async function handleNewsdataProxy(request, url, env) {
 // and only alphanumeric characters, hyphens, underscores, and dots are allowed
 // within segments. Consecutive or trailing slashes are not permitted.
 const SAFE_LIVESCORE_PATH = /^(\/[a-zA-Z0-9][a-zA-Z0-9_\-.]*)+$/;
+
+async function handleH2HProxy(request, url, env) {
+  const corsHeaders = getCorsHeaders(request);
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+  if (request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405 });
+  }
+
+  // Expect /api/h2h/{team1_id}/{team2_id}
+  const parts = url.pathname.replace(/^\/api\/h2h\//, '').split('/');
+  if (parts.length !== 2 || !/^\d+$/.test(parts[0]) || !/^\d+$/.test(parts[1])) {
+    return new Response('Invalid path', { status: 400 });
+  }
+  const [team1Id, team2Id] = parts;
+
+  const params = new URLSearchParams();
+  params.set('key', env.LIVESCORE_KEY ?? '');
+  params.set('secret', env.LIVESCORE_SECRET ?? '');
+
+  let upstreamRes;
+  try {
+      upstreamRes = await fetch(
+        `https://livescore-api.com/api-client/teams/head2head.json?team1_id=${team1Id}&team2_id=${team2Id}&${params}`,
+      );
+  } catch (err) {
+    console.error('[h2h-proxy] upstream fetch failed:', err);
+    return new Response(JSON.stringify({ error: 'upstream_error' }), {
+      status: 502,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
+  }
+
+  const body = await upstreamRes.text();
+  return new Response(body, {
+    status: upstreamRes.status,
+    headers: {
+      'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
+      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+      ...corsHeaders,
+    },
+  });
+}
 
 async function handleLivescoreProxy(request, url, env) {
   const corsHeaders = getCorsHeaders(request);

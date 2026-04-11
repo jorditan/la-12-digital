@@ -23,8 +23,8 @@
     "id": 3,
     "nombre": "Diego Armando Maradona",
     "posicion": "Mediocampista",
-    "epoca": "1981-1982 / 1995-1997",
-    "wikipedia_url": "https://en.wikipedia.org/wiki/Diego_Maradona",
+    "epoca": "1981-1982; 1995-1997",
+    "wikipedia_url": "https://es.wikipedia.org/wiki/Diego_Maradona",
     "pista_1": "Llegó al club en 1981 rechazando una oferta millonaria del clásico rival porque su gran sueño era vestir esta camiseta.",
     "pista_2": "En su debut oficial el 22 de febrero de 1981 ante Talleres de Córdoba, tuvo una actuación brillante marcando dos goles de penal.",
     "pista_3": "Tuvo un partido de despedida en el estadio en el año 2001, donde dejó una frase eterna expresando que 'la pelota no se mancha'."
@@ -33,8 +33,8 @@
     "id": 4,
     "nombre": "Carlos Tevez",
     "posicion": "Delantero",
-    "epoca": "2001-2004 / 2015-2016 / 2018-2021",
-    "wikipedia_url": "https://en.wikipedia.org/wiki/Carlos_T%C3%A9vez",
+    "epoca": "2001-2004; 2015-2016; 2018-2021",
+    "wikipedia_url": "https://es.wikipedia.org/wiki/Carlos_T%C3%A9vez",
     "pista_1": "Debutó en 2001. Salió de un barrio muy humilde, fue campeón de la Intercontinental 2003 y regresó de Europa en su plenitud.",
     "pista_2": "En las semifinales de la Copa Libertadores 2004, anotó un gol decisivo en el Monumental e hizo un sancionado festejo imitando a una gallina.",
     "pista_3": "Logró cosechar un total de 11 títulos con la institución a lo largo de sus tres etapas diferentes en el club."
@@ -44,7 +44,7 @@
     "nombre": "Roberto Mouzo",
     "posicion": "Defensor",
     "epoca": "1971-1984",
-    "wikipedia_url": "https://en.wikipedia.org/wiki/Roberto_Mouzo",
+    "wikipedia_url": "https://es.wikipedia.org/wiki/Roberto_Mouzo",
     "pista_1": "Ningún otro jugador se puso tantas veces la camiseta del club; es el dueño del récord absoluto de presencias con 426 partidos.",
     "pista_2": "Es uno de los máximos emblemas forjados históricamente en las divisiones inferiores y conserva su récord intocable.",
     "pista_3": "Fue un pilar indiscutible en la defensa y defendió los colores de manera ininterrumpida desde principios de los 70 hasta mediados de los 80."
@@ -54,7 +54,7 @@
     "nombre": "Antonio Rattín",
     "posicion": "Mediocampista",
     "epoca": "1956-1970",
-    "wikipedia_url": "https://en.wikipedia.org/wiki/Antonio_Ratt%C3%ADn",
+    "wikipedia_url": "https://es.wikipedia.org/wiki/Antonio_Ratt%C3%ADn",
     "pista_1": "Caudillo y gran capitán de los años 60 que jugó toda su carrera (15 años) solo defendiendo esta camiseta.",
     "pista_2": "En el Mundial de 1966, tras ser expulsado polémicamente, se sentó en la alfombra de la Reina Isabel y estrujó un banderín inglés.",
     "pista_3": "En una final contra el Santos en 1963, le propuso a su entrenador darle un cachetazo a Pelé para que el árbitro los expulsara a ambos."
@@ -64,7 +64,7 @@
     "nombre": "Ángel Clemente Rojas",
     "posicion": "Delantero",
     "epoca": "1963-1972",
-    "wikipedia_url": "https://en.wikipedia.org/wiki/%C3%81ngel_Clemente_Rojas",
+    "wikipedia_url": "https://es.wikipedia.org/wiki/%C3%81ngel_Clemente_Rojas",
     "pista_1": "Gran ídolo de la delantera en los años 60, deslumbraba a todos por su famoso quiebre de cintura y su espectacular gambeta.",
     "pista_2": "En un amistoso de 1963 le hizo un doblete al Real Madrid y su talento fue tan admirado que hasta fue comparado con el propio Pelé.",
     "pista_3": "Fue tan inmensamente querido e importante para la historia del club que posee una estatua propia en el Museo de la Pasión Boquense."
@@ -74,7 +74,7 @@
     "nombre": "Roberto Cherro",
     "posicion": "Delantero",
     "epoca": "1926-1938",
-    "wikipedia_url": "https://en.wikipedia.org/wiki/Roberto_Cherro",
+    "wikipedia_url": "https://es.wikipedia.org/wiki/Roberto_Cherro",
     "pista_1": "Anotó 218 goles y fue el máximo goleador histórico del club durante más de setenta años hasta que fue superado en 2010.",
     "pista_2": "Su verdadero apellido no llevaba la letra hache, pero por su origen italiano sonaba distinto y la gente lo popularizó así.",
     "pista_3": "Además de su enorme capacidad goleadora, especialmente de cabeza, ganó la medalla de plata con la Selección Argentina en los Juegos Olímpicos de 1928."
@@ -84,7 +84,7 @@
     "nombre": "Francisco Varallo",
     "posicion": "Delantero",
     "epoca": "1931-1939",
-    "wikipedia_url": "https://en.wikipedia.org/wiki/Francisco_Varallo",
+    "wikipedia_url": "https://es.wikipedia.org/wiki/Francisco_Varallo",
     "pista_1": "Ídolo fundamental del inicio del profesionalismo, anotó 194 goles siendo el tercer máximo artillero histórico de la institución.",
     "pista_2": "Empató de penal el primer Superclásico de la era profesional en 1931, el cual provocó tanta polémica que el árbitro terminó expulsando a tres rivales.",
     "pista_3": "Lideró la ofensiva en el primer campeonato logrado por el club durante la naciente era profesional del fútbol argentino en 1931."
