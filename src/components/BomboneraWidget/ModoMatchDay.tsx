@@ -63,9 +63,6 @@ export function ModoMatchDay({
                 </p>
               </div>
             </div>
-            <span className="type-ui-label inline-flex items-center px-2.5 py-1 rounded-sm bg-green-500/[0.2] border-l-2 border-l-green-400 text-green-400">
-              De local
-            </span>
           </div>
         </div>
 

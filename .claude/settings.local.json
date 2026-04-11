@@ -53,7 +53,11 @@
       "mcp__claude_ai_Supabase__list_projects",
       "mcp__claude_ai_Supabase__list_tables",
       "mcp__claude_ai_Supabase__apply_migration",
-      "Bash(./node_modules/.bin/tsc --noEmit)"
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(node_modules/.bin/tsc --noEmit --skipLibCheck)",
+      "Bash(echo \"exit:$?\")",
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\('vite:', p.devDependencies.vite, 'node:', process.version\\)\")",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }
