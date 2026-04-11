@@ -1,7 +1,7 @@
 import { Newspaper, Star, ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
 import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 import { type Noticia } from '../../services/apifootball';
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 import { NoticiaCard } from '../NoticiaCard';
 import { useNoticias } from './hooks/useNoticias';
 

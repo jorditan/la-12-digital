@@ -1,14 +1,14 @@
 import { createPortal } from 'react-dom';
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 import { type Idolo } from '../../data/idolos';
 import { ESCUDO_VACIO } from '../../data/equipos';
 import { type GameState, type Score, RESULT_SECS, ROUND_SECS } from './types';
 import { TimerBar } from './TimerBar';
 import { IdoloPlaceholder } from './IdoloPlaceholder';
 import { DificultadBadge } from './DificultadBadge';
-import { useModalEffects } from './hooks/useModalEffects';
+import { useModalEffects } from '../../hooks/useModalEffects';
 import { fetchIdolImage } from '../../services/wikipediaService';
 
 const TOTAL_CLUES = 6;

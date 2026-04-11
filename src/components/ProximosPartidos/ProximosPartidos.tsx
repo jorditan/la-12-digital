@@ -1,5 +1,5 @@
 import { Download, LayoutGrid, List } from 'lucide-react';
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 import { FixtureTable } from './FixtureTable';
 import { ScrollRow } from './ScrollRow';
 import { useProximosPartidos } from './hooks/useProximosPartidos';

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 
 interface ConfirmDeleteModalProps {
   rival: string;

@@ -8,7 +8,7 @@ import { MultiSelect } from './MultiSelect';
 import { DateRangePicker } from './DateRangePicker';
 import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import { NoteModal } from './NoteModal';
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 
 // ── Logged-in content ─────────────────────────────────────────────────────────
 

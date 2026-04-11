@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Trash2, PenLine, Plus } from 'lucide-react';
 import { BOCA_ID } from '@/services/apifootball';
 import type { MatchResult } from '@/services/apifootball';
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 import { getRivalName, getResultBadge, formatTableDate } from './useMiHistorial';
 
 interface AttendanceRowProps {

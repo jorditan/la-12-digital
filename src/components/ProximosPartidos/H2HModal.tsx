@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
-import { useModalEffects } from '../IdolosGame/hooks/useModalEffects';
+import { useModalEffects } from '../../hooks/useModalEffects';
 import { useH2HModalData } from './hooks/useH2HModalData';
 import { formatH2HDate, formatH2HScore, RESULT_CFG } from './utils';
 

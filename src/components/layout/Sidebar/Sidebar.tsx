@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TablaPosiciones } from '../TablaPosiciones';
+import { TablaPosiciones } from '../../TablaPosiciones';
 import { MobileSidebarButton } from './MobileSidebarButton';
 
 export function Sidebar() {

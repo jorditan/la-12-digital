@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { Header } from './components/Header';
+import { Header } from './components/layout/Header';
 import { BannerMensaje } from './components/BannerMensaje';
 import { UltimosPartidos } from './components/UltimosPartidos';
 import { BomboneraWidget } from './components/BomboneraWidget';
@@ -9,7 +9,7 @@ import { Noticias } from './components/Noticias';
 import { CanalYoutube } from './components/CanalYoutube';
 import { IdolosGame } from './components/IdolosGame';
 import { EquiposGame } from './components/EquiposGame';
-import { Sidebar } from './components/Sidebar';
+import { Sidebar } from './components/layout/Sidebar';
 import { TablaPosiciones } from './components/TablaPosiciones';
 import { MiHistorial } from './components/MiHistorial';
 import { Configuracion } from './components/Configuracion';

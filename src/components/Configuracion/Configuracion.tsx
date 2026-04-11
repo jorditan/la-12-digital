@@ -3,7 +3,7 @@ import { Camera, Check, X, Loader2, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import type { AuthUser } from '@/types/attendance';
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 
 interface ConfiguracionProps {
   user: AuthUser | null;

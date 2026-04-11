@@ -1,5 +1,5 @@
 import { Menu, X } from 'lucide-react';
-import { Button } from '../Button';
+import { Button } from '../../ui/Button';
 import { HeaderMobileMenu } from './HeaderMobileMenu';
 import { HeaderNav } from './HeaderNav';
 import { HeaderUserSection } from './HeaderUserSection';

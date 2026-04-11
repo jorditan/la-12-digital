@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { ESCUDO_VACIO } from '../../data/equipos';
-import { Button } from '../Button';
-import { SelectDropdown } from '../SelectDropdown';
-import { Tab } from '../Tab';
+import { Button } from '../ui/Button';
+import { SelectDropdown } from '../ui/SelectDropdown';
+import { Tab } from '../ui/Tab';
 import { useTablaPosiciones, COMPETITION_OPTIONS } from './useTablaPosiciones';
 
 type TablaPosicionesProps = {

@@ -1,10 +1,10 @@
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
-import { Button } from '../Button';
+import { Button } from '../ui/Button';
 import { type BocaEquipo } from '../../data/bocaEquipos';
 import { type GameState, type PlayerState, type Score, ROUND_SECS } from './types';
 import { TimerBar } from './TimerBar';
-import { useModalEffects } from '../IdolosGame/hooks/useModalEffects';
+import { useModalEffects } from '../../hooks/useModalEffects';
 import { FormacionPitch } from './FormacionPitch';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
