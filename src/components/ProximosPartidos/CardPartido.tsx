@@ -4,7 +4,7 @@ import { Badge } from '../ui/Badge';
 import { ESCUDO_VACIO } from '../../data/equipos';
 import { H2HModal } from './H2HModal';
 import { useCardPartido } from './hooks/useCardPartido';
-import { UrgencyBadge } from './UrgencyBadge';
+import { MatchUrgencyBadge } from '../MatchUrgencyBadge';
 import { formatFechaLarga } from './utils';
 
 interface CardPartidoProps {
@@ -75,19 +75,19 @@ export function CardPartido({ partido }: CardPartidoProps) {
           {partido.time}
         </p>
 
-        {/* Competición */}
-        <Badge
-          variant={partido.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-          className="w-fit text-[10px] px-1.5 py-px"
-        >
-          {partido.competition}
-        </Badge>
+        {/* Competición + urgencia */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <Badge
+            variant={partido.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
+            className="w-fit text-[10px] px-1.5 py-px"
+          >
+            {partido.competition}
+          </Badge>
+          <MatchUrgencyBadge matchDate={partido.date} />
+        </div>
 
-        {/* Footer: urgencia + acciones */}
-        <div className="mt-auto pt-2.5 border-t border-white/[0.06] flex items-center justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            {days >= 0 && days <= 7 && <UrgencyBadge days={days} />}
-          </div>
+        {/* Footer: solo acciones */}
+        <div className="mt-auto pt-2.5 border-t border-white/[0.06] flex items-center justify-end gap-1">
 
           {/* Icon actions */}
           <div className="flex items-center gap-1 shrink-0">
@@ -98,7 +98,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Agregar partido a Google Calendar"
-              className="group flex h-full items-center gap-1.5 px-2 py-1 rounded-sm bg-white/[0.04] border border-white/[0.08] hover:bg-[#1a73e8]/10 hover:border-[#1a73e8]/30 transition-all duration-200 shrink-0"
+              className="group flex h-6 items-center gap-1.5 px-2 rounded-sm bg-white/[0.04] border border-white/[0.08] hover:bg-[#1a73e8]/10 hover:border-[#1a73e8]/30 transition-all duration-200 shrink-0"
             >
               <img
                 src="/google_calendar_icon.png"
@@ -116,7 +116,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
               <button
                 onClick={openH2h}
                 aria-label={`Ver historial vs ${rival.name}`}
-                className="flex items-center justify-center w-7 h-7 rounded-sm border bg-white/[0.04] border-white/[0.08] text-white/35 hover:bg-white/[0.07] hover:border-white/20 hover:text-white/60 transition-all duration-200"
+                className="flex items-center justify-center h-6 w-6 rounded-sm border bg-white/[0.04] border-white/[0.08] text-white/35 hover:bg-white/[0.07] hover:border-white/20 hover:text-white/60 transition-all duration-200"
               >
                 <History size={12} />
               </button>

@@ -57,7 +57,9 @@
       "Bash(node_modules/.bin/tsc --noEmit --skipLibCheck)",
       "Bash(echo \"exit:$?\")",
       "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\('vite:', p.devDependencies.vite, 'node:', process.version\\)\")",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(git rm:*)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); s=d.get\\('scripts',{}\\); print\\(json.dumps\\(s, indent=2\\)\\)\")"
     ]
   }
 }

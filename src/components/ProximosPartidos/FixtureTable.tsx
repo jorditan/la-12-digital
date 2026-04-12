@@ -26,14 +26,14 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
               <th className="py-2 px-3 text-left type-ui-label uppercase tracking-wider text-boca-gold/50 w-[72px]">
                 Fecha
               </th>
-              <th className="py-2 px-3 text-right type-ui-label uppercase tracking-wider text-boca-gold/50 w-[50%]">
+              <th className="py-2 px-3 text-right type-ui-label uppercase tracking-wider text-boca-gold/50 w-[50%] hidden sm:table-cell">
                 Local
               </th>
               <th className="py-2 px-1 text-center type-ui-label uppercase tracking-wider text-boca-gold/30 w-8">
                 vs
               </th>
               <th className="py-2 px-3 text-left type-ui-label uppercase tracking-wider text-boca-gold/50 w-[50%]">
-                Visitante
+                Rival
               </th>
               <th className="py-2 px-3 text-center type-ui-label uppercase tracking-wider text-boca-gold/50 w-14">
                 Hora
@@ -66,7 +66,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                   </td>
 
                   {/* Local */}
-                  <td className="py-2.5 px-3 text-right">
+                  <td className="py-2.5 px-3 text-right hidden sm:table-cell">
                     <div className="flex justify-end">
                       <TeamCell
                         logo={p.homeTeam.logo}

@@ -164,6 +164,6 @@ export const useMiHistorial = (user: AuthUser) => {
     availableCompetitions, selectedCompetitions, setSelectedCompetitions,
     dateFrom, setDateFrom, dateTo, setDateTo,
     hasActiveFilters, clearFilters,
-    handleMarkAttendance, handleUpdateNote, remove,
+    handleMarkAttendance, handleUpdateNote, remove, upsert,
   };
 };
