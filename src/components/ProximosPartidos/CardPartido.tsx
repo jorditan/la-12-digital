@@ -4,7 +4,7 @@ import { Badge } from '../ui/Badge';
 import { ESCUDO_VACIO } from '../../data/equipos';
 import { H2HModal } from './H2HModal';
 import { useCardPartido } from './hooks/useCardPartido';
-import { UrgencyBadge } from './UrgencyBadge';
+import { MatchUrgencyBadge } from '../MatchUrgencyBadge';
 import { formatFechaLarga } from './utils';
 
 interface CardPartidoProps {
@@ -86,7 +86,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
         {/* Footer: urgencia + acciones */}
         <div className="mt-auto pt-2.5 border-t border-white/[0.06] flex items-center justify-between gap-2">
           <div className="flex-1 min-w-0">
-            {days >= 0 && days <= 7 && <UrgencyBadge days={days} />}
+            <MatchUrgencyBadge matchDate={partido.date} />
           </div>
 
           {/* Icon actions */}
