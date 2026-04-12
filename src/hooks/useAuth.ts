@@ -71,12 +71,26 @@ export function useAuth(): UseAuthReturn {
 
   const uploadAvatar = useCallback(async (file: File) => {
     if (!user) return { error: 'No autenticado' };
-    const ext = file.name.split('.').pop() ?? 'jpg';
-    const path = `${user.id}/avatar.${ext}`;
+
+    // Validate MIME type against a strict whitelist to prevent SVG/HTML stored XSS.
+    const ALLOWED_MIME_TYPES: Record<string, string> = {
+      'image/jpeg': 'jpg',
+      'image/png':  'png',
+      'image/webp': 'webp',
+      'image/gif':  'gif',
+    };
+    const mimeType = file.type.toLowerCase();
+    const safeExt = ALLOWED_MIME_TYPES[mimeType];
+    if (!safeExt) {
+      return { error: 'Formato no permitido. Solo se aceptan JPG, PNG, WebP y GIF.' };
+    }
+
+    // Use the MIME-derived extension (not the filename) to prevent extension spoofing.
+    const path = `${user.id}/avatar.${safeExt}`;
 
     const { data: storageData, error: uploadError } = await supabase.storage
       .from('avatars')
-      .upload(path, file, { upsert: true, contentType: file.type });
+      .upload(path, file, { upsert: true, contentType: mimeType });
 
     if (uploadError || !storageData) return { error: uploadError?.message ?? 'Error al subir la imagen' };
 
