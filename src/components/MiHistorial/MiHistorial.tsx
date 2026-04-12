@@ -9,6 +9,8 @@ import { DateRangePicker } from './DateRangePicker';
 import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import { NoteModal } from './NoteModal';
 import { Button } from '../ui/Button';
+import { Upload } from 'lucide-react';
+import { ImportModal } from './ImportModal';
 
 // ── Logged-in content ─────────────────────────────────────────────────────────
 
@@ -20,15 +22,20 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
     matches, matchEstado,
     selectedMatchId, setSelectedMatchId,
     adding, justAdded, successMatchId,
-    filteredEntries, totalAttended, earliestYear, availableMatches,
+    attendedEntries, filteredEntries, totalAttended, earliestYear, availableMatches,
     availableCompetitions, selectedCompetitions, setSelectedCompetitions,
     dateFrom, setDateFrom, dateTo, setDateTo,
     hasActiveFilters, clearFilters,
-    handleMarkAttendance, handleUpdateNote, remove,
+    handleMarkAttendance, handleUpdateNote, remove, upsert,
   } = useMiHistorial(user);
 
   const [deleteModal, setDeleteModal] = useState<DeleteModalData | null>(null);
   const [noteModal, setNoteModal]     = useState<NoteModalData | null>(null);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+
+  const existingFixtureIds = attendedEntries
+    .map(e => parseInt(e.matchId, 10))
+    .filter(id => !isNaN(id));
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -72,6 +79,14 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         {matchEstado === 'ok' && (
           <div className="flex flex-col sm:flex-row gap-2">
             <MatchCombobox matches={availableMatches} value={selectedMatchId} onChange={setSelectedMatchId} />
+            <button
+              type="button"
+              onClick={() => setImportModalOpen(true)}
+              className="h-10 flex items-center gap-2 px-4 rounded-sm border border-boca-border text-text-muted hover:bg-boca-border/20 transition-colors type-caption whitespace-nowrap"
+            >
+              <Upload className="w-4 h-4" />
+              Importar
+            </button>
             <Button
               onClick={handleMarkAttendance}
               disabled={!selectedMatchId || adding}
@@ -209,6 +224,14 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
           initialNote={noteModal.note}
           onSave={note => handleUpdateNote(noteModal.matchId, note)}
           onClose={() => setNoteModal(null)}
+        />
+      )}
+      {importModalOpen && (
+        <ImportModal
+          matches={matches}
+          existingFixtureIds={existingFixtureIds}
+          upsert={upsert}
+          onClose={() => setImportModalOpen(false)}
         />
       )}
 
