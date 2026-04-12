@@ -1,6 +1,7 @@
+import { Badge } from './ui/Badge';
+
 interface MatchUrgencyBadgeProps {
   matchDate: string | Date;
-  showIcon?: boolean;
 }
 
 type UrgencyLevel = 'critical' | 'upcoming' | 'near' | null;
@@ -11,42 +12,37 @@ function getUrgencyLevel(matchDate: string | Date): UrgencyLevel {
   const diffHours = (date.getTime() - now.getTime()) / (1000 * 60 * 60);
 
   if (diffHours < 0) return null;
-  if (diffHours <= 3) return 'critical';
+  if (diffHours <= 3)  return 'critical';
   if (diffHours <= 24) return 'upcoming';
   if (diffHours <= 72) return 'near';
   return null;
 }
 
-const BASE = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase tracking-wide';
-
-const BADGE_CONFIG: Record<NonNullable<UrgencyLevel>, { className: string; icon: string; label: string }> = {
-  critical: {
-    className: 'bg-boca-gold text-boca-blue',
-    icon: '🔴',
-    label: '¡HOY!',
-  },
-  upcoming: {
-    className: 'bg-boca-gold/20 text-boca-gold border border-boca-gold/30',
-    icon: '⏰',
-    label: 'Mañana',
-  },
-  near: {
-    className: 'bg-white/5 text-white/60 border border-white/10',
-    icon: '📅',
-    label: 'Pronto',
-  },
-};
-
-export function MatchUrgencyBadge({ matchDate, showIcon = true }: MatchUrgencyBadgeProps) {
+export function MatchUrgencyBadge({ matchDate }: MatchUrgencyBadgeProps) {
   const level = getUrgencyLevel(matchDate);
   if (!level) return null;
 
-  const config = BADGE_CONFIG[level];
+  if (level === 'critical') {
+    return (
+      <Badge variant="gold" className="gap-1.5 px-1.5 py-px text-[10px]">
+        <span className="w-1.5 h-1.5 rounded-full bg-boca-blue animate-pulse shrink-0" />
+        HOY
+      </Badge>
+    );
+  }
 
+  if (level === 'upcoming') {
+    return (
+      <Badge variant="gold" className="bg-transparent border border-boca-gold/40 text-boca-gold px-1.5 py-px text-[10px]">
+        Mañana
+      </Badge>
+    );
+  }
+
+  // near
   return (
-    <span className={`${BASE} ${config.className}`}>
-      {showIcon && <span aria-hidden="true">{config.icon}</span>}
-      {config.label}
-    </span>
+    <Badge variant="blue" className="bg-transparent border border-boca-border text-text-muted px-1.5 py-px text-[10px]">
+      Esta semana
+    </Badge>
   );
 }
