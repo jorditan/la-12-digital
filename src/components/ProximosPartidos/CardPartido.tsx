@@ -98,7 +98,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Agregar partido a Google Calendar"
-              className="group flex h-full items-center gap-1.5 px-2 py-1 rounded-sm bg-white/[0.04] border border-white/[0.08] hover:bg-[#1a73e8]/10 hover:border-[#1a73e8]/30 transition-all duration-200 shrink-0"
+              className="group flex h-10 items-center gap-1.5 px-2 rounded-sm bg-white/[0.04] border border-white/[0.08] hover:bg-[#1a73e8]/10 hover:border-[#1a73e8]/30 transition-all duration-200 shrink-0"
             >
               <img
                 src="/google_calendar_icon.png"
@@ -116,7 +116,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
               <button
                 onClick={openH2h}
                 aria-label={`Ver historial vs ${rival.name}`}
-                className="flex items-center justify-center w-7 h-7 rounded-sm border bg-white/[0.04] border-white/[0.08] text-white/35 hover:bg-white/[0.07] hover:border-white/20 hover:text-white/60 transition-all duration-200"
+                className="flex items-center justify-center h-10 w-10 rounded-sm border bg-white/[0.04] border-white/[0.08] text-white/35 hover:bg-white/[0.07] hover:border-white/20 hover:text-white/60 transition-all duration-200"
               >
                 <History size={12} />
               </button>
