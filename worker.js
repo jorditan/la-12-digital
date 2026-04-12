@@ -93,8 +93,9 @@ function isRateLimited(ip, limit = 60, windowMs = 60_000) {
   entry.count++;
   _rlStore.set(ip, entry);
 
-  // Evict the oldest entry when the Map exceeds the size cap.
-  if (_rlStore.size > RL_MAX_ENTRIES) {
+  // Evict the oldest entry before the Map exceeds the size cap so that size
+  // never grows beyond RL_MAX_ENTRIES even under rapid concurrent insertions.
+  if (_rlStore.size >= RL_MAX_ENTRIES) {
     const oldestKey = _rlStore.keys().next().value;
     _rlStore.delete(oldestKey);
   }
@@ -178,7 +179,7 @@ async function handleYoutubeProxy(request, url, env) {
   const subpath = url.pathname.replace(/^\/api\/youtube\//, '');
   // Only allow the specific YouTube API resources the app actually needs.
   if (!ALLOWED_YOUTUBE_SUBPATHS.has(subpath)) {
-    return new Response('Not Found', { status: 404 });
+    return new Response('Not Found', { status: 404, headers: corsHeaders });
   }
 
   // Forward only explicitly allowed query parameters to prevent quota manipulation.
