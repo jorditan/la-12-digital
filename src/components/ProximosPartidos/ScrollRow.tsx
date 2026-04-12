@@ -2,7 +2,7 @@ import { ChevronRight } from 'lucide-react';
 import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 import type { ProximoPartido } from '../../services/apifootball';
 import { CardPartido } from './CardPartido';
-import { MobileFixtureTable } from './MobileFixtureTable';
+import { FixtureTable } from './FixtureTable';
 
 interface ScrollRowProps {
   partidos: ProximoPartido[];
@@ -13,8 +13,10 @@ export function ScrollRow({ partidos }: ScrollRowProps) {
 
   return (
     <>
-      {/* Mobile: tabla compacta */}
-      <MobileFixtureTable partidos={partidos} />
+      {/* Mobile: tabla de fixtures */}
+      <div className="block sm:hidden">
+        <FixtureTable partidos={partidos} />
+      </div>
 
       {/* Desktop/tablet: scroll de cards */}
       <div className="relative hidden sm:block">
