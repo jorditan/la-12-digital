@@ -67,16 +67,17 @@ export function HeaderUserSection({
                 <User size={14} aria-hidden="true" />
                 Ir a mi perfil
               </Link>
-              <div
+              <Button
+                variant="ghost"
                 onClick={() => {
                   setIsUserMenuOpen(false);
                   onLogout();
                 }}
-                className="w-full flex gap-2 items-center transition-all duration-75 cursor-pointer justify-start px-4 py-3 type-body text-text-nav hover:text-status-negative hover:bg-boca-blue-mid"
+                className="w-full justify-start gap-2 px-4 py-3 type-body text-text-nav hover:text-status-negative hover:bg-boca-blue-mid"
               >
                 <LogOut size={14} aria-hidden="true" />
                 Cerrar sesión
-              </div>
+              </Button>
             </div>
           )}
         </div>

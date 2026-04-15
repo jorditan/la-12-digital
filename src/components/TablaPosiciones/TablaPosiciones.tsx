@@ -55,11 +55,7 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
             <p className="font-sans text-sm text-text-secondary">
               No se pudo cargar la tabla
             </p>
-            <Button
-              onClick={retry}
-              variant="text"
-              className="text-sm text-boca-gold rounded px-4 py-2 hover:bg-boca-gold/10"
-            >
+            <Button onClick={retry} variant="secondary" size="sm">
               Reintentar
             </Button>
           </div>

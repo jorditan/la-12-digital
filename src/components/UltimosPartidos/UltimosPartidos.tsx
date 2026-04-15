@@ -1,57 +1,17 @@
-import { useEffect, useState } from 'react';
-import { fetchLastMatches, BOCA_ID, type MatchResult } from '../../services/apifootball';
+import { BOCA_ID } from '../../services/apifootball';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
-
-type Estado = 'loading' | 'error' | 'ok';
-type Resultado = 'victoria' | 'derrota' | 'empate';
-
-function getResultado(match: MatchResult): Resultado {
-  const bocaEsLocal = match.homeTeam.id === BOCA_ID;
-  const bocaGano = bocaEsLocal ? match.homeTeam.winner : match.awayTeam.winner;
-  if (bocaGano === true) return 'victoria';
-  if (match.goalsAway === match.goalsHome) return 'empate';
-  return 'derrota';
-}
-
-function getRival(match: MatchResult) {
-  return match.homeTeam.id === BOCA_ID ? match.awayTeam : match.homeTeam;
-}
-
-function formatFecha(isoDate: string): string {
-  const d = new Date(isoDate);
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  return `${day}/${month}`;
-}
-
-const ROW_STYLE: Record<Resultado, string> = {
-  victoria: 'border-l-2 border-l-green-400 bg-green-500/[0.2]',
-  derrota:  'border-l-2 border-l-red-400 bg-red-500/[0.2]',
-  empate:   'border-l-2 border-l-slate-400 bg-slate-500/[0.2]',
-};
+import { SectionHeader } from '../ui/SectionHeader';
+import { useUltimosPartidos, getResultado, getRival, formatFecha, ROW_STYLE } from './hooks/useUltimosPartidos';
 
 export function UltimosPartidos() {
-  const [partidos, setPartidos] = useState<MatchResult[]>([]);
-  const [estado, setEstado] = useState<Estado>('loading');
-
-  const cargar = () => {
-    setEstado('loading');
-    fetchLastMatches()
-      .then((data) => { setPartidos(data); setEstado('ok'); })
-      .catch(() => setEstado('error'));
-  };
-
-  useEffect(() => { cargar(); }, []);
+  const { partidos, estado, cargar } = useUltimosPartidos();
 
   return (
     <section aria-label="Últimos partidos" className="h-full">
       <div className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col h-full">
 
-        {/* Header */}
-        <div className="border-b border-boca-border-card px-4 pt-4 pb-2 sm:px-6 sm:pt-6 sm:pb-3">
-          <h2 className="type-section-title text-white">Últimos partidos</h2>
-        </div>
+        <SectionHeader title="Últimos partidos" />
 
         {/* Loading */}
         {estado === 'loading' && (
@@ -64,11 +24,7 @@ export function UltimosPartidos() {
         {estado === 'error' && (
           <div className="flex flex-col items-center gap-3 py-10 text-center px-6">
             <p className="font-sans text-sm text-white/50">No se pudieron cargar los partidos</p>
-            <Button
-              onClick={cargar}
-              variant="text"
-              className="text-xs text-boca-gold border border-boca-gold/30 rounded px-4 py-2 hover:bg-boca-gold/10"
-            >
+            <Button onClick={cargar} variant="secondary" size="xs">
               Reintentar
             </Button>
           </div>

@@ -5,6 +5,20 @@ import { Button } from '../ui/Button';
 import { NoticiaCard } from '../NoticiaCard';
 import { useNoticias } from './hooks/useNoticias';
 
+function NoticiasHeader() {
+  return (
+    <>
+      <div className="flex items-center gap-4 mb-4">
+        <Newspaper size={24} className="text-boca-gold shrink-0" />
+        <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight sm:leading-10 text-boca-gold tracking-tight">
+          Noticias
+        </h2>
+      </div>
+      <div className="w-full h-px bg-boca-gold/30 mb-4" />
+    </>
+  );
+}
+
 function NoticiasMobileSlider({ noticias }: { noticias: Noticia[] }) {
   const { ref, canScrollLeft, canScrollRight, onPointerDown, onPointerMove, stopDrag } = useHorizontalScroll();
 
@@ -44,11 +58,7 @@ export function Noticias() {
 
   if (estado === 'loading') return (
     <section aria-label="Noticias" className="w-full">
-      <div className="flex items-center gap-4 mb-4">
-        <Newspaper size={24} className="text-boca-gold shrink-0" />
-        <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight sm:leading-10 text-boca-gold tracking-tight">Noticias</h2>
-      </div>
-      <div className="w-full h-px bg-boca-gold/30 mb-4" />
+      <NoticiasHeader />
       <div className="flex gap-4 h-[260px] sm:h-[340px]">
         {Array.from({ length: 3 }, (_, i) => (
           <div key={i} className="flex-1 animate-pulse bg-boca-gold/10 border border-boca-gold/10 rounded-sm" />
@@ -59,18 +69,10 @@ export function Noticias() {
 
   if (estado === 'error') return (
     <section aria-label="Noticias" className="w-full">
-      <div className="flex items-center gap-4 mb-4">
-        <Newspaper size={24} className="text-boca-gold shrink-0" />
-        <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight sm:leading-10 text-boca-gold tracking-tight">Noticias</h2>
-      </div>
-      <div className="w-full h-px bg-boca-gold/30 mb-4" />
+      <NoticiasHeader />
       <div className="flex items-center gap-3 py-8 px-4 border border-boca-gold/10 rounded-sm">
         <p className="font-sans text-sm text-white/50 flex-1">No se pudieron cargar las noticias</p>
-        <Button
-          onClick={cargar}
-          variant="text"
-          className="text-sm text-boca-gold border border-boca-gold/30 rounded px-4 py-2 hover:bg-boca-gold/10 shrink-0"
-        >
+        <Button onClick={cargar} variant="secondary" size="sm" className="shrink-0">
           Reintentar
         </Button>
       </div>
@@ -82,15 +84,7 @@ export function Noticias() {
   return (
     <section aria-label="Noticias" className="w-full">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-4">
-        <Newspaper size={24} className="text-boca-gold shrink-0" />
-        <h2 className="font-serif font-bold text-[32px] leading-10 text-boca-gold tracking-tight">
-          Noticias
-        </h2>
-      </div>
-
-      {/* Separador dorado */}
-      <div className="w-full h-px bg-boca-gold/30 mb-4" />
+      <NoticiasHeader />
 
       {/* Mobile: slider con drag y fade */}
       <NoticiasMobileSlider noticias={noticias} />

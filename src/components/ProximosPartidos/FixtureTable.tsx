@@ -1,6 +1,7 @@
 import { CalendarPlus, History } from 'lucide-react';
 import type { ProximoPartido } from '../../services/apifootball';
 import { Badge } from '../ui/Badge';
+import { Button } from '../ui/Button';
 import { buildGCalLink } from '../../utils/calendarLink';
 import { H2HModal } from './H2HModal';
 import { useFixtureTableH2H } from './hooks/useFixtureTableH2H';
@@ -114,14 +115,16 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                   {/* Acciones */}
                   <td className="py-2.5 px-2 text-center">
                     <div className="flex items-center justify-center gap-2">
-                      <button
+                      <Button
                         type="button"
                         onClick={() => openH2H(p.rivalApiId, rival.name)}
                         aria-label={`Ver historial vs ${rival.name}`}
-                        className="inline-flex items-center justify-center text-white/25 hover:text-boca-gold transition-colors"
+                        variant="ghost"
+                        size="icon"
+                        className="text-white/25 hover:text-boca-gold"
                       >
                         <History size={14} />
-                      </button>
+                      </Button>
                       <a
                         href={buildGCalLink(p)}
                         target="_blank"

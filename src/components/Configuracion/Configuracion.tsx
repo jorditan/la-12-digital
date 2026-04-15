@@ -414,10 +414,14 @@ export function Configuracion({ user, onUploadAvatar, onUpdateEmail, onUpdatePas
   );
 }
 
+const ERROR_TRANSLATIONS: Array<[string, string]> = [
+  ['same as the old email',        'El nuevo correo es igual al actual.'],
+  ['already registered',           'Ese correo ya está en uso.'],
+  ['Password should be at least',  'La contraseña debe tener al menos 8 caracteres.'],
+  ['Auth session missing',         'Tu sesión expiró. Volvé a iniciar sesión.'],
+];
+
 function translateError(msg: string): string {
-  if (msg.includes('same as the old email')) return 'El nuevo correo es igual al actual.';
-  if (msg.includes('already registered')) return 'Ese correo ya está en uso.';
-  if (msg.includes('Password should be at least')) return 'La contraseña debe tener al menos 8 caracteres.';
-  if (msg.includes('Auth session missing')) return 'Tu sesión expiró. Volvé a iniciar sesión.';
-  return msg;
+  const match = ERROR_TRANSLATIONS.find(([key]) => msg.includes(key));
+  return match ? match[1] : msg;
 }

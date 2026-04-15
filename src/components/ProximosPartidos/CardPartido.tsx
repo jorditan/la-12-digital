@@ -15,7 +15,6 @@ export function CardPartido({ partido }: CardPartidoProps) {
   const {
     bocaEsLocal,
     rival,
-    days,
     cardBorderClass,
     calendarHref,
     h2hOpen,

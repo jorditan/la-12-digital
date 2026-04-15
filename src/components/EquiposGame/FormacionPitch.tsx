@@ -5,12 +5,16 @@ import { type CardState, PlayerCard } from './PlayerCard';
 type PosicionBucket = 'Delantero' | 'Mediocampista' | 'Defensor' | 'Arquero';
 const POSICION_ORDER: PosicionBucket[] = ['Delantero', 'Mediocampista', 'Defensor', 'Arquero'];
 
+const POSICION_KEYWORDS: Array<[PosicionBucket, string[]]> = [
+  ['Arquero',       ['arquero', 'portero', 'golero']],
+  ['Delantero',     ['delantero', 'centrodelantero', 'extremo', 'punta']],
+  ['Defensor',      ['lateral', 'zaguero', 'stopper', 'defensor']],
+];
+
 function normalizePosicion(posicion: string): PosicionBucket {
   const p = posicion.toLowerCase();
-  if (p.includes('arquero') || p.includes('portero') || p.includes('golero')) return 'Arquero';
-  if (p.includes('delantero') || p.includes('centrodelantero') || p.includes('extremo') || p.includes('punta')) return 'Delantero';
-  if (p.includes('lateral') || p.includes('zaguero') || p.includes('stopper') || p.includes('defensor')) return 'Defensor';
-  return 'Mediocampista';
+  const match = POSICION_KEYWORDS.find(([, keywords]) => keywords.some(k => p.includes(k)));
+  return match ? match[0] : 'Mediocampista';
 }
 
 function cardStateFor(player: PlayerState, gameState: GameState): CardState {

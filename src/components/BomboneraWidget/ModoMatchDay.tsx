@@ -2,6 +2,7 @@ import { ESCUDO_VACIO } from '../../data/equipos';
 import type { MatchForecast } from '../../services/weather';
 import type { ProximoPartido } from '../../services/apifootball';
 import { BOCA_ID } from '../../services/apifootball';
+import { Badge } from '../ui/Badge';
 import { StatsGrid } from './StatsGrid';
 import { ForecastRows } from './ForecastRows';
 import { ConditionsBlock } from './ConditionsBlock';
@@ -33,9 +34,7 @@ export function ModoMatchDay({
     >
       <div className="border-b border-boca-gold/15 px-6 pt-6 pb-3 flex items-center justify-between">
         <h2 className="type-section-title text-white">La Bombonera hoy</h2>
-        <span className="type-ui-label inline-flex items-center px-2 py-px rounded-sm bg-boca-gold/25 text-boca-gold border border-boca-gold/30">
-          EN CASA
-        </span>
+        <Badge variant="gold" className="px-2 py-px text-[10px]">EN CASA</Badge>
       </div>
 
       <div className="px-6 pt-4 pb-6 flex flex-col gap-3 flex-1">

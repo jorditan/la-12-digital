@@ -3,6 +3,13 @@ import { GamePromoCard } from '../GamePromoCard/GamePromoCard';
 import { GameModal } from './GameModal';
 import { useEquiposGame } from './hooks/useEquiposGame';
 
+const JERSEY_NUMBER_CLASSES = [
+  'text-4xl text-boca-gold/35',
+  'text-3xl text-boca-gold/20',
+  'text-2xl text-boca-gold/10',
+  'text-2xl text-boca-gold/10',
+] as const;
+
 export function EquiposGame() {
   const game = useEquiposGame();
   const { gameState, equipo, score, startGame, closeModal } = game;
@@ -21,13 +28,7 @@ export function EquiposGame() {
         decoration={[10, 9, 7, 11].map((n, i) => (
           <span
             key={i}
-            className={`font-serif font-black leading-none select-none tabular-nums ${
-              i === 0
-                ? 'text-4xl text-boca-gold/35'
-                : i === 1
-                ? 'text-3xl text-boca-gold/20'
-                : 'text-2xl text-boca-gold/10'
-            }`}
+            className={`font-serif font-black leading-none select-none tabular-nums ${JERSEY_NUMBER_CLASSES[i]}`}
           >
             #{n}
           </span>

@@ -79,25 +79,21 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         {matchEstado === 'ok' && (
           <div className="flex flex-col sm:flex-row gap-2">
             <MatchCombobox matches={availableMatches} value={selectedMatchId} onChange={setSelectedMatchId} />
-            <button
+            <Button
               type="button"
               onClick={() => setImportModalOpen(true)}
-              className="h-10 flex items-center gap-2 px-4 rounded-sm border border-boca-border text-text-muted hover:bg-boca-border/20 transition-colors type-caption whitespace-nowrap"
+              variant="outline"
+              size="sm"
+              className="whitespace-nowrap"
             >
               <Upload className="w-4 h-4" />
               Importar
-            </button>
+            </Button>
             <Button
               onClick={handleMarkAttendance}
               disabled={!selectedMatchId || adding}
               variant="primary"
-              className={[
-                'sm:w-auto w-full type-button font-bold px-5 py-2.5 rounded-sm transition-all',
-                'flex items-center justify-center gap-2 whitespace-nowrap',
-                selectedMatchId && !adding
-                  ? 'bg-boca-gold text-text-on-gold hover:opacity-90 cursor-pointer'
-                  : 'bg-boca-gold/30 text-text-on-gold/50 cursor-not-allowed',
-              ].join(' ')}
+              className="sm:w-auto w-full whitespace-nowrap"
             >
               {adding ? (
                 <>

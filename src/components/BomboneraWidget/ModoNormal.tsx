@@ -2,6 +2,7 @@ import { ESCUDO_VACIO } from '../../data/equipos';
 import type { MatchForecast } from '../../services/weather';
 import type { ProximoPartido } from '../../services/apifootball';
 import { BOCA_ID } from '../../services/apifootball';
+import { Badge } from '../ui/Badge';
 import { StatsGrid } from './StatsGrid';
 import { ForecastRows } from './ForecastRows';
 import { ConditionsBlock } from './ConditionsBlock';
@@ -81,15 +82,15 @@ export function ModoNormal({
 
               {/* Fecha + hora como badges */}
               <div className="flex flex-wrap gap-1.5">
-                <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-sm px-2 py-0.5 type-ui-label text-text-secondary tracking-[0.05em]">
-                  {formatFechaLarga(proximoLocal.date).toUpperCase()}
-                </span>
-                <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-sm px-2 py-0.5 type-ui-label text-boca-gold tracking-[0.05em]">
+                <Badge variant="blue" className="px-2 py-0.5 tracking-[0.05em] text-text-secondary uppercase">
+                  {formatFechaLarga(proximoLocal.date)}
+                </Badge>
+                <Badge variant="gold" className="px-2 py-0.5 tracking-[0.05em]">
                   {proximoLocal.time} HS
-                </span>
-                <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-sm px-2 py-0.5 type-ui-label text-text-secondary tracking-[0.05em]">
+                </Badge>
+                <Badge variant="blue" className="px-2 py-0.5 tracking-[0.05em] text-text-secondary">
                   {proximoLocal.competition}
-                </span>
+                </Badge>
               </div>
             </div>
           </div>

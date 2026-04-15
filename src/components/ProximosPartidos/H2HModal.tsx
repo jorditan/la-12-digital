@@ -1,5 +1,6 @@
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
+import { Button } from '../ui/Button';
 import { useModalEffects } from '../../hooks/useModalEffects';
 import { useH2HModalData } from './hooks/useH2HModalData';
 import { formatH2HDate, formatH2HScore, RESULT_CFG } from './utils';
@@ -34,13 +35,15 @@ export function H2HModal({ onClose, rivalId, rivalName }: H2HModalProps) {
             </p>
             <small className="text-white/40">Resultado de los últimos partidos</small>
           </div>
-          <button
+          <Button
             onClick={onClose}
+            variant="ghost"
+            size="icon"
             aria-label="Cerrar"
-            className="shrink-0 flex items-center justify-center w-7 h-7 rounded-sm text-white/30 hover:text-white hover:bg-white/[0.06] transition-colors"
+            className="shrink-0 text-white/30 hover:text-white hover:bg-white/[0.06]"
           >
             <X size={14} />
-          </button>
+          </Button>
         </div>
 
         {/* Body */}
