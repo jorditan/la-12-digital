@@ -13,7 +13,7 @@ const POSICION_KEYWORDS: Array<[PosicionBucket, string[]]> = [
 
 function normalizePosicion(posicion: string): PosicionBucket {
   const p = posicion.toLowerCase();
-  const match = POSICION_KEYWORDS.find(([, keywords]) => keywords.some(k => p.includes(k)));
+  const match = POSICION_KEYWORDS.find(([_bucket, keywords]) => keywords.some(k => p.includes(k)));
   return match ? match[0] : 'Mediocampista';
 }
 

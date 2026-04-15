@@ -34,7 +34,7 @@ export function ModoMatchDay({
     >
       <div className="border-b border-boca-gold/15 px-6 pt-6 pb-3 flex items-center justify-between">
         <h2 className="type-section-title text-white">La Bombonera hoy</h2>
-        <Badge variant="gold" className="px-2 py-px text-[10px]">EN CASA</Badge>
+        <Badge variant="gold" className="px-2 py-px">EN CASA</Badge>
       </div>
 
       <div className="px-6 pt-4 pb-6 flex flex-col gap-3 flex-1">
