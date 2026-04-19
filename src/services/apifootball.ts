@@ -6,15 +6,15 @@ import {
   getLibertadoresLastFixtures,
   getLibertadoresNextFixtures,
   getLibertadoresStandingsData,
-} from './footballApiService';
-import { fetchNewsdataNoticias } from './newsdataService';
-import { fetchYoutubeVideos, type VideoItem } from './youtubeService';
+} from "./footballApiService";
+import { fetchNewsdataNoticias } from "./newsdataService";
+import { fetchYoutubeVideos, type VideoItem } from "./youtubeService";
 
 // BOCA_ID exportado = 451 (coincide con lo que leen los componentes)
 // Live Score API usa un ID interno desconocido hasta el primer fetch;
 // la detección se hace por nombre en lugar de por ID numérico.
 const BOCA_ID_EXPORT = 451;
-const BOCA_NAME_RE   = /boca/i;
+const BOCA_NAME_RE = /boca/i;
 
 // Logo URLs: use direct CDN URL from API when available, fallback to constructed URL.
 function teamLogoUrl(teamId: number, directUrl?: string): string {
@@ -25,10 +25,10 @@ function teamLogoUrl(teamId: number, directUrl?: string): string {
 // ── Tipos públicos ───────────────────────────────────────────────────────────
 
 export interface StandingRow {
-  rank:  number;
-  team:  { id: number; name: string; logo: string };
+  rank: number;
+  team: { id: number; name: string; logo: string };
   points: number;
-  all:   { played: number; win: number; draw: number; lose: number };
+  all: { played: number; win: number; draw: number; lose: number };
   zone?: string; // "Zona A" / "Zona B" — undefined = tabla única
 }
 
@@ -45,8 +45,8 @@ export interface MatchResult {
 
 export interface ProximoPartido {
   fixtureId: number;
-  date: string;        // ISO
-  time: string;        // "HH:MM" hora local
+  date: string; // ISO
+  time: string; // "HH:MM" hora local
   homeTeam: { id: number; name: string; logo: string };
   awayTeam: { id: number; name: string; logo: string };
   venueName: string;
@@ -59,7 +59,7 @@ export interface Noticia {
   id: number;
   titulo: string;
   imagen: string;
-  categoria: 'mercado' | 'informe' | 'partido' | 'seleccion';
+  categoria: "mercado" | "informe" | "partido" | "seleccion";
   fecha: string;
   url?: string;
 }
@@ -68,13 +68,19 @@ export type VideoYoutube = VideoItem;
 
 // ── Tabla de posiciones ──────────────────────────────────────────────────────
 
-function mapStandingData(d: import('./footballApiService').StandingData): StandingRow {
+function mapStandingData(
+  d: import("./footballApiService").StandingData,
+): StandingRow {
   return {
-    rank:   d.rank,
-    team:   { id: BOCA_NAME_RE.test(d.teamName) ? BOCA_ID_EXPORT : d.teamId, name: d.teamName, logo: d.teamLogo },
+    rank: d.rank,
+    team: {
+      id: BOCA_NAME_RE.test(d.teamName) ? BOCA_ID_EXPORT : d.teamId,
+      name: d.teamName,
+      logo: d.teamLogo,
+    },
     points: d.points,
-    all:    { played: d.played, win: d.win, draw: d.draw, lose: d.lose },
-    zone:   d.zone,
+    all: { played: d.played, win: d.win, draw: d.draw, lose: d.lose },
+    zone: d.zone,
   };
 }
 
@@ -95,24 +101,46 @@ export async function fetchLibertadoresStandings(): Promise<StandingRow[]> {
 
 // ── Últimos partidos ─────────────────────────────────────────────────────────
 
-function mapFixtureToMatchResult(f: import('../types/football').ProcessedFixture, competition: string): MatchResult {
+function mapFixtureToMatchResult(
+  f: import("../types/football").ProcessedFixture,
+  competition: string,
+): MatchResult {
   const homeId = f.isBocaHome ? BOCA_ID_EXPORT : 0;
   const awayId = f.isBocaHome ? 0 : BOCA_ID_EXPORT;
 
   let homeWinner: boolean | null = null;
   let awayWinner: boolean | null = null;
-  if (f.result === 'win')  { homeWinner = f.isBocaHome;  awayWinner = !f.isBocaHome; }
-  if (f.result === 'loss') { homeWinner = !f.isBocaHome; awayWinner = f.isBocaHome;  }
-  if (f.result === 'draw') { homeWinner = false;          awayWinner = false;          }
+  if (f.result === "win") {
+    homeWinner = f.isBocaHome;
+    awayWinner = !f.isBocaHome;
+  }
+  if (f.result === "loss") {
+    homeWinner = !f.isBocaHome;
+    awayWinner = f.isBocaHome;
+  }
+  if (f.result === "draw") {
+    homeWinner = false;
+    awayWinner = false;
+  }
 
   return {
-    fixtureId:   f.id,
-    date:        f.date.toISOString(),
-    homeTeam:    { id: homeId, name: f.homeTeam, logo: teamLogoUrl(f.homeTeamId, f.homeLogo), winner: homeWinner },
-    awayTeam:    { id: awayId, name: f.awayTeam, logo: teamLogoUrl(f.awayTeamId, f.awayLogo), winner: awayWinner },
-    goalsHome:   f.homeScore,
-    goalsAway:   f.awayScore,
-    venueName:   f.venue,
+    fixtureId: f.id,
+    date: f.date.toISOString(),
+    homeTeam: {
+      id: homeId,
+      name: f.homeTeam,
+      logo: teamLogoUrl(f.homeTeamId, f.homeLogo),
+      winner: homeWinner,
+    },
+    awayTeam: {
+      id: awayId,
+      name: f.awayTeam,
+      logo: teamLogoUrl(f.awayTeamId, f.awayLogo),
+      winner: awayWinner,
+    },
+    goalsHome: f.homeScore,
+    goalsAway: f.awayScore,
+    venueName: f.venue,
     competition,
   };
 }
@@ -124,11 +152,15 @@ export async function fetchLastMatches(): Promise<MatchResult[]> {
     getLibertadoresLastFixtures(10),
   ]);
 
-  const liga = ligaFixtures.map(f => mapFixtureToMatchResult(f, 'Liga Profesional'));
-  const lib  = libFixtures.map(f => mapFixtureToMatchResult(f, 'Copa Libertadores'));
+  const liga = ligaFixtures.map((f) =>
+    mapFixtureToMatchResult(f, "Liga Profesional"),
+  );
+  const lib = libFixtures.map((f) =>
+    mapFixtureToMatchResult(f, "Copa Libertadores"),
+  );
 
   return [...liga, ...lib]
-    .filter(m => new Date(m.date).getFullYear() === currentYear)
+    .filter((m) => new Date(m.date).getFullYear() === currentYear)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 10);
 }
@@ -139,28 +171,45 @@ export async function fetchMatchesForHistorial(): Promise<MatchResult[]> {
     getLibertadoresLastFixtures(25),
   ]);
 
-  const liga = ligaFixtures.map(f => mapFixtureToMatchResult(f, 'Liga Profesional'));
-  const lib  = libFixtures.map(f => mapFixtureToMatchResult(f, 'Copa Libertadores'));
+  const liga = ligaFixtures.map((f) =>
+    mapFixtureToMatchResult(f, "Liga Profesional"),
+  );
+  const lib = libFixtures.map((f) =>
+    mapFixtureToMatchResult(f, "Copa Libertadores"),
+  );
 
-  return [...liga, ...lib]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return [...liga, ...lib].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
 }
 
 // ── Próximos partidos ────────────────────────────────────────────────────────
 
-function mapFixtureToProximoPartido(f: import('../types/football').ProcessedFixture, competition: string): ProximoPartido {
+function mapFixtureToProximoPartido(
+  f: import("../types/football").ProcessedFixture,
+  competition: string,
+): ProximoPartido {
   return {
-    fixtureId:   f.id,
-    date:        f.date.toISOString(),
-    time:        f.date.toLocaleTimeString('es-AR', {
-      hour: '2-digit', minute: '2-digit',
-      timeZone: 'America/Argentina/Buenos_Aires',
+    fixtureId: f.id,
+    date: f.date.toISOString(),
+    time: f.date.toLocaleTimeString("es-AR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "America/Argentina/Buenos_Aires",
     }),
-    homeTeam:    { id: f.isBocaHome ? BOCA_ID_EXPORT : 0, name: f.homeTeam, logo: teamLogoUrl(f.homeTeamId, f.homeLogo) },
-    awayTeam:    { id: f.isBocaHome ? 0 : BOCA_ID_EXPORT, name: f.awayTeam, logo: teamLogoUrl(f.awayTeamId, f.awayLogo) },
-    venueName:   f.venue,
+    homeTeam: {
+      id: f.isBocaHome ? BOCA_ID_EXPORT : 0,
+      name: f.homeTeam,
+      logo: teamLogoUrl(f.homeTeamId, f.homeLogo),
+    },
+    awayTeam: {
+      id: f.isBocaHome ? 0 : BOCA_ID_EXPORT,
+      name: f.awayTeam,
+      logo: teamLogoUrl(f.awayTeamId, f.awayLogo),
+    },
+    venueName: f.venue,
     competition,
-    rivalApiId:  f.isBocaHome ? f.awayTeamId : f.homeTeamId,
+    rivalApiId: f.isBocaHome ? f.awayTeamId : f.homeTeamId,
   };
 }
 
@@ -170,8 +219,12 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
     getLibertadoresNextFixtures(8),
   ]);
 
-  const liga = ligaFixtures.map(f => mapFixtureToProximoPartido(f, 'Liga Profesional'));
-  const lib  = libFixtures.map(f => mapFixtureToProximoPartido(f, 'Copa Libertadores'));
+  const liga = ligaFixtures.map((f) =>
+    mapFixtureToProximoPartido(f, "Liga Profesional"),
+  );
+  const lib = libFixtures.map((f) =>
+    mapFixtureToProximoPartido(f, "Copa Libertadores"),
+  );
 
   return [...liga, ...lib]
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -183,12 +236,12 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
 export async function fetchNoticias(): Promise<Noticia[]> {
   const articles = await fetchNewsdataNoticias();
   return articles.map((a, i) => ({
-    id:        i,
-    titulo:    a.titulo,
-    imagen:    a.imagen,
-    categoria: 'partido' as const,
-    fecha:     a.fecha,
-    url:       a.url,
+    id: i,
+    titulo: a.titulo,
+    imagen: a.imagen,
+    categoria: "partido" as const,
+    fecha: a.fecha,
+    url: a.url,
   }));
 }
 

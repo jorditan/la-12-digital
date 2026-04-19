@@ -1,1 +1,1 @@
-export { TablaPosiciones } from './TablaPosiciones';
+export { TablaPosiciones } from "./TablaPosiciones";

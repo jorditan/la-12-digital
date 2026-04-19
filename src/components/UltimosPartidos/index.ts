@@ -1,1 +1,1 @@
-export { UltimosPartidos } from './UltimosPartidos';
+export { UltimosPartidos } from "./UltimosPartidos";

@@ -21,11 +21,13 @@
 - Usa múltiples apps pero ninguna le da el panorama completo
 
 **Frustraciones:**
+
 - "Tengo que abrir 5 apps diferentes para tener toda la info"
 - "Las noticias son sensacionalistas, quiero datos objetivos"
 - "No tengo tiempo de analizar estadísticas, necesito resúmenes claros"
 
 **Necesidades:**
+
 - Información centralizada y actualizada
 - Insights rápidos sin perder profundidad
 - Entender el momento del equipo de un vistazo
@@ -34,24 +36,27 @@
 
 ## 📖 User Story
 
-> *"Como hincha de Boca con poco tiempo, necesito una forma rápida de entender cómo viene el equipo y qué esperar del próximo partido, para poder tomar decisiones informadas (ir a la cancha, hablar con amigos, apostar) sin tener que investigar en múltiples fuentes."*
+> _"Como hincha de Boca con poco tiempo, necesito una forma rápida de entender cómo viene el equipo y qué esperar del próximo partido, para poder tomar decisiones informadas (ir a la cancha, hablar con amigos, apostar) sin tener que investigar en múltiples fuentes."_
 
 ---
 
 ## 🎯 Jobs to be Done
 
 **Functional Jobs:**
+
 - Verificar próximos partidos y resultados recientes
 - Conocer el estado actual del plantel (lesionados, suspendidos)
 - Entender la posición en la tabla y contexto competitivo
 - Obtener análisis del momento del equipo
 
 **Emotional Jobs:**
+
 - Sentirse informado y "en tema" con otros hinchas
 - Reducir la ansiedad pre-partido con información clara
 - Disfrutar del seguimiento sin overwhelm de información
 
 **Social Jobs:**
+
 - Tener argumentos basados en datos para discusiones
 - Compartir insights interesantes con amigos
 
@@ -84,12 +89,14 @@
 ### Key Features del MVP:
 
 **Panel AI (Izquierda - 40% viewport):**
+
 - Chat interface con Claude/GPT
 - Preguntas sugeridas contextual: "¿Cómo viene Boca?", "¿Qué esperar del próximo partido?"
 - Análisis automático del momento del equipo
 - Respuestas con datos de la API + interpretación IA
 
 **Dashboard (Derecha - 60% viewport):**
+
 - Widget: Próximo partido (fecha, rival, competencia)
 - Widget: Últimos 5 resultados
 - Widget: Tabla de posiciones
@@ -120,18 +127,22 @@
 ## 🛠 Stack Técnico
 
 **Diseño:**
+
 - Figma / PenPot (herramienta con IA)
 - ShadCN para componentes UI
 
 **Frontend:**
+
 - React + TypeScript
 - ShadCN UI
 
 **Backend:**
+
 - Go
 - PostgreSQL / Supabase
 
 **AI Integration:**
+
 - Claude API / OpenAI API
 - API-Football para datos del equipo
 
@@ -140,25 +151,29 @@
 ## 📅 Timeline Estimado
 
 **Fase 1 - UX & Diseño (2 semanas):**
+
 - Research y wireframes
 - Diseño UI en Figma
 - Sistema de diseño básico
 
 **Fase 2 - Frontend MVP (3 semanas):**
+
 - Setup React + TypeScript
 - Implementación de widgets
 - Integración con API-Football
 
 **Fase 3 - AI Integration (2 semanas):**
+
 - Backend Go
 - Integración IA
 - Chat interface
 
 **Fase 4 - Polish (1 semana):**
+
 - Testing
 - Refinamiento UX
 - Documentación
 
 ---
 
-*Proyecto creado: Enero 2026*
+_Proyecto creado: Enero 2026_

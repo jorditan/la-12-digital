@@ -1,1 +1,1 @@
-export { CanalSelector } from './CanalSelector';
+export { CanalSelector } from "./CanalSelector";

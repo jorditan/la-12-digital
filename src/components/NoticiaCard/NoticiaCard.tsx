@@ -1,4 +1,4 @@
-import type { Noticia } from '../../services/apifootball';
+import type { Noticia } from "../../services/apifootball";
 
 interface NoticiaCardProps {
   noticia: Noticia;
@@ -18,10 +18,10 @@ interface NoticiaCardProps {
  *   └── Footer (bg-#002140, border-b #003d7a, px-6 pt-6 pb-3)
  *       └── Título (serif regular 16px, leading-6, #e0e7ff)
  */
-export function NoticiaCard({ noticia, className = '' }: NoticiaCardProps) {
-  const Tag = noticia.url ? 'a' : 'article';
+export function NoticiaCard({ noticia, className = "" }: NoticiaCardProps) {
+  const Tag = noticia.url ? "a" : "article";
   const linkProps = noticia.url
-    ? { href: noticia.url, target: '_blank', rel: 'noopener noreferrer' }
+    ? { href: noticia.url, target: "_blank", rel: "noopener noreferrer" }
     : {};
 
   return (
@@ -53,7 +53,7 @@ export function NoticiaCard({ noticia, className = '' }: NoticiaCardProps) {
       {/* Footer oscuro con título */}
       <div className="bg-boca-blue-light border-b border-boca-border-card px-6 pt-4 pb-3 shrink-0 w-full">
         <p className="font-serif min-h-12 items-start font-normal text-base text-text-nav leading-6 tracking-normal line-clamp-2">
-          {noticia.titulo.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
+          {noticia.titulo.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}
         </p>
       </div>
     </Tag>

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 export function StatRow({
   label,
@@ -15,7 +15,7 @@ export function StatRow({
         {label}
       </p>
       <p
-        className={`font-bold leading-none text-[0.9rem] font-sans ${warn ? 'text-status-negative' : 'text-white'}`}
+        className={`font-bold leading-none text-[0.9rem] font-sans ${warn ? "text-status-negative" : "text-white"}`}
       >
         {value}
       </p>

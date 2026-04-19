@@ -1,1 +1,1 @@
-export type VistaProximosPartidos = 'cards' | 'tabla';
+export type VistaProximosPartidos = "cards" | "tabla";

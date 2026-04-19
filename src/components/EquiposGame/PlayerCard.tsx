@@ -1,4 +1,4 @@
-export type CardState = 'hidden' | 'guessed' | 'missed';
+export type CardState = "hidden" | "guessed" | "missed";
 
 interface PlayerCardProps {
   name: string;
@@ -7,20 +7,20 @@ interface PlayerCardProps {
 }
 
 const CARD_STYLES: Record<CardState, string> = {
-  hidden:  'bg-boca-blue-light border border-boca-gold/10 text-boca-gold/20',
-  guessed: 'bg-status-win-subtle border border-status-win text-green-400',
-  missed:  'bg-status-loss-subtle border border-status-loss text-red-400',
+  hidden: "bg-boca-blue-light border border-boca-gold/10 text-boca-gold/20",
+  guessed: "bg-status-win-subtle border border-status-win text-green-400",
+  missed: "bg-status-loss-subtle border border-status-loss text-red-400",
 };
 
 export function PlayerCard({ name, cardState, isSuplente }: PlayerCardProps) {
-  const revealed = cardState !== 'hidden';
+  const revealed = cardState !== "hidden";
   return (
     <div
       className={[
-        'relative rounded-sm px-2 py-2 flex items-center justify-center min-h-[44px]',
-        'transition-all duration-500',
+        "relative rounded-sm px-2 py-2 flex items-center justify-center min-h-[44px]",
+        "transition-all duration-500",
         CARD_STYLES[cardState],
-      ].join(' ')}
+      ].join(" ")}
     >
       {revealed ? (
         <span className="font-sans text-xs font-semibold text-center leading-tight">

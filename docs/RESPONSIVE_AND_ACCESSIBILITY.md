@@ -3,6 +3,7 @@
 > Breakpoints del proyecto, patrones mobile-first, y checklist de accesibilidad para componentes.
 
 ## Índice
+
 - [Breakpoints](#breakpoints)
 - [Enfoque mobile-first](#enfoque-mobile-first)
 - [Patrones responsive del proyecto](#patrones-responsive-del-proyecto)
@@ -15,14 +16,14 @@
 
 Definidos en `design-system/tokens/spacing.ts` (`breakpoints`) e importados en `tailwind.config.js`:
 
-| Prefijo Tailwind | Valor | Dispositivo típico |
-|---|---|---|
-| *(sin prefijo)* | 0px+ | Mobile portrait (base) |
-| `sm:` | 640px+ | Mobile landscape / phablet |
-| `md:` | 768px+ | Tablet |
-| `lg:` | 1024px+ | Desktop pequeño |
-| `xl:` | 1280px+ | Desktop estándar |
-| `2xl:` | 1440px+ | Desktop grande (diseño base Figma) |
+| Prefijo Tailwind | Valor   | Dispositivo típico                 |
+| ---------------- | ------- | ---------------------------------- |
+| _(sin prefijo)_  | 0px+    | Mobile portrait (base)             |
+| `sm:`            | 640px+  | Mobile landscape / phablet         |
+| `md:`            | 768px+  | Tablet                             |
+| `lg:`            | 1024px+ | Desktop pequeño                    |
+| `xl:`            | 1280px+ | Desktop estándar                   |
+| `2xl:`           | 1440px+ | Desktop grande (diseño base Figma) |
 
 **El diseño base de Figma está a 1440px** (`2xl`). Se adapta hacia abajo (mobile-first).
 
@@ -98,11 +99,14 @@ El contenido principal deja espacio al sidebar (desktop) y se expande cuando est
 ```
 
 El menú mobile se cierra automáticamente al redimensionar a desktop:
+
 ```tsx
 useEffect(() => {
-  const handleResize = () => { if (window.innerWidth >= 640) setIsMenuOpen(false); };
-  window.addEventListener('resize', handleResize);
-  return () => window.removeEventListener('resize', handleResize);
+  const handleResize = () => {
+    if (window.innerWidth >= 640) setIsMenuOpen(false);
+  };
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
 }, []);
 ```
 
@@ -152,6 +156,7 @@ className="flex gap-4 overflow-x-auto"
 Verificar antes de hacer merge:
 
 ### Estructura semántica
+
 - [ ] Secciones usan `<section>` con `aria-label` descriptivo
 - [ ] El header global usa `role="banner"`
 - [ ] La navegación usa `<nav>` con `aria-label` (distinguir nav principal de nav móvil)
@@ -160,11 +165,13 @@ Verificar antes de hacer merge:
 - [ ] Los artículos de contenido usan `<article>` cuando corresponde
 
 ### Imágenes
+
 - [ ] Toda imagen tiene `alt` descriptivo
 - [ ] Imágenes decorativas tienen `alt=""` (o están en SVGs con `aria-hidden="true"`)
 - [ ] Escudos de equipos tienen `alt="Nombre del equipo"`
 
 ### Interactividad
+
 - [ ] Botones sin texto visible tienen `aria-label`
 - [ ] El botón hamburger tiene `aria-expanded` y `aria-label` que cambia según el estado
 - [ ] Los toggle de vista tienen `aria-label` descriptivo (`"Vista tarjetas"`, `"Vista tabla"`)
@@ -172,16 +179,19 @@ Verificar antes de hacer merge:
 - [ ] Los elementos interactivos son alcanzables por teclado (no solo por mouse)
 
 ### Focus
+
 - [ ] Los elementos interactivos tienen estilos `focus-visible` visibles
 - [ ] El foco no queda atrapado fuera de los modales mientras están abiertos
 - [ ] Cuando un modal se abre, el foco se mueve al primer elemento interactivo dentro
 
 ### Color y contraste
+
 - [ ] No se usa el color como único medio de comunicar información (ej: badges de victoria/derrota tienen texto, no solo color)
 - [ ] El texto `text-text-secondary` (`#8BA3C7`) sobre fondos azul oscuro cumple WCAG AA
 - [ ] El texto `text-text-muted` (`#64748b`) solo se usa para información de baja jerarquía donde no es crítico el contraste
 
 ### Formularios (juegos)
+
 - [ ] Los inputs tienen `<label>` asociado o `aria-label`
 - [ ] Los errores de validación se anuncian (atributo `aria-invalid` o mensaje visible)
 
@@ -213,8 +223,8 @@ Los SVGs decorativos y los íconos que complementan texto con `aria-hidden="true
 // Header.tsx — aria-label y aria-expanded dinámicos
 <button
   className="sm:hidden p-1 text-boca-gold"
-  onClick={() => setIsMenuOpen(o => !o)}
-  aria-label={isMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+  onClick={() => setIsMenuOpen((o) => !o)}
+  aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
   aria-expanded={isMenuOpen}
 >
   {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -227,8 +237,8 @@ Los SVGs decorativos y los íconos que complementan texto con `aria-hidden="true
 // Header.tsx — aria-current="page" en el link activo
 <a
   href={href}
-  aria-current={isActive ? 'page' : undefined}
-  className={isActive ? 'text-boca-gold' : 'text-text-nav hover:text-boca-gold'}
+  aria-current={isActive ? "page" : undefined}
+  className={isActive ? "text-boca-gold" : "text-text-nav hover:text-boca-gold"}
 >
   {label}
 </a>
@@ -242,7 +252,10 @@ Las secciones usan `<section>` con `aria-label` para que los lectores de pantall
 
 ```tsx
 // ProximosPartidos.tsx
-<section aria-label="Próximos partidos" className="bg-boca-blue-mid border border-boca-border rounded-sm">
+<section
+  aria-label="Próximos partidos"
+  className="bg-boca-blue-mid border border-boca-border rounded-sm"
+>
   <h2 className="type-section-title text-white">Próximos partidos</h2>
   {/* ... */}
 </section>
@@ -255,7 +268,7 @@ El foco se mueve al input del juego cuando el modal abre, con un delay que permi
 ```tsx
 // useIdolosGame.ts
 useEffect(() => {
-  if (state !== 'playing') return;
+  if (state !== "playing") return;
   const t = setTimeout(() => inputRef.current?.focus(), INPUT_FOCUS_DELAY_MS); // 150ms
   return () => clearTimeout(t);
 }, [state]);
@@ -270,7 +283,9 @@ Los escudos de equipos tienen fallback cuando la imagen falla:
 <img
   src={rival.logo}
   alt={rival.name}
-  onError={(e) => { (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO; }}
+  onError={(e) => {
+    (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO;
+  }}
   draggable={false}
 />
 ```
@@ -281,12 +296,14 @@ El backdrop del drawer mobile captura clicks para cerrar:
 
 ```tsx
 // Sidebar.tsx — backdrop como zona de cierre
-{drawerOpen && (
-  <div
-    className="fixed inset-0 z-40 bg-black/60"
-    onClick={() => setDrawerOpen(false)}
-  />
-)}
+{
+  drawerOpen && (
+    <div
+      className="fixed inset-0 z-40 bg-black/60"
+      onClick={() => setDrawerOpen(false)}
+    />
+  );
+}
 ```
 
 Para modales complejos (juegos), considerar también `onKeyDown` para cerrar con Escape:
@@ -294,13 +311,13 @@ Para modales complejos (juegos), considerar también `onKeyDown` para cerrar con
 ```tsx
 useEffect(() => {
   const handler = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') closeModal();
+    if (e.key === "Escape") closeModal();
   };
-  document.addEventListener('keydown', handler);
-  return () => document.removeEventListener('keydown', handler);
+  document.addEventListener("keydown", handler);
+  return () => document.removeEventListener("keydown", handler);
 }, [closeModal]);
 ```
 
 ---
 
-*Última actualización: 2026-04-02*
+_Última actualización: 2026-04-02_

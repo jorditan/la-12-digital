@@ -27,45 +27,49 @@ El aside usa `sticky top-8` dentro de un flex row. En pantallas grandes funciona
 **Descripción:** Reemplazar el aside estático por un panel que en desktop sea fixed/flotante con toggle de collapse, y en mobile sea un drawer que sube desde abajo o desde la derecha.
 
 **Archivos:**
+
 - Crear: `src/components/Sidebar/Sidebar.tsx`
 - Crear: `src/components/Sidebar/index.ts`
 - Modificar: `src/App.tsx`
 
 **Comportamiento esperado:**
-- **Desktop (lg+):** Panel fixed en el lado derecho, `top-0 right-0 h-screen`, con un botón ‹ / › para colapsar/expandir. Ancho expandido `w-80 xl:w-96`, colapsado `w-10`. Contenido del aside (TablaPosiciones + juegos*) dentro con scroll interno (`overflow-y-auto`).
+
+- **Desktop (lg+):** Panel fixed en el lado derecho, `top-0 right-0 h-screen`, con un botón ‹ / › para colapsar/expandir. Ancho expandido `w-80 xl:w-96`, colapsado `w-10`. Contenido del aside (TablaPosiciones + juegos\*) dentro con scroll interno (`overflow-y-auto`).
 - **Mobile (<lg):** Botón flotante (FAB) fijo abajo a la derecha que abre un drawer desde abajo. El drawer toma `max-h-[80vh]` con scroll interno y se cierra con overlay o swipe.
 - Estado de colapso persistido en `localStorage` (clave `sidebar-collapsed`).
 
-> *Los juegos se van a mover en Tarea 2. En esta tarea el aside solo contendrá `TablaPosiciones`.*
+> _Los juegos se van a mover en Tarea 2. En esta tarea el aside solo contendrá `TablaPosiciones`._
 
 **Step 1: Crear el componente Sidebar**
 
 ```tsx
 // src/components/Sidebar/Sidebar.tsx
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, LayoutList } from 'lucide-react';
-import { TablaPosiciones } from '../TablaPosiciones';
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight, LayoutList } from "lucide-react";
+import { TablaPosiciones } from "../TablaPosiciones";
 
-const STORAGE_KEY = 'sidebar-collapsed';
+const STORAGE_KEY = "sidebar-collapsed";
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(
-    () => localStorage.getItem(STORAGE_KEY) === 'true'
+    () => localStorage.getItem(STORAGE_KEY) === "true",
   );
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggle = () =>
-    setCollapsed(prev => {
+    setCollapsed((prev) => {
       localStorage.setItem(STORAGE_KEY, String(!prev));
       return !prev;
     });
 
   // Cerrar drawer al hacer resize a desktop
   useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const handler = (e: MediaQueryListEvent) => { if (e.matches) setDrawerOpen(false); };
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const handler = (e: MediaQueryListEvent) => {
+      if (e.matches) setDrawerOpen(false);
+    };
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
 
   return (
@@ -75,13 +79,13 @@ export function Sidebar() {
         className={`
           hidden lg:flex flex-col fixed top-0 right-0 h-screen z-30
           bg-boca-blue border-l border-boca-border transition-all duration-300
-          ${collapsed ? 'w-10' : 'w-80 xl:w-96'}
+          ${collapsed ? "w-10" : "w-80 xl:w-96"}
         `}
       >
         {/* Toggle button */}
         <button
           onClick={toggle}
-          aria-label={collapsed ? 'Expandir panel' : 'Colapsar panel'}
+          aria-label={collapsed ? "Expandir panel" : "Colapsar panel"}
           className="absolute -left-3 top-20 z-10 w-6 h-6 rounded-full
             bg-boca-blue-light border border-boca-border
             flex items-center justify-center
@@ -91,7 +95,9 @@ export function Sidebar() {
         </button>
 
         {/* Contenido (oculto cuando colapsa) */}
-        <div className={`flex-1 overflow-y-auto p-4 ${collapsed ? 'hidden' : 'block'}`}>
+        <div
+          className={`flex-1 overflow-y-auto p-4 ${collapsed ? "hidden" : "block"}`}
+        >
           <TablaPosiciones />
         </div>
       </aside>
@@ -124,7 +130,7 @@ export function Sidebar() {
             bg-boca-blue border-t border-boca-border rounded-t-2xl
             max-h-[80vh] overflow-y-auto p-4
             transition-transform duration-300
-            ${drawerOpen ? 'translate-y-0' : 'translate-y-full'}
+            ${drawerOpen ? "translate-y-0" : "translate-y-full"}
           `}
         >
           {/* Handle */}
@@ -141,7 +147,7 @@ export function Sidebar() {
 
 ```ts
 // src/components/Sidebar/index.ts
-export { Sidebar } from './Sidebar';
+export { Sidebar } from "./Sidebar";
 ```
 
 **Step 3: Actualizar App.tsx**
@@ -150,7 +156,7 @@ Reemplazar el bloque del aside y agregar el offset en main para compensar el pan
 
 ```tsx
 // src/App.tsx — cambios:
-import { Sidebar } from './components/Sidebar';
+import { Sidebar } from "./components/Sidebar";
 
 // Quitar: import de IdolosGame, EquiposGame del aside (se mueven en Tarea 2)
 // Quitar: <Separator /> y el <aside> actual
@@ -162,20 +168,20 @@ import { Sidebar } from './components/Sidebar';
   {/* decoración */}
   <Header />
   <BannerMensaje />
-  <Sidebar />  {/* ← nuevo, fixed */}
+  <Sidebar /> {/* ← nuevo, fixed */}
   <div className="w-full px-3 md:px-4 sm:px-6 py-3 sm:py-8 lg:mr-80 xl:mr-96">
-    <main>
-      {/* mismo contenido de main */}
-    </main>
+    <main>{/* mismo contenido de main */}</main>
   </div>
-</div>
+</div>;
 ```
 
 **Step 4: Verificar visualmente**
+
 - Desktop: panel visible a la derecha, botón toggle funciona, colapso persiste
 - Mobile: FAB visible, drawer sube/baja, overlay cierra el drawer
 
 **Step 5: Commit**
+
 ```bash
 git add src/components/Sidebar/ src/App.tsx
 git commit -m "feat: aside flotante con collapse en desktop y drawer mobile"
@@ -188,10 +194,12 @@ git commit -m "feat: aside flotante con collapse en desktop y drawer mobile"
 **Descripción:** Sacar `IdolosGame` y `EquiposGame` del aside y colocarlos entre `Noticias` y `CanalYoutube` en el main. Esto libera el aside para que solo tenga `TablaPosiciones` (más limpio) y pone los juegos en un lugar más visible del flujo principal.
 
 **Archivos:**
+
 - Modificar: `src/App.tsx`
 - Modificar: `src/components/Sidebar/Sidebar.tsx`
 
 **Layout resultante en main:**
+
 ```
 BomboneraWidget + UltimosPartidos
 ProximosPartidos
@@ -226,10 +234,12 @@ En `Sidebar.tsx`, quitar los imports de `IdolosGame` y `EquiposGame`. El conteni
 Colocarlos en grid 2 columnas en desktop hace que los juegos se vean como una sección dedicada, no como widgets secundarios.
 
 **Step 3: Verificar que los juegos siguen funcionando**
+
 - Abrir la app, jugar una ronda de IdolosGame y EquiposGame
 - Confirmar que la TimerBar y el estado de juego no se rompen
 
 **Step 4: Commit**
+
 ```bash
 git add src/App.tsx src/components/Sidebar/Sidebar.tsx
 git commit -m "feat: mueve minijuegos del aside al main entre noticias y videos"
@@ -242,6 +252,7 @@ git commit -m "feat: mueve minijuegos del aside al main entre noticias y videos"
 **Descripción:** Reemplazar el `CanalSelector` (dropdown oculto) por tabs/pills de canales siempre visibles. Rediseñar el grid de videos con un layout bento donde el primer video es prominente y el resto secundarios.
 
 **Archivos:**
+
 - Modificar: `src/components/CanalYoutube/CanalYoutube.tsx`
 - Eliminar: `src/components/CanalSelector/` (o dejar pero ya no se usa en CanalYoutube)
 
@@ -260,15 +271,17 @@ Reemplazar el `<CanalSelector>` por pills horizontales:
   </div>
   {/* Pills de canal */}
   <div className="flex flex-wrap gap-2">
-    {CANALES_YOUTUBE.map(c => (
+    {CANALES_YOUTUBE.map((c) => (
       <button
         key={c.handle}
         onClick={() => setCanal(c)}
         className={`
           font-sans text-xs font-medium px-3 py-1.5 rounded-full border transition-colors
-          ${canal.handle === c.handle
-            ? 'bg-boca-gold text-text-on-gold border-boca-gold'
-            : 'border-boca-border text-text-nav hover:border-boca-gold/50 hover:text-boca-gold'}
+          ${
+            canal.handle === c.handle
+              ? "bg-boca-gold text-text-on-gold border-boca-gold"
+              : "border-boca-border text-text-nav hover:border-boca-gold/50 hover:text-boca-gold"
+          }
         `}
       >
         {c.nombre}
@@ -282,26 +295,34 @@ Reemplazar el `<CanalSelector>` por pills horizontales:
 
 ```tsx
 // Reemplazar el grid desktop en CanalYoutube.tsx
-{estado === 'ok' && videos.length > 0 && (
-  <>
-    {/* Mobile: scroll horizontal (sin cambios) */}
-    <div className="sm:hidden">
-      <VideoScrollRow videos={videos} />
-    </div>
-
-    {/* Desktop: bento */}
-    <div className="hidden sm:grid gap-3" style={{ gridTemplateColumns: '2fr 1fr 1fr', gridTemplateRows: 'auto auto' }}>
-      {/* Video destacado — ocupa 2 filas */}
-      <div className="row-span-2">
-        <CardVideo video={videos[0]} featured />
+{
+  estado === "ok" && videos.length > 0 && (
+    <>
+      {/* Mobile: scroll horizontal (sin cambios) */}
+      <div className="sm:hidden">
+        <VideoScrollRow videos={videos} />
       </div>
-      {/* Resto: hasta 4 videos secundarios */}
-      {videos.slice(1, 5).map(video => (
-        <CardVideo key={video.id} video={video} />
-      ))}
-    </div>
-  </>
-)}
+
+      {/* Desktop: bento */}
+      <div
+        className="hidden sm:grid gap-3"
+        style={{
+          gridTemplateColumns: "2fr 1fr 1fr",
+          gridTemplateRows: "auto auto",
+        }}
+      >
+        {/* Video destacado — ocupa 2 filas */}
+        <div className="row-span-2">
+          <CardVideo video={videos[0]} featured />
+        </div>
+        {/* Resto: hasta 4 videos secundarios */}
+        {videos.slice(1, 5).map((video) => (
+          <CardVideo key={video.id} video={video} />
+        ))}
+      </div>
+    </>
+  );
+}
 ```
 
 **Step 3: Agregar prop `featured` a CardVideo**
@@ -320,11 +341,13 @@ featured?: boolean;
 ```
 
 **Step 4: Verificar**
+
 - Cambiar entre canales con los pills
 - Confirmar que el bento se ve bien en desktop (video grande a la izquierda, 4 pequeños a la derecha)
 - Confirmar mobile scroll horizontal intacto
 
 **Step 5: Commit**
+
 ```bash
 git add src/components/CanalYoutube/ src/components/CardVideo/
 git commit -m "feat: videos con tabs de canal visibles y bento layout desktop"
@@ -337,10 +360,12 @@ git commit -m "feat: videos con tabs de canal visibles y bento layout desktop"
 **Descripción:** Aplicar la skill `frontend-design` para elevar la UI del widget "Días restantes para ir a la Bombonera". El componente a modificar es `ModoNormal.tsx`.
 
 **Archivos:**
+
 - Modificar: `src/components/BomboneraWidget/ModoNormal.tsx`
 - (opcional) Modificar: `src/components/BomboneraWidget/StatsGrid.tsx`, `ForecastRows.tsx`
 
 **Antes de tocar el código, invocar la skill:**
+
 ```
 @.claude/skills/frontend-design
 ```
@@ -354,6 +379,7 @@ git commit -m "feat: videos con tabs de canal visibles y bento layout desktop"
 - Mantener todos los props y la lógica existente — solo cambiar el JSX/clases de `ModoNormal.tsx`.
 
 **Step 1: Leer el archivo actual entero**
+
 ```
 Read: src/components/BomboneraWidget/ModoNormal.tsx
 Read: src/components/BomboneraWidget/StatsGrid.tsx
@@ -364,9 +390,11 @@ Read: src/components/BomboneraWidget/StatsGrid.tsx
 Con la skill activa, reescribir `ModoNormal.tsx` manteniendo los mismos props y lógica, solo elevando el diseño visual. No eliminar ningún dato que ya se muestra.
 
 **Step 3: Verificar en loading state**
+
 - Confirmar que el skeleton (animate-pulse) sigue viéndose bien con el nuevo layout.
 
 **Step 4: Commit**
+
 ```bash
 git add src/components/BomboneraWidget/
 git commit -m "design: mejora visual BomboneraWidget con tratamiento de scorecard"
@@ -376,11 +404,11 @@ git commit -m "design: mejora visual BomboneraWidget con tratamiento de scorecar
 
 ## Orden de ejecución sugerido
 
-| Tarea | Impacto | Complejidad | Dependencias |
-|-------|---------|-------------|--------------|
-| Tarea 2 (mover juegos) | Alto | Baja | — |
-| Tarea 1 (aside flotante) | Alto | Media | Tarea 2 (los juegos ya no están en aside) |
-| Tarea 3 (videos bento) | Medio | Baja | — |
-| Tarea 4 (bombonera UI) | Medio | Baja | — |
+| Tarea                    | Impacto | Complejidad | Dependencias                              |
+| ------------------------ | ------- | ----------- | ----------------------------------------- |
+| Tarea 2 (mover juegos)   | Alto    | Baja        | —                                         |
+| Tarea 1 (aside flotante) | Alto    | Media       | Tarea 2 (los juegos ya no están en aside) |
+| Tarea 3 (videos bento)   | Medio   | Baja        | —                                         |
+| Tarea 4 (bombonera UI)   | Medio   | Baja        | —                                         |
 
 Tareas 3 y 4 son completamente independientes entre sí y de 1+2.

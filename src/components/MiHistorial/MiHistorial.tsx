@@ -1,49 +1,70 @@
-import { useState } from 'react';
-import type { AuthUser } from '@/types/attendance';
-import { useMiHistorial } from './useMiHistorial';
-import { LockedState } from './LockedState';
-import { AttendanceRow } from './AttendanceRow';
-import { MatchCombobox } from './MatchCombobox';
-import { MultiSelect } from './MultiSelect';
-import { DateRangePicker } from './DateRangePicker';
-import { ConfirmDeleteModal } from './ConfirmDeleteModal';
-import { NoteModal } from './NoteModal';
-import { Button } from '../ui/Button';
+import { useState } from "react";
+import type { AuthUser } from "@/types/attendance";
+import { useMiHistorial } from "./useMiHistorial";
+import { LockedState } from "./LockedState";
+import { AttendanceRow } from "./AttendanceRow";
+import { MatchCombobox } from "./MatchCombobox";
+import { MultiSelect } from "./MultiSelect";
+import { DateRangePicker } from "./DateRangePicker";
+import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
+import { NoteModal } from "./NoteModal";
+import { Button } from "../ui/Button";
 
 // ── Logged-in content ─────────────────────────────────────────────────────────
 
 type DeleteModalData = { matchId: string; rival: string; matchDate: string };
-type NoteModalData   = { matchId: string; note: string | null; label: string };
+type NoteModalData = { matchId: string; note: string | null; label: string };
 
 const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   const {
-    matches, matchEstado,
-    selectedMatchId, setSelectedMatchId,
-    adding, justAdded, successMatchId,
-    filteredEntries, totalAttended, earliestYear, availableMatches,
-    availableCompetitions, selectedCompetitions, setSelectedCompetitions,
-    dateFrom, setDateFrom, dateTo, setDateTo,
-    hasActiveFilters, clearFilters,
-    handleMarkAttendance, handleUpdateNote, remove,
+    matches,
+    matchEstado,
+    selectedMatchId,
+    setSelectedMatchId,
+    adding,
+    justAdded,
+    successMatchId,
+    filteredEntries,
+    totalAttended,
+    earliestYear,
+    availableMatches,
+    availableCompetitions,
+    selectedCompetitions,
+    setSelectedCompetitions,
+    dateFrom,
+    setDateFrom,
+    dateTo,
+    setDateTo,
+    hasActiveFilters,
+    clearFilters,
+    handleMarkAttendance,
+    handleUpdateNote,
+    remove,
   } = useMiHistorial(user);
 
   const [deleteModal, setDeleteModal] = useState<DeleteModalData | null>(null);
-  const [noteModal, setNoteModal]     = useState<NoteModalData | null>(null);
+  const [noteModal, setNoteModal] = useState<NoteModalData | null>(null);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-
       {/* Header */}
       <div className="mb-6 pl-3 border-l-2 border-boca-gold/50">
         <h1 className="type-section-title text-white mb-0.5">Mi Historial</h1>
-        <p className="type-body text-text-muted">{user.displayName ?? user.email}</p>
+        <p className="type-body text-text-muted">
+          {user.displayName ?? user.email}
+        </p>
       </div>
 
       {/* Stats */}
       <div className="flex items-center gap-4 mb-6 p-4 bg-boca-blue-light border border-boca-border rounded-sm">
         <div className="flex-1">
-          <p className="type-caption text-text-muted mb-0.5">Partidos presenciados</p>
-          <p className="type-stat text-boca-gold font-bold tabular-nums" style={{ fontSize: '2rem', lineHeight: 1 }}>
+          <p className="type-caption text-text-muted mb-0.5">
+            Partidos presenciados
+          </p>
+          <p
+            className="type-stat text-boca-gold font-bold tabular-nums"
+            style={{ fontSize: "2rem", lineHeight: 1 }}
+          >
             {totalAttended}
           </p>
         </div>
@@ -58,47 +79,102 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
       {/* Register form */}
       <div className="mb-6 p-4 bg-boca-blue-light border border-boca-border rounded-sm">
         <div className="flex items-center gap-2 mb-3">
-          <svg viewBox="0 0 16 16" fill="none" className="w-4 h-4 text-boca-gold shrink-0">
-            <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M5 1.5v3M11 1.5v3M2 7h12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M5.5 10l1.5 1.5L10.5 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            className="w-4 h-4 text-boca-gold shrink-0"
+          >
+            <rect
+              x="2"
+              y="3"
+              width="12"
+              height="11"
+              rx="1.5"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M5 1.5v3M11 1.5v3M2 7h12"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+            <path
+              d="M5.5 10l1.5 1.5L10.5 9"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
-          <p className="type-body text-text-nav">Agregá el partido al que fuiste</p>
+          <p className="type-body text-text-nav">
+            Agregá el partido al que fuiste
+          </p>
         </div>
 
-        {matchEstado === 'loading' && <p className="type-body text-text-muted py-2">Cargando partidos...</p>}
-        {matchEstado === 'error' && <p className="type-body text-[#fca5a5] py-2">No se pudieron cargar los partidos.</p>}
+        {matchEstado === "loading" && (
+          <p className="type-body text-text-muted py-2">Cargando partidos...</p>
+        )}
+        {matchEstado === "error" && (
+          <p className="type-body text-[#fca5a5] py-2">
+            No se pudieron cargar los partidos.
+          </p>
+        )}
 
-        {matchEstado === 'ok' && (
+        {matchEstado === "ok" && (
           <div className="flex flex-col sm:flex-row gap-2">
-            <MatchCombobox matches={availableMatches} value={selectedMatchId} onChange={setSelectedMatchId} />
+            <MatchCombobox
+              matches={availableMatches}
+              value={selectedMatchId}
+              onChange={setSelectedMatchId}
+            />
             <Button
               onClick={handleMarkAttendance}
               disabled={!selectedMatchId || adding}
               variant="primary"
               className={[
-                'sm:w-auto w-full type-button font-bold px-5 py-2.5 rounded-sm transition-all',
-                'flex items-center justify-center gap-2 whitespace-nowrap',
+                "sm:w-auto w-full type-button font-bold px-5 py-2.5 rounded-sm transition-all",
+                "flex items-center justify-center gap-2 whitespace-nowrap",
                 selectedMatchId && !adding
-                  ? 'bg-boca-gold text-text-on-gold hover:opacity-90 cursor-pointer'
-                  : 'bg-boca-gold/30 text-text-on-gold/50 cursor-not-allowed',
-              ].join(' ')}
+                  ? "bg-boca-gold text-text-on-gold hover:opacity-90 cursor-pointer"
+                  : "bg-boca-gold/30 text-text-on-gold/50 cursor-not-allowed",
+              ].join(" ")}
             >
               {adding ? (
                 <>
-                  <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" strokeDasharray="28" strokeDashoffset="10" />
+                  <svg
+                    className="animate-spin w-3.5 h-3.5"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                  >
+                    <circle
+                      cx="8"
+                      cy="8"
+                      r="6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeDasharray="28"
+                      strokeDashoffset="10"
+                    />
                   </svg>
                   Guardando...
                 </>
               ) : successMatchId ? (
                 <span className="animate-check-bounce flex items-center gap-1.5">
                   <svg viewBox="0 0 14 14" fill="none" className="w-3.5 h-3.5">
-                    <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path
+                      d="M2 7l3.5 3.5L12 3"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                   ¡Marcado!
                 </span>
-              ) : 'Marcar presencia'}
+              ) : (
+                "Marcar presencia"
+              )}
             </Button>
           </div>
         )}
@@ -116,7 +192,10 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
           <DateRangePicker
             from={dateFrom}
             to={dateTo}
-            onChange={(f, t) => { setDateFrom(f); setDateTo(t); }}
+            onChange={(f, t) => {
+              setDateFrom(f);
+              setDateTo(t);
+            }}
           />
           {hasActiveFilters && (
             <Button
@@ -140,19 +219,25 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
             <p className="type-caption text-text-muted">
               {hasActiveFilters
                 ? `${filteredEntries.length} de ${totalAttended}`
-                : `${totalAttended} ${totalAttended === 1 ? 'partido' : 'partidos'}`}
+                : `${totalAttended} ${totalAttended === 1 ? "partido" : "partidos"}`}
             </p>
           )}
         </div>
 
         {totalAttended === 0 ? (
           <div className="px-4 py-12 text-center">
-            <p className="type-body text-text-muted/70 italic mb-1">Todavía no registraste partidos.</p>
-            <p className="type-caption text-text-muted/50">Usá el formulario de arriba para empezar.</p>
+            <p className="type-body text-text-muted/70 italic mb-1">
+              Todavía no registraste partidos.
+            </p>
+            <p className="type-caption text-text-muted/50">
+              Usá el formulario de arriba para empezar.
+            </p>
           </div>
         ) : filteredEntries.length === 0 ? (
           <div className="px-4 py-10 text-center">
-            <p className="type-body text-text-muted/70 italic mb-2">Ningún partido coincide con los filtros.</p>
+            <p className="type-body text-text-muted/70 italic mb-2">
+              Ningún partido coincide con los filtros.
+            </p>
             <Button
               type="button"
               onClick={clearFilters}
@@ -168,24 +253,40 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-boca-border/60">
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Fecha</th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Rival</th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Resultado</th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium hidden sm:table-cell">Competencia</th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Nota</th>
+                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">
+                    Fecha
+                  </th>
+                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">
+                    Rival
+                  </th>
+                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">
+                    Resultado
+                  </th>
+                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium hidden sm:table-cell">
+                    Competencia
+                  </th>
+                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">
+                    Nota
+                  </th>
                   <th className="px-2 py-2" aria-label="Acciones" />
                 </tr>
               </thead>
               <tbody>
-                {filteredEntries.map(entry => (
+                {filteredEntries.map((entry) => (
                   <AttendanceRow
                     key={entry.matchId}
                     matchId={entry.matchId}
-                    match={matches.find(m => m.fixtureId.toString() === entry.matchId)}
+                    match={matches.find(
+                      (m) => m.fixtureId.toString() === entry.matchId,
+                    )}
                     note={entry.note}
                     isNew={justAdded === entry.matchId}
-                    onOpenNoteModal={(matchId, note, label) => setNoteModal({ matchId, note, label })}
-                    onOpenDeleteModal={(matchId, rival, matchDate) => setDeleteModal({ matchId, rival, matchDate })}
+                    onOpenNoteModal={(matchId, note, label) =>
+                      setNoteModal({ matchId, note, label })
+                    }
+                    onOpenDeleteModal={(matchId, rival, matchDate) =>
+                      setDeleteModal({ matchId, rival, matchDate })
+                    }
                   />
                 ))}
               </tbody>
@@ -199,7 +300,10 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         <ConfirmDeleteModal
           rival={deleteModal.rival}
           matchDate={deleteModal.matchDate}
-          onConfirm={() => { remove(deleteModal.matchId); setDeleteModal(null); }}
+          onConfirm={() => {
+            remove(deleteModal.matchId);
+            setDeleteModal(null);
+          }}
           onClose={() => setDeleteModal(null)}
         />
       )}
@@ -207,11 +311,10 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         <NoteModal
           matchLabel={noteModal.label}
           initialNote={noteModal.note}
-          onSave={note => handleUpdateNote(noteModal.matchId, note)}
+          onSave={(note) => handleUpdateNote(noteModal.matchId, note)}
           onClose={() => setNoteModal(null)}
         />
       )}
-
     </div>
   );
 };
@@ -224,7 +327,11 @@ interface MiHistorialProps {
 
 export const MiHistorial = ({ user }: MiHistorialProps) => {
   if (!user) {
-    return <div className="max-w-3xl mx-auto px-4"><LockedState /></div>;
+    return (
+      <div className="max-w-3xl mx-auto px-4">
+        <LockedState />
+      </div>
+    );
   }
   return <MiHistorialContent user={user} />;
 };

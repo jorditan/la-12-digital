@@ -3,6 +3,7 @@
 > Patrones de código recurrentes en el proyecto, basados en implementaciones reales. Seguir estos patrones garantiza consistencia.
 
 ## Índice
+
 - [Patrón de estado async](#patrón-de-estado-async)
 - [Patrón de hook de juego](#patrón-de-hook-de-juego)
 - [Patrón de scroll horizontal con drag](#patrón-de-scroll-horizontal-con-drag)
@@ -46,10 +47,10 @@ Siempre renderizar los tres estados en este orden: loading → error → ok.
 return (
   <section>
     {/* 1. Loading */}
-    {estado === 'loading' && <SkeletonRow />}
+    {estado === "loading" && <SkeletonRow />}
 
     {/* 2. Error con botón reintentar */}
-    {estado === 'error' && (
+    {estado === "error" && (
       <div className="flex items-center gap-3 py-6 px-4 bg-boca-blue-light rounded-sm border border-boca-gold/10">
         <p className="font-sans text-sm text-text-secondary flex-1">
           No se pudieron cargar los próximos partidos
@@ -64,14 +65,14 @@ return (
     )}
 
     {/* 3. Empty state */}
-    {estado === 'ok' && partidos.length === 0 && (
+    {estado === "ok" && partidos.length === 0 && (
       <p className="font-sans text-sm text-white/50 py-6 text-center">
         No hay próximos partidos disponibles
       </p>
     )}
 
     {/* 4. Contenido */}
-    {estado === 'ok' && partidos.length > 0 && (
+    {estado === "ok" && partidos.length > 0 && (
       <ScrollRow partidos={partidos} />
     )}
   </section>
@@ -133,14 +134,14 @@ src/components/IdolosGame/hooks/useIdolosGame.ts
 ```ts
 // 1. Exportar la interfaz de retorno del hook
 export interface IdolosGameState {
-  state: GameState;       // 'waiting' | 'playing' | 'correct' | 'timeout'
+  state: GameState; // 'waiting' | 'playing' | 'correct' | 'timeout'
   idolo: Idolo | null;
   timer: number;
   visibleClues: number;
   input: string;
   inputError: boolean;
   score: Score;
-  bgIdolo: Idolo;         // Ídolo para el fondo decorativo (estático)
+  bgIdolo: Idolo; // Ídolo para el fondo decorativo (estático)
   inputRef: React.RefObject<HTMLInputElement>;
   startRound: () => void;
   closeModal: () => void;
@@ -150,25 +151,25 @@ export interface IdolosGameState {
 
 export function useIdolosGame(): IdolosGameState {
   // Estado del juego
-  const [state, setState] = useState<GameState>('waiting');
+  const [state, setState] = useState<GameState>("waiting");
   // ... resto del estado
 
   // Efecto de countdown
   useEffect(() => {
-    if (state !== 'playing') return;
+    if (state !== "playing") return;
     // setInterval para countdown...
     return () => clearInterval(roundIv.current); // siempre limpiar
   }, [state, finishRound]);
 
   // Efecto de auto-cierre cuando termina el tiempo
   useEffect(() => {
-    if (state !== 'timeout') return;
-    const t = setTimeout(() => setState('waiting'), RESULT_SECS * 1000);
+    if (state !== "timeout") return;
+    const t = setTimeout(() => setState("waiting"), RESULT_SECS * 1000);
     return () => clearTimeout(t);
   }, [state]);
 
   // Retornar todo lo que necesita el componente de render
-  return { state, idolo, timer, /* ... */ };
+  return { state, idolo, timer /* ... */ };
 }
 ```
 
@@ -182,7 +183,7 @@ export function IdolosGame() {
   return (
     <>
       <GamePromoCard /* props del estado */ />
-      {state !== 'waiting' && idolo && (
+      {state !== "waiting" && idolo && (
         <GameModal /* props del juego activo */ />
       )}
     </>
@@ -227,13 +228,20 @@ function ScrollRow({ partidos }: { partidos: ProximoPartido[] }) {
       <div
         ref={ref}
         className="flex gap-4 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+        style={
+          {
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          } as React.CSSProperties
+        }
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={stopDrag}
         onPointerLeave={stopDrag}
       >
-        {partidos.map((p) => <CardPartido key={p.fixtureId} partido={p} />)}
+        {partidos.map((p) => (
+          <CardPartido key={p.fixtureId} partido={p} />
+        ))}
       </div>
 
       {/* Gradiente izquierdo (indica contenido oculto a la izquierda) */}
@@ -261,6 +269,7 @@ function ScrollRow({ partidos }: { partidos: ProximoPartido[] }) {
 Cada componente vive en su propio directorio con barrel export.
 
 ### Átomo (estructura mínima)
+
 ```
 Badge/
 ├── Badge.tsx       Implementación
@@ -268,6 +277,7 @@ Badge/
 ```
 
 ### Organismo con subcomponentes y hooks
+
 ```
 ProximosPartidos/
 ├── ProximosPartidos.tsx    Componente principal
@@ -295,11 +305,13 @@ Los componentes que deben ser composables (átomos y moléculas) aceptan `classN
 ```tsx
 // Átomo: acepta className — el padre puede posicionarlo
 interface BadgeProps {
-  className?: string;  // Para override de posicionamiento
+  className?: string; // Para override de posicionamiento
 }
 
 // Organismo: no recibe className — es una sección autónoma
-export function ProximosPartidos() { /* sin className prop */ }
+export function ProximosPartidos() {
+  /* sin className prop */
+}
 ```
 
 ### Manejo del className en el componente
@@ -334,20 +346,20 @@ Todo componente expone su API pública a través de `index.ts`. Las importacione
 
 ```ts
 // src/components/Badge/index.ts
-export { Badge } from './Badge';
+export { Badge } from "./Badge";
 
 // Si hay tipos que otros necesitan:
-export type { BadgeProps } from './Badge';
+export type { BadgeProps } from "./Badge";
 // (requiere exportar la interfaz en Badge.tsx)
 ```
 
 ```tsx
 // Correcto — importar desde el directorio
-import { Badge } from '../Badge';
-import { Button } from '../Button';
+import { Badge } from "../Badge";
+import { Button } from "../Button";
 
 // Incorrecto — importar el archivo directamente
-import { Badge } from '../Badge/Badge';
+import { Badge } from "../Badge/Badge";
 ```
 
 ---
@@ -359,28 +371,31 @@ Cuando un componente tiene múltiples variantes visuales, las clases se definen 
 ```tsx
 // Correcto — objeto de variantes fuera del componente (Badge.tsx)
 const VARIANTS = {
-  blue:      'bg-boca-border-card text-white',
-  gold:      'bg-boca-blue text-boca-gold',
-  local:     'bg-green-900/50 text-green-300 border border-green-700/60',
-  visitante: 'bg-boca-border/60 text-blue-200 border border-boca-border',
+  blue: "bg-boca-border-card text-white",
+  gold: "bg-boca-blue text-boca-gold",
+  local: "bg-green-900/50 text-green-300 border border-green-700/60",
+  visitante: "bg-boca-border/60 text-blue-200 border border-boca-border",
 };
 
-export function Badge({ variant = 'blue' }: BadgeProps) {
+export function Badge({ variant = "blue" }: BadgeProps) {
   return <span className={`... ${VARIANTS[variant]}`} />;
 }
 
 // Incorrecto — condicionales inline
-<span className={`... ${variant === 'gold' ? 'bg-boca-blue text-boca-gold' : variant === 'local' ? '...' : '...'}`} />
+<span
+  className={`... ${variant === "gold" ? "bg-boca-blue text-boca-gold" : variant === "local" ? "..." : "..."}`}
+/>;
 ```
 
 El mismo patrón para sizes:
+
 ```tsx
 // Button.tsx
 const SIZES: Record<ButtonSize, string> = {
-  sm:   'px-3 py-1.5 text-xs rounded-sm',
-  md:   'px-4 py-2 text-sm rounded-sm',
-  lg:   'px-6 py-3 text-base rounded-sm',
-  icon: 'p-1.5 rounded-sm',
+  sm: "px-3 py-1.5 text-xs rounded-sm",
+  md: "px-4 py-2 text-sm rounded-sm",
+  lg: "px-6 py-3 text-base rounded-sm",
+  icon: "p-1.5 rounded-sm",
 };
 ```
 
@@ -392,9 +407,15 @@ Los subcomponentes que solo usa un organismo se definen en el mismo archivo o en
 
 ```tsx
 // ProximosPartidos.tsx — subcomponentes locales, no exportados
-function ScrollRow({ partidos }: { partidos: ProximoPartido[] }) { /* ... */ }
-function CardPartido({ partido }: { partido: ProximoPartido }) { /* ... */ }
-function SkeletonRow() { /* ... */ }
+function ScrollRow({ partidos }: { partidos: ProximoPartido[] }) {
+  /* ... */
+}
+function CardPartido({ partido }: { partido: ProximoPartido }) {
+  /* ... */
+}
+function SkeletonRow() {
+  /* ... */
+}
 
 export function ProximosPartidos() {
   // Usa ScrollRow, CardPartido, SkeletonRow internamente
@@ -405,4 +426,4 @@ Si el subcomponente crece y necesita su propio archivo, se crea en el mismo dire
 
 ---
 
-*Última actualización: 2026-04-02*
+_Última actualización: 2026-04-02_

@@ -5,13 +5,17 @@ Sistema de diseño completo para el portal del hincha de Boca Juniors.
 ## 📋 Contenido
 
 ### 1. [Tokens](./tokens/)
+
 Variables de diseño reutilizables:
+
 - **Colores** (`colors.ts`): Paleta oficial Boca + estados + históricos
 - **Tipografía** (`typography.ts`): Crimson Pro (80%) + Inter (20%)
 - **Espaciado** (`spacing.ts`): Sistema 8px + shadows + transitions + breakpoints
 
 ### 2. [Componentes](./components/)
+
 Especificaciones de todos los componentes UI:
+
 - Cards (Noticia, Video, Partido)
 - Buttons (Primary, Secondary, Navigation)
 - Widgets (La Bombonera, Quiz)
@@ -20,7 +24,9 @@ Especificaciones de todos los componentes UI:
 - Navigation (Header, Banner)
 
 ### 3. [Guidelines](./guidelines/)
+
 Guías de uso y mejores prácticas:
+
 - Principios de diseño
 - Cuándo usar cada tipografía
 - Estados interactivos
@@ -31,18 +37,21 @@ Guías de uso y mejores prácticas:
 ## 🎨 Identidad Visual
 
 ### Colores Principales
+
 ```
 Azul Boca:  #001529
 Oro Boca:   #FFD700
 ```
 
 ### Tipografía
+
 ```
 Serif:  Crimson Pro (80% contenido)
 Sans:   Inter (20% UI elements)
 ```
 
 ### Espaciado
+
 ```
 Sistema base: 8px
 Valores comunes: 12px, 16px, 24px, 48px
@@ -52,23 +61,24 @@ Easter eggs: 10px (Riquelme), 12px (La 12), 19px (1905)
 ## 🚀 Quick Start
 
 ### 1. Importar tokens en React:
+
 ```typescript
-import { colors, typography, spacing } from '@/design-system/tokens';
+import { colors, typography, spacing } from "@/design-system/tokens";
 ```
 
 ### 2. Usar con Tailwind:
+
 ```jsx
-<div className="bg-boca-blue text-boca-gold font-serif p-6">
-  Dale Booo!
-</div>
+<div className="bg-boca-blue text-boca-gold font-serif p-6">Dale Booo!</div>
 ```
 
 ### 3. Usar directamente en CSS:
+
 ```css
 .mi-componente {
   background: #001529;
-  color: #FFD700;
-  font-family: 'Crimson Pro', Georgia, serif;
+  color: #ffd700;
+  font-family: "Crimson Pro", Georgia, serif;
   padding: 24px;
 }
 ```
@@ -114,7 +124,7 @@ design-system/
 El archivo `tailwind.config.js` en la raíz ya incluye todos los tokens:
 
 ```javascript
-import { colors } from './design-system/tokens/colors';
+import { colors } from "./design-system/tokens/colors";
 // ...configuración automática
 ```
 
@@ -178,4 +188,4 @@ Para agregar o modificar componentes:
 
 **Dale Booo! 💙💛**
 
-*"Yo no soy de Boca, soy Boca"*
+_"Yo no soy de Boca, soy Boca"_

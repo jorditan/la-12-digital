@@ -3,6 +3,7 @@
 > Estructura de componentes del proyecto, reglas para clasificarlos y templates para crear nuevos.
 
 ## Índice
+
 - [Mapa de componentes actual](#mapa-de-componentes-actual)
 - [Reglas de clasificación](#reglas-de-clasificación)
 - [Shared components](#shared-components)
@@ -86,18 +87,21 @@ src/components/
 ## Reglas de clasificación
 
 ### Átomo
+
 - No tiene dependencias de otros componentes del proyecto (solo `Badge`, `Button`, o primitivos HTML)
 - Recibe todo por props, no hace fetching ni tiene estado complejo
 - Es reutilizable en cualquier contexto sin modificar
 - Ejemplos reales: `Badge`, `Button`, `Separator`, `TrofeoIcon`
 
 ### Molécula
+
 - Compone 2 o más átomos del proyecto
 - Puede tener estado local simple (hover, focus)
 - Resuelve un patrón de UI específico y reutilizable
 - Ejemplos reales: `NoticiaCard`, `CardVideo`, `GamePromoCard`
 
 ### Organismo
+
 - Sección completa de la página con lógica propia
 - Generalmente hace fetching de datos (API, localStorage)
 - Maneja estados async (`loading | error | ok`)
@@ -105,6 +109,7 @@ src/components/
 - Ejemplos reales: `ProximosPartidos`, `IdolosGame`, `Sidebar`, `BomboneraWidget`
 
 ### Shared
+
 - Componentes que son reutilizados en **más de un organismo diferente**
 - Viven en `src/components/shared/`, no en el directorio de ningún organismo
 - Ejemplo real: `TimerBar` — usado en `IdolosGame` y `EquiposGame`
@@ -133,15 +138,16 @@ src/components/NombreAtomo/
 ```
 
 ### `NombreAtomo.tsx`
+
 ```tsx
 // src/components/NombreAtomo/NombreAtomo.tsx
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 // 1. Definir las variantes como constante fuera del componente
 const VARIANTS = {
-  default: 'bg-boca-blue text-white',
-  gold:    'bg-boca-gold text-boca-blue',
+  default: "bg-boca-blue text-white",
+  gold: "bg-boca-gold text-boca-blue",
 } as const;
 
 // 2. Interfaz de props con sufijo Props
@@ -153,9 +159,9 @@ interface NombreAtomoProps {
 
 // 3. Exportación nombrada (nunca default en componentes)
 export function NombreAtomo({
-  variant = 'default',
+  variant = "default",
   children,
-  className = '',
+  className = "",
 }: NombreAtomoProps) {
   return (
     <div
@@ -168,9 +174,10 @@ export function NombreAtomo({
 ```
 
 ### `index.ts`
+
 ```ts
 // src/components/NombreAtomo/index.ts
-export { NombreAtomo } from './NombreAtomo';
+export { NombreAtomo } from "./NombreAtomo";
 // Exportar tipos si otros componentes los necesitan:
 // export type { NombreAtomoProps } from './NombreAtomo';
 ```
@@ -190,29 +197,38 @@ src/components/NuevaSección/
 ```
 
 ### `NuevaSección.tsx`
+
 ```tsx
 // src/components/NuevaSección/NuevaSección.tsx
-import { useState, useEffect } from 'react';
-import { fetchAlgo } from '../../services/algúnService';
+import { useState, useEffect } from "react";
+import { fetchAlgo } from "../../services/algúnService";
 
 // Tipos de estado async — patrón de proyecto
-type Estado = 'loading' | 'error' | 'ok';
+type Estado = "loading" | "error" | "ok";
 
 export function NuevaSección() {
   const [datos, setDatos] = useState<TipoDato[]>([]);
-  const [estado, setEstado] = useState<Estado>('loading');
+  const [estado, setEstado] = useState<Estado>("loading");
 
   const cargar = () => {
-    setEstado('loading');
+    setEstado("loading");
     fetchAlgo()
-      .then((data) => { setDatos(data); setEstado('ok'); })
-      .catch(() => setEstado('error'));
+      .then((data) => {
+        setDatos(data);
+        setEstado("ok");
+      })
+      .catch(() => setEstado("error"));
   };
 
-  useEffect(() => { cargar(); }, []);
+  useEffect(() => {
+    cargar();
+  }, []);
 
   return (
-    <section aria-label="Descripción de la sección" className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col">
+    <section
+      aria-label="Descripción de la sección"
+      className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col"
+    >
       {/* Header */}
       <div className="border-b border-boca-border-card px-6 pt-6 pb-3">
         <h2 className="type-section-title text-white">Nombre de sección</h2>
@@ -220,9 +236,9 @@ export function NuevaSección() {
 
       {/* Contenido */}
       <div className="px-6 pt-4 pb-6 flex flex-col gap-3">
-        {estado === 'loading' && <Skeleton />}
+        {estado === "loading" && <Skeleton />}
 
-        {estado === 'error' && (
+        {estado === "error" && (
           <div className="flex items-center gap-3 py-6 px-4 bg-boca-blue-light rounded-sm border border-boca-gold/10">
             <p className="font-sans text-sm text-text-secondary flex-1">
               No se pudo cargar la información
@@ -236,15 +252,14 @@ export function NuevaSección() {
           </div>
         )}
 
-        {estado === 'ok' && datos.length === 0 && (
+        {estado === "ok" && datos.length === 0 && (
           <p className="font-sans text-sm text-white/50 py-6 text-center">
             No hay datos disponibles
           </p>
         )}
 
-        {estado === 'ok' && datos.map((item) => (
-          <SubComponente key={item.id} data={item} />
-        ))}
+        {estado === "ok" &&
+          datos.map((item) => <SubComponente key={item.id} data={item} />)}
       </div>
     </section>
   );
@@ -254,7 +269,10 @@ function Skeleton() {
   return (
     <div className="flex flex-col gap-3">
       {Array.from({ length: 3 }, (_, i) => (
-        <div key={i} className="animate-pulse h-12 bg-boca-blue-light rounded-sm border border-boca-gold/5" />
+        <div
+          key={i}
+          className="animate-pulse h-12 bg-boca-blue-light rounded-sm border border-boca-gold/5"
+        />
       ))}
     </div>
   );
@@ -262,13 +280,14 @@ function Skeleton() {
 ```
 
 ### `hooks/useNuevaSección.ts`
+
 Usar cuando la sección tiene lógica compleja (juegos, formularios multi-paso, filtros).
 
 ```ts
 // src/components/NuevaSección/hooks/useNuevaSección.ts
 export interface NuevaSecciónState {
   // Estado que expone el hook al componente
-  estado: 'loading' | 'error' | 'ok';
+  estado: "loading" | "error" | "ok";
   datos: TipoDato[];
   cargar: () => void;
 }
@@ -299,4 +318,4 @@ Antes de hacer merge, verificar:
 
 ---
 
-*Última actualización: 2026-04-02*
+_Última actualización: 2026-04-02_

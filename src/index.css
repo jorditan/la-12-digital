@@ -15,12 +15,12 @@
 
 /* Estilos base La 12 Digital */
 :root {
-  font-family: 'Crimson Pro', Georgia, serif;
+  font-family: "Crimson Pro", Georgia, serif;
   line-height: 1.5;
   font-weight: 400;
-  
+
   color-scheme: dark;
-  
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -47,14 +47,14 @@
   --color-border-gold-hover: rgba(255, 215, 0, 0.35);
 
   /* Text */
-  --color-text-primary: #FFFFFF;
+  --color-text-primary: #ffffff;
   --color-text-nav: #e0e7ff;
   --color-text-on-gold: #0052a3;
-  --color-text-secondary: #8BA3C7;
+  --color-text-secondary: #8ba3c7;
   --color-text-muted: #64748b;
 
   /* Brand */
-  --color-gold: #FFD700;
+  --color-gold: #ffd700;
   --color-blue: #001529;
 
   /* Decorative */
@@ -69,8 +69,18 @@
   --color-status-negative: #f87171;
 
   /* Gradients */
-  --gradient-app-bg: linear-gradient(166.99deg, #001529 1%, rgb(0,35,68) 72.17%, rgb(0,62,121) 101.68%, rgb(0,73,143) 111.31%);
-  --gradient-overlay-game: linear-gradient(to top, #031428 40%, transparent 100%);
+  --gradient-app-bg: linear-gradient(
+    166.99deg,
+    #001529 1%,
+    rgb(0, 35, 68) 72.17%,
+    rgb(0, 62, 121) 101.68%,
+    rgb(0, 73, 143) 111.31%
+  );
+  --gradient-overlay-game: linear-gradient(
+    to top,
+    #031428 40%,
+    transparent 100%
+  );
   --gradient-pitch: linear-gradient(180deg, #0d5c2a 0%, #0a4a22 100%);
 }
 
@@ -86,55 +96,64 @@ body {
 @layer components {
   /* Títulos de sección — Crimson Pro Bold 24px */
   .type-section-title {
-    font-family: 'Crimson Pro', Georgia, serif;
-    font-size: 1.5rem;    /* 24px */
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 1.5rem; /* 24px */
     font-weight: 700;
     line-height: 1.2;
   }
 
   /* Títulos de card — Crimson Pro SemiBold 18px */
   .type-card-title {
-    font-family: 'Crimson Pro', Georgia, serif;
-    font-size: 1.125rem;  /* 18px */
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 1.125rem; /* 18px */
     font-weight: 600;
     line-height: 1.5;
   }
 
   /* Texto cuerpo — Crimson Pro Regular 16px */
   .type-body {
-    font-family: 'Crimson Pro', Georgia, serif;
-    font-size: 1rem;      /* 16px */
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 1rem; /* 16px */
     font-weight: 400;
     line-height: 1.5;
   }
 
   /* Caption / texto secundario — Crimson Pro Regular 14px */
   .type-caption {
-    font-family: 'Crimson Pro', Georgia, serif;
-    font-size: 0.875rem;  /* 14px */
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 0.875rem; /* 14px */
     font-weight: 400;
     line-height: 1.5;
   }
 
   /* Botones y etiquetas de acción — Geist Medium 14px */
   .type-button {
-    font-family: 'Geist', -apple-system, sans-serif;
-    font-size: 0.875rem;  /* 14px */
+    font-family:
+      "Geist",
+      -apple-system,
+      sans-serif;
+    font-size: 0.875rem; /* 14px */
     font-weight: 500;
     letter-spacing: 0.02em;
   }
 
   /* Stats y números — Geist SemiBold 20px */
   .type-stat {
-    font-family: 'Geist', -apple-system, sans-serif;
-    font-size: 1.25rem;   /* 20px */
+    font-family:
+      "Geist",
+      -apple-system,
+      sans-serif;
+    font-size: 1.25rem; /* 20px */
     font-weight: 600;
   }
 
   /* UI labels — Geist SemiBold 12px (badges, cabeceras de tabla) */
   .type-ui-label {
-    font-family: 'Geist', -apple-system, sans-serif;
-    font-size: 0.75rem;   /* 12px */
+    font-family:
+      "Geist",
+      -apple-system,
+      sans-serif;
+    font-size: 0.75rem; /* 12px */
     font-weight: 600;
     line-height: 1;
   }
@@ -169,8 +188,12 @@ body {
 /* Animaciones custom */
 @layer utilities {
   @keyframes marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
   }
 
   @keyframes fadeIn {
@@ -183,7 +206,7 @@ body {
       transform: translateY(0);
     }
   }
-  
+
   .animate-fade-in {
     animation: fadeIn 0.3s ease-out;
   }
@@ -204,9 +227,15 @@ body {
   }
 
   @keyframes goldPulse {
-    0%   { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.55); }
-    60%  { box-shadow: 0 0 0 6px rgba(255, 215, 0, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.55);
+    }
+    60% {
+      box-shadow: 0 0 0 6px rgba(255, 215, 0, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+    }
   }
 
   .animate-gold-pulse {
@@ -214,9 +243,17 @@ body {
   }
 
   @keyframes checkBounce {
-    0%   { transform: scale(0.6); opacity: 0; }
-    60%  { transform: scale(1.2); }
-    100% { transform: scale(1);   opacity: 1; }
+    0% {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 
   .animate-check-bounce {

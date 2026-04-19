@@ -1,4 +1,4 @@
-import type { Idolo } from '../../data/idolos';
+import type { Idolo } from "../../data/idolos";
 
 interface IdoloPlaceholderProps {
   idolo: Idolo;
@@ -17,7 +17,7 @@ export function IdoloPlaceholder({ idolo, revealed }: IdoloPlaceholderProps) {
             {idolo.apodo}
           </span>
           <span className="text-sm text-text-secondary mt-1 font-sans text-center px-4">
-            {idolo.posicion} · {idolo.periodos.join(', ')}
+            {idolo.posicion} · {idolo.periodos.join(", ")}
           </span>
         </>
       ) : (

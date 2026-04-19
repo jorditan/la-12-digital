@@ -3,6 +3,7 @@
 > Reglas de nomenclatura, estructura y TypeScript que garantizan consistencia en toda la base de código.
 
 ## Índice
+
 - [Nomenclatura de archivos y directorios](#nomenclatura-de-archivos-y-directorios)
 - [Nomenclatura de props e interfaces](#nomenclatura-de-props-e-interfaces)
 - [Orden de importaciones](#orden-de-importaciones)
@@ -16,16 +17,16 @@
 
 ## Nomenclatura de archivos y directorios
 
-| Tipo | Convención | Ejemplo |
-|---|---|---|
-| Directorio de componente | PascalCase | `ProximosPartidos/` |
-| Archivo de componente | PascalCase | `ProximosPartidos.tsx` |
-| Archivo de hook | camelCase con prefijo `use` | `useHorizontalScroll.ts` |
-| Archivo de tipos | camelCase o `types.ts` | `types.ts` |
-| Archivo de servicio | camelCase con sufijo `Service` | `footballApiService.ts` |
-| Archivo de datos estáticos | camelCase | `bocaEquipos.ts` |
-| Barrel export | siempre `index.ts` | `index.ts` |
-| Utilidades | camelCase | `stringMatch.ts`, `gameConfig.ts` |
+| Tipo                       | Convención                     | Ejemplo                           |
+| -------------------------- | ------------------------------ | --------------------------------- |
+| Directorio de componente   | PascalCase                     | `ProximosPartidos/`               |
+| Archivo de componente      | PascalCase                     | `ProximosPartidos.tsx`            |
+| Archivo de hook            | camelCase con prefijo `use`    | `useHorizontalScroll.ts`          |
+| Archivo de tipos           | camelCase o `types.ts`         | `types.ts`                        |
+| Archivo de servicio        | camelCase con sufijo `Service` | `footballApiService.ts`           |
+| Archivo de datos estáticos | camelCase                      | `bocaEquipos.ts`                  |
+| Barrel export              | siempre `index.ts`             | `index.ts`                        |
+| Utilidades                 | camelCase                      | `stringMatch.ts`, `gameConfig.ts` |
 
 ```
 src/components/
@@ -51,7 +52,7 @@ src/hooks/
 ```tsx
 // Correcto
 interface BadgeProps {
-  variant?: 'blue' | 'gold';
+  variant?: "blue" | "gold";
   children: ReactNode;
   className?: string;
 }
@@ -63,8 +64,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 // Incorrecto — sin sufijo, o con prefijo I
-interface Badge { /* ... */ }
-interface IBadge { /* ... */ }
+interface Badge {
+  /* ... */
+}
+interface IBadge {
+  /* ... */
+}
 ```
 
 ### Tipos de retorno de hooks: sufijo `State`
@@ -79,19 +84,26 @@ export interface IdolosGameState {
   // ...
 }
 
-export function useIdolosGame(): IdolosGameState { /* ... */ }
+export function useIdolosGame(): IdolosGameState {
+  /* ... */
+}
 ```
 
 ### Tipos de union para variantes: sufijo del concepto
 
 ```tsx
 // Button.tsx
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'destructive';
-export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "ghost"
+  | "outline"
+  | "destructive";
+export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 // ProximosPartidos.tsx
-type Vista = 'cards' | 'tabla';
-type Estado = 'loading' | 'error' | 'ok';
+type Vista = "cards" | "tabla";
+type Estado = "loading" | "error" | "ok";
 ```
 
 ---
@@ -102,21 +114,25 @@ El orden es: React y librerías externas primero, luego todo lo interno del proy
 
 ```tsx
 // 1. React
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from "react";
 
 // 2. Librerías externas (iconos, utils de terceros)
-import { MapPin, ChevronRight, LayoutGrid } from 'lucide-react';
+import { MapPin, ChevronRight, LayoutGrid } from "lucide-react";
 
 // 3. Componentes internos (por carpeta, relativos)
-import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
-import { Badge } from '../Badge';
-import { FixtureTable } from './FixtureTable';
+import { useHorizontalScroll } from "../../hooks/useHorizontalScroll";
+import { Badge } from "../Badge";
+import { FixtureTable } from "./FixtureTable";
 
 // 4. Servicios y utils
-import { fetchUpcomingMatches, BOCA_ID, type ProximoPartido } from '../../services/apifootball';
+import {
+  fetchUpcomingMatches,
+  BOCA_ID,
+  type ProximoPartido,
+} from "../../services/apifootball";
 
 // 5. Datos estáticos
-import { ESCUDO_VACIO } from '../../data/equipos';
+import { ESCUDO_VACIO } from "../../data/equipos";
 ```
 
 **Regla:** No mezclar grupos. Una línea en blanco entre cada grupo.
@@ -129,16 +145,16 @@ import { ESCUDO_VACIO } from '../../data/equipos';
 
 ```tsx
 // Correcto — tipo union para estado async
-type Estado = 'loading' | 'error' | 'ok';
-const [estado, setEstado] = useState<Estado>('loading');
+type Estado = "loading" | "error" | "ok";
+const [estado, setEstado] = useState<Estado>("loading");
 
 // Correcto — tipo union para estado de juego (cuatro valores posibles)
-type GameState = 'waiting' | 'playing' | 'correct' | 'timeout';
-const [state, setState] = useState<GameState>('waiting');
+type GameState = "waiting" | "playing" | "correct" | "timeout";
+const [state, setState] = useState<GameState>("waiting");
 
 // Correcto — tipo union para vista alternativa
-type Vista = 'cards' | 'tabla';
-const [vista, setVista] = useState<Vista>('cards');
+type Vista = "cards" | "tabla";
+const [vista, setVista] = useState<Vista>("cards");
 
 // Incorrecto — booleans que generan estados imposibles (isLoading=true y isError=true a la vez)
 const [isLoading, setIsLoading] = useState(true);
@@ -165,29 +181,31 @@ El orden dentro de un componente debe ser siempre consistente:
 // src/components/ProximosPartidos/ProximosPartidos.tsx
 
 // ── 1. Tipos locales (si no están en types.ts) ────────────────────────────────
-type Vista = 'cards' | 'tabla';
-type Estado = 'loading' | 'error' | 'ok';
+type Vista = "cards" | "tabla";
+type Estado = "loading" | "error" | "ok";
 
 // ── 2. Funciones helpers puras (fuera del componente) ─────────────────────────
 function formatFecha(isoDate: string): string {
   const d = new Date(isoDate);
-  return d.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
+  return d.toLocaleDateString("es-AR", { day: "numeric", month: "long" });
 }
 
 // ── 3. Constantes de arrays/mapas (fuera del componente) ──────────────────────
-const NAV_ITEMS = [/* ... */];
+const NAV_ITEMS = [
+  /* ... */
+];
 
 const VARIANTS = {
-  blue: 'bg-boca-border-card text-white',
-  gold: 'bg-boca-blue text-boca-gold',
+  blue: "bg-boca-border-card text-white",
+  gold: "bg-boca-blue text-boca-gold",
 };
 
 // ── 4. El componente ──────────────────────────────────────────────────────────
 export function ProximosPartidos() {
   // 4a. Estado
   const [partidos, setPartidos] = useState<ProximoPartido[]>([]);
-  const [estado, setEstado] = useState<Estado>('loading');
-  const [vista, setVista] = useState<Vista>('cards');
+  const [estado, setEstado] = useState<Estado>("loading");
+  const [vista, setVista] = useState<Vista>("cards");
 
   // 4b. Refs
   const inputRef = useRef<HTMLInputElement>(null);
@@ -197,29 +215,36 @@ export function ProximosPartidos() {
 
   // 4d. Funciones que cargan datos
   const cargar = () => {
-    setEstado('loading');
+    setEstado("loading");
     fetchUpcomingMatches()
-      .then((data) => { setPartidos(data); setEstado('ok'); })
-      .catch(() => setEstado('error'));
+      .then((data) => {
+        setPartidos(data);
+        setEstado("ok");
+      })
+      .catch(() => setEstado("error"));
   };
 
   // 4e. Effects
-  useEffect(() => { cargar(); }, []);
+  useEffect(() => {
+    cargar();
+  }, []);
 
   // 4f. Handlers de eventos
-  const handleClick = (id: string) => { /* ... */ };
+  const handleClick = (id: string) => {
+    /* ... */
+  };
 
   // 4g. Render
-  return (
-    <section>
-      {/* ... */}
-    </section>
-  );
+  return <section>{/* ... */}</section>;
 }
 
 // ── 5. Subcomponentes locales (no exportados) ─────────────────────────────────
-function SkeletonRow() { /* ... */ }
-function CardPartido({ partido }: { partido: ProximoPartido }) { /* ... */ }
+function SkeletonRow() {
+  /* ... */
+}
+function CardPartido({ partido }: { partido: ProximoPartido }) {
+  /* ... */
+}
 ```
 
 ---
@@ -228,12 +253,12 @@ function CardPartido({ partido }: { partido: ProximoPartido }) { /* ... */ }
 
 Crear un hook cuando se cumple **al menos una** de estas condiciones:
 
-| Condición | Ejemplo real |
-|---|---|
-| La lógica tiene más de 3 `useEffect` o `useState` | `useIdolosGame` — maneja timer, score, input, pistas |
-| La lógica se reutiliza en 2+ componentes | `useHorizontalScroll` — usado en ProximosPartidos, Noticias, CanalYoutube |
-| El componente mezcla lógica de negocio y render y dificulta leerlo | IdolosGame, EquiposGame |
-| Hay efectos con cleanup complejos (intervals, ResizeObserver) | `useHorizontalScroll` (ResizeObserver + scroll listener) |
+| Condición                                                          | Ejemplo real                                                              |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| La lógica tiene más de 3 `useEffect` o `useState`                  | `useIdolosGame` — maneja timer, score, input, pistas                      |
+| La lógica se reutiliza en 2+ componentes                           | `useHorizontalScroll` — usado en ProximosPartidos, Noticias, CanalYoutube |
+| El componente mezcla lógica de negocio y render y dificulta leerlo | IdolosGame, EquiposGame                                                   |
+| Hay efectos con cleanup complejos (intervals, ResizeObserver)      | `useHorizontalScroll` (ResizeObserver + scroll listener)                  |
 
 **No crear un hook** solo para mover 1 `useState` fuera del componente. El overhead no vale la pena.
 
@@ -254,16 +279,16 @@ src/hooks/useAsyncData.ts
 
 ### `interface` vs `type`
 
-| Usar `interface` cuando... | Usar `type` cuando... |
-|---|---|
-| Definir props de componentes | Definir union types (`'loading' \| 'error' \| 'ok'`) |
-| Definir el retorno de hooks | Definir aliases de tipos primitivos |
-| Extender otros tipos de HTML (`extends ButtonHTMLAttributes`) | Definir tipos de variante (`ButtonVariant`) |
+| Usar `interface` cuando...                                    | Usar `type` cuando...                                |
+| ------------------------------------------------------------- | ---------------------------------------------------- |
+| Definir props de componentes                                  | Definir union types (`'loading' \| 'error' \| 'ok'`) |
+| Definir el retorno de hooks                                   | Definir aliases de tipos primitivos                  |
+| Extender otros tipos de HTML (`extends ButtonHTMLAttributes`) | Definir tipos de variante (`ButtonVariant`)          |
 
 ```ts
 // interface — para props y estructuras de datos
 interface BadgeProps {
-  variant?: 'blue' | 'gold';
+  variant?: "blue" | "gold";
   children: ReactNode;
 }
 
@@ -273,9 +298,14 @@ export interface IdolosGameState {
 }
 
 // type — para unions y aliases
-type Estado = 'loading' | 'error' | 'ok';
-type GameState = 'waiting' | 'playing' | 'correct' | 'timeout';
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'destructive';
+type Estado = "loading" | "error" | "ok";
+type GameState = "waiting" | "playing" | "correct" | "timeout";
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "ghost"
+  | "outline"
+  | "destructive";
 ```
 
 ### Generics: nombrar con letra mayúscula + nombre descriptivo
@@ -283,11 +313,13 @@ export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'des
 ```ts
 // useAsyncData.ts — T describe el tipo de data que retorna
 type AsyncState<T> =
-  | { status: 'loading'; data: null; error: null }
-  | { status: 'error'; data: null; error: Error }
-  | { status: 'ok'; data: T; error: null };
+  | { status: "loading"; data: null; error: null }
+  | { status: "error"; data: null; error: Error }
+  | { status: "ok"; data: T; error: null };
 
-export function useAsyncData<T>(fetcher: () => Promise<T>): AsyncState<T> & { retry: () => void }
+export function useAsyncData<T>(
+  fetcher: () => Promise<T>,
+): AsyncState<T> & { retry: () => void };
 ```
 
 ### Aserciones de tipo: evitar, preferir type guards
@@ -306,7 +338,13 @@ const el = ref.current as any;
 ### Tipos de React: importar desde `react`
 
 ```tsx
-import type { ReactNode, RefObject, ChangeEvent, FormEvent, PointerEvent } from 'react';
+import type {
+  ReactNode,
+  RefObject,
+  ChangeEvent,
+  FormEvent,
+  PointerEvent,
+} from "react";
 
 // En props de callbacks, usar los tipos de React
 interface GameModalProps {
@@ -340,13 +378,13 @@ import Badge from '../Badge';
 // src/components/Badge/index.ts
 
 // Siempre: el componente principal
-export { Badge } from './Badge';
+export { Badge } from "./Badge";
 
 // Solo si otros componentes necesitan el tipo:
-export type { BadgeProps } from './Badge';
+export type { BadgeProps } from "./Badge";
 
 // Solo si son tipos de variante que se usan en otros lugares:
-export type { ButtonVariant, ButtonSize } from './Button';
+export type { ButtonVariant, ButtonSize } from "./Button";
 ```
 
 ### Qué NO exportar
@@ -357,4 +395,4 @@ export type { ButtonVariant, ButtonSize } from './Button';
 
 ---
 
-*Última actualización: 2026-04-02*
+_Última actualización: 2026-04-02_

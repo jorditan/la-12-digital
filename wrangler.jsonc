@@ -10,17 +10,15 @@
   "main": "worker.js",
   "compatibility_date": "2025-09-27",
   "observability": {
-    "enabled": true
+    "enabled": true,
   },
   "assets": {
     // Vite builds the React SPA into ./dist — Workers Assets serves it.
     "directory": "./dist",
     // Serve index.html for any path not matched by a static file (SPA routing).
-    "not_found_handling": "single-page-application"
+    "not_found_handling": "single-page-application",
   },
-  "compatibility_flags": [
-    "nodejs_compat"
-  ]
+  "compatibility_flags": ["nodejs_compat"],
   // API keys for the proxy handlers are stored as Cloudflare secrets (wrangler secret put).
   // They are NOT in this file — secrets persist through deploys and are never committed to git.
 }

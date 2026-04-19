@@ -4,17 +4,57 @@
     "descripcion": "El equipo que rompió la sequía de 10 años sin títulos.",
     "formacion_tactica": "No especificada en los registros",
     "equipo_completo": [
-      { "nombre": "Julio Elías Musimessi", "posicion": "Arquero", "rol": "Titular" },
-      { "nombre": "Juan Carlos Colman", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Federico Edwards", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Francisco Lombardo", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Eliseo Mouriño", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Natalio Pescia", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Juan Ángel Navarro", "posicion": "Delantero", "rol": "Titular" },
+      {
+        "nombre": "Julio Elías Musimessi",
+        "posicion": "Arquero",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Juan Carlos Colman",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Federico Edwards",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Francisco Lombardo",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Eliseo Mouriño",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Natalio Pescia",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Juan Ángel Navarro",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      },
       { "nombre": "José Borello", "posicion": "Delantero", "rol": "Titular" },
-      { "nombre": "Faustino Rosello", "posicion": "Delantero", "rol": "Titular" },
-      { "nombre": "Julio Marcarián", "posicion": "Delantero", "rol": "Titular" },
-      { "nombre": "Miguel Ángel Baiocco", "posicion": "Delantero", "rol": "Titular" }
+      {
+        "nombre": "Faustino Rosello",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Julio Marcarián",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Miguel Ángel Baiocco",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      }
     ]
   },
   {
@@ -23,17 +63,61 @@
     "formacion_tactica": "Línea de 4, un '5' adelantado y un cuarteto de atacantes",
     "equipo_completo": [
       { "nombre": "Rubén Sánchez", "posicion": "Arquero", "rol": "Titular" },
-      { "nombre": "Rubén Suñé", "posicion": "Defensor (Línea de 4)", "rol": "Titular" },
-      { "nombre": "Julio Meléndez", "posicion": "Defensor (Línea de 4)", "rol": "Titular" },
-      { "nombre": "Roberto Rogel", "posicion": "Defensor (Línea de 4)", "rol": "Titular" },
-      { "nombre": "Silvio Marzolini", "posicion": "Lateral por izquierda", "rol": "Titular" },
-      { "nombre": "Norberto Madurga", "posicion": "Mediocampista (El atípico '5')", "rol": "Titular" },
-      { "nombre": "Orlando Medina", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Ramón Ponce", "posicion": "Delantero (Cuarteto ofensivo)", "rol": "Titular" },
-      { "nombre": "Ángel Clemente Rojas", "posicion": "Delantero (Cuarteto ofensivo)", "rol": "Titular" },
-      { "nombre": "Oscar Pianetti", "posicion": "Delantero (Cuarteto ofensivo)", "rol": "Titular" },
-      { "nombre": "Raúl Savoy", "posicion": "Delantero (Cuarteto ofensivo)", "rol": "Titular" },
-      { "nombre": "Nicolás Novello", "posicion": "Mediocampista", "rol": "Suplente" }
+      {
+        "nombre": "Rubén Suñé",
+        "posicion": "Defensor (Línea de 4)",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Julio Meléndez",
+        "posicion": "Defensor (Línea de 4)",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Roberto Rogel",
+        "posicion": "Defensor (Línea de 4)",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Silvio Marzolini",
+        "posicion": "Lateral por izquierda",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Norberto Madurga",
+        "posicion": "Mediocampista (El atípico '5')",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Orlando Medina",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Ramón Ponce",
+        "posicion": "Delantero (Cuarteto ofensivo)",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Ángel Clemente Rojas",
+        "posicion": "Delantero (Cuarteto ofensivo)",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Oscar Pianetti",
+        "posicion": "Delantero (Cuarteto ofensivo)",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Raúl Savoy",
+        "posicion": "Delantero (Cuarteto ofensivo)",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Nicolás Novello",
+        "posicion": "Mediocampista",
+        "rol": "Suplente"
+      }
     ]
   },
   {
@@ -41,16 +125,44 @@
     "descripcion": "El mítico equipo campeón liderado por Diego Armando Maradona.",
     "formacion_tactica": "Esquema con un '10' como conductor del juego",
     "equipo_completo": [
-      { "nombre": "Hugo Orlando Gatti", "posicion": "Arquero", "rol": "Titular" },
+      {
+        "nombre": "Hugo Orlando Gatti",
+        "posicion": "Arquero",
+        "rol": "Titular"
+      },
       { "nombre": "Vicente Pernía", "posicion": "Defensor", "rol": "Titular" },
       { "nombre": "Oscar Ruggeri", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Roberto Mouzo", "posicion": "Zaguero Central", "rol": "Titular" },
+      {
+        "nombre": "Roberto Mouzo",
+        "posicion": "Zaguero Central",
+        "rol": "Titular"
+      },
       { "nombre": "Carlos Córdoba", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Jorge Benítez", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Ariel Krasouski", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Diego Armando Maradona", "posicion": "Mediocampista Creador / El '10'", "rol": "Titular" },
-      { "nombre": "Osvaldo Escudero", "posicion": "Delantero", "rol": "Titular" },
-      { "nombre": "Miguel Ángel Brindisi", "posicion": "Delantero", "rol": "Titular" },
+      {
+        "nombre": "Jorge Benítez",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Ariel Krasouski",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Diego Armando Maradona",
+        "posicion": "Mediocampista Creador / El '10'",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Osvaldo Escudero",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Miguel Ángel Brindisi",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      },
       { "nombre": "Hugo Perotti", "posicion": "Delantero", "rol": "Titular" }
     ]
   },
@@ -62,12 +174,36 @@
       { "nombre": "Sandro Guzmán", "posicion": "Arquero", "rol": "Titular" },
       { "nombre": "Nelson Vivas", "posicion": "Defensor", "rol": "Titular" },
       { "nombre": "Néstor Fabbri", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Cristian Traverso", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Rodolfo Arruabarrena", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Julio Toresani", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Diego Cagna", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Juan Román Riquelme", "posicion": "Mediocampista Creador / El '10'", "rol": "Titular" },
-      { "nombre": "Roberto Pompei", "posicion": "Mediocampista", "rol": "Titular" },
+      {
+        "nombre": "Cristian Traverso",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Rodolfo Arruabarrena",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Julio Toresani",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Diego Cagna",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Juan Román Riquelme",
+        "posicion": "Mediocampista Creador / El '10'",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Roberto Pompei",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
       { "nombre": "Diego Latorre", "posicion": "Delantero", "rol": "Titular" },
       { "nombre": "Sergio Martínez", "posicion": "Delantero", "rol": "Titular" }
     ]
@@ -78,16 +214,52 @@
     "formacion_tactica": "Esquema sólido defensivamente con enlace ('10')",
     "equipo_completo": [
       { "nombre": "Oscar Córdoba", "posicion": "Arquero", "rol": "Titular" },
-      { "nombre": "Hugo Ibarra", "posicion": "Lateral Derecho", "rol": "Titular" },
-      { "nombre": "Jorge Bermúdez", "posicion": "Zaguero Central", "rol": "Titular" },
+      {
+        "nombre": "Hugo Ibarra",
+        "posicion": "Lateral Derecho",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Jorge Bermúdez",
+        "posicion": "Zaguero Central",
+        "rol": "Titular"
+      },
       { "nombre": "Aníbal Matellán", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Clemente Rodríguez", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Mauricio Serna", "posicion": "Volante Central / El '5'", "rol": "Titular" },
-      { "nombre": "Cristian Traverso", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Walter Gaitán", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Juan Román Riquelme", "posicion": "Mediocampista Creador / El '10'", "rol": "Titular" },
-      { "nombre": "Marcelo Delgado", "posicion": "Delantero", "rol": "Titular" },
-      { "nombre": "Guillermo Barros Schelotto", "posicion": "Delantero", "rol": "Titular" }
+      {
+        "nombre": "Clemente Rodríguez",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Mauricio Serna",
+        "posicion": "Volante Central / El '5'",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Cristian Traverso",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Walter Gaitán",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Juan Román Riquelme",
+        "posicion": "Mediocampista Creador / El '10'",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Marcelo Delgado",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Guillermo Barros Schelotto",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      }
     ]
   },
   {
@@ -95,17 +267,53 @@
     "descripcion": "El equipo de Alfio 'Coco' Basile que arrasó a nivel local e internacional.",
     "formacion_tactica": "No especificada en los registros",
     "equipo_completo": [
-      { "nombre": "Roberto Abbondanzieri", "posicion": "Arquero", "rol": "Titular" },
-      { "nombre": "Hugo Ibarra", "posicion": "Lateral Derecho", "rol": "Titular" },
-      { "nombre": "Rolando Schiavi", "posicion": "Zaguero Central", "rol": "Titular" },
+      {
+        "nombre": "Roberto Abbondanzieri",
+        "posicion": "Arquero",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Hugo Ibarra",
+        "posicion": "Lateral Derecho",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Rolando Schiavi",
+        "posicion": "Zaguero Central",
+        "rol": "Titular"
+      },
       { "nombre": "Daniel Díaz", "posicion": "Defensor", "rol": "Titular" },
       { "nombre": "Juan Krupoviesa", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Sebastián Battaglia", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Fernando Gago", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Daniel Bilos", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Federico Insúa", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Rodrigo Palacio", "posicion": "Delantero", "rol": "Titular" },
-      { "nombre": "Martín Palermo", "posicion": "Centrodelantero / El '9'", "rol": "Titular" }
+      {
+        "nombre": "Sebastián Battaglia",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Fernando Gago",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Daniel Bilos",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Federico Insúa",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Rodrigo Palacio",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Martín Palermo",
+        "posicion": "Centrodelantero / El '9'",
+        "rol": "Titular"
+      }
     ]
   },
   {
@@ -114,14 +322,46 @@
     "formacion_tactica": "No especificada en los registros",
     "equipo_completo": [
       { "nombre": "Agustín Orion", "posicion": "Arquero", "rol": "Titular" },
-      { "nombre": "Facundo Roncaglia", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Rolando Schiavi", "posicion": "Zaguero Central", "rol": "Titular" },
-      { "nombre": "Juan Manuel Insaurralde", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Clemente Rodríguez", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Pablo Ledesma", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Leandro Somoza", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Walter Erviti", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Juan Román Riquelme", "posicion": "Mediocampista Creador / El '10'", "rol": "Titular" },
+      {
+        "nombre": "Facundo Roncaglia",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Rolando Schiavi",
+        "posicion": "Zaguero Central",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Juan Manuel Insaurralde",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Clemente Rodríguez",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Pablo Ledesma",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Leandro Somoza",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Walter Erviti",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Juan Román Riquelme",
+        "posicion": "Mediocampista Creador / El '10'",
+        "rol": "Titular"
+      },
       { "nombre": "Pablo Mouche", "posicion": "Delantero", "rol": "Titular" },
       { "nombre": "Santiago Silva", "posicion": "Delantero", "rol": "Titular" }
     ]
@@ -135,13 +375,33 @@
       { "nombre": "Gino Peruzzi", "posicion": "Defensor", "rol": "Titular" },
       { "nombre": "Daniel Díaz", "posicion": "Defensor", "rol": "Titular" },
       { "nombre": "Nicolás Colazo", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Cristian Erbes", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Pablo Pérez", "posicion": "Mediocampista", "rol": "Titular" },
+      {
+        "nombre": "Cristian Erbes",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Pablo Pérez",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
       { "nombre": "César Meli", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Nicolás Lodeiro", "posicion": "Mediocampista", "rol": "Titular" },
+      {
+        "nombre": "Nicolás Lodeiro",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
       { "nombre": "Carlos Tevez", "posicion": "Delantero", "rol": "Titular" },
-      { "nombre": "Jonathan Calleri", "posicion": "Delantero", "rol": "Titular" },
-      { "nombre": "Sebastián Palacios", "posicion": "Delantero", "rol": "Titular" }
+      {
+        "nombre": "Jonathan Calleri",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Sebastián Palacios",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      }
     ]
   },
   {
@@ -151,13 +411,33 @@
     "equipo_completo": [
       { "nombre": "Esteban Andrada", "posicion": "Arquero", "rol": "Titular" },
       { "nombre": "Julio Buffarini", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Carlos Izquierdoz", "posicion": "Defensor", "rol": "Titular" },
+      {
+        "nombre": "Carlos Izquierdoz",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
       { "nombre": "Lisandro López", "posicion": "Defensor", "rol": "Titular" },
       { "nombre": "Frank Fabra", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Jorman Campuzano", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Guillermo Fernández", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Eduardo Salvio", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Sebastián Villa", "posicion": "Delantero", "rol": "Titular" },
+      {
+        "nombre": "Jorman Campuzano",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Guillermo Fernández",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Eduardo Salvio",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Sebastián Villa",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      },
       { "nombre": "Carlos Tevez", "posicion": "Delantero", "rol": "Titular" },
       { "nombre": "Franco Soldano", "posicion": "Delantero", "rol": "Titular" }
     ]
@@ -167,17 +447,45 @@
     "descripcion": "El plantel actual conformado para las competiciones del año.",
     "formacion_tactica": "No especificada en los registros",
     "equipo_completo": [
-      { "nombre": "Agustín Marchesín", "posicion": "Arquero", "rol": "Titular" },
+      {
+        "nombre": "Agustín Marchesín",
+        "posicion": "Arquero",
+        "rol": "Titular"
+      },
       { "nombre": "Lucas Blondel", "posicion": "Defensor", "rol": "Titular" },
       { "nombre": "Nicolás Figal", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Marco Pellegrino", "posicion": "Defensor", "rol": "Titular" },
+      {
+        "nombre": "Marco Pellegrino",
+        "posicion": "Defensor",
+        "rol": "Titular"
+      },
       { "nombre": "Lautaro Blanco", "posicion": "Defensor", "rol": "Titular" },
-      { "nombre": "Leandro Paredes", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Tomás Belmonte", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Kevin Zenón", "posicion": "Mediocampista", "rol": "Titular" },
-      { "nombre": "Carlos Palacios", "posicion": "Mediocampista", "rol": "Titular" },
+      {
+        "nombre": "Leandro Paredes",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Tomás Belmonte",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Kevin Zenón",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
+      {
+        "nombre": "Carlos Palacios",
+        "posicion": "Mediocampista",
+        "rol": "Titular"
+      },
       { "nombre": "Edinson Cavani", "posicion": "Delantero", "rol": "Titular" },
-      { "nombre": "Miguel Merentiel", "posicion": "Delantero", "rol": "Titular" }
+      {
+        "nombre": "Miguel Merentiel",
+        "posicion": "Delantero",
+        "rol": "Titular"
+      }
     ]
   }
 ]

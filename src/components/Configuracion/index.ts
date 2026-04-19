@@ -1,1 +1,1 @@
-export { Configuracion } from './Configuracion';
+export { Configuracion } from "./Configuracion";

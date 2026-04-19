@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import { useAsyncData } from './useAsyncData';
-import { fetchHeadToHead, type H2HMatch } from '../services/footballApiService';
+import { useMemo } from "react";
+import { useAsyncData } from "./useAsyncData";
+import { fetchHeadToHead, type H2HMatch } from "../services/footballApiService";
 
 /**
  * Historial de enfrentamientos directos Boca vs un rival.
@@ -21,8 +21,7 @@ export function useHeadToHead(rivalId: number | null) {
     [rivalId],
   );
 
-  return useAsyncData<H2HMatch[]>(
-    fetcher ?? (() => Promise.resolve([])),
-    [rivalId],
-  );
+  return useAsyncData<H2HMatch[]>(fetcher ?? (() => Promise.resolve([])), [
+    rivalId,
+  ]);
 }

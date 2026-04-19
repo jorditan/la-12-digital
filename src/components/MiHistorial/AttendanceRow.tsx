@@ -1,30 +1,49 @@
-import { useEffect, useRef } from 'react';
-import { Trash2, PenLine, Plus } from 'lucide-react';
-import { BOCA_ID } from '@/services/apifootball';
-import type { MatchResult } from '@/services/apifootball';
-import { Button } from '../ui/Button';
-import { getRivalName, getResultBadge, formatTableDate } from './useMiHistorial';
+import { useEffect, useRef } from "react";
+import { Trash2, PenLine, Plus } from "lucide-react";
+import { BOCA_ID } from "@/services/apifootball";
+import type { MatchResult } from "@/services/apifootball";
+import { Button } from "../ui/Button";
+import {
+  getRivalName,
+  getResultBadge,
+  formatTableDate,
+} from "./useMiHistorial";
 
 interface AttendanceRowProps {
   matchId: string;
   match: MatchResult | undefined;
   note: string | null;
   isNew: boolean;
-  onOpenNoteModal: (matchId: string, note: string | null, label: string) => void;
-  onOpenDeleteModal: (matchId: string, rival: string, matchDate: string) => void;
+  onOpenNoteModal: (
+    matchId: string,
+    note: string | null,
+    label: string,
+  ) => void;
+  onOpenDeleteModal: (
+    matchId: string,
+    rival: string,
+    matchDate: string,
+  ) => void;
 }
 
 export const AttendanceRow = ({
-  matchId, match, note, isNew,
-  onOpenNoteModal, onOpenDeleteModal,
+  matchId,
+  match,
+  note,
+  isNew,
+  onOpenNoteModal,
+  onOpenDeleteModal,
 }: AttendanceRowProps) => {
   const rowRef = useRef<HTMLTableRowElement>(null);
 
   useEffect(() => {
     if (isNew && rowRef.current) {
       const el = rowRef.current;
-      el.classList.add('animate-gold-pulse');
-      const t = setTimeout(() => el.classList.remove('animate-gold-pulse'), 900);
+      el.classList.add("animate-gold-pulse");
+      const t = setTimeout(
+        () => el.classList.remove("animate-gold-pulse"),
+        900,
+      );
       return () => clearTimeout(t);
     }
   }, [isNew]);
@@ -32,25 +51,28 @@ export const AttendanceRow = ({
   if (!match) {
     return (
       <tr className="border-b border-boca-border/40">
-        <td colSpan={6} className="px-3 py-2 type-caption text-text-muted/50 italic">
+        <td
+          colSpan={6}
+          className="px-3 py-2 type-caption text-text-muted/50 italic"
+        >
           Partido #{matchId}
         </td>
       </tr>
     );
   }
 
-  const rival     = getRivalName(match);
-  const badge     = getResultBadge(match);
+  const rival = getRivalName(match);
+  const badge = getResultBadge(match);
   const matchDate = formatTableDate(match.date);
-  const label     = `Boca vs ${rival} · ${matchDate}`;
+  const label = `Boca vs ${rival} · ${matchDate}`;
 
   return (
     <tr
       ref={rowRef}
       className={[
-        'border-b border-boca-border/40 group transition-colors hover:bg-boca-blue-mid/40',
-        isNew ? 'animate-slide-in-row' : '',
-      ].join(' ')}
+        "border-b border-boca-border/40 group transition-colors hover:bg-boca-blue-mid/40",
+        isNew ? "animate-slide-in-row" : "",
+      ].join(" ")}
     >
       {/* Fecha */}
       <td className="px-3 py-3 type-caption text-text-muted whitespace-nowrap">
@@ -61,25 +83,35 @@ export const AttendanceRow = ({
       <td className="px-3 py-3">
         <div className="flex items-center gap-1.5">
           <img
-            src={match.homeTeam.id === BOCA_ID ? match.awayTeam.logo : match.homeTeam.logo}
+            src={
+              match.homeTeam.id === BOCA_ID
+                ? match.awayTeam.logo
+                : match.homeTeam.logo
+            }
             alt={rival}
             className="w-4 h-4 object-contain shrink-0"
-            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = "none";
+            }}
           />
-          <span className="type-caption text-text-nav truncate max-w-[120px]">{rival}</span>
+          <span className="type-caption text-text-nav truncate max-w-[120px]">
+            {rival}
+          </span>
         </div>
       </td>
 
       {/* Resultado */}
       <td className="px-3 py-3">
-        <span className={`inline-block type-caption font-bold tabular-nums px-2 py-0.5 rounded-sm ${badge.cls}`}>
+        <span
+          className={`inline-block type-caption font-bold tabular-nums px-2 py-0.5 rounded-sm ${badge.cls}`}
+        >
           {badge.label}
         </span>
       </td>
 
       {/* Competencia */}
       <td className="px-3 py-3 type-caption text-text-muted hidden sm:table-cell truncate max-w-[100px]">
-        {match.competition ?? '–'}
+        {match.competition ?? "–"}
       </td>
 
       {/* Nota */}
@@ -89,7 +121,7 @@ export const AttendanceRow = ({
           onClick={() => onOpenNoteModal(matchId, note, label)}
           variant="ghost"
           className="w-full justify-start text-left group/note"
-          title={note ? 'Editar nota' : 'Añadir nota'}
+          title={note ? "Editar nota" : "Añadir nota"}
         >
           {note ? (
             <>

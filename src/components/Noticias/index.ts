@@ -1,1 +1,1 @@
-export { Noticias } from './Noticias';
+export { Noticias } from "./Noticias";

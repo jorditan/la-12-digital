@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from "react";
 
 interface SelectedH2H {
   rivalId: number;
@@ -16,9 +16,12 @@ export function useFixtureTableH2H() {
     setSelected(null);
   }, []);
 
-  return useMemo(() => ({
-    selected,
-    openH2H,
-    closeH2H,
-  }), [closeH2H, openH2H, selected]);
+  return useMemo(
+    () => ({
+      selected,
+      openH2H,
+      closeH2H,
+    }),
+    [closeH2H, openH2H, selected],
+  );
 }

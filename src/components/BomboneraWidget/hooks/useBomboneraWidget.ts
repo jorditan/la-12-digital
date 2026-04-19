@@ -1,6 +1,13 @@
-import { useState, useEffect } from 'react';
-import { fetchMatchForecast, type MatchForecast } from '../../../services/weather';
-import { fetchUpcomingMatches, type ProximoPartido, BOCA_ID } from '../../../services/apifootball';
+import { useState, useEffect } from "react";
+import {
+  fetchMatchForecast,
+  type MatchForecast,
+} from "../../../services/weather";
+import {
+  fetchUpcomingMatches,
+  type ProximoPartido,
+  BOCA_ID,
+} from "../../../services/apifootball";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -14,7 +21,7 @@ export function isMatchDayMode(date: string): boolean {
 
 export interface BomboneraWidgetData {
   proximoLocal: ProximoPartido | null;
-  proximosLocales: ProximoPartido[];   // siguientes partidos de local (sin el primero)
+  proximosLocales: ProximoPartido[]; // siguientes partidos de local (sin el primero)
   diasHastaPartido: number | null;
   matchForecast: MatchForecast | null;
   matchDayMode: boolean;
@@ -25,32 +32,38 @@ export interface BomboneraWidgetData {
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
 export function useBomboneraWidget(): BomboneraWidgetData {
-  const [proximoLocal, setProximoLocal]     = useState<ProximoPartido | null>(null);
+  const [proximoLocal, setProximoLocal] = useState<ProximoPartido | null>(null);
   const [proximosLocales, setProximosLocales] = useState<ProximoPartido[]>([]);
-  const [matchForecast, setMatchForecast]   = useState<MatchForecast | null>(null);
-  const [loading, setLoading]             = useState(true);
-  const [error, setError]                 = useState<string | null>(null);
+  const [matchForecast, setMatchForecast] = useState<MatchForecast | null>(
+    null,
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Carga el próximo partido de local
   useEffect(() => {
     let cancelled = false;
 
     fetchUpcomingMatches()
-      .then(matches => {
+      .then((matches) => {
         if (cancelled) return;
-        const homeGames = matches.filter(m => m.homeTeam.id === BOCA_ID);
+        const homeGames = matches.filter((m) => m.homeTeam.id === BOCA_ID);
         setProximoLocal(homeGames[0] ?? null);
         setProximosLocales(homeGames.slice(1, 3));
       })
-      .catch(err => {
+      .catch((err) => {
         if (!cancelled) {
-          console.error('[BomboneraWidget] upcoming error →', err);
-          setError('No se pudieron cargar los partidos');
+          console.error("[BomboneraWidget] upcoming error →", err);
+          setError("No se pudieron cargar los partidos");
         }
       })
-      .finally(() => { if (!cancelled) setLoading(false); });
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Carga el pronóstico una vez que conocemos el partido
@@ -59,19 +72,37 @@ export function useBomboneraWidget(): BomboneraWidgetData {
     let cancelled = false;
 
     fetchMatchForecast(proximoLocal.date)
-      .then(data => { if (!cancelled) setMatchForecast(data); })
-      .catch(err => { console.error('[BomboneraWidget] forecast error →', err); });
+      .then((data) => {
+        if (!cancelled) setMatchForecast(data);
+      })
+      .catch((err) => {
+        console.error("[BomboneraWidget] forecast error →", err);
+      });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [proximoLocal]);
 
   const diasHastaPartido = proximoLocal
-    ? Math.max(0, Math.ceil(
-        (new Date(proximoLocal.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-      ))
+    ? Math.max(
+        0,
+        Math.ceil(
+          (new Date(proximoLocal.date).getTime() - Date.now()) /
+            (1000 * 60 * 60 * 24),
+        ),
+      )
     : null;
 
   const matchDayMode = proximoLocal ? isMatchDayMode(proximoLocal.date) : false;
 
-  return { proximoLocal, proximosLocales, diasHastaPartido, matchForecast, matchDayMode, loading, error };
+  return {
+    proximoLocal,
+    proximosLocales,
+    diasHastaPartido,
+    matchForecast,
+    matchDayMode,
+    loading,
+    error,
+  };
 }

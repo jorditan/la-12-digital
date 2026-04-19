@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { Button } from '../ui/Button';
+import { useEffect, useRef } from "react";
+import { Button } from "../ui/Button";
 
 interface ConfirmDeleteModalProps {
   rival: string;
@@ -8,24 +8,32 @@ interface ConfirmDeleteModalProps {
   onClose: () => void;
 }
 
-export const ConfirmDeleteModal = ({ rival, matchDate, onConfirm, onClose }: ConfirmDeleteModalProps) => {
+export const ConfirmDeleteModal = ({
+  rival,
+  matchDate,
+  onConfirm,
+  onClose,
+}: ConfirmDeleteModalProps) => {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
   return (
     <div
       ref={overlayRef}
       className="fixed inset-0 z-[200] flex items-center justify-center px-4"
-      style={{ background: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(4px)' }}
-      onClick={e => { if (e.target === overlayRef.current) onClose(); }}
+      style={{ background: "rgba(0,0,0,0.78)", backdropFilter: "blur(4px)" }}
+      onClick={(e) => {
+        if (e.target === overlayRef.current) onClose();
+      }}
     >
       <div className="w-full max-w-xs bg-boca-blue-light border border-boca-border rounded-sm p-6 shadow-2xl animate-fade-in">
-
         <h2 className="type-card-title text-white mb-1">
           ¿Eliminar este registro?
         </h2>

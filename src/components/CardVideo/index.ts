@@ -1,1 +1,1 @@
-export { CardVideo } from './CardVideo';
+export { CardVideo } from "./CardVideo";

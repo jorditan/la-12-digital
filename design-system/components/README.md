@@ -5,25 +5,30 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ## 📋 Índice de Componentes
 
 ### Navigation
+
 - [Header](#header)
 - [Banner Mensaje Diario](#banner-mensaje-diario)
 
 ### Cards
+
 - [Card Noticia](#card-noticia)
 - [Card Video](#card-video)
 - [Card Partido](#card-partido)
 - [Widget La Bombonera](#widget-la-bombonera)
 
 ### Buttons
+
 - [Button Primary](#button-primary)
 - [Button Secondary](#button-secondary)
 - [Button Navigation (Carousel)](#button-navigation)
 
 ### Lists & Tables
+
 - [Tabla Posiciones](#tabla-posiciones)
 - [Lista Partidos](#lista-partidos)
 
 ### Carousels
+
 - [Carousel Noticias](#carousel-noticias)
 - [Carousel Videos](#carousel-videos)
 
@@ -36,11 +41,13 @@ Documentación de componentes del design system basados en el diseño de Figma.
 **Background**: `colors.background.primary` (#001529)
 
 ### Elementos:
+
 - Logo Boca (40x40px)
 - Navegación: "Inicio", "Plantel", "Historia del proyecto"
 - 3 estrellas doradas (derecha)
 
 ### Estados:
+
 - Default
 - Sticky (scroll)
 
@@ -52,11 +59,13 @@ Documentación de componentes del design system basados en el diseño de Figma.
 **Altura**: 44px
 
 ### Variantes:
+
 - Lunes a Domingo (mensajes diferentes)
 - Día de partido (mensaje especial)
 - Victoria ayer (celebración)
 
 ### Diseño:
+
 ```typescript
 {
   background: 'rgba(0, 21, 41, 0.4)',
@@ -71,6 +80,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ```
 
 ### Iconos:
+
 - 6 estrellas doradas al inicio (⭐⭐⭐⭐⭐⭐)
 - Representa las 6 Copas Libertadores
 
@@ -86,6 +96,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ### Estados:
 
 **Default:**
+
 ```typescript
 {
   border: '2px solid rgba(255, 215, 0, 0.15)',
@@ -95,6 +106,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ```
 
 **Hover:**
+
 ```typescript
 {
   border: '2px solid rgba(255, 215, 0, 0.4)',
@@ -106,6 +118,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ```
 
 ### Estructura:
+
 ```html
 <div class="card-noticia">
   <img src="..." alt="..." />
@@ -117,6 +130,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ```
 
 ### Typography:
+
 - Título: Crimson Pro SemiBold 16px
 - Color título: #FFFFFF
 
@@ -131,6 +145,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ### Estados:
 
 **Default:**
+
 ```typescript
 {
   border: '2px solid rgba(255, 215, 0, 0.15)',
@@ -139,6 +154,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ```
 
 **Hover:**
+
 ```typescript
 {
   border: '2px solid rgba(255, 215, 0, 0.35)',
@@ -148,6 +164,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ```
 
 ### Elementos:
+
 - Thumbnail de YouTube
 - Overlay con play button
 - Título debajo
@@ -164,6 +181,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ### Variantes por resultado:
 
 **Victoria:**
+
 ```typescript
 {
   background: '#1A4D2E',  // Verde oscuro
@@ -172,6 +190,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ```
 
 **Derrota:**
+
 ```typescript
 {
   background: '#7A1F1F',  // Rojo oscuro
@@ -180,6 +199,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ```
 
 **Empate:**
+
 ```typescript
 {
   background: '#4A5568',  // Gris
@@ -188,6 +208,7 @@ Documentación de componentes del design system basados en el diseño de Figma.
 ```
 
 ### Estructura:
+
 ```
 Fecha: 08/02
 Rival: Vélez
@@ -203,6 +224,7 @@ Estadio: Nombre + Hora
 **Border Radius**: 8px
 
 ### Elementos:
+
 - Foto aérea del estadio (200px height)
 - Overlay con gradiente oscuro
 - Info:
@@ -211,6 +233,7 @@ Estadio: Nombre + Hora
   - Próximo partido: "5 días"
 
 ### Typography:
+
 - Título: Crimson Pro Medium 16px
 - Info: Crimson Pro Regular 14px
 
@@ -223,6 +246,7 @@ Estadio: Nombre + Hora
 ### Estados:
 
 **Default:**
+
 ```typescript
 {
   background: '#FFD700',
@@ -237,6 +261,7 @@ Estadio: Nombre + Hora
 ```
 
 **Hover:**
+
 ```typescript
 {
   background: '#FFC700',
@@ -247,6 +272,7 @@ Estadio: Nombre + Hora
 ```
 
 **Pressed:**
+
 ```typescript
 {
   background: '#E5C100',
@@ -256,6 +282,7 @@ Estadio: Nombre + Hora
 ```
 
 **Disabled:**
+
 ```typescript
 {
   background: '#6B8CAE',
@@ -273,6 +300,7 @@ Estadio: Nombre + Hora
 ### Estados:
 
 **Default:**
+
 ```typescript
 {
   width: '40px',
@@ -287,6 +315,7 @@ Estadio: Nombre + Hora
 ```
 
 **Hover:**
+
 ```typescript
 {
   background: 'rgba(255, 215, 0, 0.25)',
@@ -297,6 +326,7 @@ Estadio: Nombre + Hora
 ```
 
 ### Iconos:
+
 - Flecha izquierda: ◀
 - Flecha derecha: ▶
 - Color: #FFD700
@@ -310,6 +340,7 @@ Estadio: Nombre + Hora
 **Border**: none
 
 ### Row:
+
 ```typescript
 {
   padding: '12px 16px',  // Espacioso
@@ -318,6 +349,7 @@ Estadio: Nombre + Hora
 ```
 
 ### Row Boca (destacado):
+
 ```typescript
 {
   background: 'rgba(255, 215, 0, 0.08)',
@@ -327,6 +359,7 @@ Estadio: Nombre + Hora
 ```
 
 ### Headers:
+
 ```typescript
 {
   padding: '16px',
@@ -338,6 +371,7 @@ Estadio: Nombre + Hora
 ```
 
 ### Zebra Striping (opcional):
+
 ```typescript
 tr:nth-child(even) {
   background: 'rgba(255, 255, 255, 0.02)'
@@ -353,10 +387,12 @@ tr:nth-child(even) {
 **Scroll**: Horizontal smooth
 
 ### Controles:
+
 - Flechas circulares 40px
 - Posición: Centro vertical, extremos
 
 ### Comportamiento:
+
 - Click flecha: scroll 1 card
 - Swipe (mobile): scroll fluid
 - Auto-scroll: Opcional (cada 5 seg)
@@ -366,6 +402,7 @@ tr:nth-child(even) {
 ## Carousel Videos
 
 Similar a Carousel Noticias pero con:
+
 - Cards de video (YouTube thumbnails)
 - 4 items visibles (desktop)
 - Overlay play button
@@ -391,14 +428,17 @@ Ejemplos:
 ## 📱 Responsive
 
 ### Desktop (1440px+)
+
 - Layout 70/30 (contenido/sidebar)
 - 3 cards visibles en carousels
 
 ### Tablet (768px - 1439px)
+
 - Stack vertical
 - 2 cards visibles en carousels
 
 ### Mobile (< 768px)
+
 - Stack vertical completo
 - 1.2 cards visibles (peek next)
 - Scroll horizontal en tabla

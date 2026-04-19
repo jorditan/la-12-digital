@@ -1,21 +1,23 @@
-import type { HourlyForecast } from '../../services/weather';
+import type { HourlyForecast } from "../../services/weather";
 
 function conditionsText(slot: HourlyForecast): string {
   const parts: string[] = [];
 
-  if (slot.tempC < 5)       parts.push('Temperatura muy fría');
-  else if (slot.tempC < 15) parts.push('Temperatura fresca');
-  else if (slot.tempC < 28) parts.push('Temperatura agradable');
-  else                       parts.push('Temperatura calurosa');
+  if (slot.tempC < 5) parts.push("Temperatura muy fría");
+  else if (slot.tempC < 15) parts.push("Temperatura fresca");
+  else if (slot.tempC < 28) parts.push("Temperatura agradable");
+  else parts.push("Temperatura calurosa");
 
-  if (slot.precipitationProbPct < 20)       parts.push('Sin riesgo de lluvia significativo');
-  else if (slot.precipitationProbPct < 40)  parts.push('Posibilidad leve de lluvia');
-  else if (slot.precipitationProbPct < 60)  parts.push('Lluvia probable');
-  else                                       parts.push('Alta probabilidad de lluvia');
+  if (slot.precipitationProbPct < 20)
+    parts.push("Sin riesgo de lluvia significativo");
+  else if (slot.precipitationProbPct < 40)
+    parts.push("Posibilidad leve de lluvia");
+  else if (slot.precipitationProbPct < 60) parts.push("Lluvia probable");
+  else parts.push("Alta probabilidad de lluvia");
 
-  if (slot.windSpeedKmh > 40) parts.push('Viento fuerte');
+  if (slot.windSpeedKmh > 40) parts.push("Viento fuerte");
 
-  return parts.join(' · ');
+  return parts.join(" · ");
 }
 
 export function ConditionsBlock({ slot }: { slot: HourlyForecast }) {

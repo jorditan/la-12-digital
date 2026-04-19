@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 type GamePromoCardProps = {
   backgroundImageUrl?: string | null;
@@ -23,9 +23,8 @@ export function GamePromoCard({
       <div
         id={contentId}
         className="relative overflow-hidden rounded-sm"
-        style={{ minHeight: '188px' }}
+        style={{ minHeight: "188px" }}
       >
-
         {/* ── Capa base ─────────────────────────────────────────────── */}
         <div className="absolute inset-0 bg-boca-blue-mid" />
 
@@ -35,9 +34,9 @@ export function GamePromoCard({
             className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
             style={{
               backgroundImage: `url(${backgroundImageUrl})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              clipPath: 'polygon(42% 0, 100% 0, 100% 100%, 28% 100%)',
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              clipPath: "polygon(42% 0, 100% 0, 100% 100%, 28% 100%)",
               opacity: 0.45,
             }}
             aria-hidden="true"
@@ -48,8 +47,8 @@ export function GamePromoCard({
             className="absolute inset-0 opacity-[0.035]"
             style={{
               backgroundImage:
-                'repeating-linear-gradient(45deg, #FFD700 0px, #FFD700 1px, transparent 1px, transparent 14px),' +
-                'repeating-linear-gradient(-45deg, #FFD700 0px, #FFD700 1px, transparent 1px, transparent 14px)',
+                "repeating-linear-gradient(45deg, #FFD700 0px, #FFD700 1px, transparent 1px, transparent 14px)," +
+                "repeating-linear-gradient(-45deg, #FFD700 0px, #FFD700 1px, transparent 1px, transparent 14px)",
             }}
             aria-hidden="true"
           />
@@ -71,15 +70,17 @@ export function GamePromoCard({
           className="absolute top-0 right-0 w-28 h-28 pointer-events-none"
           style={{
             backgroundImage:
-              'repeating-linear-gradient(-45deg, rgba(255,215,0,0.055) 0px, rgba(255,215,0,0.055) 1px, transparent 1px, transparent 6px)',
-            clipPath: 'polygon(100% 0, 100% 100%, 0 0)',
+              "repeating-linear-gradient(-45deg, rgba(255,215,0,0.055) 0px, rgba(255,215,0,0.055) 1px, transparent 1px, transparent 6px)",
+            clipPath: "polygon(100% 0, 100% 100%, 0 0)",
           }}
           aria-hidden="true"
         />
 
         {/* ── Contenido ─────────────────────────────────────────────── */}
-        <div className="relative flex flex-col justify-between p-5 gap-3" style={{ minHeight: '188px' }}>
-
+        <div
+          className="relative flex flex-col justify-between p-5 gap-3"
+          style={{ minHeight: "188px" }}
+        >
           {/* Fila 1: etiqueta + score */}
           <div className="flex items-center justify-between gap-2">
             <span className="font-sans text-[9px] font-bold uppercase tracking-[0.2em] text-boca-gold/45">
@@ -97,9 +98,7 @@ export function GamePromoCard({
           </div>
 
           {/* Fila 2: título */}
-          <div className="flex-1 flex flex-col justify-center">
-            {title}
-          </div>
+          <div className="flex-1 flex flex-col justify-center">{title}</div>
 
           {/* Fila 3: decoración + CTA */}
           <div className="flex items-end justify-between gap-3">
@@ -108,11 +107,8 @@ export function GamePromoCard({
                 {decoration}
               </div>
             )}
-            <div className={!decoration ? 'w-full' : 'shrink-0'}>
-              {cta}
-            </div>
+            <div className={!decoration ? "w-full" : "shrink-0"}>{cta}</div>
           </div>
-
         </div>
       </div>
     </div>

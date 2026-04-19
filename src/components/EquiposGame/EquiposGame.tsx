@@ -1,7 +1,7 @@
-import { Button } from '../ui/Button';
-import { GamePromoCard } from '../GamePromoCard/GamePromoCard';
-import { GameModal } from './GameModal';
-import { useEquiposGame } from './hooks/useEquiposGame';
+import { Button } from "../ui/Button";
+import { GamePromoCard } from "../GamePromoCard/GamePromoCard";
+import { GameModal } from "./GameModal";
+import { useEquiposGame } from "./hooks/useEquiposGame";
 
 export function EquiposGame() {
   const game = useEquiposGame();
@@ -12,38 +12,38 @@ export function EquiposGame() {
       <GamePromoCard
         contentId="equiposJuego"
         score={score.total > 0 ? `${score.guessed}/${score.total}` : null}
-        title={(
+        title={
           <p className="font-serif text-2xl font-bold text-white leading-tight">
             ¿Recordás
             <span className="text-boca-gold"> el plantel?</span>
           </p>
-        )}
+        }
         decoration={[10, 9, 7, 11].map((n, i) => (
           <span
             key={i}
             className={`font-serif font-black leading-none select-none tabular-nums ${
               i === 0
-                ? 'text-4xl text-boca-gold/35'
+                ? "text-4xl text-boca-gold/35"
                 : i === 1
-                ? 'text-3xl text-boca-gold/20'
-                : 'text-2xl text-boca-gold/10'
+                  ? "text-3xl text-boca-gold/20"
+                  : "text-2xl text-boca-gold/10"
             }`}
           >
             #{n}
           </span>
         ))}
-        cta={(
+        cta={
           <Button
             className="w-fit"
-            onClick={gameState === 'waiting' ? startGame : closeModal}
+            onClick={gameState === "waiting" ? startGame : closeModal}
           >
-            {gameState === 'waiting' ? 'Jugar' : '▶ Ver desafío'}
+            {gameState === "waiting" ? "Jugar" : "▶ Ver desafío"}
           </Button>
-        )}
+        }
       />
 
       {/* Modal — solo visible cuando el juego está activo */}
-      {gameState !== 'waiting' && equipo && (
+      {gameState !== "waiting" && equipo && (
         <GameModal
           gameState={gameState}
           equipo={equipo}

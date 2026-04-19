@@ -12,13 +12,13 @@ Construir un **dashboard web** para fans de Boca Juniors que centralice fixture,
 
 ## 🛠️ Stack Tecnológico
 
-| Capa | Tecnología |
-|---|---|
-| Frontend | React + Vite |
-| Estilos | CSS Modules o Tailwind CSS |
-| HTTP Client | Axios |
-| APIs externas | API-Football, NewsAPI, OpenWeatherMap |
-| Deploy (futuro) | Vercel o Netlify |
+| Capa            | Tecnología                            |
+| --------------- | ------------------------------------- |
+| Frontend        | React + Vite                          |
+| Estilos         | CSS Modules o Tailwind CSS            |
+| HTTP Client     | Axios                                 |
+| APIs externas   | API-Football, NewsAPI, OpenWeatherMap |
+| Deploy (futuro) | Vercel o Netlify                      |
 
 ---
 
@@ -65,6 +65,7 @@ la12-digital/
 ## 🔌 APIs y Configuración
 
 ### 1. API-Football — `api-sports.io`
+
 - **Plan:** Free (100 req/día)
 - **Base URL:** `https://v3.football.api-sports.io`
 - **Header requerido:** `x-apisports-key: TU_API_KEY`
@@ -73,6 +74,7 @@ la12-digital/
 - **ID Copa Libertadores:** `13`
 
 **Endpoints usados:**
+
 ```
 GET /fixtures?team=747&next=5           → Próximos 5 partidos
 GET /standings?league=128&season=2025   → Tabla de posiciones
@@ -80,21 +82,25 @@ GET /fixtures?team=747&last=5           → Últimos resultados
 ```
 
 ### 2. NewsAPI — `newsapi.org`
+
 - **Plan:** Free (developer)
 - **Base URL:** `https://newsapi.org/v2`
 - **Query sugerida:** `Boca Juniors`
 
 **Endpoints usados:**
+
 ```
 GET /everything?q=Boca+Juniors&language=es&sortBy=publishedAt&pageSize=10
 ```
 
 ### 3. OpenWeatherMap
+
 - **Plan:** Free (1000 req/día)
 - **Base URL:** `https://api.openweathermap.org/data/2.5`
 - **Coordenadas La Bombonera:** `lat=-34.6356, lon=-58.3644`
 
 **Endpoints usados:**
+
 ```
 GET /weather?lat=-34.6356&lon=-58.3644&appid=TU_KEY&units=metric&lang=es
 ```
@@ -118,6 +124,7 @@ VITE_WEATHER_API_KEY=tu_key_aqui
 ## 📦 Secciones del Dashboard
 
 ### ✅ Fase 1 — Fixture (PRIORIDAD)
+
 - Mostrar los **próximos 5 partidos** de Boca Juniors
 - Cada tarjeta debe mostrar:
   - Escudos de ambos equipos
@@ -129,17 +136,20 @@ VITE_WEATHER_API_KEY=tu_key_aqui
 - Últimos 3 resultados con marcador
 
 ### 🔲 Fase 2 — Tabla de Posiciones
+
 - Tabla de la Liga Profesional Argentina temporada 2025
 - Columnas: Pos | Equipo | PJ | G | E | P | GF | GC | DG | Pts
 - Resaltar la fila de Boca Juniors
 - Indicador visual de zona de clasificación a Libertadores / descenso
 
 ### 🔲 Fase 3 — Noticias
+
 - Feed de las últimas noticias relacionadas a Boca Juniors
 - Cada card: imagen, título, fuente, fecha, link externo
 - Filtro por categoría: Mercado de pases | Resultados | Opinión
 
 ### 🔲 Fase 4 — Widget del Clima
+
 - Clima actual en La Bombonera
 - Temperatura, condición, humedad, viento
 - Útil para saber cómo ir a la cancha
@@ -185,4 +195,4 @@ npm run dev
 
 ---
 
-*Proyecto iniciado: Febrero 2026 | Stack: React + Vite | Club: Boca Juniors 💙💛*
+_Proyecto iniciado: Febrero 2026 | Stack: React + Vite | Club: Boca Juniors 💙💛_

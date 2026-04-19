@@ -4,12 +4,12 @@
  * Usados en el juego "El Equipo de Memoria" de La 12 Digital.
  */
 
-import rawData from './boca_equipos.json';
+import rawData from "./boca_equipos.json";
 
 export interface JugadorEquipo {
   nombre: string;
   posicion: string;
-  rol: 'Titular' | 'Suplente';
+  rol: "Titular" | "Suplente";
 }
 
 export interface BocaEquipo {

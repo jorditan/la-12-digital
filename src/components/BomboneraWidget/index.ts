@@ -1,1 +1,1 @@
-export { BomboneraWidget } from './BomboneraWidget';
+export { BomboneraWidget } from "./BomboneraWidget";

@@ -13,14 +13,17 @@
 ## Contexto del proyecto (leer antes de empezar)
 
 ### Routing actual
+
 El proyecto **NO usa React Router**. `App.tsx` renderiza todos los componentes directamente sin lógica de rutas. El `wrangler.jsonc` tiene `"not_found_handling": "single-page-application"` lo que permite manejar rutas como `/mi-historial` client-side. La convención documentada es "SPA simple con `window.location.pathname`".
 
 ### API de partidos
+
 - `src/services/apifootball.ts` expone `fetchLastMatches()` → `MatchResult[]` y `fetchUpcomingMatches()` → `ProximoPartido[]`
 - `MatchResult.fixtureId` (number) es el identificador único de partido
 - `MatchResult` tiene: `fixtureId`, `date` (ISO string), `homeTeam`, `awayTeam`, `goalsHome`, `goalsAway`, `competition`, `venueName`
 
 ### Design tokens disponibles
+
 ```
 bg-boca-blue (#001529)         bg-boca-blue-light (#002140)    bg-boca-blue-mid (#031d46)
 border-boca-border (#00396e)   border-boca-border-card (#003d7a)
@@ -30,14 +33,16 @@ bg-status-win  bg-status-loss  bg-status-draw
 ```
 
 ### Componentes de referencia para patrones de UI
+
 - `src/components/UltimosPartidos/UltimosPartidos.tsx` → patrón para listar partidos
 - `src/components/shared/SectionHeader/SectionHeader.tsx` → título de sección
 - `src/components/Button/Button.tsx` → botón estándar
 - `src/components/Badge/Badge.tsx` → badge/pill
 
 ### Variables de entorno
+
 - Dev: archivo `.env` (git-ignored). Vite expone `VITE_*` como `import.meta.env.VITE_*`
-- Deploy: `npm run deploy` = `tsc && vite build && wrangler deploy`. Las vars VITE_* se **compilan en el bundle** → deben estar en el entorno al momento del build
+- Deploy: `npm run deploy` = `tsc && vite build && wrangler deploy`. Las vars VITE\_\* se **compilan en el bundle** → deben estar en el entorno al momento del build
 - La `SUPABASE_ANON_KEY` es pública por diseño (RLS protege los datos); puede estar en vars de entorno sin ser secret
 
 ---
@@ -47,23 +52,23 @@ bg-status-win  bg-status-loss  bg-status-draw
 ```typescript
 // src/types/attendance.ts
 
-import type { MatchResult } from '@/services/apifootball';
+import type { MatchResult } from "@/services/apifootball";
 
 /** Usuario autenticado de Supabase */
 export interface AuthUser {
-  id: string;       // UUID de auth.users
+  id: string; // UUID de auth.users
   email: string;
 }
 
 /** Fila en la tabla match_attendance de Supabase */
 export interface MatchAttendance {
-  id: string;           // UUID primary key
-  userId: string;       // FK → auth.users.id
-  matchId: string;      // fixtureId.toString()
+  id: string; // UUID primary key
+  userId: string; // FK → auth.users.id
+  matchId: string; // fixtureId.toString()
   attended: boolean;
-  note: string | null;  // max 280 chars
-  createdAt: string;    // ISO timestamptz
-  updatedAt: string;    // ISO timestamptz
+  note: string | null; // max 280 chars
+  createdAt: string; // ISO timestamptz
+  updatedAt: string; // ISO timestamptz
 }
 
 /** Partido enriquecido con datos de asistencia del usuario */
@@ -79,7 +84,7 @@ export interface UpsertAttendancePayload {
 }
 
 /** Estado async estándar del proyecto */
-export type AsyncState = 'loading' | 'error' | 'ok';
+export type AsyncState = "loading" | "error" | "ok";
 ```
 
 ---
@@ -169,6 +174,7 @@ src/
 ## Contratos de hooks
 
 ### `useAuth` (src/hooks/useAuth.ts)
+
 ```typescript
 interface UseAuthReturn {
   user: AuthUser | null;
@@ -178,8 +184,9 @@ interface UseAuthReturn {
   logout: () => Promise<void>;
   error: string | null;
 }
-function useAuth(): UseAuthReturn
+function useAuth(): UseAuthReturn;
 ```
+
 - Lee sesión inicial con `supabase.auth.getSession()`
 - Suscribe a `supabase.auth.onAuthStateChange`
 - `login` → `supabase.auth.signInWithPassword`
@@ -187,17 +194,19 @@ function useAuth(): UseAuthReturn
 - `logout` → `supabase.auth.signOut`
 
 ### `useMatchAttendance` (src/hooks/useMatchAttendance.ts)
+
 ```typescript
 interface UseMatchAttendanceReturn {
-  attendanceMap: Record<string, MatchAttendance>;  // matchId → MatchAttendance
+  attendanceMap: Record<string, MatchAttendance>; // matchId → MatchAttendance
   estado: AsyncState;
   error: string | null;
   upsert: (payload: UpsertAttendancePayload) => Promise<void>;
   remove: (matchId: string) => Promise<void>;
   totalAttended: number;
 }
-function useMatchAttendance(userId: string | null): UseMatchAttendanceReturn
+function useMatchAttendance(userId: string | null): UseMatchAttendanceReturn;
 ```
+
 - `fetchAll`: `SELECT * FROM match_attendance WHERE user_id = userId` (solo cuando userId no es null)
 - `upsert`: `INSERT ... ON CONFLICT (user_id, match_id) DO UPDATE SET ...`
 - `remove`: `DELETE FROM match_attendance WHERE user_id = userId AND match_id = matchId`
@@ -215,56 +224,67 @@ function useMatchAttendance(userId: string | null): UseMatchAttendanceReturn
 #### Task 1: Instalar @supabase/supabase-js
 
 **Files:**
+
 - Modify: `package.json` (via npm)
 - Create: `.env` (si no existe)
 - Create: `src/lib/supabase.ts`
 
 **Step 1: Instalar dependencia**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital
 npm install @supabase/supabase-js
 ```
+
 Expected output: `added 1 package` (sin errores)
 
 **Step 2: Verificar que TypeScript lo encuentra**
+
 ```bash
 npx tsc --noEmit 2>&1 | head -20
 ```
+
 Expected: sin errores relacionados a supabase
 
 **Step 3: Agregar variables de entorno al .env**
 
 Crear/modificar `.env` (si no existe, crearlo; si existe, agregar al final):
+
 ```bash
 # Verificar si .env existe
 ls -la E:/desarrollo/react/la-12-digital/.env 2>/dev/null && echo "exists" || echo "not found"
 ```
 
 Agregar al `.env`:
+
 ```
 VITE_SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
 VITE_SUPABASE_ANON_KEY=your_anon_key_here
 ```
+
 > **Nota:** Reemplazar con los valores del proyecto Supabase. URL y anon key se obtienen en Supabase Dashboard → Project Settings → API.
 
 Verificar que `.env` está en `.gitignore`:
+
 ```bash
 grep -n "\.env" E:/desarrollo/react/la-12-digital/.gitignore
 ```
+
 Si no está, agregar la línea `.env` al `.gitignore`.
 
 **Step 4: Crear el cliente Supabase**
 
 Crear `src/lib/supabase.ts`:
+
 ```typescript
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
-    'Missing Supabase env vars. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env'
+    "Missing Supabase env vars. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env",
   );
 }
 
@@ -272,12 +292,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 ```
 
 **Step 5: Verificar que compila**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital && npx tsc --noEmit
 ```
+
 Expected: sin errores
 
 **Step 6: Commit**
+
 ```bash
 git add src/lib/supabase.ts package.json package-lock.json
 git commit -m "feat: add Supabase client (supabase.ts) and install @supabase/supabase-js"
@@ -288,6 +311,7 @@ git commit -m "feat: add Supabase client (supabase.ts) and install @supabase/sup
 #### Task 2: Crear schema en Supabase
 
 **Files:**
+
 - No hay archivos locales — se ejecuta en el Supabase Dashboard SQL Editor
 
 **Step 1: Ejecutar SQL de creación de tabla**
@@ -297,6 +321,7 @@ En Supabase Dashboard → SQL Editor, ejecutar el SQL completo definido en la se
 **Step 2: Verificar en Table Editor**
 
 En Supabase Dashboard → Table Editor → match_attendance:
+
 - Verificar que existen las columnas: id, user_id, match_id, attended, note, created_at, updated_at
 - Verificar que RLS está habilitado (candado cerrado en la tabla)
 
@@ -312,6 +337,7 @@ SELECT constraint_name, constraint_type
 FROM information_schema.table_constraints
 WHERE table_name = 'match_attendance';
 ```
+
 Expected: aparece `match_attendance_user_id_match_id_key` como UNIQUE constraint.
 
 ---
@@ -321,6 +347,7 @@ Expected: aparece `match_attendance_user_id_match_id_key` como UNIQUE constraint
 #### Task 3: Crear src/types/attendance.ts
 
 **Files:**
+
 - Create: `src/types/attendance.ts`
 
 **Step 1: Crear el archivo**
@@ -328,12 +355,15 @@ Expected: aparece `match_attendance_user_id_match_id_key` como UNIQUE constraint
 Crear `src/types/attendance.ts` con el contenido exacto definido en la sección "Interfaces TypeScript" de este documento.
 
 **Step 2: Verificar tipado**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital && npx tsc --noEmit
 ```
+
 Expected: sin errores
 
 **Step 3: Commit**
+
 ```bash
 git add src/types/attendance.ts
 git commit -m "feat: add TypeScript interfaces for attendance feature"
@@ -346,15 +376,17 @@ git commit -m "feat: add TypeScript interfaces for attendance feature"
 #### Task 4: Implementar hook useAuth
 
 **Files:**
+
 - Create: `src/hooks/useAuth.ts`
 
 **Step 1: Crear el hook**
 
 Crear `src/hooks/useAuth.ts`:
+
 ```typescript
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
-import type { AuthUser, AsyncState } from '@/types/attendance';
+import { useState, useEffect, useCallback } from "react";
+import { supabase } from "@/lib/supabase";
+import type { AuthUser, AsyncState } from "@/types/attendance";
 
 interface UseAuthReturn {
   user: AuthUser | null;
@@ -367,20 +399,22 @@ interface UseAuthReturn {
 
 export function useAuth(): UseAuthReturn {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [estado, setEstado] = useState<AsyncState>('loading');
+  const [estado, setEstado] = useState<AsyncState>("loading");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email ?? '' });
+        setUser({ id: session.user.id, email: session.user.email ?? "" });
       }
-      setEstado('ok');
+      setEstado("ok");
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email ?? '' });
+        setUser({ id: session.user.id, email: session.user.email ?? "" });
       } else {
         setUser(null);
       }
@@ -391,13 +425,19 @@ export function useAuth(): UseAuthReturn {
 
   const login = useCallback(async (email: string, password: string) => {
     setError(null);
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (authError) setError(authError.message);
   }, []);
 
   const register = useCallback(async (email: string, password: string) => {
     setError(null);
-    const { error: authError } = await supabase.auth.signUp({ email, password });
+    const { error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
     if (authError) setError(authError.message);
   }, []);
 
@@ -411,12 +451,15 @@ export function useAuth(): UseAuthReturn {
 ```
 
 **Step 2: Verificar tipado**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital && npx tsc --noEmit
 ```
+
 Expected: sin errores
 
 **Step 3: Commit**
+
 ```bash
 git add src/hooks/useAuth.ts
 git commit -m "feat: implement useAuth hook with Supabase email/password auth"
@@ -427,12 +470,14 @@ git commit -m "feat: implement useAuth hook with Supabase email/password auth"
 #### Task 5: Crear componente LoginForm
 
 **Files:**
+
 - Create: `src/components/Auth/LoginForm.tsx`
 - Create: `src/components/Auth/index.ts`
 
 **Step 1: Crear LoginForm.tsx**
 
 Crear `src/components/Auth/LoginForm.tsx`:
+
 ```typescript
 import { useState } from 'react';
 import type { UseAuthReturn } from '@/hooks/useAuth';
@@ -523,19 +568,23 @@ export function LoginForm({ onLogin, onRegister, error }: LoginFormProps) {
 > **Nota sobre tipos:** El prop `onLogin` debe tomar el tipo directamente, no referenciar `UseAuthReturn['login']` si genera problemas con exports. Alternativa: `onLogin: (email: string, password: string) => Promise<void>`.
 
 **Step 2: Crear index.ts**
+
 ```typescript
 // src/components/Auth/index.ts
-export { LoginForm } from './LoginForm';
-export { AuthGate } from './AuthGate';
+export { LoginForm } from "./LoginForm";
+export { AuthGate } from "./AuthGate";
 ```
+
 > AuthGate aún no existe — se creará en Task 6. Comentar esa línea hasta entonces.
 
 **Step 3: Verificar tipado**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital && npx tsc --noEmit
 ```
 
 **Step 4: Commit**
+
 ```bash
 git add src/components/Auth/
 git commit -m "feat: add LoginForm component with email/password auth"
@@ -546,11 +595,13 @@ git commit -m "feat: add LoginForm component with email/password auth"
 #### Task 6: Crear componente AuthGate
 
 **Files:**
+
 - Create: `src/components/Auth/AuthGate.tsx`
 
 `AuthGate` envuelve contenido que requiere autenticación. Si el usuario no está logueado, muestra `LoginForm`.
 
 **Step 1: Crear AuthGate.tsx**
+
 ```typescript
 // src/components/Auth/AuthGate.tsx
 import { useAuth } from '@/hooks/useAuth';
@@ -584,11 +635,13 @@ export function AuthGate({ children }: AuthGateProps) {
 En `src/components/Auth/index.ts`, descomentar la línea `export { AuthGate }`.
 
 **Step 3: Verificar tipado**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital && npx tsc --noEmit
 ```
 
 **Step 4: Commit**
+
 ```bash
 git add src/components/Auth/AuthGate.tsx src/components/Auth/index.ts
 git commit -m "feat: add AuthGate wrapper component for protected routes"
@@ -601,15 +654,21 @@ git commit -m "feat: add AuthGate wrapper component for protected routes"
 #### Task 7: Implementar useMatchAttendance
 
 **Files:**
+
 - Create: `src/hooks/useMatchAttendance.ts`
 
 **Step 1: Crear el hook**
 
 Crear `src/hooks/useMatchAttendance.ts`:
+
 ```typescript
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
-import type { MatchAttendance, UpsertAttendancePayload, AsyncState } from '@/types/attendance';
+import { useState, useEffect, useCallback } from "react";
+import { supabase } from "@/lib/supabase";
+import type {
+  MatchAttendance,
+  UpsertAttendancePayload,
+  AsyncState,
+} from "@/types/attendance";
 
 // Tipo que mapea la fila de Supabase (snake_case) a nuestra interfaz (camelCase)
 type DBRow = {
@@ -643,27 +702,31 @@ interface UseMatchAttendanceReturn {
   totalAttended: number;
 }
 
-export function useMatchAttendance(userId: string | null): UseMatchAttendanceReturn {
-  const [attendanceMap, setAttendanceMap] = useState<Record<string, MatchAttendance>>({});
-  const [estado, setEstado] = useState<AsyncState>('loading');
+export function useMatchAttendance(
+  userId: string | null,
+): UseMatchAttendanceReturn {
+  const [attendanceMap, setAttendanceMap] = useState<
+    Record<string, MatchAttendance>
+  >({});
+  const [estado, setEstado] = useState<AsyncState>("loading");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!userId) {
       setAttendanceMap({});
-      setEstado('ok');
+      setEstado("ok");
       return;
     }
 
-    setEstado('loading');
+    setEstado("loading");
     supabase
-      .from('match_attendance')
-      .select('*')
-      .eq('user_id', userId)
+      .from("match_attendance")
+      .select("*")
+      .eq("user_id", userId)
       .then(({ data, error: fetchError }) => {
         if (fetchError) {
           setError(fetchError.message);
-          setEstado('error');
+          setEstado("error");
           return;
         }
         const map: Record<string, MatchAttendance> = {};
@@ -672,69 +735,80 @@ export function useMatchAttendance(userId: string | null): UseMatchAttendanceRet
           map[attendance.matchId] = attendance;
         }
         setAttendanceMap(map);
-        setEstado('ok');
+        setEstado("ok");
       });
   }, [userId]);
 
-  const upsert = useCallback(async ({ matchId, attended, note }: UpsertAttendancePayload) => {
-    if (!userId) return;
-    setError(null);
+  const upsert = useCallback(
+    async ({ matchId, attended, note }: UpsertAttendancePayload) => {
+      if (!userId) return;
+      setError(null);
 
-    const { data, error: upsertError } = await supabase
-      .from('match_attendance')
-      .upsert(
-        { user_id: userId, match_id: matchId, attended, note: note ?? null },
-        { onConflict: 'user_id,match_id' }
-      )
-      .select()
-      .single();
+      const { data, error: upsertError } = await supabase
+        .from("match_attendance")
+        .upsert(
+          { user_id: userId, match_id: matchId, attended, note: note ?? null },
+          { onConflict: "user_id,match_id" },
+        )
+        .select()
+        .single();
 
-    if (upsertError) {
-      setError(upsertError.message);
-      return;
-    }
+      if (upsertError) {
+        setError(upsertError.message);
+        return;
+      }
 
-    setAttendanceMap(prev => ({
-      ...prev,
-      [matchId]: rowToAttendance(data as DBRow),
-    }));
-  }, [userId]);
+      setAttendanceMap((prev) => ({
+        ...prev,
+        [matchId]: rowToAttendance(data as DBRow),
+      }));
+    },
+    [userId],
+  );
 
-  const remove = useCallback(async (matchId: string) => {
-    if (!userId) return;
-    setError(null);
+  const remove = useCallback(
+    async (matchId: string) => {
+      if (!userId) return;
+      setError(null);
 
-    const { error: deleteError } = await supabase
-      .from('match_attendance')
-      .delete()
-      .eq('user_id', userId)
-      .eq('match_id', matchId);
+      const { error: deleteError } = await supabase
+        .from("match_attendance")
+        .delete()
+        .eq("user_id", userId)
+        .eq("match_id", matchId);
 
-    if (deleteError) {
-      setError(deleteError.message);
-      return;
-    }
+      if (deleteError) {
+        setError(deleteError.message);
+        return;
+      }
 
-    setAttendanceMap(prev => {
-      const next = { ...prev };
-      delete next[matchId];
-      return next;
-    });
-  }, [userId]);
+      setAttendanceMap((prev) => {
+        const next = { ...prev };
+        delete next[matchId];
+        return next;
+      });
+    },
+    [userId],
+  );
 
-  const totalAttended = Object.values(attendanceMap).filter(a => a.attended).length;
+  const totalAttended = Object.values(attendanceMap).filter(
+    (a) => a.attended,
+  ).length;
 
   return { attendanceMap, estado, error, upsert, remove, totalAttended };
 }
 ```
 
 **Step 2: Verificar tipado**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital && npx tsc --noEmit
 ```
+
 Expected: sin errores
 
 **Step 3: Commit**
+
 ```bash
 git add src/hooks/useMatchAttendance.ts
 git commit -m "feat: implement useMatchAttendance hook with Supabase CRUD"
@@ -747,11 +821,13 @@ git commit -m "feat: implement useMatchAttendance hook with Supabase CRUD"
 #### Task 8: Crear AttendanceModal
 
 **Files:**
+
 - Create: `src/components/MiHistorial/AttendanceModal.tsx`
 
 Modal para editar la nota de un partido. Se abre al hacer click en "Agregar nota".
 
 **Step 1: Crear el componente**
+
 ```typescript
 // src/components/MiHistorial/AttendanceModal.tsx
 import { useState, useEffect } from 'react';
@@ -843,11 +919,13 @@ export function AttendanceModal({ match, attendance, onSave, onClose }: Attendan
 ```
 
 **Step 2: Verificar tipado**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital && npx tsc --noEmit
 ```
 
 **Step 3: Commit**
+
 ```bash
 git add src/components/MiHistorial/AttendanceModal.tsx
 git commit -m "feat: add AttendanceModal component for editing match notes"
@@ -858,11 +936,13 @@ git commit -m "feat: add AttendanceModal component for editing match notes"
 #### Task 9: Crear MatchAttendanceCard
 
 **Files:**
+
 - Create: `src/components/MiHistorial/MatchAttendanceCard.tsx`
 
 Card por partido. Muestra el partido con el resultado, toggle de asistencia y botón para nota.
 
 **Step 1: Crear el componente**
+
 ```typescript
 // src/components/MiHistorial/MatchAttendanceCard.tsx
 import { useState } from 'react';
@@ -982,11 +1062,13 @@ export function MatchAttendanceCard({
 ```
 
 **Step 2: Verificar tipado**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital && npx tsc --noEmit
 ```
 
 **Step 3: Commit**
+
 ```bash
 git add src/components/MiHistorial/MatchAttendanceCard.tsx
 git commit -m "feat: add MatchAttendanceCard with attendance toggle and note editing"
@@ -997,11 +1079,13 @@ git commit -m "feat: add MatchAttendanceCard with attendance toggle and note edi
 #### Task 10: Crear AttendanceDashboardCard
 
 **Files:**
+
 - Create: `src/components/MiHistorial/AttendanceDashboardCard.tsx`
 
 Mini-card para el dashboard principal que muestra el total de partidos asistidos.
 
 **Step 1: Crear el componente**
+
 ```typescript
 // src/components/MiHistorial/AttendanceDashboardCard.tsx
 interface AttendanceDashboardCardProps {
@@ -1033,6 +1117,7 @@ export function AttendanceDashboardCard({ total, onNavigate }: AttendanceDashboa
 ```
 
 **Step 2: Commit**
+
 ```bash
 git add src/components/MiHistorial/AttendanceDashboardCard.tsx
 git commit -m "feat: add AttendanceDashboardCard for dashboard integration"
@@ -1043,10 +1128,12 @@ git commit -m "feat: add AttendanceDashboardCard for dashboard integration"
 #### Task 11: Crear página MiHistorial
 
 **Files:**
+
 - Create: `src/components/MiHistorial/MiHistorial.tsx`
 - Create: `src/components/MiHistorial/index.ts`
 
 **Step 1: Crear MiHistorial.tsx**
+
 ```typescript
 // src/components/MiHistorial/MiHistorial.tsx
 import { useState, useEffect } from 'react';
@@ -1166,19 +1253,23 @@ export function MiHistorial(props: MiHistorialProps) {
 ```
 
 **Step 2: Crear index.ts**
+
 ```typescript
 // src/components/MiHistorial/index.ts
-export { MiHistorial } from './MiHistorial';
-export { AttendanceDashboardCard } from './AttendanceDashboardCard';
+export { MiHistorial } from "./MiHistorial";
+export { AttendanceDashboardCard } from "./AttendanceDashboardCard";
 ```
 
 **Step 3: Verificar tipado**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital && npx tsc --noEmit
 ```
+
 Expected: sin errores
 
 **Step 4: Commit**
+
 ```bash
 git add src/components/MiHistorial/
 git commit -m "feat: add MiHistorial page component with matches list and attendance tracking"
@@ -1191,6 +1282,7 @@ git commit -m "feat: add MiHistorial page component with matches list and attend
 #### Task 12: Agregar routing a App.tsx
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 Se agrega un mini-router basado en `window.location.pathname` + `window.history.pushState`.
@@ -1202,6 +1294,7 @@ Leer `src/App.tsx` completo antes de modificar (ya leído en la exploración).
 **Step 2: Modificar App.tsx**
 
 En `src/App.tsx`, agregar:
+
 1. El import de `MiHistorial` y `AttendanceDashboardCard`
 2. El import de `useAuth` y `useMatchAttendance`
 3. Estado `currentPath` con `window.location.pathname`
@@ -1237,6 +1330,7 @@ if (currentPath === '/mi-historial') {
 ```
 
 Para el dashboard card, agregar `useAuth` y `useMatchAttendance` al scope del componente, y dentro del JSX del dashboard principal:
+
 ```tsx
 // Dentro del return principal del dashboard, agregar en la sección de partidos:
 const { user } = useAuth();
@@ -1245,27 +1339,31 @@ const { totalAttended } = useMatchAttendance(user?.id ?? null);
 // Y en el JSX, agregar antes de ProximosPartidos:
 <AttendanceDashboardCard
   total={totalAttended}
-  onNavigate={() => navigate('/mi-historial')}
-/>
+  onNavigate={() => navigate("/mi-historial")}
+/>;
 ```
 
 > **Nota de implementación:** Leer el App.tsx actual completo antes de modificar para no romper la estructura existente. Los estados `sidebarCollapsed` y `currentPath` deben coexistir. El `useEffect` para popstate va dentro del componente App, junto con el existente (o combinado).
 
 **Step 3: Verificar tipado**
+
 ```bash
 cd E:/desarrollo/react/la-12-digital && npx tsc --noEmit
 ```
 
 **Step 4: Verificar en browser**
+
 ```bash
 npm run dev
 ```
+
 - Navegar a `http://localhost:3000` → debe verse el dashboard normal con el card nuevo
 - Hacer click en el card o ir a `http://localhost:3000/mi-historial` → debe mostrar LoginForm
 - Loguearse → debe mostrar la lista de partidos
 - Browser back button → debe volver al dashboard
 
 **Step 5: Commit**
+
 ```bash
 git add src/App.tsx
 git commit -m "feat: add /mi-historial route and attendance dashboard card to App.tsx"
@@ -1278,6 +1376,7 @@ git commit -m "feat: add /mi-historial route and attendance dashboard card to Ap
 #### Task 13: Agregar link al Sidebar
 
 **Files:**
+
 - Modify: `src/components/Sidebar/Sidebar.tsx` (o DesktopSidebarBubble.tsx / MobileSidebarButton.tsx según corresponda)
 
 **Step 1: Leer el Sidebar actual**
@@ -1287,6 +1386,7 @@ Leer `src/components/Sidebar/Sidebar.tsx` para entender la estructura de nav ite
 **Step 2: Agregar nav item**
 
 En el array de navigation items del Sidebar, agregar:
+
 ```typescript
 { label: 'Mi Historial', path: '/mi-historial', icon: /* usar un ícono de lucide-react apropiado */ }
 ```
@@ -1298,12 +1398,15 @@ El click en el item debe usar `window.history.pushState` + disparar un `popstate
 > **Nota:** Evaluar si el Sidebar ya tiene un mecanismo de navegación o si solo usa `<a href>`. Si usa `<a href>`, el SPA routing ya funciona porque el Worker sirve `index.html` para cualquier path. Si prefiere no recargar la página, usar el prop `onNavigate`.
 
 **Step 3: Verificar visualmente**
+
 ```bash
 npm run dev
 ```
+
 Verificar que el link aparece en el sidebar y navega correctamente.
 
 **Step 4: Commit**
+
 ```bash
 git add src/components/Sidebar/
 git commit -m "feat: add Mi Historial link to Sidebar navigation"
@@ -1318,12 +1421,14 @@ git commit -m "feat: add Mi Historial link to Sidebar navigation"
 Las variables `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` son **compiladas en el bundle** por Vite durante `npm run build`. No son runtime secrets de Worker.
 
 **Local (dev):** Agregar al `.env`:
+
 ```
 VITE_SUPABASE_URL=https://xxxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGci...
 ```
 
 **Deploy desde CI (GitHub Actions):**
+
 ```yaml
 - name: Deploy
   env:
@@ -1364,7 +1469,7 @@ Supabase permite requests desde cualquier origen por defecto. Para restringirlo,
 - [ ] Agregar nota guarda en la columna `note`
 - [ ] Eliminar asistencia borra la fila
 - [ ] Browser back/forward navega correctamente
-- [ ] `npm run build` compila sin errores (con las VITE_ vars en entorno)
+- [ ] `npm run build` compila sin errores (con las VITE\_ vars en entorno)
 - [ ] `npm run deploy` deploya correctamente
 - [ ] En producción, `/mi-historial` sirve el SPA correctamente
 

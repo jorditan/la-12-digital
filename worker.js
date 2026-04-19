@@ -18,36 +18,36 @@
 
 // FIX: Restrict CORS to known origins instead of wildcard
 const ALLOWED_ORIGINS = [
-  'https://la12digital.com',
-  'https://www.la12digital.com',
-  'https://la-12-digital.matiasowjordan.workers.dev',
-  'http://localhost:5173',    // dev
-  'http://localhost:4173',    // preview
+  "https://la12digital.com",
+  "https://www.la12digital.com",
+  "https://la-12-digital.matiasowjordan.workers.dev",
+  "http://localhost:5173", // dev
+  "http://localhost:4173", // preview
 ];
 
 function getCorsOrigin(request) {
-  const origin = request.headers.get('Origin') || '';
+  const origin = request.headers.get("Origin") || "";
   return ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
 }
 
 function getCorsHeaders(request) {
   return {
-    'Access-Control-Allow-Origin': getCorsOrigin(request),
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    "Access-Control-Allow-Origin": getCorsOrigin(request),
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
   };
 }
 
 // Security headers added to every HTML (SPA) response.
 const SECURITY_HEADERS = {
-  'X-Frame-Options': 'DENY',
-  'X-Content-Type-Options': 'nosniff',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+  "X-Frame-Options": "DENY",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
   // Tell browsers to enforce HTTPS for one year (including subdomains).
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
   // Prevent cross-origin windows from retaining a reference to this page.
-  'Cross-Origin-Opener-Policy': 'same-origin',
+  "Cross-Origin-Opener-Policy": "same-origin",
   // CSP: restrict execution contexts while allowing the fonts and external APIs the
   // app actually needs. 'unsafe-inline' on style-src covers React inline style props
   // and Tailwind. Scripts are module-only (no inline scripts in the Vite build).
@@ -55,7 +55,7 @@ const SECURITY_HEADERS = {
   // development Vite serves without this worker, so no CSP applies there.
   // Open-Meteo (weather) and Wikipedia are called directly from the browser.
   // All other API calls are proxied through /api/* handlers on 'self'.
-  'Content-Security-Policy': [
+  "Content-Security-Policy": [
     "default-src 'self'",
     "script-src 'self'",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
@@ -64,7 +64,7 @@ const SECURITY_HEADERS = {
     "connect-src 'self' https://*.wikipedia.org https://api.open-meteo.com",
     "frame-ancestors 'none'",
     "object-src 'none'",
-  ].join('; '),
+  ].join("; "),
 };
 
 /** FIX: Simple in-memory rate limiter (resets per worker isolate restart) */
@@ -93,44 +93,44 @@ export default {
     const url = new URL(request.url);
 
     // FIX: Rate limiting for /api/* routes
-    if (url.pathname.startsWith('/api/')) {
-      const clientIp = request.headers.get('CF-Connecting-IP') ?? 'unknown';
+    if (url.pathname.startsWith("/api/")) {
+      const clientIp = request.headers.get("CF-Connecting-IP") ?? "unknown";
       if (isRateLimited(clientIp)) {
-        return new Response('Too Many Requests', {
+        return new Response("Too Many Requests", {
           status: 429,
           headers: {
-            'Retry-After': '60',
-            'Content-Type': 'text/plain',
+            "Retry-After": "60",
+            "Content-Type": "text/plain",
           },
         });
       }
     }
 
     // Route YouTube API calls through the proxy (key stored as VITE_YOUTUBE_KEY secret).
-    if (url.pathname.startsWith('/api/youtube/')) {
+    if (url.pathname.startsWith("/api/youtube/")) {
       return handleYoutubeProxy(request, url, env);
     }
 
     // Route Newsdata.io API calls through the proxy (key stored as VITE_NEWS_API_KEY secret).
-    if (url.pathname === '/api/newsdata') {
+    if (url.pathname === "/api/newsdata") {
       return handleNewsdataProxy(request, url, env);
     }
 
     // Route LiveScore API calls through the proxy (credentials stored as Cloudflare secrets).
-    if (url.pathname.startsWith('/api/livescore/')) {
+    if (url.pathname.startsWith("/api/livescore/")) {
       return handleLivescoreProxy(request, url, env);
     }
 
     // Route Head-to-Head calls: /api/h2h/{team1_id}/{team2_id}
-    if (url.pathname.startsWith('/api/h2h/')) {
+    if (url.pathname.startsWith("/api/h2h/")) {
       return handleH2HProxy(request, url, env);
     }
 
     // Everything else is served by Workers Assets (the React SPA in ./dist).
     // Attach security headers to HTML responses so the SPA gets a proper security policy.
     const assetResponse = await env.ASSETS.fetch(request);
-    const contentType = assetResponse.headers.get('Content-Type') ?? '';
-    if (contentType.includes('text/html')) {
+    const contentType = assetResponse.headers.get("Content-Type") ?? "";
+    if (contentType.includes("text/html")) {
       const headers = new Headers(assetResponse.headers);
       for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
         headers.set(name, value);
@@ -146,28 +146,32 @@ export default {
 
 async function handleYoutubeProxy(request, url, env) {
   const corsHeaders = getCorsHeaders(request);
-  if (request.method === 'OPTIONS') {
+  if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
-  if (request.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405 });
+  if (request.method !== "GET") {
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
-  const subpath = url.pathname.replace(/^\/api\/youtube\//, '');
+  const subpath = url.pathname.replace(/^\/api\/youtube\//, "");
   const params = new URLSearchParams(url.search);
-  params.set('key', env.VITE_YOUTUBE_KEY ?? '');
+  params.set("key", env.VITE_YOUTUBE_KEY ?? "");
 
   let upstreamRes;
   try {
     upstreamRes = await fetch(
       `https://www.googleapis.com/youtube/v3/${subpath}?${params}`,
-      { headers: { 'Referer': 'https://la-12-digital.matiasowjordan.workers.dev/' } },
+      {
+        headers: {
+          Referer: "https://la-12-digital.matiasowjordan.workers.dev/",
+        },
+      },
     );
   } catch (err) {
-    console.error('[youtube-proxy] upstream fetch failed:', err);
-    return new Response(JSON.stringify({ error: 'upstream_error' }), {
+    console.error("[youtube-proxy] upstream fetch failed:", err);
+    return new Response(JSON.stringify({ error: "upstream_error" }), {
       status: 502,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   }
 
@@ -175,8 +179,9 @@ async function handleYoutubeProxy(request, url, env) {
   return new Response(body, {
     status: upstreamRes.status,
     headers: {
-      'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
-      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      "Content-Type":
+        upstreamRes.headers.get("content-type") ?? "application/json",
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
       ...corsHeaders,
     },
   });
@@ -184,24 +189,24 @@ async function handleYoutubeProxy(request, url, env) {
 
 async function handleNewsdataProxy(request, url, env) {
   const corsHeaders = getCorsHeaders(request);
-  if (request.method === 'OPTIONS') {
+  if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
-  if (request.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405 });
+  if (request.method !== "GET") {
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
   const params = new URLSearchParams(url.search);
-  params.set('apikey', env.VITE_NEWS_API_KEY ?? '');
+  params.set("apikey", env.VITE_NEWS_API_KEY ?? "");
 
   let upstreamRes;
   try {
     upstreamRes = await fetch(`https://newsdata.io/api/1/news?${params}`);
   } catch (err) {
-    console.error('[newsdata-proxy] upstream fetch failed:', err);
-    return new Response(JSON.stringify({ error: 'upstream_error' }), {
+    console.error("[newsdata-proxy] upstream fetch failed:", err);
+    return new Response(JSON.stringify({ error: "upstream_error" }), {
       status: 502,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   }
 
@@ -209,8 +214,9 @@ async function handleNewsdataProxy(request, url, env) {
   return new Response(body, {
     status: upstreamRes.status,
     headers: {
-      'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
-      'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600',
+      "Content-Type":
+        upstreamRes.headers.get("content-type") ?? "application/json",
+      "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600",
       ...corsHeaders,
     },
   });
@@ -224,34 +230,38 @@ const SAFE_LIVESCORE_PATH = /^(\/[a-zA-Z0-9][a-zA-Z0-9_\-.]*)+$/;
 
 async function handleH2HProxy(request, url, env) {
   const corsHeaders = getCorsHeaders(request);
-  if (request.method === 'OPTIONS') {
+  if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
-  if (request.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405 });
+  if (request.method !== "GET") {
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
   // Expect /api/h2h/{team1_id}/{team2_id}
-  const parts = url.pathname.replace(/^\/api\/h2h\//, '').split('/');
-  if (parts.length !== 2 || !/^\d+$/.test(parts[0]) || !/^\d+$/.test(parts[1])) {
-    return new Response('Invalid path', { status: 400 });
+  const parts = url.pathname.replace(/^\/api\/h2h\//, "").split("/");
+  if (
+    parts.length !== 2 ||
+    !/^\d+$/.test(parts[0]) ||
+    !/^\d+$/.test(parts[1])
+  ) {
+    return new Response("Invalid path", { status: 400 });
   }
   const [team1Id, team2Id] = parts;
 
   const params = new URLSearchParams();
-  params.set('key', env.LIVESCORE_KEY ?? '');
-  params.set('secret', env.LIVESCORE_SECRET ?? '');
+  params.set("key", env.LIVESCORE_KEY ?? "");
+  params.set("secret", env.LIVESCORE_SECRET ?? "");
 
   let upstreamRes;
   try {
-      upstreamRes = await fetch(
-        `https://livescore-api.com/api-client/teams/head2head.json?team1_id=${team1Id}&team2_id=${team2Id}&${params}`,
-      );
+    upstreamRes = await fetch(
+      `https://livescore-api.com/api-client/teams/head2head.json?team1_id=${team1Id}&team2_id=${team2Id}&${params}`,
+    );
   } catch (err) {
-    console.error('[h2h-proxy] upstream fetch failed:', err);
-    return new Response(JSON.stringify({ error: 'upstream_error' }), {
+    console.error("[h2h-proxy] upstream fetch failed:", err);
+    return new Response(JSON.stringify({ error: "upstream_error" }), {
       status: 502,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   }
 
@@ -259,8 +269,9 @@ async function handleH2HProxy(request, url, env) {
   return new Response(body, {
     status: upstreamRes.status,
     headers: {
-      'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
-      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+      "Content-Type":
+        upstreamRes.headers.get("content-type") ?? "application/json",
+      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
       ...corsHeaders,
     },
   });
@@ -268,23 +279,23 @@ async function handleH2HProxy(request, url, env) {
 
 async function handleLivescoreProxy(request, url, env) {
   const corsHeaders = getCorsHeaders(request);
-  if (request.method === 'OPTIONS') {
+  if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
-  if (request.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405 });
+  if (request.method !== "GET") {
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
   // Strip the /api/livescore prefix; the remainder is forwarded to the upstream API.
-  const subpath = url.pathname.replace(/^\/api\/livescore/, '');
+  const subpath = url.pathname.replace(/^\/api\/livescore/, "");
   if (!subpath || !SAFE_LIVESCORE_PATH.test(subpath)) {
-    return new Response('Invalid path', { status: 400 });
+    return new Response("Invalid path", { status: 400 });
   }
 
   // Inject credentials server-side so they are never exposed to the browser.
   const params = new URLSearchParams(url.search);
-  params.set('key', env.LIVESCORE_KEY ?? '');
-  params.set('secret', env.LIVESCORE_SECRET ?? '');
+  params.set("key", env.LIVESCORE_KEY ?? "");
+  params.set("secret", env.LIVESCORE_SECRET ?? "");
 
   let upstreamRes;
   try {
@@ -292,10 +303,10 @@ async function handleLivescoreProxy(request, url, env) {
       `https://livescore-api.com/api-client${subpath}?${params}`,
     );
   } catch (err) {
-    console.error('[livescore-proxy] upstream fetch failed:', err);
-    return new Response(JSON.stringify({ error: 'upstream_error' }), {
+    console.error("[livescore-proxy] upstream fetch failed:", err);
+    return new Response(JSON.stringify({ error: "upstream_error" }), {
       status: 502,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   }
 
@@ -303,8 +314,9 @@ async function handleLivescoreProxy(request, url, env) {
   return new Response(body, {
     status: upstreamRes.status,
     headers: {
-      'Content-Type': upstreamRes.headers.get('content-type') ?? 'application/json',
-      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      "Content-Type":
+        upstreamRes.headers.get("content-type") ?? "application/json",
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
       ...corsHeaders,
     },
   });

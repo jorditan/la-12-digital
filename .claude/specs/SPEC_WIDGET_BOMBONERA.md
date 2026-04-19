@@ -1,4 +1,5 @@
 # SPEC: Migración de clima — OWM → Open-Meteo
+
 **Fecha:** Marzo 2026
 **Stack:** React + Vite + TypeScript (frontend) · Go (backend/Worker)
 **Scope:** Reemplazar el cliente de OWM por Open-Meteo en el backend y actualizar el contrato de datos con el frontend
@@ -58,15 +59,15 @@ https://api.open-meteo.com/v1/forecast?latitude=-34.6345&longitude=-58.3699&hour
 
 ### Tabla de WMO Weather Codes relevantes
 
-| Code | Descripción |
-|---|---|
-| 0 | Cielo despejado |
-| 1, 2, 3 | Mayormente despejado / Parcialmente nublado / Nublado |
-| 45, 48 | Niebla |
-| 51, 53, 55 | Llovizna leve / moderada / intensa |
-| 61, 63, 65 | Lluvia leve / moderada / intensa |
-| 80, 81, 82 | Chaparrones leve / moderado / violento |
-| 95 | Tormenta eléctrica |
+| Code       | Descripción                                           |
+| ---------- | ----------------------------------------------------- |
+| 0          | Cielo despejado                                       |
+| 1, 2, 3    | Mayormente despejado / Parcialmente nublado / Nublado |
+| 45, 48     | Niebla                                                |
+| 51, 53, 55 | Llovizna leve / moderada / intensa                    |
+| 61, 63, 65 | Lluvia leve / moderada / intensa                      |
+| 80, 81, 82 | Chaparrones leve / moderado / violento                |
+| 95         | Tormenta eléctrica                                    |
 
 ---
 
@@ -241,7 +242,7 @@ export interface HourlyForecast {
   windSpeedKmh: number;
   weatherCode: number;
   description: string;
-  isGoodConditions: boolean;    // ← nuevo campo
+  isGoodConditions: boolean; // ← nuevo campo
 }
 ```
 
@@ -257,10 +258,10 @@ export function useMatchForecast(matchDate: string, matchTime: string) {
   const matchTimeParam = `${matchDate}T${matchTime}`;
 
   return useQuery({
-    queryKey: ['forecast', matchTimeParam],
+    queryKey: ["forecast", matchTimeParam],
     queryFn: async (): Promise<HourlyForecast> => {
       const res = await fetch(`/api/weather?matchTime=${matchTimeParam}`);
-      if (!res.ok) throw new Error('Weather fetch failed');
+      if (!res.ok) throw new Error("Weather fetch failed");
       return res.json();
     },
     staleTime: 1000 * 60 * 60, // 1 hora
@@ -306,11 +307,13 @@ Reemplazar las referencias a los campos de OWM por los nuevos:
 ## Variables de entorno
 
 ### Eliminar
+
 ```
 OWM_API_KEY=...
 ```
 
 ### No agregar nada nuevo
+
 Open-Meteo no requiere API key ni configuración adicional.
 
 ---

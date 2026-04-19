@@ -1,5 +1,5 @@
-import { ChevronUp } from 'lucide-react';
-import { Button } from '../../ui/Button';
+import { ChevronUp } from "lucide-react";
+import { Button } from "../../ui/Button";
 
 type MobileSidebarButtonProps = {
   onClick: () => void;
@@ -15,7 +15,6 @@ export function MobileSidebarButton({ onClick }: MobileSidebarButtonProps) {
     >
       <span className="flex items-center gap-2">
         <span className="flex flex-col items-start leading-none">
-
           <span className="font-serif font-semibold  text-[14px]">
             Ver posiciones
           </span>

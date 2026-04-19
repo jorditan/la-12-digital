@@ -1,26 +1,31 @@
-import { useState, useEffect } from 'react';
-import { Youtube } from 'lucide-react';
-import { fetchVideos, type VideoYoutube } from '../../services/apifootball';
-import { CANAL_DEFAULT, CANALES_YOUTUBE } from '../../data/canalesYoutube';
-import { Badge } from '../ui/Badge';
-import { Button } from '../ui/Button';
-import { CardVideo } from '../CardVideo';
+import { useState, useEffect } from "react";
+import { Youtube } from "lucide-react";
+import { fetchVideos, type VideoYoutube } from "../../services/apifootball";
+import { CANAL_DEFAULT, CANALES_YOUTUBE } from "../../data/canalesYoutube";
+import { Badge } from "../ui/Badge";
+import { Button } from "../ui/Button";
+import { CardVideo } from "../CardVideo";
 
-type Estado = 'loading' | 'error' | 'ok';
+type Estado = "loading" | "error" | "ok";
 
 export function CanalYoutube() {
   const [canal, setCanal] = useState(CANAL_DEFAULT);
   const [videos, setVideos] = useState<VideoYoutube[]>([]);
-  const [estado, setEstado] = useState<Estado>('loading');
+  const [estado, setEstado] = useState<Estado>("loading");
 
   const cargar = (handle: string) => {
-    setEstado('loading');
+    setEstado("loading");
     fetchVideos(handle)
-      .then((data) => { setVideos(data); setEstado('ok'); })
-      .catch(() => setEstado('error'));
+      .then((data) => {
+        setVideos(data);
+        setEstado("ok");
+      })
+      .catch(() => setEstado("error"));
   };
 
-  useEffect(() => { cargar(canal.handle); }, [canal]);
+  useEffect(() => {
+    cargar(canal.handle);
+  }, [canal]);
 
   return (
     <section aria-label="Videos de YouTube" className="w-full">
@@ -34,7 +39,7 @@ export function CanalYoutube() {
         </div>
         {/* Pills de canal */}
         <div className="flex flex-wrap gap-2">
-          {CANALES_YOUTUBE.map(c => (
+          {CANALES_YOUTUBE.map((c) => (
             <Badge
               key={c.handle}
               onClick={() => setCanal(c)}
@@ -51,9 +56,9 @@ export function CanalYoutube() {
       {/* Separador dorado */}
       <div className="w-full h-px bg-boca-gold/30 mb-4" />
 
-      {estado === 'loading' && <SkeletonVideos />}
+      {estado === "loading" && <SkeletonVideos />}
 
-      {estado === 'error' && (
+      {estado === "error" && (
         <div className="flex flex-col items-center gap-3 py-10 text-center">
           <p className="font-sans text-sm text-text-secondary">
             No se pudieron cargar los videos
@@ -68,13 +73,13 @@ export function CanalYoutube() {
         </div>
       )}
 
-      {estado === 'ok' && videos.length === 0 && (
+      {estado === "ok" && videos.length === 0 && (
         <p className="font-sans text-sm text-white/50 py-8 text-center">
           No hay videos disponibles
         </p>
       )}
 
-      {estado === 'ok' && videos.length > 0 && (
+      {estado === "ok" && videos.length > 0 && (
         <>
           {/* Mobile: scroll horizontal con fade + hint */}
           <div className="sm:hidden">
@@ -82,7 +87,7 @@ export function CanalYoutube() {
           </div>
           {/* Desktop: grid homogéneo, sin hero sobredimensionado */}
           <div className="hidden sm:grid grid-cols-3 xl:grid-cols-4 gap-3">
-            {videos.slice(0, 12).map(video => (
+            {videos.slice(0, 12).map((video) => (
               <CardVideo key={video.id} video={video} compact />
             ))}
           </div>
@@ -96,16 +101,19 @@ function VideoStack({ videos }: { videos: VideoYoutube[] }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between px-1">
-        <p className="font-serif text-[12px] ">
-          Desliza hacia abajo
-        </p>
+        <p className="font-serif text-[12px] ">Desliza hacia abajo</p>
         <p className="font-serif text-[12px] text-text-secondary">
           {Math.min(videos.length, 8)} videos
         </p>
       </div>
       <div
         className="max-h-[32rem] space-y-3 overflow-y-auto overscroll-contain pr-1 snap-y snap-mandatory"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+        style={
+          {
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          } as React.CSSProperties
+        }
       >
         {videos.slice(0, 8).map((video) => (
           <div key={video.id} className="snap-start">

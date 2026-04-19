@@ -1,15 +1,19 @@
 # Especificación de Requisitos del Producto (PRD) - Minijuego: El Equipo de Memoria (Boca Juniors)
 
 ## 1. Visión General
+
 **Nombre del Proyecto:** El Equipo de Memoria Xeneize
 **Objetivo:** Desarrollar un minijuego web interactivo enfocado exclusivamente en la historia de los planteles campeones del Club Atlético Boca Juniors. El objetivo del jugador es poner a prueba su memoria escribiendo la mayor cantidad de nombres de futbolistas que conformaron un equipo histórico específico dentro de un límite de tiempo.
 
 ## 2. Base de Datos (Estructura Estática)
+
 El proyecto consumirá un único archivo JSON estático que representará la base de datos de los planteles. Debe ubicarse en el directorio de datos del proyecto.
 
 ### `equipos.json`
+
 Array de objetos con formaciones/planteles históricos completos.
 **Esquema:**
+
 ```json
 {
   "campeonato": "string",
@@ -36,3 +40,4 @@ Remover tildes y signos de puntuación.
 Hacer validaciones sin distinguir mayúsculas de minúsculas (Case Insensitive).
 Permitir la validación por apellido. Por ejemplo, si en el JSON figura "Diego Armando Maradona", el sistema debe darlo por válido si el usuario simplemente tipea "Maradona" o "diego maradona".
 Paso 5: Implementa la lógica de estado para el reloj de cuenta regresiva y el cálculo de puntaje final (cantidad de jugadores adivinados sobre el total).
+```

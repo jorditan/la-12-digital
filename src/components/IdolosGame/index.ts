@@ -1,1 +1,1 @@
-export { IdolosGame } from './IdolosGame';
+export { IdolosGame } from "./IdolosGame";

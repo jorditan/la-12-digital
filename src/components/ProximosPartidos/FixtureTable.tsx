@@ -1,12 +1,12 @@
-import { CalendarPlus, History } from 'lucide-react';
-import type { ProximoPartido } from '../../services/apifootball';
-import { Badge } from '../ui/Badge';
-import { buildGCalLink } from '../../utils/calendarLink';
-import { H2HModal } from './H2HModal';
-import { useFixtureTableH2H } from './hooks/useFixtureTableH2H';
-import { TeamCell } from './TeamCell';
-import { useFixtureTableRows } from './hooks/useFixtureTableRows';
-import { formatDia, formatFechaCorta, getTableRowClass } from './utils';
+import { CalendarPlus, History } from "lucide-react";
+import type { ProximoPartido } from "../../services/apifootball";
+import { Badge } from "../ui/Badge";
+import { buildGCalLink } from "../../utils/calendarLink";
+import { H2HModal } from "./H2HModal";
+import { useFixtureTableH2H } from "./hooks/useFixtureTableH2H";
+import { TeamCell } from "./TeamCell";
+import { useFixtureTableRows } from "./hooks/useFixtureTableRows";
+import { formatDia, formatFechaCorta, getTableRowClass } from "./utils";
 
 interface FixtureTableProps {
   partidos: ProximoPartido[];
@@ -49,10 +49,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
           <tbody>
             {rows.map(({ partido: p, index, bocaEsLocal, rival }) => {
               return (
-                <tr
-                  key={p.fixtureId}
-                  className={getTableRowClass(index)}
-                >
+                <tr key={p.fixtureId} className={getTableRowClass(index)}>
                   {/* Fecha */}
                   <td className="py-2.5 px-3">
                     <div className="flex flex-col leading-tight w-full">
@@ -104,7 +101,9 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                   {/* Copa */}
                   <td className="py-2.5 px-3 hidden md:table-cell">
                     <Badge
-                      variant={p.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
+                      variant={
+                        p.competition === "Copa Libertadores" ? "gold" : "blue"
+                      }
                       className="px-1.5 whitespace-nowrap"
                     >
                       {p.competition}

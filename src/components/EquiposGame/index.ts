@@ -1,1 +1,1 @@
-export { EquiposGame } from './EquiposGame';
+export { EquiposGame } from "./EquiposGame";

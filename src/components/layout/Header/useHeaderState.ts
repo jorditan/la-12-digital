@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-export function useHeaderState(onUploadAvatar: (file: File) => Promise<{ error?: string }>) {
+export function useHeaderState(
+  onUploadAvatar: (file: File) => Promise<{ error?: string }>,
+) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -9,8 +11,8 @@ export function useHeaderState(onUploadAvatar: (file: File) => Promise<{ error?:
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 0);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -20,19 +22,22 @@ export function useHeaderState(onUploadAvatar: (file: File) => Promise<{ error?:
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(e.target as Node)
+      ) {
         setIsUserMenuOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +46,7 @@ export function useHeaderState(onUploadAvatar: (file: File) => Promise<{ error?:
       setIsUserMenuOpen(false);
       await onUploadAvatar(file);
     }
-    e.target.value = '';
+    e.target.value = "";
   };
 
   return {
@@ -55,4 +60,3 @@ export function useHeaderState(onUploadAvatar: (file: File) => Promise<{ error?:
     handleAvatarChange,
   };
 }
-

@@ -1,4 +1,4 @@
-import { Button } from '../Button';
+import { Button } from "../Button";
 
 export interface TabOption<T extends string> {
   value: T;
@@ -17,16 +17,16 @@ export function Tab<T extends string>({
   options,
   value,
   onChange,
-  className = '',
+  className = "",
   fullWidth = false,
 }: TabProps<T>) {
   return (
     <div
       className={[
-        'flex items-center gap-0.5 bg-boca-blue rounded-sm p-0.5 border border-boca-gold/10',
-        fullWidth ? 'w-full' : 'w-fit',
+        "flex items-center gap-0.5 bg-boca-blue rounded-sm p-0.5 border border-boca-gold/10",
+        fullWidth ? "w-full" : "w-fit",
         className,
-      ].join(' ')}
+      ].join(" ")}
       role="tablist"
     >
       {options.map((option) => {
@@ -43,12 +43,12 @@ export function Tab<T extends string>({
             variant="ghost"
             size="xs"
             className={[
-              'rounded-[2px] font-medium truncate',
-              fullWidth ? 'flex-1' : '',
+              "rounded-[2px] font-medium truncate",
+              fullWidth ? "flex-1" : "",
               isActive
-                ? 'bg-boca-gold/20 text-boca-gold ring-1 ring-inset ring-boca-gold/35'
-                : 'text-text-secondary hover:text-white hover:bg-white/5',
-            ].join(' ')}
+                ? "bg-boca-gold/20 text-boca-gold ring-1 ring-inset ring-boca-gold/35"
+                : "text-text-secondary hover:text-white hover:bg-white/5",
+            ].join(" ")}
           >
             {option.label}
           </Button>

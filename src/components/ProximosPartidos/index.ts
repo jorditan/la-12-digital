@@ -1,1 +1,1 @@
-export { ProximosPartidos } from './ProximosPartidos';
+export { ProximosPartidos } from "./ProximosPartidos";

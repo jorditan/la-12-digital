@@ -1,18 +1,23 @@
-import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
-import { Button } from '../ui/Button';
-import { type BocaEquipo } from '../../data/bocaEquipos';
-import { type GameState, type PlayerState, type Score, ROUND_SECS } from './types';
-import { TimerBar } from './TimerBar';
-import { useModalEffects } from '../../hooks/useModalEffects';
-import { FormacionPitch } from './FormacionPitch';
+import { createPortal } from "react-dom";
+import { X } from "lucide-react";
+import { Button } from "../ui/Button";
+import { type BocaEquipo } from "../../data/bocaEquipos";
+import {
+  type GameState,
+  type PlayerState,
+  type Score,
+  ROUND_SECS,
+} from "./types";
+import { TimerBar } from "./TimerBar";
+import { useModalEffects } from "../../hooks/useModalEffects";
+import { FormacionPitch } from "./FormacionPitch";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function formatTime(secs: number): string {
   const m = Math.floor(secs / 60);
   const s = secs % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
+  return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -35,9 +40,12 @@ export interface GameModalProps {
 // ── Secciones ─────────────────────────────────────────────────────────────────
 
 function ModalHeader({
-  equipo, score, gameState, onClose,
-}: Pick<GameModalProps, 'equipo' | 'score' | 'gameState' | 'onClose'>) {
-  const isFinished = gameState === 'won' || gameState === 'timeout';
+  equipo,
+  score,
+  gameState,
+  onClose,
+}: Pick<GameModalProps, "equipo" | "score" | "gameState" | "onClose">) {
+  const isFinished = gameState === "won" || gameState === "timeout";
   return (
     <div className="flex items-start justify-between gap-3 px-4 py-3 border-b border-boca-gold/10">
       <div className="min-w-0">
@@ -47,11 +55,14 @@ function ModalHeader({
         <p className="font-sans text-xs text-text-secondary mt-0.5 leading-snug">
           {equipo.descripcion}
         </p>
-        {equipo.formacion_tactica && !equipo.formacion_tactica.toLowerCase().includes('no especificada') && (
-          <p className="font-sans text-[10px] text-boca-gold/60 mt-1 italic leading-snug">
-            {equipo.formacion_tactica}
-          </p>
-        )}
+        {equipo.formacion_tactica &&
+          !equipo.formacion_tactica
+            .toLowerCase()
+            .includes("no especificada") && (
+            <p className="font-sans text-[10px] text-boca-gold/60 mt-1 italic leading-snug">
+              {equipo.formacion_tactica}
+            </p>
+          )}
       </div>
       <div className="flex items-center gap-3 shrink-0 pt-0.5">
         {isFinished && (
@@ -73,8 +84,14 @@ function ModalHeader({
   );
 }
 
-function TimerSection({ timer, gameState }: { timer: number; gameState: GameState }) {
-  if (gameState === 'won' || gameState === 'timeout') return null;
+function TimerSection({
+  timer,
+  gameState,
+}: {
+  timer: number;
+  gameState: GameState;
+}) {
+  if (gameState === "won" || gameState === "timeout") return null;
   return (
     <div className="px-4 pt-3 flex items-center gap-3">
       <TimerBar timer={timer} total={ROUND_SECS} />
@@ -86,8 +103,21 @@ function TimerSection({ timer, gameState }: { timer: number; gameState: GameStat
 }
 
 function PlayingInput({
-  input, inputError, inputRef, onInputChange, onSubmit, onPlayNext,
-}: Pick<GameModalProps, 'input' | 'inputError' | 'inputRef' | 'onInputChange' | 'onSubmit' | 'onPlayNext'>) {
+  input,
+  inputError,
+  inputRef,
+  onInputChange,
+  onSubmit,
+  onPlayNext,
+}: Pick<
+  GameModalProps,
+  | "input"
+  | "inputError"
+  | "inputRef"
+  | "onInputChange"
+  | "onSubmit"
+  | "onPlayNext"
+>) {
   return (
     <div className="space-y-2">
       <form onSubmit={onSubmit} className="flex gap-2">
@@ -98,13 +128,13 @@ function PlayingInput({
           placeholder="Nombre o apellido..."
           autoComplete="off"
           className={[
-            'flex-1 min-w-0 px-3 py-2 text-sm font-sans',
-            'bg-boca-blue rounded-sm text-white placeholder:text-text-secondary',
-            'focus:outline-none transition-colors',
+            "flex-1 min-w-0 px-3 py-2 text-sm font-sans",
+            "bg-boca-blue rounded-sm text-white placeholder:text-text-secondary",
+            "focus:outline-none transition-colors",
             inputError
-              ? 'border border-red-500 focus:border-red-400'
-              : 'border border-boca-gold/20 focus:border-boca-gold/50',
-          ].join(' ')}
+              ? "border border-red-500 focus:border-red-400"
+              : "border border-boca-gold/20 focus:border-boca-gold/50",
+          ].join(" ")}
         />
         <Button type="submit" size="sm" variant="primary">
           ¡Dale Bo!
@@ -124,19 +154,26 @@ function PlayingInput({
 }
 
 function ResultFooter({
-  gameState, score, onClose, onPlayNext,
-}: Pick<GameModalProps, 'gameState' | 'score' | 'onClose' | 'onPlayNext'>) {
-  const won = gameState === 'won';
+  gameState,
+  score,
+  onClose,
+  onPlayNext,
+}: Pick<GameModalProps, "gameState" | "score" | "onClose" | "onPlayNext">) {
+  const won = gameState === "won";
   return (
     <div className="space-y-3 pt-1">
-      <div className={[
-        'flex items-center gap-2 px-3 py-2 rounded-sm font-sans text-sm font-semibold',
-        won
-          ? 'bg-status-win-subtle border border-status-win text-status-win'
-          : 'bg-status-loss-subtle border border-status-loss text-status-negative',
-      ].join(' ')}>
-        <span>{won ? '¡Campeón! ' : 'Tiempo agotado · '}</span>
-        <span className="tabular-nums">{score.guessed}/{score.total} jugadores</span>
+      <div
+        className={[
+          "flex items-center gap-2 px-3 py-2 rounded-sm font-sans text-sm font-semibold",
+          won
+            ? "bg-status-win-subtle border border-status-win text-status-win"
+            : "bg-status-loss-subtle border border-status-loss text-status-negative",
+        ].join(" ")}
+      >
+        <span>{won ? "¡Campeón! " : "Tiempo agotado · "}</span>
+        <span className="tabular-nums">
+          {score.guessed}/{score.total} jugadores
+        </span>
       </div>
       <div className="flex justify-between gap-2">
         <Button size="sm" variant="outline" onClick={onClose}>
@@ -154,19 +191,22 @@ function ResultFooter({
 
 export function GameModal(props: GameModalProps) {
   const { gameState, equipo, players, onClose } = props;
-  const isFinished = gameState === 'won' || gameState === 'timeout';
+  const isFinished = gameState === "won" || gameState === "timeout";
 
   useModalEffects(onClose);
 
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
-      style={{ background: 'var(--color-modal-backdrop-dark)', backdropFilter: 'blur(4px)' }}
+      style={{
+        background: "var(--color-modal-backdrop-dark)",
+        backdropFilter: "blur(4px)",
+      }}
       onClick={onClose}
     >
       <div
         className="relative w-full max-w-none bg-boca-blue-light border border-boca-gold/20 rounded-t-2xl sm:rounded-sm overflow-hidden shadow-2xl animate-fade-in flex flex-col max-h-[88dvh] sm:max-w-md sm:max-h-[90dvh]"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1 sm:hidden" />
         <ModalHeader
@@ -183,7 +223,7 @@ export function GameModal(props: GameModalProps) {
         </div>
 
         <div className="p-4 border-t border-boca-gold/10 space-y-3">
-          {gameState === 'playing' && (
+          {gameState === "playing" && (
             <PlayingInput
               input={props.input}
               inputError={props.inputError}

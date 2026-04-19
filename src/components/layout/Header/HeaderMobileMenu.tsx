@@ -1,11 +1,14 @@
-import { NavLink } from 'react-router-dom';
-import { LogOut, User } from 'lucide-react';
-import { Button } from '../../ui/Button';
-import { NAV_ITEMS } from './constants';
-import { UserAvatar } from './UserAvatar';
-import type { HeaderProps } from './types';
+import { NavLink } from "react-router-dom";
+import { LogOut, User } from "lucide-react";
+import { Button } from "../../ui/Button";
+import { NAV_ITEMS } from "./constants";
+import { UserAvatar } from "./UserAvatar";
+import type { HeaderProps } from "./types";
 
-type HeaderMobileMenuProps = Pick<HeaderProps, 'user' | 'onLoginClick' | 'onLogout'> & {
+type HeaderMobileMenuProps = Pick<
+  HeaderProps,
+  "user" | "onLoginClick" | "onLogout"
+> & {
   setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -16,7 +19,10 @@ export function HeaderMobileMenu({
   setIsMenuOpen,
 }: HeaderMobileMenuProps) {
   return (
-    <nav aria-label="Navegación móvil" className="sm:hidden bg-boca-blue-light border-b border-boca-gold animate-fade-in">
+    <nav
+      aria-label="Navegación móvil"
+      className="sm:hidden bg-boca-blue-light border-b border-boca-gold animate-fade-in"
+    >
       <ul className="flex flex-col px-4 py-2" role="list">
         {NAV_ITEMS.map(({ label, href, end }) => (
           <li key={href}>
@@ -24,11 +30,15 @@ export function HeaderMobileMenu({
               to={href}
               end={end}
               onClick={() => setIsMenuOpen(false)}
-              className={({ isActive }) => [
-                'flex items-center py-3 border-b border-boca-gold/10 last:border-0',
-                'font-serif text-sm font-medium leading-5 transition-colors duration-normal',
-                isActive ? 'text-boca-gold' : 'text-text-nav hover:text-boca-gold',
-              ].join(' ')}
+              className={({ isActive }) =>
+                [
+                  "flex items-center py-3 border-b border-boca-gold/10 last:border-0",
+                  "font-serif text-sm font-medium leading-5 transition-colors duration-normal",
+                  isActive
+                    ? "text-boca-gold"
+                    : "text-text-nav hover:text-boca-gold",
+                ].join(" ")
+              }
             >
               {label}
             </NavLink>
@@ -76,4 +86,3 @@ export function HeaderMobileMenu({
     </nav>
   );
 }
-

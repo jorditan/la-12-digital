@@ -1,8 +1,8 @@
-import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
-import { useModalEffects } from '../../hooks/useModalEffects';
-import { useH2HModalData } from './hooks/useH2HModalData';
-import { formatH2HDate, formatH2HScore, RESULT_CFG } from './utils';
+import { createPortal } from "react-dom";
+import { X } from "lucide-react";
+import { useModalEffects } from "../../hooks/useModalEffects";
+import { useH2HModalData } from "./hooks/useH2HModalData";
+import { formatH2HDate, formatH2HScore, RESULT_CFG } from "./utils";
 
 interface H2HModalProps {
   onClose: () => void;
@@ -32,7 +32,9 @@ export function H2HModal({ onClose, rivalId, rivalName }: H2HModalProps) {
             <p className="font-serif font-semibold text-md text-white leading-tight truncate">
               Boca vs {rivalName}
             </p>
-            <small className="text-white/40">Resultado de los últimos partidos</small>
+            <small className="text-white/40">
+              Resultado de los últimos partidos
+            </small>
           </div>
           <button
             onClick={onClose}
@@ -45,7 +47,7 @@ export function H2HModal({ onClose, rivalId, rivalName }: H2HModalProps) {
 
         {/* Body */}
         <div className="px-5 py-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:pb-4 flex flex-col gap-4 overflow-y-auto">
-          {status === 'loading' && (
+          {status === "loading" && (
             <div className="flex items-center justify-center gap-1.5 py-6">
               {[0, 1, 2].map((i) => (
                 <span
@@ -57,26 +59,37 @@ export function H2HModal({ onClose, rivalId, rivalName }: H2HModalProps) {
             </div>
           )}
 
-          {status !== 'loading' && finished.length === 0 && (
+          {status !== "loading" && finished.length === 0 && (
             <p className="text-[11px] text-white/30 text-center py-6 italic">
               Sin historial disponible entre estos equipos
             </p>
           )}
 
-          {status !== 'loading' && finished.length > 0 && (
+          {status !== "loading" && finished.length > 0 && (
             <>
               {/* W / D / L counters */}
               <div className="grid grid-cols-3 gap-2">
-                {([
-                  { key: 'win', count: summary.win, label: 'Ganados' },
-                  { key: 'draw', count: summary.draw, label: 'Empates' },
-                  { key: 'loss', count: summary.loss, label: 'Perdidos' },
-                ] as const).map(({ key, count, label }) => {
+                {(
+                  [
+                    { key: "win", count: summary.win, label: "Ganados" },
+                    { key: "draw", count: summary.draw, label: "Empates" },
+                    { key: "loss", count: summary.loss, label: "Perdidos" },
+                  ] as const
+                ).map(({ key, count, label }) => {
                   const cfg = RESULT_CFG[key];
                   return (
-                    <div key={key} className={`flex flex-col items-center gap-1 rounded-sm py-2.5 border ${cfg.bg} ${cfg.border}`}>
-                      <span className={`font-sans font-bold text-xl leading-none ${cfg.text}`}>{count}</span>
-                      <span className="font-sans text-[9px] text-white/35 uppercase tracking-wide">{label}</span>
+                    <div
+                      key={key}
+                      className={`flex flex-col items-center gap-1 rounded-sm py-2.5 border ${cfg.bg} ${cfg.border}`}
+                    >
+                      <span
+                        className={`font-sans font-bold text-xl leading-none ${cfg.text}`}
+                      >
+                        {count}
+                      </span>
+                      <span className="font-sans text-[9px] text-white/35 uppercase tracking-wide">
+                        {label}
+                      </span>
                     </div>
                   );
                 })}
@@ -85,7 +98,8 @@ export function H2HModal({ onClose, rivalId, rivalName }: H2HModalProps) {
               {/* Match list */}
               <div className="flex flex-col gap-0.5">
                 <p className="font-sans text-[9px] text-white/30 uppercase tracking-wider mb-1">
-                  Últimos {finished.length} resultado{finished.length !== 1 ? 's' : ''}
+                  Últimos {finished.length} resultado
+                  {finished.length !== 1 ? "s" : ""}
                 </p>
                 {finished.map((m, i) => {
                   const cfg = RESULT_CFG[m.result];
@@ -95,7 +109,9 @@ export function H2HModal({ onClose, rivalId, rivalName }: H2HModalProps) {
                       className={`flex items-center gap-2.5 px-2.5 py-2 rounded-sm border ${cfg.bg} ${cfg.border}`}
                     >
                       {/* Result dot */}
-                      <span className={`shrink-0 w-5 h-5 rounded-[3px] flex items-center justify-center font-sans font-bold text-[9px] ${cfg.dot} text-white`}>
+                      <span
+                        className={`shrink-0 w-5 h-5 rounded-[3px] flex items-center justify-center font-sans font-bold text-[9px] ${cfg.dot} text-white`}
+                      >
                         {cfg.label}
                       </span>
                       {/* Teams + score + competition */}
@@ -112,11 +128,15 @@ export function H2HModal({ onClose, rivalId, rivalName }: H2HModalProps) {
                         )}
                       </div>
                       {/* Date and score */}
-                      <span className={`font-sans font-semibold text-xs tabular-nums shrink-0 ${cfg.text}`}>
+                      <span
+                        className={`font-sans font-semibold text-xs tabular-nums shrink-0 ${cfg.text}`}
+                      >
                         {formatH2HScore(m)}
                       </span>
                       <div className="shrink-0 flex items-center gap-1 text-white/25">
-                        <span className="font-sans text-[9px] tabular-nums whitespace-nowrap">{formatH2HDate(m.date)}</span>
+                        <span className="font-sans text-[9px] tabular-nums whitespace-nowrap">
+                          {formatH2HDate(m.date)}
+                        </span>
                       </div>
                     </div>
                   );

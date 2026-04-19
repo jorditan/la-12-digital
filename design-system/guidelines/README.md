@@ -3,17 +3,20 @@
 ## 🎯 Principios de Diseño
 
 ### 1. Identidad Boquense
+
 - **Colores oficiales**: Azul (#001529) y Oro (#FFD700) en todas las interfaces
 - **Tradición + Modernidad**: 80% serif tradicional + 20% sans moderna
 - **Mística del club**: Easter eggs históricos integrados sutilmente
 
 ### 2. Accesibilidad (WCAG AA)
+
 - Contraste mínimo texto/fondo: 4.5:1
 - Navegación por teclado en todos los elementos
 - Alt text descriptivo en imágenes
 - Focus states visibles con outline dorado
 
 ### 3. Consistencia
+
 - Usar componentes documentados
 - Mantener spacing system (8px)
 - Aplicar estados (hover, active, disabled) consistentemente
@@ -25,6 +28,7 @@
 ### Crimson Pro (Serif) - 80% del contenido
 
 **✅ Usar para:**
+
 - Títulos de secciones
 - Nombres de equipos
 - Títulos de noticias y artículos
@@ -34,18 +38,20 @@
 - Cualquier contenido narrativo
 
 **Ejemplo:**
+
 ```css
 .section-title {
-  font-family: 'Crimson Pro', Georgia, serif;
+  font-family: "Crimson Pro", Georgia, serif;
   font-size: 20px;
   font-weight: 700;
-  color: #FFD700;
+  color: #ffd700;
 }
 ```
 
 ### Inter (Sans) - 20% del contenido
 
 **✅ Usar para:**
+
 - Inputs y formularios
 - Botones
 - Números y estadísticas
@@ -55,9 +61,10 @@
 - Tablas de datos
 
 **Ejemplo:**
+
 ```css
 .button {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 14px;
   font-weight: 500;
 }
@@ -70,23 +77,26 @@
 ### Colores de Texto
 
 **Primario (Títulos importantes):**
+
 ```css
-color: #FFD700; /* Dorado */
-font-family: 'Crimson Pro';
+color: #ffd700; /* Dorado */
+font-family: "Crimson Pro";
 font-weight: 700;
 ```
 
 **Secundario (Contenido principal):**
+
 ```css
-color: #FFFFFF; /* Blanco */
-font-family: 'Crimson Pro';
+color: #ffffff; /* Blanco */
+font-family: "Crimson Pro";
 font-weight: 400;
 ```
 
 **Terciario (Metadatos, fechas):**
+
 ```css
-color: #8BA3C7; /* Gris claro */
-font-family: 'Inter';
+color: #8ba3c7; /* Gris claro */
+font-family: "Inter";
 font-weight: 400;
 ```
 
@@ -95,6 +105,7 @@ font-weight: 400;
 ## 🖱️ Estados Interactivos
 
 ### Hover
+
 Todos los elementos clickeables deben tener hover state:
 
 ```css
@@ -107,16 +118,18 @@ Todos los elementos clickeables deben tener hover state:
 ```
 
 ### Focus
+
 Navegación por teclado:
 
 ```css
 *:focus-visible {
-  outline: 2px solid #FFD700;
+  outline: 2px solid #ffd700;
   outline-offset: 2px;
 }
 ```
 
 ### Active/Pressed
+
 Feedback táctil:
 
 ```css
@@ -131,6 +144,7 @@ Feedback táctil:
 ## 📏 Espaciado
 
 ### Sistema de 8px
+
 Todo el espaciado debe ser múltiplo de 8:
 
 ```
@@ -145,6 +159,7 @@ Todo el espaciado debe ser múltiplo de 8:
 ### Ejemplos de Uso
 
 **Padding en cards:**
+
 ```css
 .card {
   padding: 24px; /* spacing.6 */
@@ -152,6 +167,7 @@ Todo el espaciado debe ser múltiplo de 8:
 ```
 
 **Gap entre elementos:**
+
 ```css
 .container {
   display: flex;
@@ -160,6 +176,7 @@ Todo el espaciado debe ser múltiplo de 8:
 ```
 
 **Margin entre secciones:**
+
 ```css
 .section {
   margin-bottom: 48px; /* spacing.12 */
@@ -173,28 +190,33 @@ Todo el espaciado debe ser múltiplo de 8:
 ### Borders Dorados
 
 **Sutil (Default):**
+
 ```css
 border: 2px solid rgba(255, 215, 0, 0.15);
 ```
 
 **Visible (Hover):**
+
 ```css
 border: 2px solid rgba(255, 215, 0, 0.4);
 ```
 
 **Destacado (Boca en tabla):**
+
 ```css
-border-left: 4px solid #FFD700;
+border-left: 4px solid #ffd700;
 ```
 
 ### Sombras
 
 **Card elevado:**
+
 ```css
 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 ```
 
 **Hover dorado:**
+
 ```css
 box-shadow: 0 8px 24px rgba(255, 215, 0, 0.25);
 ```
@@ -237,17 +259,18 @@ margin: 19px;
 
 ```typescript
 const breakpoints = {
-  sm: '640px',   // Mobile landscape
-  md: '768px',   // Tablet
-  lg: '1024px',  // Desktop small
-  xl: '1280px',  // Desktop
-  '2xl': '1440px' // Desktop large (base)
+  sm: "640px", // Mobile landscape
+  md: "768px", // Tablet
+  lg: "1024px", // Desktop small
+  xl: "1280px", // Desktop
+  "2xl": "1440px", // Desktop large (base)
 };
 ```
 
 ### Layout
 
 **Desktop (1440px+):**
+
 ```css
 .layout {
   display: grid;
@@ -257,6 +280,7 @@ const breakpoints = {
 ```
 
 **Tablet (768px - 1439px):**
+
 ```css
 .layout {
   display: grid;
@@ -266,6 +290,7 @@ const breakpoints = {
 ```
 
 **Mobile (< 768px):**
+
 ```css
 .layout {
   display: flex;
@@ -281,11 +306,13 @@ const breakpoints = {
 ### ❌ NO HACER:
 
 1. **Usar colores fuera del sistema**
+
    ```css
    /* ❌ MAL */
-   color: #FF0000;
-   background: #00FF00;
+   color: #ff0000;
+   background: #00ff00;
    ```
+
    ```css
    /* ✅ BIEN */
    color: colors.text.primary;
@@ -293,36 +320,42 @@ const breakpoints = {
    ```
 
 2. **Espaciado arbitrario**
+
    ```css
    /* ❌ MAL */
    padding: 13px 17px;
    ```
+
    ```css
    /* ✅ BIEN */
    padding: 12px 16px; /* Múltiplos de 8 o históricos */
    ```
 
 3. **Tipografía incorrecta**
+
    ```css
    /* ❌ MAL - Título en sans */
    .title {
-     font-family: 'Inter';
+     font-family: "Inter";
    }
    ```
+
    ```css
    /* ✅ BIEN - Título en serif */
    .title {
-     font-family: 'Crimson Pro';
+     font-family: "Crimson Pro";
    }
    ```
 
 4. **Hover sin transición**
+
    ```css
    /* ❌ MAL */
    .card:hover {
      transform: translateY(-4px);
    }
    ```
+
    ```css
    /* ✅ BIEN */
    .card:hover {
@@ -334,7 +367,7 @@ const breakpoints = {
 5. **Borders muy gruesos**
    ```css
    /* ❌ MAL */
-   border: 5px solid #FFD700;
+   border: 5px solid #ffd700;
    ```
    ```css
    /* ✅ BIEN */

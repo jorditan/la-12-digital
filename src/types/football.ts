@@ -164,7 +164,7 @@ export interface APIResponse<T> {
 // TIPOS HELPER
 // ============================================
 
-export type MatchResult = 'win' | 'loss' | 'draw' | 'scheduled';
+export type MatchResult = "win" | "loss" | "draw" | "scheduled";
 
 export interface ProcessedFixture {
   id: number;

@@ -11,30 +11,30 @@ export function formatIsoDate(
 }
 
 export function formatIsoDateEsArLong(value: string): string {
-  return formatIsoDate(value, 'es-AR', { day: 'numeric', month: 'long' });
+  return formatIsoDate(value, "es-AR", { day: "numeric", month: "long" });
 }
 
 export function formatIsoDateEsArShort(value: string): string {
-  return formatIsoDate(value, 'es-AR', { day: 'numeric', month: 'short' });
+  return formatIsoDate(value, "es-AR", { day: "numeric", month: "short" });
 }
 
 export function formatIsoWeekdayEsArShort(value: string): string {
-  return formatIsoDate(value, 'es-AR', { weekday: 'short' }).replace('.', '');
+  return formatIsoDate(value, "es-AR", { weekday: "short" }).replace(".", "");
 }
 
 export function formatIsoDateEsArWithYear(value: string): string {
-  return formatIsoDate(value, 'es-AR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
+  return formatIsoDate(value, "es-AR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   });
 }
 
 export function formatIsoDateEsArNumeric(value: string): string {
-  return formatIsoDate(value, 'es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
+  return formatIsoDate(value, "es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 }
 
@@ -45,5 +45,7 @@ export function getDaysUntilIsoDate(value: string): number {
   const target = parseIsoDate(value);
   target.setHours(0, 0, 0, 0);
 
-  return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.round(
+    (target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+  );
 }

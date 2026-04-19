@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 type AsyncState<T> =
-  | { status: 'loading'; data: null; error: null }
-  | { status: 'error'; data: null; error: Error }
-  | { status: 'ok'; data: T; error: null };
+  | { status: "loading"; data: null; error: null }
+  | { status: "error"; data: null; error: Error }
+  | { status: "ok"; data: T; error: null };
 
 /**
  * Hook genérico para manejar llamadas asíncronas con estados loading/error/ok.
@@ -11,25 +11,27 @@ type AsyncState<T> =
  */
 export function useAsyncData<T>(
   fetcher: () => Promise<T>,
-  deps: React.DependencyList = []
+  deps: React.DependencyList = [],
 ): AsyncState<T> & { retry: () => void } {
   const [state, setState] = useState<AsyncState<T>>({
-    status: 'loading',
+    status: "loading",
     data: null,
     error: null,
   });
 
   const load = useCallback(() => {
     let cancelled = false;
-    setState({ status: 'loading', data: null, error: null });
+    setState({ status: "loading", data: null, error: null });
     fetcher()
       .then((data) => {
-        if (!cancelled) setState({ status: 'ok', data, error: null });
+        if (!cancelled) setState({ status: "ok", data, error: null });
       })
       .catch((error) => {
-        if (!cancelled) setState({ status: 'error', data: null, error });
+        if (!cancelled) setState({ status: "error", data: null, error });
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 

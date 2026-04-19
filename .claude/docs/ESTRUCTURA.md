@@ -46,6 +46,7 @@ design-system/
 ## 🎨 Tokens Incluidos
 
 ### Colores (`colors.ts`)
+
 - ✅ Colores primarios Boca (azul #001529, oro #FFD700)
 - ✅ Estados (victoria verde, derrota roja, empate gris)
 - ✅ Backgrounds (3 niveles)
@@ -54,6 +55,7 @@ design-system/
 - ✅ Easter eggs históricos (1905, 1977, 2000, 2007)
 
 ### Tipografía (`typography.ts`)
+
 - ✅ Fuentes: Crimson Pro (serif 80%) + Inter (sans 20%)
 - ✅ Tamaños: xs a 4xl
 - ✅ Pesos: regular a bold
@@ -61,6 +63,7 @@ design-system/
 - ✅ Presets de estilos (titles, body, buttons, stats)
 
 ### Espaciado (`spacing.ts`)
+
 - ✅ Sistema de 8px (0 a 96px)
 - ✅ Easter eggs (12px La 12, 10px Riquelme, 19px 1905)
 - ✅ Border radius
@@ -74,25 +77,30 @@ design-system/
 ## 📋 Componentes Documentados
 
 ### Navigation
+
 - Header
 - Banner Mensaje Diario
 
 ### Cards
+
 - Card Noticia (default, hover)
 - Card Video (default, hover)
 - Card Partido (victoria, derrota, empate)
 - Widget La Bombonera
 
 ### Buttons
+
 - Button Primary ("¡Dale Bo!")
 - Button Secondary
 - Button Navigation (Carousel)
 
 ### Lists & Tables
+
 - Tabla Posiciones (con row Boca destacada)
 - Lista Partidos
 
 ### Carousels
+
 - Carousel Noticias (3 cards)
 - Carousel Videos (4 items)
 
@@ -101,6 +109,7 @@ design-system/
 ## 📚 Documentación Incluida
 
 ### README Principal
+
 - Descripción del proyecto
 - Stack tecnológico
 - Estructura de carpetas
@@ -108,6 +117,7 @@ design-system/
 - Identidad visual
 
 ### README Design System
+
 - Overview completo
 - Quick start
 - Estructura de archivos
@@ -116,6 +126,7 @@ design-system/
 - Checklist de implementación
 
 ### README Componentes
+
 - Especificaciones detalladas
 - Estados de cada componente
 - Código de ejemplo
@@ -123,6 +134,7 @@ design-system/
 - Convenciones de naming
 
 ### README Guidelines
+
 - Principios de diseño
 - Cuándo usar cada tipografía
 - Jerarquía visual
@@ -136,45 +148,47 @@ design-system/
 ## 🚀 Próximos Pasos
 
 ### 1. Instalar Dependencias
+
 ```bash
 cd E:\Desarrollo\React\la-12-digital
 npm install
 ```
 
 ### 2. Iniciar Proyecto Vite
+
 ```bash
 npm run dev
 ```
 
 ### 3. Importar Tokens
+
 ```typescript
-import { colors, typography, spacing } from './design-system/tokens';
+import { colors, typography, spacing } from "./design-system/tokens";
 ```
 
 ### 4. Usar Tailwind
+
 ```jsx
-<div className="bg-boca-blue text-boca-gold font-serif p-6">
-  Dale Booo!
-</div>
+<div className="bg-boca-blue text-boca-gold font-serif p-6">Dale Booo!</div>
 ```
 
 ---
 
 ## 📊 Resumen de Archivos Creados
 
-| Archivo | Ubicación | Descripción |
-|---------|-----------|-------------|
-| `README.md` | Raíz | Descripción del proyecto |
-| `package.json` | Raíz | Dependencias npm |
-| `tailwind.config.js` | Raíz | Config Tailwind con tokens |
-| `.gitignore` | Raíz | Archivos ignorados Git |
-| `colors.ts` | tokens/ | Sistema de colores |
-| `typography.ts` | tokens/ | Sistema tipográfico |
-| `spacing.ts` | tokens/ | Espaciado y más |
-| `index.ts` | tokens/ | Export central |
-| `README.md` | design-system/ | Doc sistema diseño |
-| `README.md` | components/ | Doc componentes |
-| `README.md` | guidelines/ | Guías de uso |
+| Archivo              | Ubicación      | Descripción                |
+| -------------------- | -------------- | -------------------------- |
+| `README.md`          | Raíz           | Descripción del proyecto   |
+| `package.json`       | Raíz           | Dependencias npm           |
+| `tailwind.config.js` | Raíz           | Config Tailwind con tokens |
+| `.gitignore`         | Raíz           | Archivos ignorados Git     |
+| `colors.ts`          | tokens/        | Sistema de colores         |
+| `typography.ts`      | tokens/        | Sistema tipográfico        |
+| `spacing.ts`         | tokens/        | Espaciado y más            |
+| `index.ts`           | tokens/        | Export central             |
+| `README.md`          | design-system/ | Doc sistema diseño         |
+| `README.md`          | components/    | Doc componentes            |
+| `README.md`          | guidelines/    | Guías de uso               |
 
 **Total: 11 archivos + 3 carpetas creadas** ✅
 
@@ -191,7 +205,7 @@ import { colors, typography, spacing } from './design-system/tokens';
 ✅ **Sistema responsive** (5 breakpoints)  
 ✅ **Componentes especificados** con estados  
 ✅ **Guías de uso** y mejores prácticas  
-✅ **Convenciones de naming** establecidas  
+✅ **Convenciones de naming** establecidas
 
 ---
 

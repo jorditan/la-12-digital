@@ -1,1 +1,1 @@
-export { TimerBar } from '../ui/TimerBar';
+export { TimerBar } from "../ui/TimerBar";

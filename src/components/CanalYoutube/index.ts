@@ -1,1 +1,1 @@
-export { CanalYoutube } from './CanalYoutube';
+export { CanalYoutube } from "./CanalYoutube";

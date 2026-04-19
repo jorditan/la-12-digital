@@ -1,4 +1,4 @@
-import type { AuthUser } from '@/types/attendance';
+import type { AuthUser } from "@/types/attendance";
 
 function getInitials(user: AuthUser): string {
   if (user.displayName) {
@@ -7,7 +7,13 @@ function getInitials(user: AuthUser): string {
   return user.email.charAt(0).toUpperCase();
 }
 
-export function UserAvatar({ user, size = 28 }: { user: AuthUser; size?: number }) {
+export function UserAvatar({
+  user,
+  size = 28,
+}: {
+  user: AuthUser;
+  size?: number;
+}) {
   if (user.avatarUrl) {
     return (
       <img
@@ -30,4 +36,3 @@ export function UserAvatar({ user, size = 28 }: { user: AuthUser; size?: number 
     </span>
   );
 }
-

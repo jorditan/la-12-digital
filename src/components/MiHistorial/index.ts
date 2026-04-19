@@ -1,1 +1,1 @@
-export { MiHistorial } from './MiHistorial';
+export { MiHistorial } from "./MiHistorial";

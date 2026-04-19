@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect } from "react";
 
 interface UseHorizontalScrollReturn {
   ref: React.RefObject<HTMLDivElement>;
@@ -23,18 +23,20 @@ export function useHorizontalScroll(): UseHorizontalScrollReturn {
     if (!el) return;
     const tolerance = 4;
     setCanScrollLeft(el.scrollLeft > tolerance);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - tolerance);
+    setCanScrollRight(
+      el.scrollLeft + el.clientWidth < el.scrollWidth - tolerance,
+    );
   }, []);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     checkScroll();
-    el.addEventListener('scroll', checkScroll, { passive: true });
+    el.addEventListener("scroll", checkScroll, { passive: true });
     const ro = new ResizeObserver(checkScroll);
     ro.observe(el);
     return () => {
-      el.removeEventListener('scroll', checkScroll);
+      el.removeEventListener("scroll", checkScroll);
       ro.disconnect();
     };
   }, [checkScroll]);
@@ -43,7 +45,7 @@ export function useHorizontalScroll(): UseHorizontalScrollReturn {
     const el = ref.current;
     if (!el) return;
     // No interceptar clicks en elementos interactivos (links, botones)
-    if ((e.target as Element).closest('a, button')) return;
+    if ((e.target as Element).closest("a, button")) return;
     dragging.current = true;
     startX.current = e.clientX;
     scrollLeft.current = el.scrollLeft;
@@ -59,5 +61,13 @@ export function useHorizontalScroll(): UseHorizontalScrollReturn {
     dragging.current = false;
   }, []);
 
-  return { ref, canScrollLeft, canScrollRight, onPointerDown, onPointerMove, stopDrag, checkScroll };
+  return {
+    ref,
+    canScrollLeft,
+    canScrollRight,
+    onPointerDown,
+    onPointerMove,
+    stopDrag,
+    checkScroll,
+  };
 }

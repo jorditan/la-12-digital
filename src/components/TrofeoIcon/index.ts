@@ -1,2 +1,2 @@
-export { TrofeoIcon } from './TrofeoIcon';
-export type { TrofeoType } from './TrofeoIcon';
+export { TrofeoIcon } from "./TrofeoIcon";
+export type { TrofeoType } from "./TrofeoIcon";

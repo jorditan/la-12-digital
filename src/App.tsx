@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { Header } from './components/layout/Header';
-import { BannerMensaje } from './components/BannerMensaje';
-import { UltimosPartidos } from './components/UltimosPartidos';
-import { BomboneraWidget } from './components/BomboneraWidget';
-import { ProximosPartidos } from './components/ProximosPartidos';
-import { Noticias } from './components/Noticias';
-import { CanalYoutube } from './components/CanalYoutube';
-import { IdolosGame } from './components/IdolosGame';
-import { EquiposGame } from './components/EquiposGame';
-import { Sidebar } from './components/layout/Sidebar';
-import { TablaPosiciones } from './components/TablaPosiciones';
-import { MiHistorial } from './components/MiHistorial';
-import { Configuracion } from './components/Configuracion';
-import { AuthModal } from './components/Auth';
-import { useAuth } from './hooks/useAuth';
-import { Toaster } from 'sonner';
+import { useEffect, useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import { Header } from "./components/layout/Header";
+import { BannerMensaje } from "./components/BannerMensaje";
+import { UltimosPartidos } from "./components/UltimosPartidos";
+import { BomboneraWidget } from "./components/BomboneraWidget";
+import { ProximosPartidos } from "./components/ProximosPartidos";
+import { Noticias } from "./components/Noticias";
+import { CanalYoutube } from "./components/CanalYoutube";
+import { IdolosGame } from "./components/IdolosGame";
+import { EquiposGame } from "./components/EquiposGame";
+import { Sidebar } from "./components/layout/Sidebar";
+import { TablaPosiciones } from "./components/TablaPosiciones";
+import { MiHistorial } from "./components/MiHistorial";
+import { Configuracion } from "./components/Configuracion";
+import { AuthModal } from "./components/Auth";
+import { useAuth } from "./hooks/useAuth";
+import { Toaster } from "sonner";
 
 function DashboardPage() {
   return (
@@ -77,22 +77,18 @@ function AppInner() {
 
   return (
     <div className="min-h-screen text-white font-serif relative overflow-x-clip bg-app-bg">
-      <Header user={user} onLoginClick={() => setShowLoginModal(true)} onLogout={logout} onUploadAvatar={uploadAvatar} />
+      <Header
+        user={user}
+        onLoginClick={() => setShowLoginModal(true)}
+        onLogout={logout}
+        onUploadAvatar={uploadAvatar}
+      />
       <BannerMensaje />
 
       <Routes>
-        <Route
-          path="/"
-          element={<DashboardPage />}
-        />
-        <Route
-          path="/plantel"
-          element={<DashboardPage />}
-        />
-        <Route
-          path="/mi-historial"
-          element={<MiHistorial user={user} />}
-        />
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/plantel" element={<DashboardPage />} />
+        <Route path="/mi-historial" element={<MiHistorial user={user} />} />
         <Route
           path="/configuracion"
           element={
@@ -106,10 +102,7 @@ function AppInner() {
             />
           }
         />
-        <Route
-          path="*"
-          element={<DashboardPage />}
-        />
+        <Route path="*" element={<DashboardPage />} />
       </Routes>
 
       {showLoginModal && (
@@ -129,11 +122,11 @@ function AppToaster() {
       position="top-center"
       toastOptions={{
         style: {
-          background: '#002140',
-          border: '1px solid #00396e',
-          color: '#e0e7ff',
-          fontFamily: 'Geist, sans-serif',
-          fontSize: '14px',
+          background: "#002140",
+          border: "1px solid #00396e",
+          color: "#e0e7ff",
+          fontFamily: "Geist, sans-serif",
+          fontSize: "14px",
         },
       }}
     />

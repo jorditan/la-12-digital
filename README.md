@@ -12,22 +12,22 @@ Seguir a Boca requiere abrir 5 apps distintas: el sitio del club para noticias, 
 
 **Martín, 32 años — "El Hincha Analítico"**
 
-Trabaja en tecnología, va a la cancha cuando puede. Sigue a Boca diariamente pero tiene poco tiempo. Le gusta entender el *por qué* detrás de los resultados, no solo el marcador. Consume estadísticas y análisis, no titulares. Necesita el panorama completo de un vistazo.
+Trabaja en tecnología, va a la cancha cuando puede. Sigue a Boca diariamente pero tiene poco tiempo. Le gusta entender el _por qué_ detrás de los resultados, no solo el marcador. Consume estadísticas y análisis, no titulares. Necesita el panorama completo de un vistazo.
 
 ### User story
 
-> *"Como hincha de Boca con poco tiempo, necesito una forma rápida de entender cómo viene el equipo y qué esperar del próximo partido, para poder tomar decisiones informadas sin tener que investigar en múltiples fuentes."*
+> _"Como hincha de Boca con poco tiempo, necesito una forma rápida de entender cómo viene el equipo y qué esperar del próximo partido, para poder tomar decisiones informadas sin tener que investigar en múltiples fuentes."_
 
 ### Jobs to be Done
 
-| Tipo | Job |
-|------|-----|
-| Funcional | Verificar próximos partidos y resultados recientes |
-| Funcional | Entender la posición en la tabla y contexto competitivo |
-| Funcional | Conocer el estado actual del plantel |
+| Tipo      | Job                                                       |
+| --------- | --------------------------------------------------------- |
+| Funcional | Verificar próximos partidos y resultados recientes        |
+| Funcional | Entender la posición en la tabla y contexto competitivo   |
+| Funcional | Conocer el estado actual del plantel                      |
 | Emocional | Sentirse informado y "en tema" antes de hablar con amigos |
-| Emocional | Reducir la ansiedad pre-partido con información clara |
-| Social | Tener argumentos basados en datos para discusiones |
+| Emocional | Reducir la ansiedad pre-partido con información clara     |
+| Social    | Tener argumentos basados en datos para discusiones        |
 
 ### Principios de diseño
 
@@ -39,16 +39,16 @@ Trabaja en tecnología, va a la cancha cuando puede. Sigue a Boca diariamente pe
 
 ## Widgets
 
-| Widget | Descripción |
-|--------|-------------|
-| 🏟️ La Bombonera | Clima actual en el estadio + cuenta regresiva al próximo partido local |
-| 📅 Últimos partidos | Resultados recientes con escudos y resultado visual (V/E/D) |
-| 🗓️ Próximos partidos | Fixture con estadio, horario en AR y competencia |
-| 🏆 Tabla de posiciones | Liga Profesional temporada actual, con Boca destacado |
-| 📰 Noticias | Feed de noticias con scroll horizontal en mobile |
-| 📺 Canal YouTube | Últimos videos del canal oficial |
-| 🎮 ¿Quién es este ídolo? | Quiz interactivo con foto borroneada y dificultades |
-| 👕 ¿Recordás el plantel? | Trivia del plantel actual con formación táctica |
+| Widget                   | Descripción                                                            |
+| ------------------------ | ---------------------------------------------------------------------- |
+| 🏟️ La Bombonera          | Clima actual en el estadio + cuenta regresiva al próximo partido local |
+| 📅 Últimos partidos      | Resultados recientes con escudos y resultado visual (V/E/D)            |
+| 🗓️ Próximos partidos     | Fixture con estadio, horario en AR y competencia                       |
+| 🏆 Tabla de posiciones   | Liga Profesional temporada actual, con Boca destacado                  |
+| 📰 Noticias              | Feed de noticias con scroll horizontal en mobile                       |
+| 📺 Canal YouTube         | Últimos videos del canal oficial                                       |
+| 🎮 ¿Quién es este ídolo? | Quiz interactivo con foto borroneada y dificultades                    |
+| 👕 ¿Recordás el plantel? | Trivia del plantel actual con formación táctica                        |
 
 ---
 
@@ -61,13 +61,13 @@ Trabaja en tecnología, va a la cancha cuando puede. Sigue a Boca diariamente pe
 
 ### APIs utilizadas
 
-| API | Uso | Dónde se llama |
-|-----|-----|----------------|
-| API-Football / LiveScore | Partidos, tabla, fixture | `worker.js` (proxy) |
-| NewsData.io | Noticias del club | `worker.js` (proxy) |
-| YouTube Data v3 | Videos oficiales | `worker.js` (proxy) |
-| Open-Meteo | Clima en La Bombonera | Directo desde cliente |
-| Wikipedia REST | Fotos de ídolos | Directo desde cliente |
+| API                      | Uso                      | Dónde se llama        |
+| ------------------------ | ------------------------ | --------------------- |
+| API-Football / LiveScore | Partidos, tabla, fixture | `worker.js` (proxy)   |
+| NewsData.io              | Noticias del club        | `worker.js` (proxy)   |
+| YouTube Data v3          | Videos oficiales         | `worker.js` (proxy)   |
+| Open-Meteo               | Clima en La Bombonera    | Directo desde cliente |
+| Wikipedia REST           | Fotos de ídolos          | Directo desde cliente |
 
 > Todas las API keys se almacenan como **Cloudflare Secrets** — nunca en el bundle del frontend.
 
@@ -119,13 +119,13 @@ El proyecto usa **Cloudflare Workers** con **Workers Assets** para servir la SPA
 
 Configurar en el dashboard → Settings → Environment Variables → Production:
 
-| Variable | Descripción | Requerida |
-|----------|-------------|-----------|
-| `VITE_YOUTUBE_KEY` | [Google YouTube Data API v3](https://console.cloud.google.com/) | ✅ |
-| `VITE_NEWS_API_KEY` | [NewsData.io](https://newsdata.io/) | ✅ |
-| `LIVESCORE_KEY` | API-Football / LiveScore key | ✅ |
-| `LIVESCORE_SECRET` | LiveScore secret | ✅ |
-| `VITE_OPENWEATHER_KEY` | [OpenWeatherMap](https://openweathermap.org/api) | ⚠️ Opcional |
+| Variable               | Descripción                                                     | Requerida   |
+| ---------------------- | --------------------------------------------------------------- | ----------- |
+| `VITE_YOUTUBE_KEY`     | [Google YouTube Data API v3](https://console.cloud.google.com/) | ✅          |
+| `VITE_NEWS_API_KEY`    | [NewsData.io](https://newsdata.io/)                             | ✅          |
+| `LIVESCORE_KEY`        | API-Football / LiveScore key                                    | ✅          |
+| `LIVESCORE_SECRET`     | LiveScore secret                                                | ✅          |
+| `VITE_OPENWEATHER_KEY` | [OpenWeatherMap](https://openweathermap.org/api)                | ⚠️ Opcional |
 
 > Después de guardar variables, hacer un nuevo **Redeploy** desde el dashboard.
 
@@ -140,6 +140,7 @@ npm run deploy    # tsc + vite build + wrangler deploy
 ## Design system
 
 Los tokens están en `design-system/tokens/` y se exponen como:
+
 - **Clases Tailwind**: `bg-boca-blue`, `text-boca-gold`, `bg-boca-blue-mid`, `border-boca-border`, etc.
 - **CSS custom properties**: `var(--color-bg-card)`, `var(--gradient-app-bg)`, etc.
 

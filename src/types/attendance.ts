@@ -1,4 +1,4 @@
-import type { MatchResult } from '@/services/apifootball';
+import type { MatchResult } from "@/services/apifootball";
 
 /** Usuario autenticado de Supabase */
 export interface AuthUser {
@@ -48,4 +48,4 @@ export interface UpsertAttendancePayload {
 }
 
 /** Estado async estándar del proyecto */
-export type AsyncState = 'loading' | 'error' | 'ok';
+export type AsyncState = "loading" | "error" | "ok";
