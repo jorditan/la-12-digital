@@ -32,9 +32,17 @@ function getCorsOrigin(request) {
 
 function getCorsHeaders(request) {
   return {
+<<<<<<< HEAD
     "Access-Control-Allow-Origin": getCorsOrigin(request),
     "Access-Control-Allow-Methods": "GET, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
+=======
+    'Access-Control-Allow-Origin': getCorsOrigin(request),
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    // Prevent caches from serving one origin's response to another origin.
+    'Vary': 'Origin',
+>>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
   };
 }
 
@@ -70,6 +78,11 @@ const SECURITY_HEADERS = {
 /** FIX: Simple in-memory rate limiter (resets per worker isolate restart) */
 const _rlStore = new Map();
 
+// Maximum number of unique IPs to track at once. Entries beyond this limit are
+// dropped (the oldest entry is evicted), preventing unbounded memory growth under
+// high traffic / IP-spoofing DDoS scenarios.
+const RL_MAX_ENTRIES = 10_000;
+
 /**
  * Returns true if the IP has exceeded the limit.
  * @param {string} ip
@@ -85,6 +98,14 @@ function isRateLimited(ip, limit = 60, windowMs = 60_000) {
   }
   entry.count++;
   _rlStore.set(ip, entry);
+
+  // Evict the oldest entry before the Map exceeds the size cap so that size
+  // never grows beyond RL_MAX_ENTRIES even under rapid concurrent insertions.
+  if (_rlStore.size >= RL_MAX_ENTRIES) {
+    const oldestKey = _rlStore.keys().next().value;
+    _rlStore.delete(oldestKey);
+  }
+
   return entry.count > limit;
 }
 
@@ -144,6 +165,14 @@ export default {
   },
 };
 
+// Allowed YouTube Data API v3 resource paths used by this application.
+const ALLOWED_YOUTUBE_SUBPATHS = new Set(['channels', 'playlistItems', 'videos']);
+
+// Query parameters the client is permitted to forward to the YouTube API.
+const ALLOWED_YOUTUBE_PARAMS = new Set([
+  'part', 'forHandle', 'playlistId', 'maxResults', 'id', 'pageToken',
+]);
+
 async function handleYoutubeProxy(request, url, env) {
   const corsHeaders = getCorsHeaders(request);
   if (request.method === "OPTIONS") {
@@ -153,9 +182,26 @@ async function handleYoutubeProxy(request, url, env) {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
+<<<<<<< HEAD
   const subpath = url.pathname.replace(/^\/api\/youtube\//, "");
   const params = new URLSearchParams(url.search);
   params.set("key", env.VITE_YOUTUBE_KEY ?? "");
+=======
+  const subpath = url.pathname.replace(/^\/api\/youtube\//, '');
+  // Only allow the specific YouTube API resources the app actually needs.
+  if (!ALLOWED_YOUTUBE_SUBPATHS.has(subpath)) {
+    return new Response('Not Found', { status: 404, headers: corsHeaders });
+  }
+
+  // Forward only explicitly allowed query parameters to prevent quota manipulation.
+  const incomingParams = new URLSearchParams(url.search);
+  const params = new URLSearchParams();
+  for (const key of ALLOWED_YOUTUBE_PARAMS) {
+    const val = incomingParams.get(key);
+    if (val !== null) params.set(key, val);
+  }
+  params.set('key', env.VITE_YOUTUBE_KEY ?? '');
+>>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
 
   let upstreamRes;
   try {
@@ -187,6 +233,11 @@ async function handleYoutubeProxy(request, url, env) {
   });
 }
 
+// Query parameters the client is permitted to forward to the Newsdata API.
+const ALLOWED_NEWSDATA_PARAMS = new Set([
+  'q', 'country', 'language', 'category', 'image', 'size', 'page',
+]);
+
 async function handleNewsdataProxy(request, url, env) {
   const corsHeaders = getCorsHeaders(request);
   if (request.method === "OPTIONS") {
@@ -196,8 +247,19 @@ async function handleNewsdataProxy(request, url, env) {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
+<<<<<<< HEAD
   const params = new URLSearchParams(url.search);
   params.set("apikey", env.VITE_NEWS_API_KEY ?? "");
+=======
+  // Forward only explicitly allowed query parameters to prevent quota manipulation.
+  const incomingParams = new URLSearchParams(url.search);
+  const params = new URLSearchParams();
+  for (const key of ALLOWED_NEWSDATA_PARAMS) {
+    const val = incomingParams.get(key);
+    if (val !== null) params.set(key, val);
+  }
+  params.set('apikey', env.VITE_NEWS_API_KEY ?? '');
+>>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
 
   let upstreamRes;
   try {
@@ -277,6 +339,12 @@ async function handleH2HProxy(request, url, env) {
   });
 }
 
+// Query parameters the client is permitted to forward to the LiveScore API.
+const ALLOWED_LIVESCORE_PARAMS = new Set([
+  'competition_id', 'from', 'to', 'team_id', 'match_id',
+  'season', 'round', 'stage_id', 'group_id', 'type',
+]);
+
 async function handleLivescoreProxy(request, url, env) {
   const corsHeaders = getCorsHeaders(request);
   if (request.method === "OPTIONS") {
@@ -292,10 +360,22 @@ async function handleLivescoreProxy(request, url, env) {
     return new Response("Invalid path", { status: 400 });
   }
 
+  // Forward only explicitly allowed query parameters to prevent abuse.
+  const incomingParams = new URLSearchParams(url.search);
+  const params = new URLSearchParams();
+  for (const key of ALLOWED_LIVESCORE_PARAMS) {
+    const val = incomingParams.get(key);
+    if (val !== null) params.set(key, val);
+  }
   // Inject credentials server-side so they are never exposed to the browser.
+<<<<<<< HEAD
   const params = new URLSearchParams(url.search);
   params.set("key", env.LIVESCORE_KEY ?? "");
   params.set("secret", env.LIVESCORE_SECRET ?? "");
+=======
+  params.set('key', env.LIVESCORE_KEY ?? '');
+  params.set('secret', env.LIVESCORE_SECRET ?? '');
+>>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
 
   let upstreamRes;
   try {

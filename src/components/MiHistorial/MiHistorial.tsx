@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from "react";
 import type { AuthUser } from "@/types/attendance";
 import { useMiHistorial } from "./useMiHistorial";
@@ -9,6 +10,21 @@ import { DateRangePicker } from "./DateRangePicker";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 import { NoteModal } from "./NoteModal";
 import { Button } from "../ui/Button";
+=======
+import { useState } from 'react';
+import type { AuthUser } from '@/types/attendance';
+import { useMiHistorial } from './useMiHistorial';
+import { LockedState } from './LockedState';
+import { AttendanceRow } from './AttendanceRow';
+import { MatchCombobox } from './MatchCombobox';
+import { MultiSelect } from './MultiSelect';
+import { DateRangePicker } from './DateRangePicker';
+import { ConfirmDeleteModal } from './ConfirmDeleteModal';
+import { NoteModal } from './NoteModal';
+import { Button } from '../ui/Button';
+import { Upload } from 'lucide-react';
+import { ImportModal } from './ImportModal';
+>>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
 
 // ── Logged-in content ─────────────────────────────────────────────────────────
 
@@ -17,6 +33,7 @@ type NoteModalData = { matchId: string; note: string | null; label: string };
 
 const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   const {
+<<<<<<< HEAD
     matches,
     matchEstado,
     selectedMatchId,
@@ -44,6 +61,25 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
 
   const [deleteModal, setDeleteModal] = useState<DeleteModalData | null>(null);
   const [noteModal, setNoteModal] = useState<NoteModalData | null>(null);
+=======
+    matches, matchEstado,
+    selectedMatchId, setSelectedMatchId,
+    adding, justAdded, successMatchId,
+    attendedEntries, filteredEntries, totalAttended, earliestYear, availableMatches,
+    availableCompetitions, selectedCompetitions, setSelectedCompetitions,
+    dateFrom, setDateFrom, dateTo, setDateTo,
+    hasActiveFilters, clearFilters,
+    handleMarkAttendance, handleUpdateNote, remove, upsert,
+  } = useMiHistorial(user);
+
+  const [deleteModal, setDeleteModal] = useState<DeleteModalData | null>(null);
+  const [noteModal, setNoteModal]     = useState<NoteModalData | null>(null);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+
+  const existingFixtureIds = attendedEntries
+    .map(e => parseInt(e.matchId, 10))
+    .filter(id => !isNaN(id));
+>>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -123,11 +159,23 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
 
         {matchEstado === "ok" && (
           <div className="flex flex-col sm:flex-row gap-2">
+<<<<<<< HEAD
             <MatchCombobox
               matches={availableMatches}
               value={selectedMatchId}
               onChange={setSelectedMatchId}
             />
+=======
+            <MatchCombobox matches={availableMatches} value={selectedMatchId} onChange={setSelectedMatchId} />
+            <button
+              type="button"
+              onClick={() => setImportModalOpen(true)}
+              className="h-10 flex items-center gap-2 px-4 rounded-sm border border-boca-border text-text-muted hover:bg-boca-border/20 transition-colors type-caption whitespace-nowrap"
+            >
+              <Upload className="w-4 h-4" />
+              Importar
+            </button>
+>>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
             <Button
               onClick={handleMarkAttendance}
               disabled={!selectedMatchId || adding}
@@ -315,6 +363,18 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
           onClose={() => setNoteModal(null)}
         />
       )}
+<<<<<<< HEAD
+=======
+      {importModalOpen && (
+        <ImportModal
+          matches={matches}
+          existingFixtureIds={existingFixtureIds}
+          upsert={upsert}
+          onClose={() => setImportModalOpen(false)}
+        />
+      )}
+
+>>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
     </div>
   );
 };

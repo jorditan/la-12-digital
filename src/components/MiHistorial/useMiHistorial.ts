@@ -203,6 +203,7 @@ export const useMiHistorial = (user: AuthUser) => {
   };
 
   return {
+<<<<<<< HEAD
     matches,
     matchEstado,
     selectedMatchId,
@@ -227,5 +228,15 @@ export const useMiHistorial = (user: AuthUser) => {
     handleMarkAttendance,
     handleUpdateNote,
     remove,
+=======
+    matches, matchEstado,
+    selectedMatchId, setSelectedMatchId,
+    adding, justAdded, successMatchId,
+    attendedEntries, filteredEntries, totalAttended, earliestYear, availableMatches,
+    availableCompetitions, selectedCompetitions, setSelectedCompetitions,
+    dateFrom, setDateFrom, dateTo, setDateTo,
+    hasActiveFilters, clearFilters,
+    handleMarkAttendance, handleUpdateNote, remove, upsert,
+>>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
   };
 };
