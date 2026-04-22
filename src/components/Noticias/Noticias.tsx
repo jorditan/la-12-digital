@@ -25,7 +25,7 @@ function NoticiasMobileSlider({ noticias }: { noticias: Noticia[] }) {
     <div className="md:hidden relative">
       <div
         ref={ref}
-        className="flex gap-3 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
+        className="flex gap-3 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none snap-x snap-mandatory overscroll-x-contain"
         style={
           {
             scrollbarWidth: "none",
@@ -38,7 +38,7 @@ function NoticiasMobileSlider({ noticias }: { noticias: Noticia[] }) {
         onPointerLeave={stopDrag}
       >
         {noticias.map((noticia) => (
-          <div key={noticia.id} className="shrink-0 w-[65vw]">
+          <div key={noticia.id} className="shrink-0 w-[65vw] snap-start">
             <NoticiaCard noticia={noticia} className="h-[220px]" />
           </div>
         ))}

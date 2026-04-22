@@ -130,10 +130,10 @@ function PlayingInput({
           className={[
             "flex-1 min-w-0 px-3 py-2 text-sm font-sans",
             "bg-boca-blue rounded-sm text-white placeholder:text-text-secondary",
-            "focus:outline-none transition-colors",
+            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors",
             inputError
-              ? "border border-red-500 focus:border-red-400"
-              : "border border-boca-gold/20 focus:border-boca-gold/50",
+              ? "border border-red-500 focus-visible:border-red-400"
+              : "border border-boca-gold/20 focus-visible:border-boca-gold/50",
           ].join(" ")}
         />
         <Button type="submit" size="sm" variant="primary">

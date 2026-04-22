@@ -83,6 +83,7 @@ export function getFixtureTeams(partido: ProximoPartido) {
   const bocaEsLocal = partido.homeTeam.id === BOCA_ID;
   return {
     bocaEsLocal,
+    boca: bocaEsLocal ? partido.homeTeam : partido.awayTeam,
     rival: bocaEsLocal ? partido.awayTeam : partido.homeTeam,
   };
 }

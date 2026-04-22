@@ -46,7 +46,7 @@ export function LoginForm({ onLogin, onRegister, error }: LoginFormProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-boca-blue border border-boca-border rounded-lg px-3 py-2 text-white type-body focus:outline-none focus:border-boca-gold"
+              className="w-full bg-boca-blue border border-boca-border rounded-lg px-3 py-2 text-white type-body focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50"
               placeholder="tu@email.com"
             />
           </div>
@@ -60,7 +60,7 @@ export function LoginForm({ onLogin, onRegister, error }: LoginFormProps) {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full bg-boca-blue border border-boca-border rounded-lg px-3 py-2 text-white type-body focus:outline-none focus:border-boca-gold"
+              className="w-full bg-boca-blue border border-boca-border rounded-lg px-3 py-2 text-white type-body focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50"
               placeholder="Mínimo 6 caracteres"
             />
           </div>

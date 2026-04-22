@@ -21,7 +21,7 @@ export function ScrollRow({ partidos }: ScrollRowProps) {
     <div className="relative">
       <div
         ref={ref}
-        className="flex gap-4 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
+        className="flex gap-4 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none snap-x snap-mandatory overscroll-x-contain"
         style={
           {
             scrollbarWidth: "none",
@@ -34,7 +34,9 @@ export function ScrollRow({ partidos }: ScrollRowProps) {
         onPointerLeave={stopDrag}
       >
         {partidos.map((p) => (
-          <CardPartido key={p.fixtureId} partido={p} />
+          <div key={p.fixtureId} className="snap-start shrink-0">
+            <CardPartido partido={p} />
+          </div>
         ))}
       </div>
 

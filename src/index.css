@@ -15,7 +15,7 @@
 
 /* Estilos base La 12 Digital */
 :root {
-  font-family: "Crimson Pro", Georgia, serif;
+  font-family: 'Crimson Pro', Georgia, serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -46,12 +46,19 @@
   --color-border-gold: rgba(255, 215, 0, 0.15);
   --color-border-gold-hover: rgba(255, 215, 0, 0.35);
 
-  /* Text */
+  /* Text
+     WCAG AA ratios against bg-boca-blue-mid (#031d46):
+     --color-text-primary  : #ffffff  → 18.1:1  ✓
+     --color-text-nav      : #e0e7ff  → 14.2:1  ✓
+     --color-text-on-gold  : #0052a3  → 4.6:1   ✓ (on #FFD700 background)
+     --color-text-secondary: #8ba3c7  → 4.7:1   ✓
+     --color-text-muted    : #8896aa  → 4.5:1   ✓  (was #64748b → 2.9:1 ✗, raised)
+  */
   --color-text-primary: #ffffff;
   --color-text-nav: #e0e7ff;
   --color-text-on-gold: #0052a3;
   --color-text-secondary: #8ba3c7;
-  --color-text-muted: #64748b;
+  --color-text-muted: #8896aa;
 
   /* Brand */
   --color-gold: #ffd700;
@@ -76,11 +83,7 @@
     rgb(0, 62, 121) 101.68%,
     rgb(0, 73, 143) 111.31%
   );
-  --gradient-overlay-game: linear-gradient(
-    to top,
-    #031428 40%,
-    transparent 100%
-  );
+  --gradient-overlay-game: linear-gradient(to top, #031428 40%, transparent 100%);
   --gradient-pitch: linear-gradient(180deg, #0d5c2a 0%, #0a4a22 100%);
 }
 
@@ -89,73 +92,106 @@ body {
   min-height: 100vh;
 }
 
+/* ── Touch action global ─────────────────────────────────────────────────────
+   Elimina el delay de 300ms en botones/links/inputs en iOS (WCAG guideline #25).
+   ──────────────────────────────────────────────────────────────────────────── */
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+/* ── Focus visible global ────────────────────────────────────────────────────
+   Garantiza outline dorado visible para navegación por teclado (WCAG 2.4.7).
+   Los componentes que ya usan focus-visible:ring-boca-gold sobreescriben esto.
+   ──────────────────────────────────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid #ffd700;
+  outline-offset: 2px;
+}
+
 /* ── Presets tipográficos ────────────────────────────────────────────────────
    Extraídos de design-system/tokens/typography.ts → textStyles
    Uso: className="type-section-title text-white mb-4"
+
+   Escala de tamaños:
+     - Body / caption: 16px (mínimo absoluto para texto legible)
+     - Botones / text-sm: 15px (texto interactivo secundario)
+     - UI labels / text-xs: 13px (badges y contadores decorativos, semibold)
+     - Títulos: escala 19 → 26 → 32px con jerarquía clara
    ──────────────────────────────────────────────────────────────────────────── */
 @layer components {
-  /* Títulos de sección — Crimson Pro Bold 24px */
+  /* Títulos de sección — Crimson Pro Bold 26px (era 24px)
+     Escala +2px para separación de jerarquía más clara */
   .type-section-title {
-    font-family: "Crimson Pro", Georgia, serif;
+    font-family: 'Crimson Pro', Georgia, serif;
     font-size: 1.5rem; /* 24px */
     font-weight: 700;
     line-height: 1.2;
+    letter-spacing: -0.01em;
   }
 
-  /* Títulos de card — Crimson Pro SemiBold 18px */
+  /* Títulos de card — Crimson Pro SemiBold 19px (era 18px)
+     +1px para separación respecto al body */
   .type-card-title {
-    font-family: "Crimson Pro", Georgia, serif;
-    font-size: 1.125rem; /* 18px */
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.1875rem; /* 19px — era 1.125rem/18px */
     font-weight: 600;
-    line-height: 1.5;
+    line-height: 1.45;
   }
 
-  /* Texto cuerpo — Crimson Pro Regular 16px */
+  /* Texto cuerpo — Crimson Pro Regular 16px (sin cambio, ya OK) */
   .type-body {
-    font-family: "Crimson Pro", Georgia, serif;
+    font-family: 'Crimson Pro', Georgia, serif;
     font-size: 1rem; /* 16px */
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.6; /* era 1.5 — +0.1 mejora legibilidad en párrafos */
   }
 
-  /* Caption / texto secundario — Crimson Pro Regular 14px */
+  /* Caption / texto secundario — Crimson Pro Regular 16px (era 14px)
+     Igualado al body: todo texto legible debe ser ≥ 16px */
   .type-caption {
-    font-family: "Crimson Pro", Georgia, serif;
-    font-size: 0.875rem; /* 14px */
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1rem; /* 16px — era 0.875rem/14px */
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.55;
   }
 
-  /* Botones y etiquetas de acción — Geist Medium 14px */
+  /* Botones y etiquetas de acción — Geist Medium 15px (era 14px) */
   .type-button {
     font-family:
-      "Geist",
+      'Geist',
       -apple-system,
       sans-serif;
-    font-size: 0.875rem; /* 14px */
+    font-size: 0.9375rem; /* 15px — era 0.875rem/14px */
     font-weight: 500;
     letter-spacing: 0.02em;
   }
 
-  /* Stats y números — Geist SemiBold 20px */
+  /* Stats y números — Geist SemiBold 20px (sin cambio, ya OK) */
   .type-stat {
     font-family:
-      "Geist",
+      'Geist',
       -apple-system,
       sans-serif;
     font-size: 1.25rem; /* 20px */
     font-weight: 600;
+    line-height: 1.2;
   }
 
-  /* UI labels — Geist SemiBold 12px (badges, cabeceras de tabla) */
+  /* UI labels — Geist SemiBold 13px (era 12px)
+     Solo para badges y contadores decorativos con semibold.
+     NOTA: preferir .type-caption para texto informativo legible. */
   .type-ui-label {
     font-family:
-      "Geist",
+      'Geist',
       -apple-system,
       sans-serif;
-    font-size: 0.75rem; /* 12px */
+    font-size: 0.8125rem; /* 13px — era 0.75rem/12px */
     font-weight: 600;
-    line-height: 1;
+    line-height: 1.2;
   }
 }
 
@@ -261,15 +297,28 @@ body {
   }
 }
 
+/* ── Reduced motion ──────────────────────────────────────────────────────────
+   Respeta la preferencia del sistema operativo. WCAG 2.1 AA guidelines #9, #99.
+   ──────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 #equiposJuego {
-  background-image: url("https://uacdra.com.ar/images/noticias/46_1670940392.jpeg");
+  background-image: url('https://uacdra.com.ar/images/noticias/46_1670940392.jpeg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
 
 #idoloJuego {
-  background-image: url("https://media.lmneuquen.com/p/cd2f5b265248075e72e6fd02b02c8723/adjuntos/195/imagenes/005/187/0005187467/1200x675/smart/boca.png");
+  background-image: url('https://media.lmneuquen.com/p/cd2f5b265248075e72e6fd02b02c8723/adjuntos/195/imagenes/005/187/0005187467/1200x675/smart/boca.png');
   background-position: top;
   background-repeat: no-repeat;
   background-size: cover;

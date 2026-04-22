@@ -95,25 +95,25 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
             <table className="w-full table-fixed caption-bottom text-sm">
               <thead>
                 <tr>
-                  <th className="h-10 w-8 px-2 text-left align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">
+                  <th className="h-10 w-8 px-2 text-left align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
                     #
                   </th>
-                  <th className="h-10 px-2 text-left align-middle font-sans text-[11px] font-medium tracking-wide text-text-secondary">
+                  <th className="h-10 px-2 text-left align-middle font-sans text-xs font-medium tracking-wide text-text-secondary">
                     Equipos
                   </th>
-                  <th className="h-10 w-10 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-boca-gold">
+                  <th className="h-10 w-10 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-boca-gold">
                     PTS
                   </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">
+                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
                     PJ
                   </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">
+                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
                     G
                   </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">
+                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
                     E
                   </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-[11px] font-medium uppercase tracking-wide text-text-secondary">
+                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
                     P
                   </th>
                 </tr>
@@ -144,6 +144,7 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
                             width={16}
                             height={16}
                             className="shrink-0 object-contain"
+                            loading="lazy"
                             onError={(e) => {
                               (e.currentTarget as HTMLImageElement).src =
                                 ESCUDO_VACIO;
