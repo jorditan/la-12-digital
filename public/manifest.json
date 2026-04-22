@@ -1,0 +1,22 @@
+{
+  "name": "La 12 Digital — Fan Site de Boca Juniors",
+  "short_name": "La 12 Digital",
+  "description": "El fan site definitivo de Boca Juniors. Partidos, posiciones, noticias y clima en la Bombonera en tiempo real.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#001529",
+  "theme_color": "#001529",
+  "lang": "es-AR",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/escudo_boca.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "news", "entertainment"],
+  "screenshots": []
+}

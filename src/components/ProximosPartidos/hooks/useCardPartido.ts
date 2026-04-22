@@ -6,7 +6,7 @@ import { getCardBorderClass, getDaysUntil, getFixtureTeams } from "../utils";
 export function useCardPartido(partido: ProximoPartido) {
   const [h2hOpen, setH2hOpen] = useState(false);
 
-  const { bocaEsLocal, rival } = useMemo(
+  const { bocaEsLocal, boca, rival } = useMemo(
     () => getFixtureTeams(partido),
     [partido],
   );
@@ -23,6 +23,7 @@ export function useCardPartido(partido: ProximoPartido) {
 
   return {
     bocaEsLocal,
+    boca,
     rival,
     days,
     cardBorderClass,

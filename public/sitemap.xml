@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  sitemap.xml — La 12 Digital
+  NOTA: Actualizar <loc> al dominio de producción real.
+  Placeholder actual: https://la12digital.com
+  Actualizar <lastmod> en cada deploy significativo.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Página principal / Dashboard -->
+  <url>
+    <loc>https://la12digital.com/</loc>
+    <lastmod>2026-04-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="es-AR" href="https://la12digital.com/"/>
+  </url>
+
+  <!-- Plantel -->
+  <url>
+    <loc>https://la12digital.com/plantel</loc>
+    <lastmod>2026-04-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es-AR" href="https://la12digital.com/plantel"/>
+  </url>
+
+</urlset>

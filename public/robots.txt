@@ -1,0 +1,13 @@
+# robots.txt — La 12 Digital
+# https://la12digital.com/robots.txt
+# NOTA: Actualizar el dominio cuando esté confirmado en producción.
+
+User-agent: *
+Allow: /
+
+# Bloquear rutas privadas de usuario que no aportan valor de indexación
+Disallow: /mi-historial
+Disallow: /configuracion
+
+# Sitemap
+Sitemap: https://la12digital.com/sitemap.xml

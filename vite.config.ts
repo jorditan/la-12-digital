@@ -34,5 +34,27 @@ export default defineConfig(({ mode }) => {
         // Open-Meteo (weather) is called directly from the browser — no proxy needed.
       },
     },
+    build: {
+      // Target modern browsers — smaller, faster bundles
+      target: "es2020",
+      // El chunk principal de la app (código propio) supera 600kB sin lazy routes.
+      // Para reducirlo habría que aplicar React.lazy() por ruta — queda como mejora futura.
+      // Se sube el umbral para no generar ruido en el build ya que los vendors sí están separados.
+      chunkSizeWarningLimit: 750,
+      rollupOptions: {
+        output: {
+          // Manual code splitting: separar vendor chunks grandes para mejor cache
+          // Los chunks de vendor se cachean en el navegador incluso cuando cambia la app
+          manualChunks: {
+            // React core — cambia raramente, cache-hit muy alto
+            "vendor-react": ["react", "react-dom", "react-router-dom"],
+            // Supabase — librería grande, separada del bundle principal
+            "vendor-supabase": ["@supabase/supabase-js"],
+            // Utilidades UI pequeñas
+            "vendor-ui": ["lucide-react", "sonner"],
+          },
+        },
+      },
+    },
   };
 });

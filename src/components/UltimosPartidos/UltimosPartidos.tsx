@@ -69,7 +69,7 @@ export function UltimosPartidos() {
         {/* Error */}
         {estado === 'error' && (
           <div className="flex flex-col items-center gap-3 py-10 text-center px-6">
-            <p className="font-sans text-sm text-white/50">No se pudieron cargar los partidos</p>
+            <p className="font-sans text-sm text-text-muted">No se pudieron cargar los partidos</p>
             <Button
               onClick={cargar}
               variant="text"
@@ -82,14 +82,14 @@ export function UltimosPartidos() {
 
         {/* Empty */}
         {estado === 'ok' && partidos.length === 0 && (
-          <p className="font-sans text-sm text-white/50 py-6 text-center px-6">
+          <p className="font-sans text-sm text-text-muted py-6 text-center px-6">
             No se encontraron partidos recientes
           </p>
         )}
 
         {/* Table */}
         {estado === 'ok' && partidos.length > 0 && (
-          <div className="overflow-x-auto px-3 pb-3 sm:px-8 sm:pb-8">
+          <div className="overflow-x-auto pt-2 px-3 pb-3 sm:px-8 sm:pb-8">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-boca-border-card">
@@ -133,7 +133,7 @@ export function UltimosPartidos() {
                         {match.competition && (
                           <Badge
                             variant={match.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-                            className="text-[9px] px-1.5 whitespace-nowrap"
+                            className="text-[11px] px-1.5 whitespace-nowrap"
                           >
                             {match.competition === 'Copa Libertadores'
                               ? 'Libertadores'
@@ -150,7 +150,7 @@ export function UltimosPartidos() {
               </tbody>
             </table>
             {/* Leyenda de colores */}
-            <div className="flex items-center gap-4 mt-3 text-xs text-white/40">
+            <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-green-400/70 inline-block shrink-0" />
                 <span>Victoria</span>

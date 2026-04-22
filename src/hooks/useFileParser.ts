@@ -1,5 +1,4 @@
-// src/hooks/useFileParser.ts
-//import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
 
 export interface ParsedRow {
   rowIndex: number;

@@ -100,6 +100,8 @@ export const zIndex = {
   modal: 50,
   popover: 60,
   tooltip: 70,
+  userMenu: 100,  // dropdown de usuario en header
+  overlay: 200,   // modales por encima de todo el layout
 };
 
 /**

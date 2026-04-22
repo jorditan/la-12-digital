@@ -70,7 +70,7 @@ export const MatchCombobox = ({
                 handleSelect(filtered[0].fixtureId.toString());
             }}
             placeholder="Buscá por rival o fecha..."
-            className="flex-1 bg-transparent px-3 py-2.5 type-body text-white focus:outline-none placeholder:text-text-muted/50"
+            className="flex-1 bg-transparent px-3 py-2.5 type-body text-white focus-visible:outline-none placeholder:text-text-muted/50"
           />
         ) : (
           <span

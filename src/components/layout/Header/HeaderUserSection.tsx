@@ -59,7 +59,7 @@ export function HeaderUserSection({
           </Button>
 
           {isUserMenuOpen && (
-            <div className="absolute right-0 top-full mt-1 w-52 bg-boca-blue-light border border-boca-border rounded-sm shadow-2xl z-[100] overflow-hidden animate-fade-in">
+            <div className="absolute right-0 top-full mt-1 w-52 bg-boca-blue-light border border-boca-border rounded-sm shadow-2xl z-userMenu overflow-hidden animate-fade-in">
               <div className="px-4 py-3 border-b border-boca-border">
                 {user.displayName && (
                   <p className="type-body text-text-nav font-medium truncate">

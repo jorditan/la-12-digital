@@ -48,7 +48,7 @@ export function AuthModal({ onLogin, onRegister, onClose }: AuthModalProps) {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[200] flex items-end justify-center p-0 sm:items-center sm:px-4"
+      className="fixed inset-0 z-overlay flex items-end justify-center p-0 sm:items-center sm:px-4"
       style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
       onClick={(e) => {
         if (e.target === overlayRef.current) onClose();
@@ -106,7 +106,7 @@ export function AuthModal({ onLogin, onRegister, onClose }: AuthModalProps) {
                   minLength={2}
                   maxLength={32}
                   autoFocus
-                  className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 type-body text-white focus:outline-none focus:border-boca-gold transition-colors"
+                  className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 type-body text-white focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors"
                   placeholder="Ej: xeneize1905"
                 />
               </div>
@@ -122,7 +122,7 @@ export function AuthModal({ onLogin, onRegister, onClose }: AuthModalProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoFocus={mode === "login"}
-                className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 type-body text-white focus:outline-none focus:border-boca-gold transition-colors"
+                className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 type-body text-white focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors"
                 placeholder="tu@email.com"
               />
             </div>
@@ -138,7 +138,7 @@ export function AuthModal({ onLogin, onRegister, onClose }: AuthModalProps) {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={mode === "register" ? 8 : 1}
-                  className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 pr-10 type-body text-white focus:outline-none focus:border-boca-gold transition-colors"
+                  className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 pr-10 type-body text-white focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors"
                   placeholder={
                     mode === "register" ? "Mínimo 8 caracteres" : "••••••••"
                   }
@@ -166,7 +166,7 @@ export function AuthModal({ onLogin, onRegister, onClose }: AuthModalProps) {
             </div>
 
             {localError && (
-              <p className="type-body text-status-negative text-center border border-status-negative/30 rounded-sm px-3 py-2 bg-status-negative/5">
+              <p role="alert" className="type-body text-status-negative text-center border border-status-negative/30 rounded-sm px-3 py-2 bg-status-negative/5">
                 {localError}
               </p>
             )}

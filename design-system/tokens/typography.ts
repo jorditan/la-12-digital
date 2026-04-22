@@ -11,13 +11,14 @@ export const typography = {
   },
 
   // Font Sizes
+  // Mínimos de legibilidad: body ≥ 16px; secundario ≥ 15px; labels ≥ 13px
   fontSize: {
-    xs: "12px", // Captions, metadatos
-    sm: "14px", // Texto secundario
-    base: "16px", // Texto base
-    md: "18px", // Texto destacado
-    lg: "20px", // Títulos pequeños (secciones)
-    xl: "24px", // Títulos medianos
+    xs: "13px", // UI labels decorativos (badges, contadores) — era 12px
+    sm: "15px", // Texto secundario, botones, tablas — era 14px
+    base: "16px", // Texto cuerpo — mínimo absoluto para contenido legible
+    md: "19px", // Títulos de card
+    lg: "20px", // Títulos pequeños / stats
+    xl: "26px", // Títulos de sección
     "2xl": "32px", // Títulos grandes
     "3xl": "40px", // Títulos hero
     "4xl": "48px", // Display
@@ -85,52 +86,54 @@ export const typography = {
 
 // Presets comunes
 export const textStyles = {
-  // Títulos de sección (Crimson Pro Bold)
+  // Títulos de sección (Crimson Pro Bold) — 26px, era 24px
   sectionTitle: {
     fontFamily: typography.fonts.serif,
-    fontSize: typography.fontSize.xl,
+    fontSize: typography.fontSize.xl, // 26px
     fontWeight: typography.fontWeight.bold,
     lineHeight: typography.lineHeight.tight,
+    letterSpacing: "-0.01em",
     color: "#FFD700", // Dorado
   },
 
-  // Títulos de card (Crimson Pro SemiBold)
+  // Títulos de card (Crimson Pro SemiBold) — 19px, era 18px
   cardTitle: {
     fontFamily: typography.fonts.serif,
-    fontSize: typography.fontSize.md,
+    fontSize: typography.fontSize.md, // 19px
     fontWeight: typography.fontWeight.semibold,
-    lineHeight: typography.lineHeight.normal,
+    lineHeight: 1.45,
   },
 
-  // Texto base (Crimson Pro Regular)
+  // Texto base (Crimson Pro Regular) — 16px sin cambio
   body: {
     fontFamily: typography.fonts.serif,
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.regular,
-    lineHeight: typography.lineHeight.normal,
+    lineHeight: 1.6, // era 1.5 (normal), mejorado para legibilidad
   },
 
-  // Caption (Crimson Pro Regular)
+  // Caption (Crimson Pro Regular) — 16px (era 14px, igualado al body)
   caption: {
     fontFamily: typography.fonts.serif,
-    fontSize: typography.fontSize.sm,
+    fontSize: typography.fontSize.base, // 16px — era sm/14px
     fontWeight: typography.fontWeight.regular,
-    lineHeight: typography.lineHeight.normal,
+    lineHeight: 1.55,
   },
 
-  // Botón (Inter Medium)
+  // Botón (Geist Medium) — 15px (era 14px)
   button: {
     fontFamily: typography.fonts.sans,
-    fontSize: typography.fontSize.sm,
+    fontSize: "15px", // era sm/14px
     fontWeight: typography.fontWeight.medium,
     letterSpacing: typography.letterSpacing.wide,
   },
 
-  // Números/Stats (Inter SemiBold)
+  // Números/Stats (Geist SemiBold) — 20px sin cambio
   stat: {
     fontFamily: typography.fonts.sans,
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
+    lineHeight: typography.lineHeight.tight,
   },
 };
 
