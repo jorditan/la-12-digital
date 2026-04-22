@@ -1,10 +1,10 @@
 // src/hooks/useFileParser.ts
-import * as XLSX from 'xlsx';
+//import * as XLSX from 'xlsx';
 
 export interface ParsedRow {
   rowIndex: number;
-  fecha: string;     // DD/MM/YYYY (original del usuario)
-  fechaISO: string;  // YYYY-MM-DD (para comparar con MatchResult.date)
+  fecha: string; // DD/MM/YYYY (original del usuario)
+  fechaISO: string; // YYYY-MM-DD (para comparar con MatchResult.date)
   rival: string;
   competencia?: string;
   notas?: string;
@@ -28,7 +28,13 @@ export function useFileParser() {
     if (!['xlsx', 'csv'].includes(ext ?? '')) {
       return {
         valid: [],
-        errors: [{ rowIndex: 0, field: 'file', message: 'Formato no soportado. Solo se aceptan archivos .xlsx y .csv' }],
+        errors: [
+          {
+            rowIndex: 0,
+            field: 'file',
+            message: 'Formato no soportado. Solo se aceptan archivos .xlsx y .csv',
+          },
+        ],
       };
     }
 
@@ -66,23 +72,39 @@ export function useFileParser() {
 
       // Validar fecha
       if (!/^\d{2}\/\d{2}\/\d{4}$/.test(fecha)) {
-        errors.push({ rowIndex: realIdx, field: 'fecha', message: `Fila ${realIdx}: formato de fecha inválido (usar DD/MM/YYYY)` });
+        errors.push({
+          rowIndex: realIdx,
+          field: 'fecha',
+          message: `Fila ${realIdx}: formato de fecha inválido (usar DD/MM/YYYY)`,
+        });
         return;
       }
       const [dd, mm, yyyy] = fecha.split('/');
       const dateObj = new Date(`${yyyy}-${mm}-${dd}`);
       if (isNaN(dateObj.getTime())) {
-        errors.push({ rowIndex: realIdx, field: 'fecha', message: `Fila ${realIdx}: fecha inválida` });
+        errors.push({
+          rowIndex: realIdx,
+          field: 'fecha',
+          message: `Fila ${realIdx}: fecha inválida`,
+        });
         return;
       }
       if (dateObj > new Date()) {
-        errors.push({ rowIndex: realIdx, field: 'fecha', message: `Fila ${realIdx}: la fecha no puede ser futura` });
+        errors.push({
+          rowIndex: realIdx,
+          field: 'fecha',
+          message: `Fila ${realIdx}: la fecha no puede ser futura`,
+        });
         return;
       }
 
       // Validar rival
       if (!rival) {
-        errors.push({ rowIndex: realIdx, field: 'rival', message: `Fila ${realIdx}: el rival es obligatorio` });
+        errors.push({
+          rowIndex: realIdx,
+          field: 'rival',
+          message: `Fila ${realIdx}: el rival es obligatorio`,
+        });
         return;
       }
 

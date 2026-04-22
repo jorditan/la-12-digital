@@ -88,7 +88,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
         <div className="flex items-center gap-1.5 flex-wrap">
           <Badge
             variant={partido.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-            className="w-fit text-[10px] px-1.5 py-px"
+            className="w-fit text-[10px] px-1.5"
           >
             {partido.competition}
           </Badge>

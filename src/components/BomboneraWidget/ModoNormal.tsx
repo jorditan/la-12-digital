@@ -1,22 +1,22 @@
-import { ESCUDO_VACIO } from "../../data/equipos";
-import type { MatchForecast } from "../../services/weather";
-import type { ProximoPartido } from "../../services/apifootball";
-import { BOCA_ID } from "../../services/apifootball";
-import { StatsGrid } from "./StatsGrid";
-import { ForecastRows } from "./ForecastRows";
-import { ConditionsBlock } from "./ConditionsBlock";
+import { ESCUDO_VACIO } from '../../data/equipos';
+import type { MatchForecast } from '../../services/weather';
+import type { ProximoPartido } from '../../services/apifootball';
+import { BOCA_ID } from '../../services/apifootball';
+import { StatsGrid } from './StatsGrid';
+import { ForecastRows } from './ForecastRows';
+import { ConditionsBlock } from './ConditionsBlock';
 
 function formatFechaLarga(iso: string): string {
-  return new Date(iso).toLocaleDateString("es-AR", {
-    day: "numeric",
-    month: "long",
+  return new Date(iso).toLocaleDateString('es-AR', {
+    day: 'numeric',
+    month: 'long',
   });
 }
 
 function formatFechaCorta(iso: string): string {
-  return new Date(iso).toLocaleDateString("es-AR", {
-    day: "numeric",
-    month: "short",
+  return new Date(iso).toLocaleDateString('es-AR', {
+    day: 'numeric',
+    month: 'short',
   });
 }
 
@@ -46,22 +46,20 @@ export function ModoNormal({
     >
       {/* Header */}
       <div className="border-b border-boca-border-card px-6 pt-6 pb-3">
-        <h2 className="type-section-title text-white">
-          Partidos en la Bombonera
-        </h2>
+        <h2 className="type-section-title text-white">Próximo partido en la Bombonera</h2>
       </div>
 
       <div className="px-6 pt-5 pb-6 flex flex-col gap-5 flex-1">
         {/* ── Contador + Rival ─────────────────────────────────────────── */}
         {proximoLocal && rival && diasHastaPartido !== null ? (
-          <div className="flex items-stretch gap-4">
+          <div className="flex gap-4 items-end">
             {/* Contador de días — protagonista visual */}
-            <div className="bg-boca-gold/5 border border-boca-gold/10 rounded-md px-4 py-3 flex flex-col items-center justify-center flex-shrink-0 min-w-[80px]">
-              <p className="font-bold text-boca-gold leading-none text-7xl font-sans tabular-nums">
+            <div className="bg-boca-gold-light/20 rounded-sm border-0.5 border-boca-gold  px-4 py-3 flex flex-col items-center justify-center flex-shrink-0 min-w-[80px]">
+              <p className="font-bold text-boca-gold font-serif leading-none text-7xl">
                 {diasHastaPartido}
               </p>
-              <p className="type-ui-label text-text-secondary mt-2 tracking-[0.14em]">
-                {diasHastaPartido === 1 ? "DÍA" : "DÍAS"}
+              <p className="type-ui-label text-text-secondary font-serif mt-2  text-lg">
+                {diasHastaPartido === 1 ? 'Día' : 'Días'}
               </p>
             </div>
 
@@ -80,9 +78,6 @@ export function ModoNormal({
                   />
                 </div>
                 <div className="min-w-0">
-                  <p className="type-caption text-text-secondary tracking-[0.08em] mb-0.5">
-                    Próximo de local
-                  </p>
                   <p className="font-serif text-white font-semibold text-base leading-tight truncate">
                     vs {rival.name}
                   </p>
@@ -130,7 +125,7 @@ export function ModoNormal({
           <p className="type-caption text-text-secondary mb-3 tracking-[0.10em]">
             {matchForecast
               ? `Condiciones climáticas · ${matchForecast.timeLabel} HS`
-              : "Condiciones climáticas del partido"}
+              : 'Condiciones climáticas del partido'}
           </p>
 
           {slotMatch ? (
@@ -158,12 +153,11 @@ export function ModoNormal({
           <div>
             <div className="border-t border-boca-border-card mb-3" />
             <p className="type-caption text-text-secondary mb-2.5 tracking-[0.10em]">
-              Próximos de local
+              Siguientes partidos
             </p>
             <div className="flex flex-col divide-y divide-boca-border-card/60">
               {proximosLocales.map((p) => {
-                const rivalItem =
-                  p.homeTeam.id === BOCA_ID ? p.awayTeam : p.homeTeam;
+                const rivalItem = p.homeTeam.id === BOCA_ID ? p.awayTeam : p.homeTeam;
                 return (
                   <div
                     key={p.fixtureId}
@@ -175,8 +169,7 @@ export function ModoNormal({
                         alt={rivalItem.name}
                         className="w-4 h-4 object-contain"
                         onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).src =
-                            ESCUDO_VACIO;
+                          (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO;
                         }}
                       />
                     </div>
