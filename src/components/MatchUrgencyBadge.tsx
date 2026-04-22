@@ -4,51 +4,68 @@ interface MatchUrgencyBadgeProps {
   matchDate: string | Date;
 }
 
-type UrgencyLevel = "critical" | "upcoming" | "near" | null;
+type UrgencyLevel = "critical" | "today" | "tomorrow" | "days";
 
-function getUrgencyLevel(matchDate: string | Date): UrgencyLevel {
+function getUrgencyInfo(
+  matchDate: string | Date,
+): { level: UrgencyLevel; label: string } | null {
   const now = new Date();
   const date = new Date(matchDate);
   const diffHours = (date.getTime() - now.getTime()) / (1000 * 60 * 60);
 
   if (diffHours < 0) return null;
-  if (diffHours <= 3) return "critical";
-  if (diffHours <= 24) return "upcoming";
-  if (diffHours <= 72) return "near";
+  if (diffHours <= 3) {
+    const hours = Math.ceil(diffHours);
+    return { level: "critical", label: hours <= 1 ? "Ahora" : `En ${hours}h` };
+  }
+  if (diffHours <= 24) return { level: "today", label: "Hoy" };
+  if (diffHours <= 48) return { level: "tomorrow", label: "Mañana" };
+  const days = Math.round(diffHours / 24);
+  if (days <= 7) return { level: "days", label: `En ${days} días` };
   return null;
 }
 
 export function MatchUrgencyBadge({ matchDate }: MatchUrgencyBadgeProps) {
-  const level = getUrgencyLevel(matchDate);
-  if (!level) return null;
+  const info = getUrgencyInfo(matchDate);
+  if (!info) return null;
 
-  if (level === "critical") {
+  if (info.level === "critical") {
     return (
-      <Badge variant="gold" className="gap-1.5 px-1.5 py-px text-[10px]">
+      <Badge variant="gold" className="gap-1.5 px-1.5 text-[10px]">
         <span className="w-1.5 h-1.5 rounded-full bg-boca-blue animate-pulse shrink-0" />
-        HOY
+        {info.label}
       </Badge>
     );
   }
 
-  if (level === "upcoming") {
+  if (info.level === "today") {
     return (
       <Badge
         variant="gold"
-        className="bg-transparent border border-boca-gold/40 text-boca-gold px-1.5 py-px text-[10px]"
+        className="bg-transparent border border-boca-gold/40 text-boca-gold px-1.5 text-[10px]"
       >
-        Mañana
+        {info.label}
       </Badge>
     );
   }
 
-  // near
+  if (info.level === "tomorrow") {
+    return (
+      <Badge
+        variant="blue"
+        className="bg-transparent border border-boca-gold/20 text-boca-gold/60 px-1.5 text-[10px]"
+      >
+        {info.label}
+      </Badge>
+    );
+  }
+
   return (
     <Badge
       variant="blue"
-      className="bg-transparent border border-boca-border text-text-muted px-1.5 py-px text-[10px]"
+      className="bg-transparent border border-boca-border text-text-muted px-1.5 text-[10px]"
     >
-      Esta semana
+      {info.label}
     </Badge>
   );
 }

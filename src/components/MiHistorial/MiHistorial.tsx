@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import { useState } from "react";
-import type { AuthUser } from "@/types/attendance";
-import { useMiHistorial } from "./useMiHistorial";
-import { LockedState } from "./LockedState";
-import { AttendanceRow } from "./AttendanceRow";
-import { MatchCombobox } from "./MatchCombobox";
-import { MultiSelect } from "./MultiSelect";
-import { DateRangePicker } from "./DateRangePicker";
-import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
-import { NoteModal } from "./NoteModal";
-import { Button } from "../ui/Button";
-=======
 import { useState } from 'react';
 import type { AuthUser } from '@/types/attendance';
 import { useMiHistorial } from './useMiHistorial';
@@ -24,7 +11,6 @@ import { NoteModal } from './NoteModal';
 import { Button } from '../ui/Button';
 import { Upload } from 'lucide-react';
 import { ImportModal } from './ImportModal';
->>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
 
 // ── Logged-in content ─────────────────────────────────────────────────────────
 
@@ -33,7 +19,6 @@ type NoteModalData = { matchId: string; note: string | null; label: string };
 
 const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   const {
-<<<<<<< HEAD
     matches,
     matchEstado,
     selectedMatchId,
@@ -41,6 +26,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
     adding,
     justAdded,
     successMatchId,
+    attendedEntries,
     filteredEntries,
     totalAttended,
     earliestYear,
@@ -57,49 +43,32 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
     handleMarkAttendance,
     handleUpdateNote,
     remove,
+    upsert,
   } = useMiHistorial(user);
 
   const [deleteModal, setDeleteModal] = useState<DeleteModalData | null>(null);
   const [noteModal, setNoteModal] = useState<NoteModalData | null>(null);
-=======
-    matches, matchEstado,
-    selectedMatchId, setSelectedMatchId,
-    adding, justAdded, successMatchId,
-    attendedEntries, filteredEntries, totalAttended, earliestYear, availableMatches,
-    availableCompetitions, selectedCompetitions, setSelectedCompetitions,
-    dateFrom, setDateFrom, dateTo, setDateTo,
-    hasActiveFilters, clearFilters,
-    handleMarkAttendance, handleUpdateNote, remove, upsert,
-  } = useMiHistorial(user);
-
-  const [deleteModal, setDeleteModal] = useState<DeleteModalData | null>(null);
-  const [noteModal, setNoteModal]     = useState<NoteModalData | null>(null);
   const [importModalOpen, setImportModalOpen] = useState(false);
 
   const existingFixtureIds = attendedEntries
-    .map(e => parseInt(e.matchId, 10))
-    .filter(id => !isNaN(id));
->>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
+    .map((e) => parseInt(e.matchId, 10))
+    .filter((id) => !isNaN(id));
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       {/* Header */}
       <div className="mb-6 pl-3 border-l-2 border-boca-gold/50">
         <h1 className="type-section-title text-white mb-0.5">Mi Historial</h1>
-        <p className="type-body text-text-muted">
-          {user.displayName ?? user.email}
-        </p>
+        <p className="type-body text-text-muted">{user.displayName ?? user.email}</p>
       </div>
 
       {/* Stats */}
       <div className="flex items-center gap-4 mb-6 p-4 bg-boca-blue-light border border-boca-border rounded-sm">
         <div className="flex-1">
-          <p className="type-caption text-text-muted mb-0.5">
-            Partidos presenciados
-          </p>
+          <p className="type-caption text-text-muted mb-0.5">Partidos presenciados</p>
           <p
             className="type-stat text-boca-gold font-bold tabular-nums"
-            style={{ fontSize: "2rem", lineHeight: 1 }}
+            style={{ fontSize: '2rem', lineHeight: 1 }}
           >
             {totalAttended}
           </p>
@@ -115,11 +84,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
       {/* Register form */}
       <div className="mb-6 p-4 bg-boca-blue-light border border-boca-border rounded-sm">
         <div className="flex items-center gap-2 mb-3">
-          <svg
-            viewBox="0 0 16 16"
-            fill="none"
-            className="w-4 h-4 text-boca-gold shrink-0"
-          >
+          <svg viewBox="0 0 16 16" fill="none" className="w-4 h-4 text-boca-gold shrink-0">
             <rect
               x="2"
               y="3"
@@ -143,30 +108,23 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
               strokeLinejoin="round"
             />
           </svg>
-          <p className="type-body text-text-nav">
-            Agregá el partido al que fuiste
-          </p>
+          <p className="type-body text-text-nav">Agregá el partido al que fuiste</p>
         </div>
 
-        {matchEstado === "loading" && (
+        {matchEstado === 'loading' && (
           <p className="type-body text-text-muted py-2">Cargando partidos...</p>
         )}
-        {matchEstado === "error" && (
-          <p className="type-body text-[#fca5a5] py-2">
-            No se pudieron cargar los partidos.
-          </p>
+        {matchEstado === 'error' && (
+          <p className="type-body text-[#fca5a5] py-2">No se pudieron cargar los partidos.</p>
         )}
 
-        {matchEstado === "ok" && (
+        {matchEstado === 'ok' && (
           <div className="flex flex-col sm:flex-row gap-2">
-<<<<<<< HEAD
             <MatchCombobox
               matches={availableMatches}
               value={selectedMatchId}
               onChange={setSelectedMatchId}
             />
-=======
-            <MatchCombobox matches={availableMatches} value={selectedMatchId} onChange={setSelectedMatchId} />
             <button
               type="button"
               onClick={() => setImportModalOpen(true)}
@@ -175,26 +133,21 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
               <Upload className="w-4 h-4" />
               Importar
             </button>
->>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
             <Button
               onClick={handleMarkAttendance}
               disabled={!selectedMatchId || adding}
               variant="primary"
               className={[
-                "sm:w-auto w-full type-button font-bold px-5 py-2.5 rounded-sm transition-all",
-                "flex items-center justify-center gap-2 whitespace-nowrap",
+                'sm:w-auto w-full type-button font-bold px-5 py-2.5 rounded-sm transition-all',
+                'flex items-center justify-center gap-2 whitespace-nowrap',
                 selectedMatchId && !adding
-                  ? "bg-boca-gold text-text-on-gold hover:opacity-90 cursor-pointer"
-                  : "bg-boca-gold/30 text-text-on-gold/50 cursor-not-allowed",
-              ].join(" ")}
+                  ? 'bg-boca-gold text-text-on-gold hover:opacity-90 cursor-pointer'
+                  : 'bg-boca-gold/30 text-text-on-gold/50 cursor-not-allowed',
+              ].join(' ')}
             >
               {adding ? (
                 <>
-                  <svg
-                    className="animate-spin w-3.5 h-3.5"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                  >
+                  <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
                     <circle
                       cx="8"
                       cy="8"
@@ -221,7 +174,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                   ¡Marcado!
                 </span>
               ) : (
-                "Marcar presencia"
+                'Marcar presencia'
               )}
             </Button>
           </div>
@@ -267,7 +220,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
             <p className="type-caption text-text-muted">
               {hasActiveFilters
                 ? `${filteredEntries.length} de ${totalAttended}`
-                : `${totalAttended} ${totalAttended === 1 ? "partido" : "partidos"}`}
+                : `${totalAttended} ${totalAttended === 1 ? 'partido' : 'partidos'}`}
             </p>
           )}
         </div>
@@ -301,21 +254,15 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-boca-border/60">
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">
-                    Fecha
-                  </th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">
-                    Rival
-                  </th>
+                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Fecha</th>
+                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Rival</th>
                   <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">
                     Resultado
                   </th>
                   <th className="px-3 py-2 type-caption text-text-muted/70 font-medium hidden sm:table-cell">
                     Competencia
                   </th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">
-                    Nota
-                  </th>
+                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Nota</th>
                   <th className="px-2 py-2" aria-label="Acciones" />
                 </tr>
               </thead>
@@ -324,9 +271,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                   <AttendanceRow
                     key={entry.matchId}
                     matchId={entry.matchId}
-                    match={matches.find(
-                      (m) => m.fixtureId.toString() === entry.matchId,
-                    )}
+                    match={matches.find((m) => m.fixtureId.toString() === entry.matchId)}
                     note={entry.note}
                     isNew={justAdded === entry.matchId}
                     onOpenNoteModal={(matchId, note, label) =>
@@ -363,8 +308,6 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
           onClose={() => setNoteModal(null)}
         />
       )}
-<<<<<<< HEAD
-=======
       {importModalOpen && (
         <ImportModal
           matches={matches}
@@ -373,8 +316,6 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
           onClose={() => setImportModalOpen(false)}
         />
       )}
-
->>>>>>> 9fd9806c519ae3819ea42b15e30649297f1bfe6c
     </div>
   );
 };

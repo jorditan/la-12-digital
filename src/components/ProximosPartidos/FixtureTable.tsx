@@ -1,12 +1,14 @@
-import { CalendarPlus, History } from "lucide-react";
-import type { ProximoPartido } from "../../services/apifootball";
-import { Badge } from "../ui/Badge";
-import { buildGCalLink } from "../../utils/calendarLink";
-import { H2HModal } from "./H2HModal";
-import { useFixtureTableH2H } from "./hooks/useFixtureTableH2H";
-import { TeamCell } from "./TeamCell";
-import { useFixtureTableRows } from "./hooks/useFixtureTableRows";
-import { formatDia, formatFechaCorta, getTableRowClass } from "./utils";
+import { CalendarPlus, History, MoreHorizontal } from 'lucide-react';
+import { useState } from 'react';
+import type { ProximoPartido } from '../../services/apifootball';
+import { Badge } from '../ui/Badge';
+import { buildGCalLink } from '../../utils/calendarLink';
+import { H2HModal } from './H2HModal';
+import { useFixtureTableH2H } from './hooks/useFixtureTableH2H';
+import { TeamCell } from './TeamCell';
+import { useFixtureTableRows } from './hooks/useFixtureTableRows';
+import { formatDia, getTableRowClass } from './utils';
+import { formatIsoDate } from '../../lib/date';
 
 interface FixtureTableProps {
   partidos: ProximoPartido[];
@@ -15,6 +17,8 @@ interface FixtureTableProps {
 export function FixtureTable({ partidos }: FixtureTableProps) {
   const rows = useFixtureTableRows(partidos);
   const { selected, openH2H, closeH2H } = useFixtureTableH2H();
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+  const toggleDropdown = (id: number) => setOpenDropdownId((prev) => (prev === id ? null : id));
 
   return (
     <>
@@ -22,24 +26,25 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
         <table className="w-full border-collapse font-sans">
           {/* Cabecera */}
           <thead>
-            <tr className="border-b border-boca-gold/15">
-              <th className="py-2 px-3 text-left type-ui-label uppercase tracking-wider text-boca-gold/50 w-[72px]">
+            <tr className="border-b border-boca-border-card">
+              <th className="py-2 px-3 text-left font-sans font-medium text-sm text-text-muted w-[72px]">
                 Fecha
               </th>
-              <th className="py-2 px-3 text-right type-ui-label uppercase tracking-wider text-boca-gold/50 w-[50%] hidden sm:table-cell">
+              <th className="py-2 px-3 text-right font-sans font-medium text-sm text-text-muted w-[50%] hidden sm:table-cell">
                 Local
               </th>
-              <th className="py-2 px-1 text-center type-ui-label uppercase tracking-wider text-boca-gold/30 w-8">
+              <th className="py-2 px-1 text-center font-sans font-medium text-sm text-text-muted w-8">
                 vs
               </th>
-              <th className="py-2 px-3 text-left type-ui-label uppercase tracking-wider text-boca-gold/50 w-[50%]">
-                Rival
+              <th className="py-2 px-3 text-left font-sans font-medium text-sm text-text-muted w-[50%]">
+                <span className="sm:hidden">Rival</span>
+                <span className="hidden sm:inline">Visitante</span>
               </th>
-              <th className="py-2 px-3 text-center type-ui-label uppercase tracking-wider text-boca-gold/50 w-14">
+              <th className="py-2 px-3 text-center font-sans font-medium text-sm text-text-muted w-14">
                 Hora
               </th>
-              <th className="py-2 px-3 text-left type-ui-label uppercase tracking-wider text-boca-gold/50 hidden md:table-cell">
-                Copa
+              <th className="py-2 px-3 text-left font-sans font-medium text-sm text-text-muted hidden md:table-cell">
+                Competencia
               </th>
               <th className="py-2 px-3 w-20" aria-label="Acciones" />
             </tr>
@@ -53,11 +58,11 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                   {/* Fecha */}
                   <td className="py-2.5 px-3">
                     <div className="flex flex-col leading-tight w-full">
-                      <span className="type-ui-label uppercase text-boca-gold/40">
+                      <span className="font-sans font-medium text-xs text-text-muted">
                         {formatDia(p.date)}
                       </span>
-                      <span className="text-xs text-text-secondary tabular-nums">
-                        {formatFechaCorta(p.date)}
+                      <span className="text-sm text-white tabular-nums">
+                        {formatIsoDate(p.date, 'es-AR', { day: '2-digit', month: '2-digit' })}
                       </span>
                     </div>
                   </td>
@@ -76,34 +81,33 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
 
                   {/* vs */}
                   <td className="py-2.5 px-1 text-center">
-                    <span className="type-ui-label text-boca-gold/25 tracking-tight">
-                      vs
-                    </span>
+                    <span className="font-sans text-sm text-text-muted">vs</span>
                   </td>
 
-                  {/* Visitante */}
+                  {/* Visitante — mobile muestra siempre el rival (no-Boca) */}
                   <td className="py-2.5 px-3">
-                    <TeamCell
-                      logo={p.awayTeam.logo}
-                      name={p.awayTeam.name}
-                      align="left"
-                      bold={!bocaEsLocal}
-                    />
+                    <div className="sm:hidden">
+                      <TeamCell logo={rival.logo} name={rival.name} align="left" bold />
+                    </div>
+                    <div className="hidden sm:block">
+                      <TeamCell
+                        logo={p.awayTeam.logo}
+                        name={p.awayTeam.name}
+                        align="left"
+                        bold={!bocaEsLocal}
+                      />
+                    </div>
                   </td>
 
                   {/* Hora */}
                   <td className="py-2.5 px-3 text-center whitespace-nowrap">
-                    <span className="text-xs text-white tabular-nums font-medium">
-                      {p.time}
-                    </span>
+                    <span className="text-sm text-white tabular-nums font-medium">{p.time}</span>
                   </td>
 
                   {/* Copa */}
                   <td className="py-2.5 px-3 hidden md:table-cell">
                     <Badge
-                      variant={
-                        p.competition === "Copa Libertadores" ? "gold" : "blue"
-                      }
+                      variant={p.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
                       className="px-1.5 whitespace-nowrap"
                     >
                       {p.competition}
@@ -111,25 +115,95 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                   </td>
 
                   {/* Acciones */}
-                  <td className="py-2.5 px-2 text-center">
-                    <div className="flex items-center justify-center gap-2">
+                  <td className="py-2.5 px-2 text-center relative">
+                    {/* Mobile: menú "..." */}
+                    <div className="sm:hidden">
                       <button
                         type="button"
-                        onClick={() => openH2H(p.rivalApiId, rival.name)}
-                        aria-label={`Ver historial vs ${rival.name}`}
-                        className="inline-flex items-center justify-center text-white/25 hover:text-boca-gold transition-colors"
+                        onClick={() => toggleDropdown(p.fixtureId)}
+                        aria-label="Acciones del partido"
+                        aria-expanded={openDropdownId === p.fixtureId}
+                        aria-haspopup="menu"
+                        className="inline-flex items-center justify-center w-7 h-7 rounded-sm border border-white/[0.08] bg-white/[0.03] text-white/40 hover:text-white/70 hover:border-white/20 transition-colors"
                       >
-                        <History size={14} />
+                        <MoreHorizontal size={14} />
                       </button>
+                      {openDropdownId === p.fixtureId && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-10"
+                            onClick={() => setOpenDropdownId(null)}
+                            aria-hidden="true"
+                          />
+                          <div
+                            role="menu"
+                            className="absolute right-0 top-full mt-1 z-20 w-max bg-boca-blue border border-boca-border rounded-sm shadow-lg overflow-hidden"
+                          >
+                            <button
+                              type="button"
+                              role="menuitem"
+                              onClick={() => {
+                                openH2H(p.rivalApiId, rival.name);
+                                setOpenDropdownId(null);
+                              }}
+                              className="flex items-center gap-2.5  px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/[0.05] transition-colors w-fit"
+                            >
+                              <History size={13} className="shrink-0" />
+                              <span>Ver últimos partidos</span>
+                            </button>
+                            <a
+                              href={buildGCalLink(p)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              role="menuitem"
+                              onClick={() => setOpenDropdownId(null)}
+                              aria-label={`Agregar ${p.homeTeam.name} vs ${p.awayTeam.name} a Google Calendar`}
+                              className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/[0.05] transition-colors w-fit"
+                            >
+                              <CalendarPlus size={13} className="shrink-0" />
+                              <span>Agregar al calendario</span>
+                            </a>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Tablet+: botones completos (estilo CardPartido) */}
+                    <div className="hidden sm:flex items-center justify-center gap-1">
                       <a
                         href={buildGCalLink(p)}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`Agregar ${p.homeTeam.name} vs ${p.awayTeam.name} a Google Calendar`}
-                        className="inline-flex items-center justify-center text-white/25 hover:text-boca-gold transition-colors"
+                        className="group flex h-6 items-center gap-1.5 px-2 rounded-sm bg-white/[0.04] border border-white/[0.08] hover:bg-[#1a73e8]/10 hover:border-[#1a73e8]/30 transition-all duration-200 shrink-0"
                       >
-                        <CalendarPlus size={14} />
+                        <img
+                          src="/google_calendar_icon.png"
+                          alt=""
+                          aria-hidden="true"
+                          className="w-3.5 h-3.5 object-contain shrink-0"
+                        />
+                        <span className="font-sans text-[10px] text-white/35 group-hover:text-white/70 transition-colors whitespace-nowrap">
+                          Agregar al calendario
+                        </span>
                       </a>
+                      <div className="relative group/tip">
+                        <button
+                          type="button"
+                          onClick={() => openH2H(p.rivalApiId, rival.name)}
+                          aria-label={`Ver historial vs ${rival.name}`}
+                          className="flex items-center justify-center h-6 w-6 rounded-sm border bg-white/[0.04] border-white/[0.08] text-white/35 hover:bg-white/[0.07] hover:border-white/20 hover:text-white/60 transition-all duration-200"
+                        >
+                          <History size={12} />
+                        </button>
+                        <div className="pointer-events-none absolute bottom-full right-0 mb-1.5 z-20 opacity-0 group-hover/tip:opacity-100 transition-opacity duration-150">
+                          <div className="bg-boca-blue px-2 py-1 rounded-sm border border-boca-border whitespace-nowrap">
+                            <span className="font-sans text-[10px] text-white/60">
+                              Últimos partidos contra {rival.name}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -140,11 +214,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
       </div>
 
       {selected && (
-        <H2HModal
-          onClose={closeH2H}
-          rivalId={selected.rivalId}
-          rivalName={selected.rivalName}
-        />
+        <H2HModal onClose={closeH2H} rivalId={selected.rivalId} rivalName={selected.rivalName} />
       )}
     </>
   );

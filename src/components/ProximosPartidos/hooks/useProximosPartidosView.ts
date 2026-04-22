@@ -7,7 +7,9 @@ export function useProximosPartidosView(
   partidos: ProximoPartido[],
   estado: "loading" | "error" | "ok",
 ) {
-  const [vista, setVista] = useState<VistaProximosPartidos>("cards");
+  const [vista, setVista] = useState<VistaProximosPartidos>(() =>
+    window.innerWidth < 1024 ? "tabla" : "cards",
+  );
 
   const canShowActions = estado === "ok" && partidos.length > 0;
 

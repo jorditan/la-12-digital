@@ -1,8 +1,8 @@
-import { Star } from "lucide-react";
-import { Button } from "../ui/Button";
-import { GamePromoCard } from "../GamePromoCard/GamePromoCard";
-import { GameModal } from "./GameModal";
-import { useIdolosGame } from "./hooks/useIdolosGame";
+import { Star } from 'lucide-react';
+import { Button } from '../ui/Button';
+import { GamePromoCard } from '../GamePromoCard/GamePromoCard';
+import { GameModal } from './GameModal';
+import { useIdolosGame } from './hooks/useIdolosGame';
 
 export function IdolosGame() {
   const game = useIdolosGame();
@@ -16,8 +16,8 @@ export function IdolosGame() {
         score={score.total > 0 ? `${score.correct}/${score.total}` : null}
         title={
           <p className="font-serif text-2xl font-bold text-white leading-tight">
-            ¿Qué ídolo
-            <span className="text-boca-gold"> es?</span>
+            ¿Qué
+            <span className="text-boca-gold"> ídolo de Boca es?</span>
           </p>
         }
         decoration={[20, 16, 12].map((size, i) => (
@@ -30,17 +30,14 @@ export function IdolosGame() {
           />
         ))}
         cta={
-          <Button
-            onClick={state === "waiting" ? startRound : closeModal}
-            className="w-fit"
-          >
-            {state === "waiting" ? "Jugar" : "▶ Ver desafío"}
+          <Button onClick={state === 'waiting' ? startRound : closeModal} className="w-fit">
+            {state === 'waiting' ? 'Jugar' : '▶ Ver desafío'}
           </Button>
         }
       />
 
       {/* Modal — solo visible cuando el juego está activo */}
-      {state !== "waiting" && idolo && (
+      {state !== 'waiting' && idolo && (
         <GameModal
           state={state}
           idolo={idolo}
