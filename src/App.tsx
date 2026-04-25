@@ -132,7 +132,7 @@ function AppInner() {
           >
             Club Atlético Boca Juniors
           </a>
-          . . Hecha con amor bostero y sin fines de lucro.
+          . Hecha con amor bostero y sin fines de lucro.
         </p>
       </footer>
     </div>

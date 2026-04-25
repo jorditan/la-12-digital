@@ -4,8 +4,8 @@ import { Upload, Download, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 import type { MatchResult } from '@/services/apifootball';
 import type { UpsertAttendancePayload } from '@/types/attendance';
-import type { EnrichedRow } from '@/hooks/useMatchEnricher';
 import { useImportModal } from './useImportModal';
+import { PreviewRow } from './ImportPreview';
 
 interface ImportModalProps {
   matches: MatchResult[];
@@ -13,41 +13,6 @@ interface ImportModalProps {
   upsert: (payload: UpsertAttendancePayload) => Promise<void>;
   onClose: () => void;
 }
-
-// ── Sub-componentes ───────────────────────────────────────────────────────────
-
-const StatusDot = ({ status }: { status: EnrichedRow['status'] }) => {
-  const colors: Record<EnrichedRow['status'], string> = {
-    found: 'bg-[#4ade80]',
-    duplicate: 'bg-text-muted/30',
-    not_found: 'bg-boca-gold',
-  };
-  return <span className={`inline-block w-2 h-2 rounded-full shrink-0 ${colors[status]}`} />;
-};
-
-const PreviewRow = ({ row }: { row: EnrichedRow }) => {
-  const rival =
-    row.homeTeam && row.awayTeam ? `${row.homeTeam} vs ${row.awayTeam}` : row.rival;
-  const score =
-    row.homeGoals !== undefined && row.awayGoals !== undefined
-      ? ` ${row.homeGoals}-${row.awayGoals}`
-      : '';
-  return (
-    <div className="flex items-center gap-2 py-1.5 border-b border-boca-border/20 last:border-0">
-      <StatusDot status={row.status} />
-      <span className="type-caption text-text-nav flex-1 min-w-0 truncate">
-        {row.fecha} · {rival}{score}
-      </span>
-      {row.league && (
-        <span className="type-caption text-text-muted shrink-0 text-[10px] uppercase tracking-tighter bg-boca-blue-mid px-1.5 py-0.5 rounded-sm">
-          {row.league}
-        </span>
-      )}
-    </div>
-  );
-};
-
-// ── Componente principal ──────────────────────────────────────────────────────
 
 export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: ImportModalProps) => {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -73,10 +38,11 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
       ref={overlayRef}
       className="fixed inset-0 z-overlay flex items-center justify-center px-4"
       style={{ background: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(4px)' }}
-      onClick={e => { if (e.target === overlayRef.current) onClose(); }}
+      onClick={(e) => {
+        if (e.target === overlayRef.current) onClose();
+      }}
     >
       <div className="w-full max-w-2xl bg-boca-blue-light border border-boca-border rounded-sm shadow-2xl animate-fade-in overflow-hidden">
-
         {/* Header compartido */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-boca-border/60">
           <h2 className="type-card-title text-boca-gold">Importar historial</h2>
@@ -90,13 +56,15 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
         </div>
 
         <div className="p-6">
-
           {/* ── idle ── */}
           {step === 'idle' && (
             <>
               <p className="type-body text-text-muted mb-5">
-                Subí tu archivo para añadir partidos a tu historial de forma masiva.
-                El sistema identificará automáticamente los resultados y competencias.
+                <b className="text-white">
+                  Descargá la plantilla, completala y después volvé a cargarla
+                </b>{' '}
+                . Añadirás partidos a tu historial de forma masiva, el sistema identificará
+                automáticamente los resultados y competencias.
               </p>
 
               <button
@@ -129,7 +97,7 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
                   <p className="type-caption text-[#fca5a5] font-bold mb-2">
                     Errores en el archivo:
                   </p>
-                  {errors.map(e => (
+                  {errors.map((e) => (
                     <p key={`${e.field}-${e.rowIndex}`} className="type-caption text-[#fca5a5]/80">
                       • {e.message}
                     </p>
@@ -164,26 +132,24 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
                       Partidos identificados ({foundCount})
                     </p>
                     <div className="bg-black/20 rounded-sm px-3 py-1">
-                      {enriched.filter(r => r.status === 'found').map(r => (
-                        <PreviewRow key={r.rowIndex} row={r} />
-                      ))}
+                      {enriched
+                        .filter((r) => r.status === 'found')
+                        .map((r) => (
+                          <PreviewRow key={r.rowIndex} row={r} />
+                        ))}
                     </div>
                   </div>
                 )}
 
                 {notFoundCount > 0 && (
                   <div>
-                    <p className="type-caption text-boca-gold font-bold mb-2 uppercase tracking-wider text-[11px]">
-                      Partidos para añadir manualmente ({notFoundCount})
-                    </p>
                     <div className="bg-black/20 rounded-sm px-3 py-1">
-                      {enriched.filter(r => r.status === 'not_found').map(r => (
-                        <PreviewRow key={r.rowIndex} row={r} />
-                      ))}
+                      {enriched
+                        .filter((r) => r.status === 'not_found')
+                        .map((r) => (
+                          <PreviewRow key={r.rowIndex} row={r} />
+                        ))}
                     </div>
-                    <p className="type-caption text-text-muted/60 mt-2 italic">
-                      Se usarán los datos proporcionados en tu archivo.
-                    </p>
                   </div>
                 )}
 
@@ -193,9 +159,11 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
                       Ya registrados ({duplicateCount})
                     </p>
                     <div className="bg-black/10 rounded-sm px-3 py-1 opacity-60">
-                      {enriched.filter(r => r.status === 'duplicate').map(r => (
-                        <PreviewRow key={r.rowIndex} row={r} />
-                      ))}
+                      {enriched
+                        .filter((r) => r.status === 'duplicate')
+                        .map((r) => (
+                          <PreviewRow key={r.rowIndex} row={r} />
+                        ))}
                     </div>
                   </div>
                 )}
@@ -207,20 +175,17 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
                 </div>
               )}
 
-              <div className="flex gap-3">
+              <div className="flex justify-between">
+                <Button variant="outline" onClick={onClose} className="px-6 font-medium">
+                  Cancelar
+                </Button>
+
                 <Button
                   variant="primary"
                   onClick={handleImport}
                   disabled={foundCount + notFoundCount === 0}
-                  className={[
-                    "flex-1 justify-center py-3 font-bold uppercase tracking-wide",
-                    foundCount + notFoundCount === 0 ? 'opacity-40 cursor-not-allowed' : ''
-                  ].join(" ")}
                 >
-                  Confirmar e importar {foundCount + notFoundCount} { (foundCount + notFoundCount) === 1 ? 'partido' : 'partidos' }
-                </Button>
-                <Button variant="outline" onClick={onClose} className="px-6 font-medium">
-                  Cancelar
+                  Añadir partidos
                 </Button>
               </div>
             </>
@@ -238,12 +203,15 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
               <p className="type-body text-text-muted mb-8 max-w-xs mx-auto">
                 Se han añadido <strong>{importedCount}</strong> partidos a tu historial personal.
               </p>
-              <Button variant="primary" onClick={onClose} className="px-10 py-3 font-bold uppercase tracking-wider">
+              <Button
+                variant="primary"
+                onClick={onClose}
+                className="px-10 py-3 font-bold uppercase tracking-wider"
+              >
                 Cerrar y ver historial
               </Button>
             </div>
           )}
-
         </div>
       </div>
     </div>

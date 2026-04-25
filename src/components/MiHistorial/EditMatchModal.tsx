@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { Input } from '../ui/Input';
 import type { MatchResult } from '@/services/apifootball';
 
 interface EditMatchModalProps {
@@ -49,59 +50,57 @@ export const EditMatchModal = ({ match, onSave, onClose }: EditMatchModalProps) 
       <div className="w-full max-w-md bg-boca-blue-light border border-boca-border rounded-sm shadow-2xl animate-fade-in">
         <div className="flex items-center justify-between px-6 py-4 border-b border-boca-border/60">
           <h2 className="type-card-title text-boca-gold text-lg">Editar datos del partido</h2>
-          <button onClick={onClose} className="text-text-muted hover:text-white"><X size={20} /></button>
+          <button onClick={onClose} className="text-text-muted hover:text-white transition-colors">
+            <X size={20} />
+          </button>
         </div>
 
-        <form onSubmit={handleSave} className="p-6 space-y-4">
-          <div>
-            <label className="block type-caption text-text-muted mb-1 uppercase tracking-wider">Rival</label>
-            <input
-              type="text"
-              value={rival}
-              onChange={e => setRival(e.target.value)}
-              className="w-full bg-black/20 border border-boca-border rounded-sm px-3 py-2 text-white outline-none focus:border-boca-gold/50 transition-colors"
-              required
-            />
-          </div>
+        <form onSubmit={handleSave} className="p-6 space-y-5">
+          <Input 
+            label="rival"
+            value={rival}
+            onChange={e => setRival(e.target.value)}
+            required
+          />
 
-          <div>
-            <label className="block type-caption text-text-muted mb-1 uppercase tracking-wider">Competencia</label>
-            <input
-              type="text"
-              value={competition}
-              onChange={e => setCompetition(e.target.value)}
-              className="w-full bg-black/20 border border-boca-border rounded-sm px-3 py-2 text-white outline-none focus:border-boca-gold/50 transition-colors"
-            />
-          </div>
+          <Input 
+            label="competencia"
+            value={competition}
+            onChange={e => setCompetition(e.target.value)}
+          />
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block type-caption text-text-muted mb-1 uppercase tracking-wider">Goles Boca</label>
-              <input
-                type="number"
-                min="0"
-                value={goalsBoca}
-                onChange={e => setGoalsBoca(e.target.value)}
-                className="w-full bg-black/20 border border-boca-border rounded-sm px-3 py-2 text-white outline-none focus:border-boca-gold/50 transition-colors"
-              />
-            </div>
-            <div>
-              <label className="block type-caption text-text-muted mb-1 uppercase tracking-wider">Goles Rival</label>
-              <input
-                type="number"
-                min="0"
-                value={goalsRival}
-                onChange={e => setGoalsRival(e.target.value)}
-                className="w-full bg-black/20 border border-boca-border rounded-sm px-3 py-2 text-white outline-none focus:border-boca-gold/50 transition-colors"
-              />
-            </div>
+            <Input 
+              label="goles boca"
+              type="number"
+              min="0"
+              value={goalsBoca}
+              onChange={e => setGoalsBoca(e.target.value)}
+            />
+            <Input 
+              label="goles rival"
+              type="number"
+              min="0"
+              value={goalsRival}
+              onChange={e => setGoalsRival(e.target.value)}
+            />
           </div>
 
           <div className="pt-4 flex gap-3">
-            <Button type="submit" variant="primary" disabled={loading} className="flex-1 justify-center py-2.5 font-bold uppercase">
+            <Button 
+              type="submit" 
+              variant="primary" 
+              disabled={loading} 
+              className="flex-1 justify-center py-2.5 font-bold uppercase"
+            >
               {loading ? 'Guardando...' : 'Guardar cambios'}
             </Button>
-            <Button type="button" variant="outline" onClick={onClose} className="px-6">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onClose} 
+              className="px-6 font-medium"
+            >
               Cancelar
             </Button>
           </div>
