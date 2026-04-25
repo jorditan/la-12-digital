@@ -53,6 +53,15 @@ export const formatTableDate = (dateStr: string): string => {
   return `${day}/${month}`;
 };
 
+export const formatFullDate = (dateStr: string): string => {
+  const d = new Date(dateStr + "T12:00:00");
+  return d.toLocaleDateString('es-AR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+};
+
 const getEarliestYear = (map: Record<string, { createdAt: string }>): number | null => {
   const entries = Object.values(map);
   if (!entries.length) return null;

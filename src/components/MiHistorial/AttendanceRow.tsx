@@ -9,6 +9,7 @@ import { Badge } from "../ui/Badge";
 import {
   getRivalName,
   formatTableDate,
+  formatFullDate,
   getResultado,
   ROW_STYLE,
 } from "./useMiHistorial";
@@ -171,7 +172,7 @@ export const AttendanceRow = ({
                 </button>
                 <button
                   onClick={() => {
-                    onOpenDeleteModal(matchId, rival, match.date);
+                    onOpenDeleteModal(matchId, rival, formatFullDate(match.date));
                     setShowDropdown(false);
                   }}
                   className="flex items-center gap-2.5 px-4 py-3 text-sm text-red-400/80 hover:text-red-400 hover:bg-white/[0.05] transition-colors w-full text-left border-t border-white/[0.05]"
@@ -202,7 +203,7 @@ export const AttendanceRow = ({
           <Tooltip content="Eliminar partido" position="top">
             <Button
               type="button"
-              onClick={() => onOpenDeleteModal(matchId, rival, match.date)}
+              onClick={() => onOpenDeleteModal(matchId, rival, formatFullDate(match.date))}
               variant="ghost"
               size="icon"
               className="w-7 h-7 text-text-muted/40 hover:text-[#fca5a5] transition-colors"
