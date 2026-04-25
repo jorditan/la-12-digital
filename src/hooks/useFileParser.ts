@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 export interface ParsedRow {
   rowIndex: number;
@@ -48,11 +48,32 @@ export function useFileParser() {
       };
     }
 
-    // 3. Parsear con SheetJS
+    // 3. Parsear archivo
     const buffer = await file.arrayBuffer();
-    const wb = XLSX.read(buffer, { type: 'array', cellDates: false });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json<string[]>(ws, { header: 1, defval: '' });
+    let rows: string[][];
+
+    if (ext === 'csv') {
+      // Parse CSV natively — split on newlines, then split each line on commas,
+      // stripping optional surrounding double-quotes from each cell value.
+      const text = new TextDecoder().decode(buffer);
+      rows = text
+        .split(/\r?\n/)
+        .filter((line) => line.trim() !== '')
+        .map((line) =>
+          line.split(',').map((cell) => cell.replace(/^"(.*)"$/, '$1').trim()),
+        );
+    } else {
+      // Parse XLSX with ExcelJS (no prototype-pollution or ReDoS risks)
+      const wb = new ExcelJS.Workbook();
+      await wb.xlsx.load(buffer);
+      const ws = wb.worksheets[0];
+      rows = [];
+      ws.eachRow({ includeEmpty: true }, (row) => {
+        // row.values is 1-indexed; index 0 is always null — drop it.
+        const values = (row.values as (ExcelJS.CellValue | null)[]).slice(1);
+        rows.push(values.map((v) => (v == null ? '' : String(v))));
+      });
+    }
 
     // 4. Detectar fila de header
     const startRow = rows[0]?.[0]?.toString().toLowerCase().trim() === 'fecha' ? 1 : 0;
