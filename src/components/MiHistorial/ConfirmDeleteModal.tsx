@@ -33,14 +33,26 @@ export const ConfirmDeleteModal = ({
         if (e.target === overlayRef.current) onClose();
       }}
     >
-      <div className="relative w-full max-w-none bg-boca-blue-light border border-boca-border rounded-t-2xl sm:rounded-sm p-6 shadow-2xl animate-fade-in flex flex-col sm:max-w-xs" onClick={e => e.stopPropagation()}>
+      <div
+        className="relative w-full max-w-none bg-boca-blue-light border border-boca-border rounded-t-2xl sm:rounded-sm p-6 shadow-2xl animate-fade-in flex flex-col sm:max-w-xs"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mb-4 sm:hidden" />
         <h2 className="type-card-title text-white mb-1">¿Eliminar este registro?</h2>
-        <p className="type-caption text-text-muted mb-6">
-          Boca vs {rival}
-          <span className="text-text-muted/50 mx-1">·</span>
-          {matchDate}
-        </p>
+
+        <div className="flex flex-col gap-4 mb-6">
+          <p className="type-caption text-text-muted">
+            Boca vs {rival}
+            <span className="text-text-muted/50 mx-1">·</span>
+            {matchDate}
+          </p>
+
+          <p className="type-caption text-text-muted">
+            Al eliminar un registro, se borrará de tu historial.{' '}
+            <b className="text-white font-semibold">Esta acción no se puede deshacer</b>. Si deseas
+            volver a agregarlo, tendrás que hacerlo manualmente.
+          </p>
+        </div>
 
         <div className="flex gap-4 justify-end">
           <Button variant="outline" onClick={onClose}>

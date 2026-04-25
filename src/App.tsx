@@ -142,14 +142,15 @@ function AppInner() {
 function AppToaster() {
   return (
     <Toaster
-      position="top-center"
+      position="bottom-center"
       toastOptions={{
         style: {
-          background: '#002140',
-          border: '1px solid #00396e',
-          color: '#e0e7ff',
+          background: 'var(--color-boca-gold)',
+          border: '1px solid var(--color-boca-gold-dark)',
+          color: 'var(--color-boca-blue)',
           fontFamily: 'Geist, sans-serif',
           fontSize: '14px',
+          fontWeight: '600',
         },
       }}
     />
