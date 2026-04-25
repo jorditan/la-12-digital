@@ -9,7 +9,7 @@ import { useImportModal } from './useImportModal';
 
 interface ImportModalProps {
   matches: MatchResult[];
-  existingFixtureIds: number[];
+  existingMatchIds: string[];
   upsert: (payload: UpsertAttendancePayload) => Promise<void>;
   onClose: () => void;
 }
@@ -47,7 +47,7 @@ const PreviewRow = ({ row }: { row: EnrichedRow }) => {
 
 // ── Componente principal ──────────────────────────────────────────────────────
 
-export const ImportModal = ({ matches, existingFixtureIds, upsert, onClose }: ImportModalProps) => {
+export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: ImportModalProps) => {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -64,7 +64,7 @@ export const ImportModal = ({ matches, existingFixtureIds, upsert, onClose }: Im
     downloadTemplate,
     handleFileChange,
     handleImport,
-  } = useImportModal(matches, existingFixtureIds, upsert, onClose);
+  } = useImportModal(matches, existingMatchIds, upsert, onClose);
 
   return (
     <div
@@ -180,14 +180,14 @@ export const ImportModal = ({ matches, existingFixtureIds, upsert, onClose }: Im
 
                 {notFoundCount > 0 && (
                   <div>
-                    <p className="type-caption text-[#fca5a5] font-bold mb-2">
-                      No encontrados en el sistema ({notFoundCount})
+                    <p className="type-caption text-boca-gold font-bold mb-2">
+                      Sin datos oficiales ({notFoundCount}) — se agregarán manualmente
                     </p>
                     {enriched.filter(r => r.status === 'not_found').map(r => (
                       <PreviewRow key={r.rowIndex} row={r} />
                     ))}
                     <p className="type-caption text-text-muted/60 mt-1">
-                      Solo se importan partidos disponibles en el sistema (últimos meses).
+                      Estos partidos no están en la API, pero los guardaremos con la info del archivo.
                     </p>
                   </div>
                 )}
@@ -203,10 +203,10 @@ export const ImportModal = ({ matches, existingFixtureIds, upsert, onClose }: Im
                 <Button
                   variant="primary"
                   onClick={handleImport}
-                  disabled={foundCount === 0}
-                  className={foundCount === 0 ? 'opacity-40 cursor-not-allowed' : ''}
+                  disabled={foundCount + notFoundCount === 0}
+                  className={foundCount + notFoundCount === 0 ? 'opacity-40 cursor-not-allowed' : ''}
                 >
-                  Importar {foundCount} {foundCount === 1 ? 'partido' : 'partidos'}
+                  Importar {foundCount + notFoundCount} {(foundCount + notFoundCount) === 1 ? 'partido' : 'partidos'}
                 </Button>
                 <Button variant="outline" onClick={onClose}>
                   Cancelar

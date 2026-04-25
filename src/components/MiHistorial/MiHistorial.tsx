@@ -50,9 +50,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   const [noteModal, setNoteModal] = useState<NoteModalData | null>(null);
   const [importModalOpen, setImportModalOpen] = useState(false);
 
-  const existingFixtureIds = attendedEntries
-    .map((e) => parseInt(e.matchId, 10))
-    .filter((id) => !isNaN(id));
+  const existingMatchIds = attendedEntries.map((e) => e.matchId);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -272,7 +270,10 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                   <AttendanceRow
                     key={entry.matchId}
                     matchId={entry.matchId}
-                    match={matches.find((m) => m.fixtureId.toString() === entry.matchId)}
+                    match={matches.find((m) => {
+                      const id = (m as any)._manualId || m.fixtureId.toString();
+                      return id === entry.matchId;
+                    })}
                     note={entry.note}
                     isNew={justAdded === entry.matchId}
                     onOpenNoteModal={(matchId, note, label) =>
@@ -312,7 +313,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
       {importModalOpen && (
         <ImportModal
           matches={matches}
-          existingFixtureIds={existingFixtureIds}
+          existingMatchIds={existingMatchIds}
           upsert={upsert}
           onClose={() => setImportModalOpen(false)}
         />

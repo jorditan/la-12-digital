@@ -32,7 +32,7 @@ export interface UseImportModalReturn {
 
 export function useImportModal(
   matches: MatchResult[],
-  existingFixtureIds: number[],
+  existingMatchIds: string[],
   upsert: (payload: UpsertAttendancePayload) => Promise<void>,
   onClose: () => void,
 ): UseImportModalReturn {
@@ -46,7 +46,7 @@ export function useImportModal(
 
   const { downloadTemplate } = useTemplateDownload();
   const { parseFile } = useFileParser();
-  const { enrich } = useMatchEnricher(matches, existingFixtureIds);
+  const { enrich } = useMatchEnricher(matches, existingMatchIds);
   const { importMatches } = useMatchImport(upsert);
 
   // Cerrar con Escape

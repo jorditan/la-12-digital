@@ -5,13 +5,16 @@ export interface ParsedRow {
   fecha: string; // DD/MM/YYYY (original del usuario)
   fechaISO: string; // YYYY-MM-DD (para comparar con MatchResult.date)
   rival: string;
+  condicion: 'Local' | 'Visitante';
+  golesBoca?: number;
+  golesRival?: number;
   competencia?: string;
   notas?: string;
 }
 
 export interface RowError {
   rowIndex: number;
-  field: 'fecha' | 'rival' | 'file';
+  field: 'fecha' | 'rival' | 'condicion' | 'file';
   message: string;
 }
 
@@ -66,8 +69,11 @@ export function useFileParser() {
 
       const fecha = row[0]?.toString().trim() ?? '';
       const rival = row[1]?.toString().trim() ?? '';
-      const competencia = row[2]?.toString().trim() || undefined;
-      let notas = row[3]?.toString().trim() || undefined;
+      const condicionRaw = row[2]?.toString().trim() ?? '';
+      const golesBocaRaw = row[3]?.toString().trim();
+      const golesRivalRaw = row[4]?.toString().trim();
+      const competencia = row[5]?.toString().trim() || undefined;
+      let notas = row[6]?.toString().trim() || undefined;
 
       // Validar fecha
       if (!/^\d{2}\/\d{2}\/\d{4}$/.test(fecha)) {
@@ -107,6 +113,21 @@ export function useFileParser() {
         return;
       }
 
+      // Validar condición
+      const condicion = /visitante/i.test(condicionRaw) ? 'Visitante' : 'Local';
+      if (!condicionRaw) {
+        errors.push({
+          rowIndex: realIdx,
+          field: 'condicion',
+          message: `Fila ${realIdx}: la condición (Local/Visitante) es obligatoria`,
+        });
+        return;
+      }
+
+      // Parsear goles (opcionales)
+      const golesBoca = golesBocaRaw !== '' ? parseInt(golesBocaRaw ?? '', 10) : undefined;
+      const golesRival = golesRivalRaw !== '' ? parseInt(golesRivalRaw ?? '', 10) : undefined;
+
       // Truncar notas a 200 chars
       if (notas && notas.length > 200) notas = notas.slice(0, 200);
 
@@ -115,6 +136,9 @@ export function useFileParser() {
         fecha,
         fechaISO: `${yyyy}-${mm}-${dd}`,
         rival,
+        condicion,
+        golesBoca: !isNaN(golesBoca as number) ? golesBoca : undefined,
+        golesRival: !isNaN(golesRival as number) ? golesRival : undefined,
         competencia,
         notas,
       });

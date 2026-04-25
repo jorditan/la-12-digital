@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 import { useMatchAttendance } from '@/hooks/useMatchAttendance';
 import { fetchMatchesForHistorial, BOCA_ID } from '@/services/apifootball';
 import type { MatchResult } from '@/services/apifootball';
@@ -68,7 +69,8 @@ const getEarliestYear = (map: Record<string, { createdAt: string }>): number | n
 
 export const useMiHistorial = (user: AuthUser) => {
   const { attendanceMap, upsert, remove } = useMatchAttendance(user.id);
-  const [matches, setMatches] = useState<MatchResult[]>([]);
+  const [apiMatches, setApiMatches] = useState<MatchResult[]>([]);
+  const [dbMatches, setDbMatches] = useState<MatchResult[]>([]);
   const [matchEstado, setMatchEstado] = useState<AsyncState>('loading');
   const [selectedMatchId, setSelectedMatchId] = useState('');
   const [adding, setAdding] = useState(false);
@@ -80,20 +82,54 @@ export const useMiHistorial = (user: AuthUser) => {
   const [dateFrom, setDateFrom] = useState<string | null>(null);
   const [dateTo, setDateTo] = useState<string | null>(null);
 
+  // 1. Cargar partidos recientes de la API
   useEffect(() => {
     fetchMatchesForHistorial()
       .then((data) => {
-        setMatches(data);
-        setMatchEstado('ok');
+        setApiMatches(data);
+        if (matchEstado === 'loading') setMatchEstado('ok');
       })
       .catch(() => setMatchEstado('error'));
   }, []);
 
+  // 2. Cargar partidos de la DB (manuales o históricos) que el usuario tiene registrados
+  useEffect(() => {
+    const attendedIds = Object.keys(attendanceMap);
+    if (attendedIds.length === 0) return;
+
+    supabase
+      .from('matches')
+      .select('*')
+      .in('id', attendedIds)
+      .then(({ data, error }) => {
+        if (error) return;
+        const mapped: MatchResult[] = (data || []).map((m) => ({
+          fixtureId: isNaN(parseInt(m.id)) ? 0 : parseInt(m.id),
+          date: m.date,
+          homeTeam: { id: m.home_team_id, name: m.home_team_name, logo: m.home_team_logo, winner: null },
+          awayTeam: { id: m.away_team_id, name: m.away_team_name, logo: m.away_team_logo, winner: null },
+          goalsHome: m.goals_home,
+          goalsAway: m.goals_away,
+          venueName: m.venue || '',
+          competition: m.competition || undefined,
+          // Hack para que AttendanceRow.tsx encuentre el match por string ID si es manual
+          _manualId: m.id,
+        } as MatchResult & { _manualId?: string }));
+        setDbMatches(mapped);
+      });
+  }, [attendanceMap]);
+
+  // Combinar ambos sets (prefiriendo API si hay colisión, aunque no debería haber)
+  const allMatchesMap = new Map<string, MatchResult>();
+  dbMatches.forEach(m => allMatchesMap.set((m as any)._manualId || m.fixtureId.toString(), m));
+  apiMatches.forEach(m => allMatchesMap.set(m.fixtureId.toString(), m));
+  const matches = Array.from(allMatchesMap.values());
+
   const attendedEntries = Object.values(attendanceMap)
     .filter((a) => a.attended)
     .sort((a, b) => {
-      const matchA = matches.find((m) => m.fixtureId.toString() === a.matchId);
-      const matchB = matches.find((m) => m.fixtureId.toString() === b.matchId);
+      const matchA = allMatchesMap.get(a.matchId);
+      const matchB = allMatchesMap.get(b.matchId);
       const dateA = matchA ? new Date(matchA.date).getTime() : new Date(a.createdAt).getTime();
       const dateB = matchB ? new Date(matchB.date).getTime() : new Date(b.createdAt).getTime();
       return dateB - dateA;
@@ -101,20 +137,20 @@ export const useMiHistorial = (user: AuthUser) => {
 
   const totalAttended = attendedEntries.length;
   const earliestYear = getEarliestYear(attendanceMap);
-  const availableMatches = matches.filter((m) => !attendanceMap[m.fixtureId.toString()]?.attended);
+  const availableMatches = matches.filter((m) => !attendanceMap[(m as any)._manualId || m.fixtureId.toString()]?.attended);
 
   // Unique competitions from attended entries (sorted)
   const availableCompetitions = [
     ...new Set(
       attendedEntries
-        .map((entry) => matches.find((m) => m.fixtureId.toString() === entry.matchId)?.competition)
+        .map((entry) => allMatchesMap.get(entry.matchId)?.competition)
         .filter((c): c is string => !!c)
     ),
   ].sort();
 
   // Apply filters to attended entries
   const filteredEntries = attendedEntries.filter((entry) => {
-    const match = matches.find((m) => m.fixtureId.toString() === entry.matchId);
+    const match = allMatchesMap.get(entry.matchId);
 
     if (selectedCompetitions.length > 0) {
       if (!match?.competition || !selectedCompetitions.includes(match.competition)) return false;
