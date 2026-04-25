@@ -19,7 +19,7 @@ export const PreviewRow = ({ row }: { row: EnrichedRow }) => {
       : '';
   
   return (
-    <div className="flex items-center gap-2 py-1.5 border-b border-boca-border/20 last:border-0">
+    <div className="flex items-center gap-2 py-1.5 border-b border-boca-border/20 last:border-0 text-left">
       <StatusDot status={row.status} />
       
       {/* Logos en miniatura si están disponibles */}
@@ -28,12 +28,12 @@ export const PreviewRow = ({ row }: { row: EnrichedRow }) => {
         <TeamLogo src={row.awayTeamLogo} alt="Visitante" size={14} className="border border-black/20 rounded-full bg-white/5" />
       </div>
 
-      <span className="type-caption text-text-nav flex-1 min-w-0 truncate lowercase">
+      <span className="type-caption text-text-nav flex-1 min-w-0 truncate">
         {row.fecha} · {rival}
         {score}
       </span>
       {row.league && (
-        <Badge className="text-[10px] lowercase" variant="blue">
+        <Badge className="text-[10px]" variant="blue">
           {row.league}
         </Badge>
       )}

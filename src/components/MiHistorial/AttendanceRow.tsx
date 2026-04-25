@@ -57,9 +57,9 @@ export const AttendanceRow = ({
       <tr className="border-b border-boca-border/40">
         <td
           colSpan={6}
-          className="px-3 py-2 type-caption text-text-muted/50 italic lowercase"
+          className="px-3 py-2 type-caption text-text-muted/50 italic"
         >
-          partido #{matchId}
+          Partido #{matchId}
         </td>
       </tr>
     );
@@ -109,13 +109,13 @@ export const AttendanceRow = ({
       </td>
 
       {/* Competencia */}
-      <td className="px-3 py-3 type-caption text-text-muted hidden sm:table-cell truncate max-w-[100px] lowercase">
+      <td className="px-3 py-3 type-caption text-text-muted hidden sm:table-cell truncate max-w-[100px]">
         {match.competition ?? "–"}
       </td>
 
       {/* Nota */}
       <td className="px-3 py-3 max-w-[160px]">
-        <Tooltip content="editar nota" position="top">
+        <Tooltip content="Editar nota" position="top">
           <Button
             type="button"
             onClick={() => onOpenNoteModal(matchId, note, label)}
@@ -124,7 +124,7 @@ export const AttendanceRow = ({
           >
             {note ? (
               <>
-                <span className="type-caption italic text-text-muted truncate flex-1 lowercase">
+                <span className="type-caption italic text-text-muted truncate flex-1">
                   "{note}"
                 </span>
                 <PenLine
@@ -133,9 +133,9 @@ export const AttendanceRow = ({
                 />
               </>
             ) : (
-              <span className="flex items-center gap-1 type-caption text-text-muted/40 group-hover/note:text-boca-gold transition-colors lowercase">
+              <span className="flex items-center gap-1 type-caption text-text-muted/40 group-hover/note:text-boca-gold transition-colors">
                 <Plus size={12} />
-                añadir nota
+                Añadir nota
               </span>
             )}
           </Button>
@@ -145,27 +145,27 @@ export const AttendanceRow = ({
       {/* Acciones */}
       <td className="px-3 py-3 text-right">
         <div className="flex items-center justify-end gap-1">
-          <Tooltip content="editar partido" position="top">
+          <Tooltip content="Editar partido" position="top">
             <Button
               type="button"
               onClick={() => onOpenEditModal(match)}
               variant="ghost"
               size="icon"
               className="text-text-muted/50 hover:text-boca-gold transition-colors"
-              aria-label="editar partido"
+              aria-label="Editar partido"
             >
               <Edit3 size={14} />
             </Button>
           </Tooltip>
           
-          <Tooltip content="eliminar partido" position="top">
+          <Tooltip content="Eliminar partido" position="top">
             <Button
               type="button"
               onClick={() => onOpenDeleteModal(matchId, rival, matchDate)}
               variant="ghost"
               size="icon"
               className="text-text-muted/50 hover:text-[#fca5a5] transition-colors"
-              aria-label="eliminar partido"
+              aria-label="Eliminar partido"
             >
               <Trash2 size={14} />
             </Button>

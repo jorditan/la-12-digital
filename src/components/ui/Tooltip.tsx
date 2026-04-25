@@ -20,8 +20,8 @@ export const Tooltip = ({ children, content, className = '', position = 'top' }:
       {children}
       <div className={`pointer-events-none absolute z-50 opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 ${positionClasses[position]}`}>
         <div className="bg-boca-blue-mid border border-boca-border px-2 py-1 rounded-sm shadow-xl whitespace-nowrap">
-          <span className="type-caption text-[11px] text-text-nav lowercase tracking-tight">
-            {content.toLowerCase()}
+          <span className="type-caption text-[11px] text-text-nav tracking-tight">
+            {content}
           </span>
         </div>
       </div>
