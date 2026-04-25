@@ -6,13 +6,15 @@ import type { MatchResult } from '@/services/apifootball';
 
 interface EditMatchModalProps {
   match: MatchResult;
-  onSave: (updatedData: Partial<MatchResult>) => Promise<void>;
+  initialNote?: string | null;
+  onSave: (updatedData: Partial<MatchResult>, note: string | null) => Promise<void>;
   onClose: () => void;
 }
 
-export const EditMatchModal = ({ match, onSave, onClose }: EditMatchModalProps) => {
+export const EditMatchModal = ({ match, initialNote, onSave, onClose }: EditMatchModalProps) => {
   const [rival, setRival] = useState(match.homeTeam.id === 451 ? match.awayTeam.name : match.homeTeam.name);
   const [competition, setCompetition] = useState(match.competition || '');
+  const [note, setNote] = useState(initialNote ?? '');
   const [goalsBoca, setGoalsBoca] = useState<string>(
     (match.homeTeam.id === 451 ? match.goalsHome : match.goalsAway)?.toString() || '0'
   );
@@ -39,7 +41,7 @@ export const EditMatchModal = ({ match, onSave, onClose }: EditMatchModalProps) 
       },
       goalsHome: isBocaHome ? parseInt(goalsBoca) : parseInt(goalsRival),
       goalsAway: isBocaHome ? parseInt(goalsRival) : parseInt(goalsBoca),
-    });
+    }, note.trim() || null);
     
     setLoading(false);
     onClose();
@@ -83,6 +85,17 @@ export const EditMatchModal = ({ match, onSave, onClose }: EditMatchModalProps) 
               min="0"
               value={goalsRival}
               onChange={e => setGoalsRival(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block type-caption text-text-muted mb-1.5 tracking-wider pl-1">Nota personal</label>
+            <textarea
+              value={note}
+              onChange={e => setNote(e.target.value.slice(0, 200))}
+              rows={3}
+              className="w-full bg-black/20 border border-boca-border rounded-sm px-3 py-2 text-white outline-none focus:border-boca-gold/50 transition-colors resize-none type-body"
+              placeholder="¿Algún recuerdo de este partido?"
             />
           </div>
 

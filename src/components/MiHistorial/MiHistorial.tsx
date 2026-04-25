@@ -8,7 +8,6 @@ import { MatchCombobox } from './MatchCombobox';
 import { MultiSelect } from './MultiSelect';
 import { DateRangePicker } from './DateRangePicker';
 import { ConfirmDeleteModal } from './ConfirmDeleteModal';
-import { NoteModal } from './NoteModal';
 import { Button } from '../ui/Button';
 import { Upload } from 'lucide-react';
 import { ImportModal } from './ImportModal';
@@ -17,8 +16,7 @@ import { EditMatchModal } from './EditMatchModal';
 // ── Logged-in content ─────────────────────────────────────────────────────────
 
 type DeleteModalData = { matchId: string; rival: string; matchDate: string };
-type NoteModalData = { matchId: string; note: string | null; label: string };
-type EditModalData = { match: MatchResult };
+type EditModalData = { match: MatchResult; note: string | null };
 
 const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   const {
@@ -44,27 +42,24 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
     hasActiveFilters,
     clearFilters,
     handleMarkAttendance,
-    handleUpdateNote,
     remove,
     upsert,
   } = useMiHistorial(user);
 
   const [deleteModal, setDeleteModal] = useState<DeleteModalData | null>(null);
-  const [noteModal, setNoteModal] = useState<NoteModalData | null>(null);
   const [editModal, setEditModal] = useState<EditModalData | null>(null);
   const [importModalOpen, setImportModalOpen] = useState(false);
 
   const existingMatchIds = attendedEntries.map((e) => e.matchId);
 
-  const handleUpdateMatchData = async (matchId: string, updatedData: Partial<MatchResult>) => {
-    const entry = attendedEntries.find((e) => e.matchId === matchId);
-    const match = matches.find((m) => ((m as any)._manualId || m.fixtureId.toString()) === matchId);
+  const handleUpdateMatchData = async (matchId: string, updatedData: Partial<MatchResult>, note: string | null) => {
+    const match = matches.find(m => ((m as any)._manualId || m.fixtureId.toString()) === matchId);
     if (!match) return;
 
     await upsert({
       matchId,
       attended: true,
-      note: entry?.note ?? null,
+      note: note,
       matchData: {
         date: match.date,
         homeTeamId: updatedData.homeTeam?.id ?? match.homeTeam.id,
@@ -76,7 +71,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         goalsHome: updatedData.goalsHome !== undefined ? updatedData.goalsHome : match.goalsHome,
         goalsAway: updatedData.goalsAway !== undefined ? updatedData.goalsAway : match.goalsAway,
         competition: updatedData.competition ?? match.competition,
-      },
+      }
     });
   };
 
@@ -201,7 +196,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                   ¡Marcado!
                 </span>
               ) : (
-                'Añadir partido'
+                'Marcar presencia'
               )}
             </Button>
           </div>
@@ -295,9 +290,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
               </thead>
               <tbody>
                 {filteredEntries.map((entry) => {
-                  const match = matches.find(
-                    (m) => ((m as any)._manualId || m.fixtureId.toString()) === entry.matchId
-                  );
+                  const match = matches.find((m) => ((m as any)._manualId || m.fixtureId.toString()) === entry.matchId);
                   return (
                     <AttendanceRow
                       key={entry.matchId}
@@ -305,10 +298,8 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                       match={match}
                       note={entry.note}
                       isNew={justAdded === entry.matchId}
-                      onOpenNoteModal={(matchId, note, label) =>
-                        setNoteModal({ matchId, note, label })
-                      }
-                      onOpenEditModal={(m) => setEditModal({ match: m })}
+                      onOpenNoteModal={() => {}} // Ya no se usa
+                      onOpenEditModal={(m) => setEditModal({ match: m, note: entry.note })}
                       onOpenDeleteModal={(matchId, rival, matchDate) =>
                         setDeleteModal({ matchId, rival, matchDate })
                       }
@@ -333,23 +324,11 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
           onClose={() => setDeleteModal(null)}
         />
       )}
-      {noteModal && (
-        <NoteModal
-          matchLabel={noteModal.label}
-          initialNote={noteModal.note}
-          onSave={(note) => handleUpdateNote(noteModal.matchId, note)}
-          onClose={() => setNoteModal(null)}
-        />
-      )}
       {editModal && (
         <EditMatchModal
           match={editModal.match}
-          onSave={(data) =>
-            handleUpdateMatchData(
-              (editModal.match as any)._manualId || editModal.match.fixtureId.toString(),
-              data
-            )
-          }
+          initialNote={editModal.note}
+          onSave={(data, note) => handleUpdateMatchData((editModal.match as any)._manualId || editModal.match.fixtureId.toString(), data, note)}
           onClose={() => setEditModal(null)}
         />
       )}

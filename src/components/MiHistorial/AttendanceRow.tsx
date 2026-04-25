@@ -118,7 +118,7 @@ export const AttendanceRow = ({
         <Tooltip content="Editar nota" position="top">
           <Button
             type="button"
-            onClick={() => onOpenNoteModal(matchId, note, label)}
+            onClick={() => onOpenEditModal(match)}
             variant="ghost"
             className="w-full justify-start text-left group/note"
           >
