@@ -67,7 +67,7 @@ export function useFileParser() {
       // Ignorar filas vacías
       if (!row[0] && !row[1]) return;
 
-      const fecha = row[0]?.toString().trim() ?? '';
+      let fechaRaw = row[0]?.toString().trim() ?? '';
       const rival = row[1]?.toString().trim() ?? '';
       const condicionRaw = row[2]?.toString().trim() ?? '';
       const golesBocaRaw = row[3]?.toString().trim();
@@ -75,16 +75,48 @@ export function useFileParser() {
       const competencia = row[5]?.toString().trim() || undefined;
       let notas = row[6]?.toString().trim() || undefined;
 
-      // Validar fecha
-      if (!/^\d{2}\/\d{2}\/\d{4}$/.test(fecha)) {
-        errors.push({
-          rowIndex: realIdx,
-          field: 'fecha',
-          message: `Fila ${realIdx}: formato de fecha inválido (usar DD/MM/YYYY)`,
-        });
-        return;
+      let dd = '';
+      let mm = '';
+      let yyyy = '';
+
+      // 1. Intentar detectar formato numérico de Excel (ej. 45570)
+      const serialDate = parseFloat(fechaRaw);
+      if (!isNaN(serialDate) && serialDate > 30000 && serialDate < 60000) {
+        // Convertir serial de Excel a objeto Date
+        // Excel usa 1900-01-01 como base. Restamos 2 para corregir el bug de 1900 y desfase de base.
+        const dateObj = new Date(Math.round((serialDate - 25569) * 86400 * 1000));
+        yyyy = dateObj.getUTCFullYear().toString();
+        mm = (dateObj.getUTCMonth() + 1).toString().padStart(2, '0');
+        dd = dateObj.getUTCDate().toString().padStart(2, '0');
+        fechaRaw = `${dd}/${mm}/${yyyy}`;
+      } else {
+        // 2. Intentar parsear como texto (permite D/M/YY, DD/MM/YYYY, con / o -)
+        const dateMatch = fechaRaw.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2}|\d{4})$/);
+        
+        if (!dateMatch) {
+          errors.push({
+            rowIndex: realIdx,
+            field: 'fecha',
+            message: `Fila ${realIdx}: formato de fecha inválido. Se leyó "${fechaRaw}", pero se espera algo como DD/MM/YYYY`,
+          });
+          return;
+        }
+
+        const dRaw = dateMatch[1];
+        const mRaw = dateMatch[2];
+        let yRaw = dateMatch[3];
+
+        if (yRaw.length === 2) {
+          const currentYear = new Date().getFullYear();
+          const century = Math.floor(currentYear / 100) * 100;
+          yRaw = (century + parseInt(yRaw)).toString();
+        }
+
+        dd = dRaw.padStart(2, '0');
+        mm = mRaw.padStart(2, '0');
+        yyyy = yRaw;
       }
-      const [dd, mm, yyyy] = fecha.split('/');
+      
       const dateObj = new Date(`${yyyy}-${mm}-${dd}`);
       if (isNaN(dateObj.getTime())) {
         errors.push({
@@ -133,7 +165,7 @@ export function useFileParser() {
 
       valid.push({
         rowIndex: realIdx,
-        fecha,
+        fecha: fechaRaw,
         fechaISO: `${yyyy}-${mm}-${dd}`,
         rival,
         condicion,

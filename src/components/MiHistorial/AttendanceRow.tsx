@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Trash2, PenLine, Plus } from "lucide-react";
+import { Trash2, PenLine, Edit3, Plus } from "lucide-react";
 import { BOCA_ID } from "@/services/apifootball";
 import type { MatchResult } from "@/services/apifootball";
 import { Button } from "../ui/Button";
@@ -19,6 +19,7 @@ interface AttendanceRowProps {
     note: string | null,
     label: string,
   ) => void;
+  onOpenEditModal: (match: MatchResult) => void;
   onOpenDeleteModal: (
     matchId: string,
     rival: string,
@@ -32,6 +33,7 @@ export const AttendanceRow = ({
   note,
   isNew,
   onOpenNoteModal,
+  onOpenEditModal,
   onOpenDeleteModal,
 }: AttendanceRowProps) => {
   const rowRef = useRef<HTMLTableRowElement>(null);
@@ -142,19 +144,32 @@ export const AttendanceRow = ({
         </Button>
       </td>
 
-      {/* Eliminar */}
+      {/* Acciones */}
       <td className="px-3 py-3 text-right">
-        <Button
-          type="button"
-          onClick={() => onOpenDeleteModal(matchId, rival, matchDate)}
-          variant="ghost"
-          size="icon"
-          className="opacity-30 sm:opacity-0 group-hover:opacity-60 hover:!opacity-100 text-text-muted hover:text-[#fca5a5]"
-          title="Eliminar partido"
-          aria-label="Eliminar partido"
-        >
-          <Trash2 size={14} />
-        </Button>
+        <div className="flex items-center justify-end gap-1">
+          <Button
+            type="button"
+            onClick={() => onOpenEditModal(match)}
+            variant="ghost"
+            size="icon"
+            className="opacity-30 sm:opacity-0 group-hover:opacity-60 hover:!opacity-100 text-text-muted hover:text-boca-gold"
+            title="Editar datos del partido"
+            aria-label="Editar datos del partido"
+          >
+            <Edit3 size={14} />
+          </Button>
+          <Button
+            type="button"
+            onClick={() => onOpenDeleteModal(matchId, rival, matchDate)}
+            variant="ghost"
+            size="icon"
+            className="opacity-30 sm:opacity-0 group-hover:opacity-60 hover:!opacity-100 text-text-muted hover:text-[#fca5a5]"
+            title="Eliminar partido"
+            aria-label="Eliminar partido"
+          >
+            <Trash2 size={14} />
+          </Button>
+        </div>
       </td>
     </tr>
   );
