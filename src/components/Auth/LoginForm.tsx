@@ -38,10 +38,11 @@ export function LoginForm({ onLogin, onRegister, error }: LoginFormProps) {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="type-caption text-text-nav block mb-1">
+            <label htmlFor="login-email" className="type-caption text-text-nav block mb-1">
               Email
             </label>
             <input
+              id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -51,10 +52,11 @@ export function LoginForm({ onLogin, onRegister, error }: LoginFormProps) {
             />
           </div>
           <div>
-            <label className="type-caption text-text-nav block mb-1">
+            <label htmlFor="login-password" className="type-caption text-text-nav block mb-1">
               Contraseña
             </label>
             <input
+              id="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

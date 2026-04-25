@@ -566,16 +566,23 @@ export async function getLastFixtures(
 export async function getNextFixtures(
   count: number = 8,
 ): Promise<ProcessedFixture[]> {
-  // /fixtures/list.json uses `team` param (not team_id) to filter by team
   const data = await fetchLS<{ fixtures?: LSFixture[]; fixture?: LSFixture[] }>(
     "/fixtures/list.json",
     { competition_id: COMPETITION, team: BOCA_ID },
-    `ls_fixtures_boca_${BOCA_ID}`,
+    `ls_fixtures_boca_v2_${BOCA_ID}`,
     CACHE_DURATION.FIXTURES,
   );
 
   const fixtures = data.fixtures ?? data.fixture ?? [];
-  return fixtures.slice(0, count).map(mapFixture);
+  return fixtures
+    .map(mapFixture)
+    .filter(
+      (f) =>
+        f.isBocaHome ||
+        f.awayTeamId === Number(BOCA_ID) ||
+        BOCA_RE.test(f.awayTeam),
+    )
+    .slice(0, count);
 }
 
 function mapFlatMatch(m: LSFlatMatch): H2HMatch {
@@ -656,12 +663,20 @@ export async function getLibertadoresNextFixtures(
   const data = await fetchLS<{ fixtures?: LSFixture[]; fixture?: LSFixture[] }>(
     "/fixtures/list.json",
     { competition_id: LIBERTADORES_COMPETITION, team: BOCA_ID },
-    `ls_fixtures_boca_lib_${BOCA_ID}`,
+    `ls_fixtures_boca_lib_v2_${BOCA_ID}`,
     CACHE_DURATION.FIXTURES,
   );
 
   const fixtures = data.fixtures ?? data.fixture ?? [];
-  return fixtures.slice(0, count).map(mapFixture);
+  return fixtures
+    .map(mapFixture)
+    .filter(
+      (f) =>
+        f.isBocaHome ||
+        f.awayTeamId === Number(BOCA_ID) ||
+        BOCA_RE.test(f.awayTeam),
+    )
+    .slice(0, count);
 }
 
 export async function getLibertadoresStandingsData(): Promise<StandingData[]> {

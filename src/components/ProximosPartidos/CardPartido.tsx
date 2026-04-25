@@ -64,10 +64,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
         </div>
 
         {/* Badge Local/Visitante */}
-        <Badge
-          variant={bocaEsLocal ? 'local' : 'visitante'}
-          className="w-fit text-[10px] px-2 py-px"
-        >
+        <Badge variant={bocaEsLocal ? 'local' : 'visitante'} className="w-fit text-xs px-2 py-px">
           {bocaEsLocal ? 'Local' : 'Visitante'}
         </Badge>
 
@@ -80,7 +77,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
         {partido.venueName && (
           <div className="flex items-start gap-1">
             <MapPin size={11} className="shrink-0 text-white/40 mt-0.5" />
-            <p className="font-sans text-[11px] text-white/50 leading-tight line-clamp-1">
+            <p className="font-sans text-xs text-white/50 leading-tight line-clamp-1">
               {partido.venueName}
             </p>
           </div>
@@ -93,7 +90,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
         <div className="flex items-center gap-1.5 flex-wrap">
           <Badge
             variant={partido.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-            className="w-fit text-[10px] px-1.5"
+            className="w-fit text-xs px-1.5"
           >
             {partido.competition}
           </Badge>

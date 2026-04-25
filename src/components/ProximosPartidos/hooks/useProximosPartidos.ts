@@ -1,28 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
-import {
-  fetchUpcomingMatches,
-  type ProximoPartido,
-} from "../../../services/apifootball";
-
-type Estado = "loading" | "error" | "ok";
+import { useAsyncData } from "../../../hooks/useAsyncData";
+import { fetchUpcomingMatches } from "../../../services/apifootball";
 
 export function useProximosPartidos() {
-  const [partidos, setPartidos] = useState<ProximoPartido[]>([]);
-  const [estado, setEstado] = useState<Estado>("loading");
-
-  const cargar = useCallback(() => {
-    setEstado("loading");
-    fetchUpcomingMatches()
-      .then((data) => {
-        setPartidos(data);
-        setEstado("ok");
-      })
-      .catch(() => setEstado("error"));
-  }, []);
-
-  useEffect(() => {
-    cargar();
-  }, [cargar]);
-
-  return { partidos, estado, cargar };
+  const { data, status, retry } = useAsyncData(fetchUpcomingMatches);
+  return { partidos: data ?? [], estado: status, cargar: retry };
 }

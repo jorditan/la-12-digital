@@ -54,7 +54,7 @@ export function AuthModal({ onLogin, onRegister, onClose }: AuthModalProps) {
         if (e.target === overlayRef.current) onClose();
       }}
     >
-      <div className="relative w-full max-w-none bg-boca-blue-light border border-boca-border rounded-t-2xl sm:rounded-sm shadow-2xl max-h-[88dvh] sm:max-w-sm overflow-y-auto">
+      <div role="dialog" aria-modal="true" aria-label="Acceso a La 12 Digital" className="relative w-full max-w-none bg-boca-blue-light border border-boca-border rounded-t-2xl sm:rounded-sm shadow-2xl max-h-[88dvh] sm:max-w-sm overflow-y-auto">
         <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1 sm:hidden" />
 
         <Button

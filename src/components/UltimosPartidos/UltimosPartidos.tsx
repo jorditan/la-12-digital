@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useAsyncData } from '../../hooks/useAsyncData';
 import { fetchLastMatches, BOCA_ID, type MatchResult } from '../../services/apifootball';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 
-type Estado = 'loading' | 'error' | 'ok';
 type Resultado = 'victoria' | 'derrota' | 'empate';
 
 function getResultado(match: MatchResult): Resultado {
@@ -31,23 +30,17 @@ const ROW_STYLE: Record<Resultado, string> = {
   empate: 'border-l-2 border-l-slate-400 bg-slate-500/[0.2]',
 };
 
+const COMPETITION_BADGE: Record<string, { variant: 'gold' | 'blue'; label: string }> = {
+  'Copa Libertadores': { variant: 'gold', label: 'Libertadores' },
+};
+
+function getCompetitionBadge(competition: string) {
+  return COMPETITION_BADGE[competition] ?? { variant: 'blue' as const, label: 'Liga profesional' };
+}
+
 export function UltimosPartidos() {
-  const [partidos, setPartidos] = useState<MatchResult[]>([]);
-  const [estado, setEstado] = useState<Estado>('loading');
-
-  const cargar = () => {
-    setEstado('loading');
-    fetchLastMatches()
-      .then((data) => {
-        setPartidos(data);
-        setEstado('ok');
-      })
-      .catch(() => setEstado('error'));
-  };
-
-  useEffect(() => {
-    cargar();
-  }, []);
+  const { data, status: estado, retry: cargar } = useAsyncData(fetchLastMatches);
+  const partidos = data ?? [];
 
   return (
     <section aria-label="Últimos partidos" className="h-full">
@@ -130,16 +123,14 @@ export function UltimosPartidos() {
                         {rival.name}
                       </td>
                       <td className="hidden sm:table-cell px-2 py-2 sm:py-3 max-w-[70px]">
-                        {match.competition && (
-                          <Badge
-                            variant={match.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-                            className="text-[11px] px-1.5 whitespace-nowrap"
-                          >
-                            {match.competition === 'Copa Libertadores'
-                              ? 'Libertadores'
-                              : 'Liga profesional'}
-                          </Badge>
-                        )}
+                        {match.competition && (() => {
+                          const { variant, label } = getCompetitionBadge(match.competition);
+                          return (
+                            <Badge variant={variant} className="text-xs px-1.5 whitespace-nowrap">
+                              {label}
+                            </Badge>
+                          );
+                        })()}
                       </td>
                       <td className="px-2 sm:px-6 py-2 sm:py-3 font-sans font-normal text-sm text-white text-right whitespace-nowrap">
                         {golesBoca ?? '-'} - {golesRival ?? '-'}

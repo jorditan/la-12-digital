@@ -105,8 +105,8 @@ function mapFixtureToMatchResult(
   f: import("../types/football").ProcessedFixture,
   competition: string,
 ): MatchResult {
-  const homeId = f.isBocaHome ? BOCA_ID_EXPORT : 0;
-  const awayId = f.isBocaHome ? 0 : BOCA_ID_EXPORT;
+  const homeId = f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId;
+  const awayId = f.isBocaHome ? f.awayTeamId : BOCA_ID_EXPORT;
 
   let homeWinner: boolean | null = null;
   let awayWinner: boolean | null = null;
@@ -189,6 +189,7 @@ function mapFixtureToProximoPartido(
   f: import("../types/football").ProcessedFixture,
   competition: string,
 ): ProximoPartido {
+  const isBocaAway = !f.isBocaHome;
   return {
     fixtureId: f.id,
     date: f.date.toISOString(),
@@ -198,12 +199,12 @@ function mapFixtureToProximoPartido(
       timeZone: "America/Argentina/Buenos_Aires",
     }),
     homeTeam: {
-      id: f.isBocaHome ? BOCA_ID_EXPORT : 0,
+      id: f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId,
       name: f.homeTeam,
       logo: teamLogoUrl(f.homeTeamId, f.homeLogo),
     },
     awayTeam: {
-      id: f.isBocaHome ? 0 : BOCA_ID_EXPORT,
+      id: isBocaAway ? BOCA_ID_EXPORT : f.awayTeamId,
       name: f.awayTeam,
       logo: teamLogoUrl(f.awayTeamId, f.awayLogo),
     },

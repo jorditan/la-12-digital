@@ -329,6 +329,7 @@ const ALLOWED_LIVESCORE_PARAMS = new Set([
   'from',
   'to',
   'team_id',
+  'team',
   'match_id',
   'season',
   'round',

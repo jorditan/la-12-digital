@@ -6,6 +6,13 @@ import { useProximosPartidos } from './hooks/useProximosPartidos';
 import { useProximosPartidosView } from './hooks/useProximosPartidosView';
 import { SkeletonRow } from './SkeletonRow';
 
+type Vista = 'cards' | 'tabla';
+
+const VIEW_BUTTONS: { id: Vista; icon: typeof LayoutGrid; label: string }[] = [
+  { id: 'cards', icon: LayoutGrid, label: 'Vista tarjetas' },
+  { id: 'tabla', icon: List, label: 'Vista tabla' },
+];
+
 export function ProximosPartidos() {
   const { partidos, estado, cargar } = useProximosPartidos();
   const { vista, setVista, canShowActions } = useProximosPartidosView(partidos, estado);
@@ -21,35 +28,24 @@ export function ProximosPartidos() {
 
         {canShowActions && (
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-0.5 bg-boca-blue rounded-sm p-0.5 border border-boca-gold/10">
-              <Button
-                aria-label="Vista tarjetas"
-                onClick={() => setVista('cards')}
-                variant="ghost"
-                size="icon"
-                className={[
-                  'rounded-[2px] transition-colors',
-                  vista === 'cards'
-                    ? 'bg-boca-gold/15 text-boca-gold'
-                    : 'text-text-secondary hover:text-white',
-                ].join(' ')}
-              >
-                <LayoutGrid size={14} />
-              </Button>
-              <Button
-                aria-label="Vista tabla"
-                onClick={() => setVista('tabla')}
-                variant="ghost"
-                size="icon"
-                className={[
-                  'rounded-[2px] transition-colors',
-                  vista === 'tabla'
-                    ? 'bg-boca-gold/15 text-boca-gold'
-                    : 'text-text-secondary hover:text-white',
-                ].join(' ')}
-              >
-                <List size={14} />
-              </Button>
+            <div className="flex items-center gap-2 bg-boca-blue rounded-sm p-0.5 border border-boca-gold/10">
+              {VIEW_BUTTONS.map(({ id, icon: Icon, label }) => (
+                <Button
+                  key={id}
+                  aria-label={label}
+                  onClick={() => setVista(id)}
+                  variant="ghost"
+                  size="icon"
+                  className={[
+                    'rounded-[2px] transition-colors',
+                    vista === id
+                      ? 'bg-boca-gold/15 text-boca-gold'
+                      : 'text-text-secondary hover:text-white',
+                  ].join(' ')}
+                >
+                  <Icon size={14} />
+                </Button>
+              ))}
             </div>
           </div>
         )}

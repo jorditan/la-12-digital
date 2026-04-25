@@ -7,10 +7,8 @@ import {
   ROUND_SECS,
 } from "../types";
 import { normalize } from "../../../utils/stringMatch";
-import {
-  INPUT_FOCUS_DELAY_MS,
-  INPUT_ERROR_DURATION_MS,
-} from "../../../utils/gameConfig";
+import { INPUT_FOCUS_DELAY_MS } from "../../../utils/gameConfig";
+import { useInputError } from "../../../hooks/useInputError";
 
 // ── Helpers puros ─────────────────────────────────────────────────────────────
 
@@ -53,7 +51,6 @@ export function useEquiposGame(): EquiposGameState {
   const [equipo, setEquipo] = useState<BocaEquipo | null>(null);
   const [players, setPlayers] = useState<PlayerState[]>([]);
   const [input, setInput] = useState("");
-  const [inputError, setInputError] = useState(false);
   const [timer, setTimer] = useState(ROUND_SECS);
   const [score, setScore] = useState<Score>({ guessed: 0, total: 0 });
   const [usedCampeonatos, setUsed] = useState<Set<string>>(new Set());
@@ -61,6 +58,7 @@ export function useEquiposGame(): EquiposGameState {
   const inputRef = useRef<HTMLInputElement>(
     null,
   ) as React.RefObject<HTMLInputElement>;
+  const { inputError, triggerError } = useInputError(inputRef);
   const roundIv = useRef<ReturnType<typeof setInterval>>();
 
   const pickEquipo = useCallback((): BocaEquipo => {
@@ -84,7 +82,6 @@ export function useEquiposGame(): EquiposGameState {
       })),
     );
     setInput("");
-    setInputError(false);
     setTimer(ROUND_SECS);
     setGameState("playing");
   }, [pickEquipo]);
@@ -97,7 +94,7 @@ export function useEquiposGame(): EquiposGameState {
       setScore({ guessed: guessedCount, total: ps.length });
       if (won) {
         setUsed((prev) => new Set([...prev, equipo!.campeonato]));
-        setGameState("won");
+        setGameState("correct");
       } else {
         setGameState("timeout");
       }
@@ -156,12 +153,7 @@ export function useEquiposGame(): EquiposGameState {
         finishGame(true, updated);
       }
     } else {
-      setInputError(true);
-      setTimeout(() => {
-        setInputError(false);
-        setInput("");
-        inputRef.current?.focus();
-      }, INPUT_ERROR_DURATION_MS);
+      triggerError(() => setInput(""));
     }
   };
 

@@ -45,7 +45,7 @@ function ModalHeader({
   gameState,
   onClose,
 }: Pick<GameModalProps, "equipo" | "score" | "gameState" | "onClose">) {
-  const isFinished = gameState === "won" || gameState === "timeout";
+  const isFinished = gameState === "correct" || gameState === "timeout";
   return (
     <div className="flex items-start justify-between gap-3 px-4 py-3 border-b border-boca-gold/10">
       <div className="min-w-0">
@@ -91,7 +91,7 @@ function TimerSection({
   timer: number;
   gameState: GameState;
 }) {
-  if (gameState === "won" || gameState === "timeout") return null;
+  if (gameState === "correct" || gameState === "timeout") return null;
   return (
     <div className="px-4 pt-3 flex items-center gap-3">
       <TimerBar timer={timer} total={ROUND_SECS} />
@@ -159,7 +159,7 @@ function ResultFooter({
   onClose,
   onPlayNext,
 }: Pick<GameModalProps, "gameState" | "score" | "onClose" | "onPlayNext">) {
-  const won = gameState === "won";
+  const won = gameState === "correct";
   return (
     <div className="space-y-3 pt-1">
       <div
@@ -191,7 +191,7 @@ function ResultFooter({
 
 export function GameModal(props: GameModalProps) {
   const { gameState, equipo, players, onClose } = props;
-  const isFinished = gameState === "won" || gameState === "timeout";
+  const isFinished = gameState === "correct" || gameState === "timeout";
 
   useModalEffects(onClose);
 
