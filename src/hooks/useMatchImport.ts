@@ -1,5 +1,6 @@
 // src/hooks/useMatchImport.ts
 import type { UpsertAttendancePayload } from '@/types/attendance';
+import { normalize } from '@/utils/stringMatch';
 import type { EnrichedRow } from './useMatchEnricher';
 
 export interface ImportResult {
@@ -9,7 +10,7 @@ export interface ImportResult {
 }
 
 /**
- * Persiste en Supabase los partidos con status 'found'.
+ * Persiste en Supabase los partidos con status 'found' o 'not_found'.
  * Recibe upsert de useMatchAttendance para reutilizar la lógica existente
  * (que también cachea en la tabla matches).
  */
@@ -17,12 +18,18 @@ export function useMatchImport(
   upsert: (payload: UpsertAttendancePayload) => Promise<void>,
 ) {
   const importMatches = async (rows: EnrichedRow[]): Promise<ImportResult> => {
-    const toImport = rows.filter(r => r.status === 'found');
+    // Importamos tanto los encontrados como los no encontrados (manuales)
+    const toImport = rows.filter(r => r.status === 'found' || r.status === 'not_found');
 
     try {
       for (const row of toImport) {
+        // Para partidos manuales, generamos un ID determinístico pero que no colisione con IDs de la API
+        const matchId = row.status === 'found' 
+          ? row.fixtureId!.toString() 
+          : `manual-${row.fechaISO}-${normalize(row.rival)}`;
+
         await upsert({
-          matchId: row.fixtureId!.toString(),
+          matchId,
           attended: true,
           note: row.notas ?? null,
           matchData: {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { AuthUser } from '@/types/attendance';
+import type { MatchResult } from '@/services/apifootball';
 import { useMiHistorial } from './useMiHistorial';
 import { LockedState } from './LockedState';
 import { AttendanceRow } from './AttendanceRow';
@@ -7,15 +8,15 @@ import { MatchCombobox } from './MatchCombobox';
 import { MultiSelect } from './MultiSelect';
 import { DateRangePicker } from './DateRangePicker';
 import { ConfirmDeleteModal } from './ConfirmDeleteModal';
-import { NoteModal } from './NoteModal';
 import { Button } from '../ui/Button';
 import { Upload } from 'lucide-react';
 import { ImportModal } from './ImportModal';
+import { EditMatchModal } from './EditMatchModal';
 
 // ── Logged-in content ─────────────────────────────────────────────────────────
 
 type DeleteModalData = { matchId: string; rival: string; matchDate: string };
-type NoteModalData = { matchId: string; note: string | null; label: string };
+type EditModalData = { match: MatchResult; note: string | null };
 
 const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   const {
@@ -41,25 +42,49 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
     hasActiveFilters,
     clearFilters,
     handleMarkAttendance,
-    handleUpdateNote,
     remove,
     upsert,
   } = useMiHistorial(user);
 
   const [deleteModal, setDeleteModal] = useState<DeleteModalData | null>(null);
-  const [noteModal, setNoteModal] = useState<NoteModalData | null>(null);
+  const [editModal, setEditModal] = useState<EditModalData | null>(null);
   const [importModalOpen, setImportModalOpen] = useState(false);
 
-  const existingFixtureIds = attendedEntries
-    .map((e) => parseInt(e.matchId, 10))
-    .filter((id) => !isNaN(id));
+  const existingMatchIds = attendedEntries.map((e) => e.matchId);
+
+  const handleUpdateMatchData = async (
+    matchId: string,
+    updatedData: Partial<MatchResult>,
+    note: string | null
+  ) => {
+    const match = matches.find((m) => ((m as any)._manualId || m.fixtureId.toString()) === matchId);
+    if (!match) return;
+
+    await upsert({
+      matchId,
+      attended: true,
+      note: note,
+      matchData: {
+        date: updatedData.date || match.date,
+        homeTeamId: updatedData.homeTeam?.id ?? match.homeTeam.id,
+        homeTeamName: updatedData.homeTeam?.name ?? match.homeTeam.name,
+        homeTeamLogo: updatedData.homeTeam?.logo ?? match.homeTeam.logo,
+        awayTeamId: updatedData.awayTeam?.id ?? match.awayTeam.id,
+        awayTeamName: updatedData.awayTeam?.name ?? match.awayTeam.name,
+        awayTeamLogo: updatedData.awayTeam?.logo ?? match.awayTeam.logo,
+        goalsHome: updatedData.goalsHome !== undefined ? updatedData.goalsHome : match.goalsHome,
+        goalsAway: updatedData.goalsAway !== undefined ? updatedData.goalsAway : match.goalsAway,
+        competition: updatedData.competition ?? match.competition,
+      },
+    });
+  };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="max-w-4xl mx-auto px-4 py-6">
       {/* Header */}
       <div className="mb-6 pl-3 border-l-2 border-boca-gold/50">
         <h1 className="type-section-title text-white mb-0.5">Mi Historial</h1>
-        <p className="type-body text-text-muted">{user.displayName ?? user.email}</p>
+        <p className="type-body text-text-muted lowercase">{user.displayName ?? user.email}</p>
       </div>
 
       {/* Stats */}
@@ -213,10 +238,12 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         </div>
       )}
 
-      {/* Table */}
-      <div className="bg-boca-blue-light border border-boca-border rounded-sm overflow-hidden">
-        <div className="px-4 py-3 border-b border-boca-border/60 flex items-center justify-between">
-          <p className="type-body text-text-nav">Partidos registrados</p>
+      {/* Table Section */}
+      <div className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col">
+        <div className="border-b border-boca-border-card px-4 py-3 sm:px-6 flex items-center justify-between">
+          <h2 className="type-section-title text-white text-sm sm:text-base">
+            Partidos registrados
+          </h2>
           {totalAttended > 0 && (
             <p className="type-caption text-text-muted">
               {hasActiveFilters
@@ -251,40 +278,65 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
             </Button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
+          <div className="overflow-x-auto pt-2 px-3 pb-3 sm:px-8 sm:pb-8">
+            <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b border-boca-border/60">
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Fecha</th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Rival</th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">
-                    Resultado
+                <tr className="border-b border-boca-border-card">
+                  <th className="px-2 sm:px-6 py-2 text-left font-sans font-medium text-sm text-text-muted">
+                    Día
                   </th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium hidden sm:table-cell">
+                  <th className="px-2 sm:px-3 py-2 text-left font-sans font-medium text-sm text-text-muted">
+                    Rival
+                  </th>
+                  <th className="hidden sm:table-cell px-2 py-2 text-left font-sans font-medium text-sm text-text-muted max-w-[70px]">
                     Competencia
                   </th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Nota</th>
-                  <th className="px-2 py-2" aria-label="Acciones" />
+                  <th className="px-2 sm:px-4 py-2 text-center font-sans font-medium text-sm text-text-muted">
+                    Resultado
+                  </th>
+                  <th className="px-2 py-2 text-left font-sans font-medium text-sm text-text-muted">
+                    Nota
+                  </th>
+                  <th className="px-2 sm:px-6 py-2 w-20" aria-label="Acciones" />
                 </tr>
               </thead>
               <tbody>
-                {filteredEntries.map((entry) => (
-                  <AttendanceRow
-                    key={entry.matchId}
-                    matchId={entry.matchId}
-                    match={matches.find((m) => m.fixtureId.toString() === entry.matchId)}
-                    note={entry.note}
-                    isNew={justAdded === entry.matchId}
-                    onOpenNoteModal={(matchId, note, label) =>
-                      setNoteModal({ matchId, note, label })
-                    }
-                    onOpenDeleteModal={(matchId, rival, matchDate) =>
-                      setDeleteModal({ matchId, rival, matchDate })
-                    }
-                  />
-                ))}
+                {filteredEntries.map((entry) => {
+                  const match = matches.find(
+                    (m) => ((m as any)._manualId || m.fixtureId.toString()) === entry.matchId
+                  );
+                  return (
+                    <AttendanceRow
+                      key={entry.matchId}
+                      matchId={entry.matchId}
+                      match={match}
+                      note={entry.note}
+                      isNew={justAdded === entry.matchId}
+                      onOpenEditModal={(m) => setEditModal({ match: m, note: entry.note })}
+                      onOpenDeleteModal={(matchId, rival, matchDate) =>
+                        setDeleteModal({ matchId, rival, matchDate })
+                      }
+                    />
+                  );
+                })}
               </tbody>
             </table>
+
+            {/* Leyenda de colores (Mismo estilo que UltimosPartidos) */}
+            <div className="flex items-center gap-4 mt-4 text-[10px] sm:text-xs text-text-muted">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-green-400/70 inline-block shrink-0" />
+                <span>Victoria</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-slate-400/60 inline-block shrink-0" />
+                <span>Empate</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-red-400/70 inline-block shrink-0" />
+                <span>Derrota</span>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -301,18 +353,24 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
           onClose={() => setDeleteModal(null)}
         />
       )}
-      {noteModal && (
-        <NoteModal
-          matchLabel={noteModal.label}
-          initialNote={noteModal.note}
-          onSave={(note) => handleUpdateNote(noteModal.matchId, note)}
-          onClose={() => setNoteModal(null)}
+      {editModal && (
+        <EditMatchModal
+          match={editModal.match}
+          initialNote={editModal.note}
+          onSave={(data, note) =>
+            handleUpdateMatchData(
+              (editModal.match as any)._manualId || editModal.match.fixtureId.toString(),
+              data,
+              note
+            )
+          }
+          onClose={() => setEditModal(null)}
         />
       )}
       {importModalOpen && (
         <ImportModal
           matches={matches}
-          existingFixtureIds={existingFixtureIds}
+          existingMatchIds={existingMatchIds}
           upsert={upsert}
           onClose={() => setImportModalOpen(false)}
         />

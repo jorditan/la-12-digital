@@ -122,38 +122,43 @@ function AppInner() {
         aria-label="Pie de página"
         className="border-t border-boca-border px-4 py-6 sm:px-10 text-center"
       >
-        <p className="font-sans text-xs text-text-muted">
-          Esta plataforma busca recopilar y centraliza información del{' '}
-          <a
-            href="https://www.bocajuniors.com.ar"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-boca-gold/70 hover:text-boca-gold transition-colors"
-          >
-            Club Atlético Boca Juniors
-          </a>
-          . . Hecha con amor bostero y sin fines de lucro.
-        </p>
+        <div className="flex flex-col gap-4">
+          <p className="font-sans text-xs text-text-muted">
+            Esta plataforma busca recopilar y centraliza información del{' '}
+            <a
+              href="https://www.bocajuniors.com.ar"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-boca-gold/70 underline hover:text-boca-gold transition-colors"
+            >
+              Club Atlético Boca Juniors
+            </a>
+            . Hecha con amor bostero y sin fines de lucro.
+          </p>
+
+          <hr className="border-0.5 border-white/20" />
+
+          <div>
+            <p className="font-sans text-xs text-text-muted">
+              Creada por:{' '}
+              <a
+                href="https://github.com/bocajuniors"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-boca-gold/70 underline hover:text-boca-gold transition-colors"
+              >
+                Matías Owen Jordán
+              </a>
+            </p>
+          </div>
+        </div>
       </footer>
     </div>
   );
 }
 
 function AppToaster() {
-  return (
-    <Toaster
-      position="top-center"
-      toastOptions={{
-        style: {
-          background: '#002140',
-          border: '1px solid #00396e',
-          color: '#e0e7ff',
-          fontFamily: 'Geist, sans-serif',
-          fontSize: '14px',
-        },
-      }}
-    />
-  );
+  return <Toaster position="bottom-center" />;
 }
 
 export default function AppWithToaster() {

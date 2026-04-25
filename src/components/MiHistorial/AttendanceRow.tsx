@@ -1,12 +1,17 @@
-import { useEffect, useRef } from "react";
-import { Trash2, PenLine, Plus } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Trash2, PenLine, Edit3, Plus, MoreHorizontal } from "lucide-react";
 import { BOCA_ID } from "@/services/apifootball";
 import type { MatchResult } from "@/services/apifootball";
 import { Button } from "../ui/Button";
+import { TeamLogo } from "../ui/TeamLogo";
+import { Tooltip } from "../ui/Tooltip";
+import { Badge } from "../ui/Badge";
 import {
   getRivalName,
-  getResultBadge,
   formatTableDate,
+  formatFullDate,
+  getResultado,
+  ROW_STYLE,
 } from "./useMiHistorial";
 
 interface AttendanceRowProps {
@@ -14,11 +19,7 @@ interface AttendanceRowProps {
   match: MatchResult | undefined;
   note: string | null;
   isNew: boolean;
-  onOpenNoteModal: (
-    matchId: string,
-    note: string | null,
-    label: string,
-  ) => void;
+  onOpenEditModal: (match: MatchResult) => void;
   onOpenDeleteModal: (
     matchId: string,
     rival: string,
@@ -31,10 +32,11 @@ export const AttendanceRow = ({
   match,
   note,
   isNew,
-  onOpenNoteModal,
+  onOpenEditModal,
   onOpenDeleteModal,
 }: AttendanceRowProps) => {
   const rowRef = useRef<HTMLTableRowElement>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     if (isNew && rowRef.current) {
@@ -62,99 +64,155 @@ export const AttendanceRow = ({
   }
 
   const rival = getRivalName(match);
-  const badge = getResultBadge(match);
   const matchDate = formatTableDate(match.date);
-  const label = `Boca vs ${rival} · ${matchDate}`;
+  const rivalLogo = match.homeTeam.id === BOCA_ID ? match.awayTeam.logo : match.homeTeam.logo;
+  const resultado = getResultado(match);
+  
+  const bocaIsHome = match.homeTeam.id === BOCA_ID;
+  const golesBoca = bocaIsHome ? match.goalsHome : match.goalsAway;
+  const golesRival = bocaIsHome ? match.goalsAway : match.goalsHome;
 
   return (
     <tr
       ref={rowRef}
       className={[
-        "border-b border-boca-border/40 group transition-colors hover:bg-boca-blue-mid/40",
+        "transition-colors border-b border-white/[0.04]",
+        ROW_STYLE[resultado],
         isNew ? "animate-slide-in-row" : "",
       ].join(" ")}
     >
       {/* Fecha */}
-      <td className="px-3 py-3 type-caption text-text-muted whitespace-nowrap">
+      <td className="px-2 sm:px-6 py-2 sm:py-3 font-sans font-medium text-sm text-white whitespace-nowrap">
         {matchDate}
       </td>
 
       {/* Rival */}
-      <td className="px-3 py-3">
-        <div className="flex items-center gap-1.5">
-          <img
-            src={
-              match.homeTeam.id === BOCA_ID
-                ? match.awayTeam.logo
-                : match.homeTeam.logo
-            }
-            alt={rival}
-            className="w-4 h-4 object-contain shrink-0"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
+      <td className="px-2 sm:px-3 py-2 sm:py-3">
+        <div className="flex items-center gap-2">
+          <TeamLogo 
+            src={rivalLogo} 
+            alt={rival} 
+            size={18} 
+            className="shrink-0" 
           />
-          <span className="type-caption text-text-nav truncate max-w-[120px]">
+          <span className="font-sans font-normal text-sm text-white truncate max-w-[110px] sm:max-w-[140px]">
             {rival}
           </span>
         </div>
       </td>
 
-      {/* Resultado */}
-      <td className="px-3 py-3">
-        <span
-          className={`inline-block type-caption font-bold tabular-nums px-2 py-0.5 rounded-sm ${badge.cls}`}
-        >
-          {badge.label}
-        </span>
+      {/* Competencia */}
+      <td className="hidden sm:table-cell px-2 py-2 sm:py-3 max-w-[70px]">
+        {match.competition && (
+          <Badge variant={match.competition === 'Copa Libertadores' ? 'gold' : 'blue'} className="text-[10px] px-1.5 whitespace-nowrap">
+            {match.competition === 'Copa Libertadores' ? 'Libertadores' : 'Liga profesional'}
+          </Badge>
+        )}
       </td>
 
-      {/* Competencia */}
-      <td className="px-3 py-3 type-caption text-text-muted hidden sm:table-cell truncate max-w-[100px]">
-        {match.competition ?? "–"}
+      {/* Resultado */}
+      <td className="px-2 sm:px-4 py-2 sm:py-3 font-sans font-normal text-sm text-white text-center whitespace-nowrap tabular-nums">
+        {golesBoca ?? '-'} - {golesRival ?? '-'}
       </td>
 
       {/* Nota */}
-      <td className="px-3 py-3 max-w-[160px]">
-        <Button
-          type="button"
-          onClick={() => onOpenNoteModal(matchId, note, label)}
-          variant="ghost"
-          className="w-full justify-start text-left group/note"
-          title={note ? "Editar nota" : "Añadir nota"}
-        >
-          {note ? (
-            <>
-              <span className="type-caption italic text-text-muted truncate flex-1">
+      <td className="px-2 py-2 sm:py-3 max-w-[120px] sm:max-w-[160px]">
+        <Tooltip content="Editar nota" position="top">
+          <Button
+            type="button"
+            onClick={() => onOpenEditModal(match)}
+            variant="ghost"
+            className="w-full justify-start text-left group/note p-0 h-auto hover:bg-transparent"
+          >
+            {note ? (
+              <span className="text-[11px] italic text-text-muted truncate flex-1">
                 "{note}"
               </span>
-              <PenLine
-                size={12}
-                className="shrink-0 text-text-muted/30 group-hover/note:text-boca-gold transition-colors"
-              />
-            </>
-          ) : (
-            <span className="flex items-center gap-1 type-caption text-text-muted/40 group-hover/note:text-boca-gold transition-colors">
-              <Plus size={12} />
-              Añadir nota
-            </span>
-          )}
-        </Button>
+            ) : (
+              <span className="flex items-center gap-1 text-[11px] text-text-muted/40 group-hover:note:text-boca-gold transition-colors">
+                <Plus size={10} />
+                Nota
+              </span>
+            )}
+          </Button>
+        </Tooltip>
       </td>
 
-      {/* Eliminar */}
-      <td className="px-3 py-3 text-right">
-        <Button
-          type="button"
-          onClick={() => onOpenDeleteModal(matchId, rival, matchDate)}
-          variant="ghost"
-          size="icon"
-          className="opacity-30 sm:opacity-0 group-hover:opacity-60 hover:!opacity-100 text-text-muted hover:text-[#fca5a5]"
-          title="Eliminar partido"
-          aria-label="Eliminar partido"
-        >
-          <Trash2 size={14} />
-        </Button>
+      {/* Acciones */}
+      <td className="px-2 sm:px-6 py-2 sm:py-3 text-right whitespace-nowrap relative">
+        {/* Mobile Actions (Menu) */}
+        <div className="sm:hidden flex justify-end">
+          <Button
+            type="button"
+            onClick={() => setShowDropdown(!showDropdown)}
+            variant="outline"
+            size="icon"
+            className="w-7 h-7 bg-white/[0.03] border-white/[0.08] text-white/40 hover:text-white/70"
+            aria-label="Acciones"
+          >
+            <MoreHorizontal size={14} />
+          </Button>
+          
+          {showDropdown && (
+            <>
+              <div 
+                className="fixed inset-0 z-10" 
+                onClick={() => setShowDropdown(false)}
+              />
+              <div className="absolute right-2 top-full mt-1 z-20 w-max bg-boca-blue border border-boca-border rounded-sm shadow-lg overflow-hidden animate-fade-in">
+                <button
+                  onClick={() => {
+                    onOpenEditModal(match);
+                    setShowDropdown(false);
+                  }}
+                  className="flex items-center gap-2.5 px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/[0.05] transition-colors w-full text-left"
+                >
+                  <Edit3 size={13} />
+                  <span>Editar</span>
+                </button>
+                <button
+                  onClick={() => {
+                    onOpenDeleteModal(matchId, rival, formatFullDate(match.date));
+                    setShowDropdown(false);
+                  }}
+                  className="flex items-center gap-2.5 px-4 py-3 text-sm text-red-400/80 hover:text-red-400 hover:bg-white/[0.05] transition-colors w-full text-left border-t border-white/[0.05]"
+                >
+                  <Trash2 size={13} />
+                  <span>Eliminar</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Desktop Actions */}
+        <div className="hidden sm:flex items-center justify-end gap-1">
+          <Tooltip content="Editar partido" position="top">
+            <Button
+              type="button"
+              onClick={() => onOpenEditModal(match)}
+              variant="ghost"
+              size="icon"
+              className="w-7 h-7 text-text-muted/40 hover:text-boca-gold transition-colors"
+              aria-label="Editar partido"
+            >
+              <Edit3 size={13} />
+            </Button>
+          </Tooltip>
+          
+          <Tooltip content="Eliminar partido" position="top">
+            <Button
+              type="button"
+              onClick={() => onOpenDeleteModal(matchId, rival, formatFullDate(match.date))}
+              variant="ghost"
+              size="icon"
+              className="w-7 h-7 text-text-muted/40 hover:text-[#fca5a5] transition-colors"
+              aria-label="Eliminar partido"
+            >
+              <Trash2 size={13} />
+            </Button>
+          </Tooltip>
+        </div>
       </td>
     </tr>
   );

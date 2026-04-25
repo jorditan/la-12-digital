@@ -1,6 +1,7 @@
 import { MapPin, History } from 'lucide-react';
 import type { ProximoPartido } from '../../services/apifootball';
 import { Badge } from '../ui/Badge';
+import { Tooltip } from '../ui/Tooltip';
 import { ESCUDO_VACIO } from '../../data/equipos';
 import { H2HModal } from './H2HModal';
 import { useCardPartido } from './hooks/useCardPartido';
@@ -120,8 +121,8 @@ export function CardPartido({ partido }: CardPartidoProps) {
               </span>
             </a>
 
-            {/* Historial H2H — icon + CSS tooltip */}
-            <div className="relative group/tip">
+            {/* Historial H2H */}
+            <Tooltip content={`Historial vs ${rival.name}`} position="top">
               <button
                 onClick={openH2h}
                 aria-label={`Ver historial vs ${rival.name}`}
@@ -129,14 +130,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
               >
                 <History size={16} />
               </button>
-              <div className="pointer-events-none absolute bottom-full right-0 mb-1.5 z-20 opacity-0 group-hover/tip:opacity-100 transition-opacity duration-150">
-                <div className="bg-boca-blue px-2 py-1 rounded-sm border border-boca-border whitespace-nowrap">
-                  <span className="font-sans text-sm text-white/60">
-                    Ver últimos resultados contra {rival.name}
-                  </span>
-                </div>
-              </div>
-            </div>
+            </Tooltip>
           </div>
         </div>
       </article>

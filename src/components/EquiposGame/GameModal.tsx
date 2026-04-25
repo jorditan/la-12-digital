@@ -175,7 +175,7 @@ function ResultFooter({
           {score.guessed}/{score.total} jugadores
         </span>
       </div>
-      <div className="flex justify-between gap-2">
+      <div className="flex justify-end gap-4">
         <Button size="sm" variant="outline" onClick={onClose}>
           Cerrar
         </Button>

@@ -24,9 +24,9 @@ export interface EnrichedRow extends ParsedRow {
  * El matching es local — no hace llamadas adicionales a APIs.
  *
  * @param matches     Array de MatchResult ya cargado en useMiHistorial
- * @param existingIds fixtureIds que el usuario ya tiene en su historial
+ * @param existingIds matchIds que el usuario ya tiene en su historial
  */
-export function useMatchEnricher(matches: MatchResult[], existingIds: number[]) {
+export function useMatchEnricher(matches: MatchResult[], existingIds: string[]) {
   const enrich = (
     rows: ParsedRow[],
     onProgress: (current: number, total: number) => void,
@@ -55,10 +55,24 @@ export function useMatchEnricher(matches: MatchResult[], existingIds: number[]) 
       }
 
       if (!matched) {
-        return { ...row, status: 'not_found' };
+        // Si no hay match, usamos los datos del Excel para crear un "manual match"
+        const manualId = `manual-${row.fechaISO}-${normalize(row.rival)}`;
+        const isDuplicate = existingIds.includes(manualId);
+
+        return {
+          ...row,
+          status: isDuplicate ? 'duplicate' : 'not_found',
+          homeTeam: row.condicion === 'Local' ? 'Boca Juniors' : row.rival,
+          homeTeamId: row.condicion === 'Local' ? 451 : 0,
+          awayTeam: row.condicion === 'Local' ? row.rival : 'Boca Juniors',
+          awayTeamId: row.condicion === 'Local' ? 0 : 451,
+          homeGoals: row.condicion === 'Local' ? row.golesBoca : row.golesRival,
+          awayGoals: row.condicion === 'Local' ? row.golesRival : row.golesBoca,
+          league: row.competencia,
+        };
       }
 
-      const isDuplicate = existingIds.includes(matched.fixtureId);
+      const isDuplicate = existingIds.includes(matched.fixtureId.toString());
       return {
         ...row,
         status: isDuplicate ? 'duplicate' : 'found',
