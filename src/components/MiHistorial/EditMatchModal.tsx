@@ -46,27 +46,29 @@ export const EditMatchModal = ({ match, onSave, onClose }: EditMatchModalProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-overlay flex items-center justify-center px-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-md bg-boca-blue-light border border-boca-border rounded-sm shadow-2xl animate-fade-in">
+    <div className="fixed inset-0 z-overlay flex items-center justify-start sm:pl-12 px-4 bg-black/80 backdrop-blur-sm">
+      <div className="w-full max-w-md bg-boca-blue-light border border-boca-border rounded-sm shadow-2xl animate-slide-in-left">
         <div className="flex items-center justify-between px-6 py-4 border-b border-boca-border/60">
-          <h2 className="type-card-title text-boca-gold text-lg">Editar datos del partido</h2>
+          <h2 className="type-card-title text-boca-gold text-lg lowercase">editar datos del partido</h2>
           <button onClick={onClose} className="text-text-muted hover:text-white transition-colors">
             <X size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSave} className="p-6 space-y-5">
+        <form onSubmit={handleSave} className="p-6 space-y-5 text-left">
           <Input 
             label="rival"
             value={rival}
             onChange={e => setRival(e.target.value)}
             required
+            className="lowercase"
           />
 
           <Input 
             label="competencia"
             value={competition}
             onChange={e => setCompetition(e.target.value)}
+            className="lowercase"
           />
 
           <div className="grid grid-cols-2 gap-4">
@@ -91,17 +93,17 @@ export const EditMatchModal = ({ match, onSave, onClose }: EditMatchModalProps) 
               type="submit" 
               variant="primary" 
               disabled={loading} 
-              className="flex-1 justify-center py-2.5 font-bold uppercase"
+              className="flex-1 justify-center py-2.5 font-bold lowercase"
             >
-              {loading ? 'Guardando...' : 'Guardar cambios'}
+              {loading ? 'guardando...' : 'guardar cambios'}
             </Button>
             <Button 
               type="button" 
               variant="outline" 
               onClick={onClose} 
-              className="px-6 font-medium"
+              className="px-6 font-medium lowercase"
             >
-              Cancelar
+              cancelar
             </Button>
           </div>
         </form>
