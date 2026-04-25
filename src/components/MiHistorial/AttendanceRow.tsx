@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { Trash2, PenLine, Edit3, Plus } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Trash2, PenLine, Edit3, Plus, MoreHorizontal } from "lucide-react";
 import { BOCA_ID } from "@/services/apifootball";
 import type { MatchResult } from "@/services/apifootball";
 import { Button } from "../ui/Button";
@@ -18,11 +18,6 @@ interface AttendanceRowProps {
   match: MatchResult | undefined;
   note: string | null;
   isNew: boolean;
-  onOpenNoteModal: (
-    matchId: string,
-    note: string | null,
-    label: string,
-  ) => void;
   onOpenEditModal: (match: MatchResult) => void;
   onOpenDeleteModal: (
     matchId: string,
@@ -40,6 +35,7 @@ export const AttendanceRow = ({
   onOpenDeleteModal,
 }: AttendanceRowProps) => {
   const rowRef = useRef<HTMLTableRowElement>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     if (isNew && rowRef.current) {
@@ -132,7 +128,7 @@ export const AttendanceRow = ({
                 "{note}"
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-[11px] text-text-muted/40 group-hover/note:text-boca-gold transition-colors">
+              <span className="flex items-center gap-1 text-[11px] text-text-muted/40 group-hover:note:text-boca-gold transition-colors">
                 <Plus size={10} />
                 Nota
               </span>
@@ -142,8 +138,54 @@ export const AttendanceRow = ({
       </td>
 
       {/* Acciones */}
-      <td className="px-2 sm:px-6 py-2 sm:py-3 text-right whitespace-nowrap">
-        <div className="flex items-center justify-end gap-1">
+      <td className="px-2 sm:px-6 py-2 sm:py-3 text-right whitespace-nowrap relative">
+        {/* Mobile Actions (Menu) */}
+        <div className="sm:hidden flex justify-end">
+          <Button
+            type="button"
+            onClick={() => setShowDropdown(!showDropdown)}
+            variant="outline"
+            size="icon"
+            className="w-7 h-7 bg-white/[0.03] border-white/[0.08] text-white/40 hover:text-white/70"
+            aria-label="Acciones"
+          >
+            <MoreHorizontal size={14} />
+          </Button>
+          
+          {showDropdown && (
+            <>
+              <div 
+                className="fixed inset-0 z-10" 
+                onClick={() => setShowDropdown(false)}
+              />
+              <div className="absolute right-2 top-full mt-1 z-20 w-max bg-boca-blue border border-boca-border rounded-sm shadow-lg overflow-hidden animate-fade-in">
+                <button
+                  onClick={() => {
+                    onOpenEditModal(match);
+                    setShowDropdown(false);
+                  }}
+                  className="flex items-center gap-2.5 px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/[0.05] transition-colors w-full text-left"
+                >
+                  <Edit3 size={13} />
+                  <span>Editar</span>
+                </button>
+                <button
+                  onClick={() => {
+                    onOpenDeleteModal(matchId, rival, match.date);
+                    setShowDropdown(false);
+                  }}
+                  className="flex items-center gap-2.5 px-4 py-3 text-sm text-red-400/80 hover:text-red-400 hover:bg-white/[0.05] transition-colors w-full text-left border-t border-white/[0.05]"
+                >
+                  <Trash2 size={13} />
+                  <span>Eliminar</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Desktop Actions */}
+        <div className="hidden sm:flex items-center justify-end gap-1">
           <Tooltip content="Editar partido" position="top">
             <Button
               type="button"
