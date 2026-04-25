@@ -128,15 +128,9 @@ export const AttendanceRow = ({
             className="w-full justify-start text-left group/note p-0 h-auto hover:bg-transparent"
           >
             {note ? (
-              <>
-                <span className="text-[11px] italic text-text-muted truncate flex-1">
-                  "{note}"
-                </span>
-                <PenLine
-                  size={10}
-                  className="shrink-0 text-text-muted/30 group-hover/note:text-boca-gold transition-colors ml-1"
-                />
-              </>
+              <span className="text-[11px] italic text-text-muted truncate flex-1">
+                "{note}"
+              </span>
             ) : (
               <span className="flex items-center gap-1 text-[11px] text-text-muted/40 group-hover/note:text-boca-gold transition-colors">
                 <Plus size={10} />
