@@ -7,7 +7,7 @@ import {
   getLibertadoresNextFixtures,
   getLibertadoresStandingsData,
 } from "./footballApiService";
-import { fetchNewsdataNoticias } from "./newsdataService";
+import { fetchBocaNews } from "./newsdataService";
 import { fetchYoutubeVideos, type VideoItem } from "./youtubeService";
 
 // BOCA_ID exportado = 451 (coincide con lo que leen los componentes)
@@ -56,12 +56,13 @@ export interface ProximoPartido {
 }
 
 export interface Noticia {
-  id: number;
+  id: string | number;
   titulo: string;
   imagen: string;
   categoria: "mercado" | "informe" | "partido" | "seleccion";
   fecha: string;
   url?: string;
+  fuente?: string;
 }
 
 export type VideoYoutube = VideoItem;
@@ -234,16 +235,32 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
 
 // ── Noticias ─────────────────────────────────────────────────────────────────
 
-export async function fetchNoticias(): Promise<Noticia[]> {
-  const articles = await fetchNewsdataNoticias();
-  return articles.map((a, i) => ({
-    id: i,
-    titulo: a.titulo,
-    imagen: a.imagen,
-    categoria: "partido" as const,
-    fecha: a.fecha,
-    url: a.url,
-  }));
+export interface NoticiasResponse {
+  results: Noticia[];
+  total: number;
+  page: number;
+  limit: number;
+  pageCount: number;
+}
+
+export async function fetchNoticias(
+  page = 0,
+  limit = 12,
+): Promise<NoticiasResponse> {
+  const data = await fetchBocaNews(page, limit);
+
+  return {
+    ...data,
+    results: data.results.map((a) => ({
+      id: a.id,
+      titulo: a.titulo,
+      imagen: a.imagen,
+      categoria: "partido" as const,
+      fecha: a.fecha,
+      url: a.url,
+      fuente: a.fuente,
+    })),
+  };
 }
 
 // ── Canal de YouTube ──────────────────────────────────────────────────────────

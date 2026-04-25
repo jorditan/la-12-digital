@@ -1,4 +1,5 @@
-import type { Noticia } from "../../services/apifootball";
+import type { Noticia } from '../../services/apifootball';
+import { Badge } from '../ui/Badge';
 
 interface NoticiaCardProps {
   noticia: Noticia;
@@ -18,10 +19,10 @@ interface NoticiaCardProps {
  *   └── Footer (bg-#002140, border-b #003d7a, px-6 pt-6 pb-3)
  *       └── Título (serif regular 16px, leading-6, #e0e7ff)
  */
-export function NoticiaCard({ noticia, className = "" }: NoticiaCardProps) {
-  const Tag = noticia.url ? "a" : "article";
+export function NoticiaCard({ noticia, className = '' }: NoticiaCardProps) {
+  const Tag = noticia.url ? 'a' : 'article';
   const linkProps = noticia.url
-    ? { href: noticia.url, target: "_blank", rel: "noopener noreferrer" }
+    ? { href: noticia.url, target: '_blank', rel: 'noopener noreferrer' }
     : {};
 
   return (
@@ -30,23 +31,33 @@ export function NoticiaCard({ noticia, className = "" }: NoticiaCardProps) {
       className={`
         group
         bg-boca-gold border border-boca-border rounded-sm
-        h-[340px] flex flex-col justify-between overflow-hidden
+         flex flex-col justify-between overflow-hidden
         pt-3 px-0
         hover:border-boca-gold hover:shadow-card
-        transition-[border-color,box-shadow] duration-300
+        transition-[border-color,box-shadow] duration-300 h-full
         ${className}
       `}
     >
       {/* Zona de imagen — px-4 en el outer expone el fondo sdorado como marco lateral.
           El div inner es el contexto de posicionamiento para que inset-0 respete el padding. */}
       <div className="flex-1 min-h-0 px-4 flex flex-col">
-        <div className="flex-1 relative min-h-0 w-full">
+        <div className="flex-1 relative min-h-0 w-full h-full">
           <img
             src={noticia.imagen}
             alt={noticia.titulo}
             className="absolute inset-0 w-full h-full object-cover object-center"
             loading="lazy"
           />
+          {noticia.fuente && (
+            <div>
+              <Badge
+                variant="gold"
+                className=" absolute bottom-2 right-2 font-sans text-sm font-bold text-boca-gold tracking-wider"
+              >
+                {noticia.fuente}
+              </Badge>
+            </div>
+          )}
         </div>
       </div>
 
