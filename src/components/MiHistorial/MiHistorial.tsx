@@ -52,8 +52,12 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
 
   const existingMatchIds = attendedEntries.map((e) => e.matchId);
 
-  const handleUpdateMatchData = async (matchId: string, updatedData: Partial<MatchResult>, note: string | null) => {
-    const match = matches.find(m => ((m as any)._manualId || m.fixtureId.toString()) === matchId);
+  const handleUpdateMatchData = async (
+    matchId: string,
+    updatedData: Partial<MatchResult>,
+    note: string | null
+  ) => {
+    const match = matches.find((m) => ((m as any)._manualId || m.fixtureId.toString()) === matchId);
     if (!match) return;
 
     await upsert({
@@ -71,7 +75,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         goalsHome: updatedData.goalsHome !== undefined ? updatedData.goalsHome : match.goalsHome,
         goalsAway: updatedData.goalsAway !== undefined ? updatedData.goalsAway : match.goalsAway,
         competition: updatedData.competition ?? match.competition,
-      }
+      },
     });
   };
 
@@ -237,7 +241,9 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
       {/* Table Section */}
       <div className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col">
         <div className="border-b border-boca-border-card px-4 py-3 sm:px-6 flex items-center justify-between">
-          <h2 className="type-section-title text-white text-sm sm:text-base">Partidos registrados</h2>
+          <h2 className="type-section-title text-white text-sm sm:text-base">
+            Partidos registrados
+          </h2>
           {totalAttended > 0 && (
             <p className="type-caption text-text-muted">
               {hasActiveFilters
@@ -296,7 +302,9 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
               </thead>
               <tbody>
                 {filteredEntries.map((entry) => {
-                  const match = matches.find((m) => ((m as any)._manualId || m.fixtureId.toString()) === entry.matchId);
+                  const match = matches.find(
+                    (m) => ((m as any)._manualId || m.fixtureId.toString()) === entry.matchId
+                  );
                   return (
                     <AttendanceRow
                       key={entry.matchId}
@@ -304,7 +312,6 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                       match={match}
                       note={entry.note}
                       isNew={justAdded === entry.matchId}
-                      onOpenNoteModal={() => {}} 
                       onOpenEditModal={(m) => setEditModal({ match: m, note: entry.note })}
                       onOpenDeleteModal={(matchId, rival, matchDate) =>
                         setDeleteModal({ matchId, rival, matchDate })
@@ -350,7 +357,13 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         <EditMatchModal
           match={editModal.match}
           initialNote={editModal.note}
-          onSave={(data, note) => handleUpdateMatchData((editModal.match as any)._manualId || editModal.match.fixtureId.toString(), data, note)}
+          onSave={(data, note) =>
+            handleUpdateMatchData(
+              (editModal.match as any)._manualId || editModal.match.fixtureId.toString(),
+              data,
+              note
+            )
+          }
           onClose={() => setEditModal(null)}
         />
       )}

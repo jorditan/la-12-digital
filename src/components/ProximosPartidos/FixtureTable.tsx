@@ -2,6 +2,7 @@ import { CalendarPlus, History, MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
 import type { ProximoPartido } from '../../services/apifootball';
 import { Badge } from '../ui/Badge';
+import { Tooltip } from '../ui/Tooltip';
 import { buildGCalLink } from '../../utils/calendarLink';
 import { H2HModal } from './H2HModal';
 import { useFixtureTableH2H } from './hooks/useFixtureTableH2H';
@@ -187,7 +188,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                           Agregar al calendario
                         </span>
                       </a>
-                      <div className="relative group/tip">
+                      <Tooltip content={`Historial vs ${rival.name}`} position="top">
                         <button
                           type="button"
                           onClick={() => openH2H(p.rivalApiId, rival.name)}
@@ -196,14 +197,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                         >
                           <History size={12} />
                         </button>
-                        <div className="pointer-events-none absolute bottom-full right-0 mb-1.5 z-20 opacity-0 group-hover/tip:opacity-100 transition-opacity duration-150">
-                          <div className="bg-boca-blue px-2 py-1 rounded-sm border border-boca-border whitespace-nowrap">
-                            <span className="font-sans text-[10px] text-white/60">
-                              Últimos partidos contra {rival.name}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+                      </Tooltip>
                     </div>
                   </td>
                 </tr>
