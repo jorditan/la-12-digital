@@ -41,7 +41,7 @@ export const ConfirmDeleteModal = ({
           {matchDate}
         </p>
 
-        <div className="flex gap-3 justify-end">
+        <div className="flex gap-4 justify-end">
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>

@@ -57,8 +57,8 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   const existingMatchIds = attendedEntries.map((e) => e.matchId);
 
   const handleUpdateMatchData = async (matchId: string, updatedData: Partial<MatchResult>) => {
-    const entry = attendedEntries.find(e => e.matchId === matchId);
-    const match = matches.find(m => ((m as any)._manualId || m.fixtureId.toString()) === matchId);
+    const entry = attendedEntries.find((e) => e.matchId === matchId);
+    const match = matches.find((m) => ((m as any)._manualId || m.fixtureId.toString()) === matchId);
     if (!match) return;
 
     await upsert({
@@ -76,7 +76,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         goalsHome: updatedData.goalsHome !== undefined ? updatedData.goalsHome : match.goalsHome,
         goalsAway: updatedData.goalsAway !== undefined ? updatedData.goalsAway : match.goalsAway,
         competition: updatedData.competition ?? match.competition,
-      }
+      },
     });
   };
 
@@ -201,7 +201,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                   ¡Marcado!
                 </span>
               ) : (
-                'Marcar presencia'
+                'Añadir partido'
               )}
             </Button>
           </div>
@@ -295,7 +295,9 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
               </thead>
               <tbody>
                 {filteredEntries.map((entry) => {
-                  const match = matches.find((m) => ((m as any)._manualId || m.fixtureId.toString()) === entry.matchId);
+                  const match = matches.find(
+                    (m) => ((m as any)._manualId || m.fixtureId.toString()) === entry.matchId
+                  );
                   return (
                     <AttendanceRow
                       key={entry.matchId}
@@ -342,7 +344,12 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
       {editModal && (
         <EditMatchModal
           match={editModal.match}
-          onSave={(data) => handleUpdateMatchData((editModal.match as any)._manualId || editModal.match.fixtureId.toString(), data)}
+          onSave={(data) =>
+            handleUpdateMatchData(
+              (editModal.match as any)._manualId || editModal.match.fixtureId.toString(),
+              data
+            )
+          }
           onClose={() => setEditModal(null)}
         />
       )}

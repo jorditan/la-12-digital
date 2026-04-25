@@ -86,15 +86,7 @@ export const EditMatchModal = ({ match, onSave, onClose }: EditMatchModalProps) 
             />
           </div>
 
-          <div className="pt-4 flex gap-3">
-            <Button 
-              type="submit" 
-              variant="primary" 
-              disabled={loading} 
-              className="flex-1 justify-center py-2.5 font-bold"
-            >
-              {loading ? 'Guardando...' : 'Guardar cambios'}
-            </Button>
+          <div className="pt-4 flex justify-end gap-4">
             <Button 
               type="button" 
               variant="outline" 
@@ -102,6 +94,14 @@ export const EditMatchModal = ({ match, onSave, onClose }: EditMatchModalProps) 
               className="px-6 font-medium"
             >
               Cancelar
+            </Button>
+            <Button 
+              type="submit" 
+              variant="primary" 
+              disabled={loading} 
+              className="px-8 justify-center py-2.5 font-bold"
+            >
+              {loading ? 'Guardando...' : 'Guardar cambios'}
             </Button>
           </div>
         </form>

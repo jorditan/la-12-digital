@@ -178,7 +178,7 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
                 </div>
               )}
 
-              <div className="flex justify-between items-center">
+              <div className="flex justify-end items-center gap-4">
                 <Button variant="outline" onClick={onClose} className="px-6 font-medium">
                   Cancelar
                 </Button>

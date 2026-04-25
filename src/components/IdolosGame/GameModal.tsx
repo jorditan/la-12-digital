@@ -274,7 +274,7 @@ function RevealedContent({
       </p>
 
       {state === "correct" ? (
-        <div className="flex justify-between gap-2 pt-3 border-t border-boca-gold/10 mt-1">
+        <div className="flex justify-end gap-4 pt-3 border-t border-boca-gold/10 mt-1">
           <Button size="sm" variant="outline" onClick={onClose}>
             Cerrar
           </Button>
