@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
+import { DatePicker } from './DatePicker';
 import type { MatchResult } from '@/services/apifootball';
 
 interface EditMatchModalProps {
@@ -12,6 +13,7 @@ interface EditMatchModalProps {
 }
 
 export const EditMatchModal = ({ match, initialNote, onSave, onClose }: EditMatchModalProps) => {
+  const [date, setDate] = useState(match.date.slice(0, 10));
   const [rival, setRival] = useState(match.homeTeam.id === 451 ? match.awayTeam.name : match.homeTeam.name);
   const [competition, setCompetition] = useState(match.competition || '');
   const [note, setNote] = useState(initialNote ?? '');
@@ -30,6 +32,7 @@ export const EditMatchModal = ({ match, initialNote, onSave, onClose }: EditMatc
     const isBocaHome = match.homeTeam.id === 451;
     
     await onSave({
+      date,
       competition,
       homeTeam: { 
         ...match.homeTeam, 
@@ -58,6 +61,12 @@ export const EditMatchModal = ({ match, initialNote, onSave, onClose }: EditMatc
         </div>
 
         <form onSubmit={handleSave} className="p-6 space-y-5 text-left">
+          <DatePicker 
+            label="Fecha"
+            value={date}
+            onChange={setDate}
+          />
+
           <Input 
             label="Rival"
             value={rival}
