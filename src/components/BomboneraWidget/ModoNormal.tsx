@@ -25,11 +25,15 @@ export function ModoNormal({
   proximosLocales,
   diasHastaPartido,
   matchForecast,
+  loading = true,
+  error = null,
 }: {
   proximoLocal: ProximoPartido | null;
   proximosLocales: ProximoPartido[];
   diasHastaPartido: number | null;
   matchForecast: MatchForecast | null;
+  loading?: boolean;
+  error?: string | null;
 }) {
   const rival = proximoLocal
     ? proximoLocal.homeTeam.id === BOCA_ID
@@ -98,8 +102,8 @@ export function ModoNormal({
               </div>
             </div>
           </div>
-        ) : (
-          /* Skeleton — refleja nuevo layout */
+        ) : loading ? (
+          /* Skeleton mientras carga */
           <div className="flex items-stretch gap-4 animate-pulse">
             <div className="bg-white/5 rounded-md min-w-[80px] min-h-[96px]" />
             <div className="flex flex-col justify-center gap-3 flex-1">
@@ -116,6 +120,11 @@ export function ModoNormal({
               </div>
             </div>
           </div>
+        ) : (
+          /* Sin datos o error */
+          <p className="font-sans text-sm text-white/50 py-2">
+            {error ?? 'No hay próximos partidos en la Bombonera disponibles'}
+          </p>
         )}
 
         {/* ── Pronóstico del partido ───────────────────────────────────── */}
@@ -177,7 +186,7 @@ export function ModoNormal({
                       vs {rivalItem.name}
                     </p>
                     <p className="type-ui-label text-text-secondary tabular-nums flex-shrink-0">
-                      {formatFechaCorta(p.date).toUpperCase()}
+                      {formatFechaCorta(p.date)}
                     </p>
                   </div>
                 );

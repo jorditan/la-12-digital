@@ -19,6 +19,7 @@ export function TeamCell({ logo, name, align, bold }: TeamCellProps) {
         src={logo}
         alt={name}
         className="w-[18px] h-[18px] object-contain shrink-0"
+        loading="lazy"
         onError={(e) => {
           (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO;
         }}

@@ -43,7 +43,7 @@ function SectionCard({
 function FieldError({ msg }: { msg: string | null }) {
   if (!msg) return null;
   return (
-    <p className="type-caption text-status-negative mt-1.5 border border-status-negative/30 rounded-sm px-3 py-1.5 bg-status-negative/5">
+    <p role="alert" className="type-caption text-status-negative mt-1.5 border border-status-negative/30 rounded-sm px-3 py-1.5 bg-status-negative/5">
       {msg}
     </p>
   );
@@ -265,7 +265,7 @@ function UsernameSection({
               minLength={2}
               maxLength={32}
               placeholder="Ej: xeneize1905"
-              className="flex-1 bg-boca-blue border border-boca-border rounded-sm px-3 py-2 type-body text-white focus:outline-none focus:border-boca-gold transition-colors"
+              className="flex-1 bg-boca-blue border border-boca-border rounded-sm px-3 py-2 type-body text-white focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors"
             />
             <UsernameStatusBadge status={status} />
           </div>
@@ -321,7 +321,7 @@ function EmailSection({
               setError(null);
             }}
             placeholder="nuevo@email.com"
-            className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 type-body text-white focus:outline-none focus:border-boca-gold transition-colors"
+            className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 type-body text-white focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors"
           />
           <FieldError msg={error} />
         </div>
@@ -388,7 +388,7 @@ function PasswordSection({
               }}
               minLength={8}
               placeholder="Mínimo 8 caracteres"
-              className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 pr-10 type-body text-white focus:outline-none focus:border-boca-gold transition-colors"
+              className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 pr-10 type-body text-white focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors"
             />
             <Button
               type="button"
@@ -421,10 +421,10 @@ function PasswordSection({
             }}
             placeholder="Repetí la contraseña"
             className={[
-              "w-full bg-boca-blue border rounded-sm px-3 py-2 type-body text-white focus:outline-none transition-colors",
+              "w-full bg-boca-blue border rounded-sm px-3 py-2 type-body text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors",
               mismatch
-                ? "border-status-negative focus:border-status-negative"
-                : "border-boca-border focus:border-boca-gold",
+                ? "border-status-negative focus-visible:border-status-negative"
+                : "border-boca-border focus-visible:border-boca-gold",
             ].join(" ")}
           />
           {mismatch && (
@@ -518,7 +518,7 @@ function BioSection({ onUpdateBio }: Pick<ConfiguracionProps, "onUpdateBio">) {
               }}
               rows={3}
               placeholder="Ej: Xeneize de toda la vida. Bombonera 77 veces."
-              className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 type-body text-white focus:outline-none focus:border-boca-gold transition-colors resize-none"
+              className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2 type-body text-white focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors resize-none"
             />
             <span
               className={[

@@ -38,29 +38,31 @@ export function LoginForm({ onLogin, onRegister, error }: LoginFormProps) {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="type-caption text-text-nav block mb-1">
+            <label htmlFor="login-email" className="type-caption text-text-nav block mb-1">
               Email
             </label>
             <input
+              id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-boca-blue border border-boca-border rounded-lg px-3 py-2 text-white type-body focus:outline-none focus:border-boca-gold"
+              className="w-full bg-boca-blue border border-boca-border rounded-lg px-3 py-2 text-white type-body focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50"
               placeholder="tu@email.com"
             />
           </div>
           <div>
-            <label className="type-caption text-text-nav block mb-1">
+            <label htmlFor="login-password" className="type-caption text-text-nav block mb-1">
               Contraseña
             </label>
             <input
+              id="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full bg-boca-blue border border-boca-border rounded-lg px-3 py-2 text-white type-body focus:outline-none focus:border-boca-gold"
+              className="w-full bg-boca-blue border border-boca-border rounded-lg px-3 py-2 text-white type-body focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50"
               placeholder="Mínimo 6 caracteres"
             />
           </div>

@@ -50,7 +50,7 @@ export const colors = {
     gold: "#FFD700", // Texto dorado (títulos)
     nav: "#e0e7ff", // Texto de navegación sobre azul oscuro
     onGold: "#0052a3", // Texto azul sobre fondo dorado
-    muted: "#64748b", // Texto muy sutil
+    muted: "#8896aa", // Texto muy sutil — WCAG AA 4.5:1 sobre #031d46 (era #64748b → 2.9:1 ✗)
   },
 
   // Bordes

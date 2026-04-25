@@ -9,6 +9,8 @@ export function BomboneraWidget() {
     diasHastaPartido,
     matchForecast,
     matchDayMode,
+    loading,
+    error,
   } = useBomboneraWidget();
 
   if (matchDayMode && proximoLocal) {
@@ -23,6 +25,8 @@ export function BomboneraWidget() {
       proximosLocales={proximosLocales}
       diasHastaPartido={diasHastaPartido}
       matchForecast={matchForecast}
+      loading={loading}
+      error={error}
     />
   );
 }

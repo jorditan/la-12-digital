@@ -1,25 +1,8 @@
 import { getCachedData, setCachedData, CACHE_DURATION } from "../utils/cache";
-import { fetchWithTimeout } from "../utils/fetchWithTimeout";
 
-// In production the Worker injects the key server-side (Cloudflare secret).
-// In dev we call Newsdata directly using the VITE_ key from .env.
 const isDev = import.meta.env.DEV;
-const API_KEY = isDev ? (import.meta.env.VITE_NEWS_API_KEY as string) : "";
-const BASE_URL = isDev ? "https://newsdata.io/api/1/news" : "/api/newsdata";
-
-interface NewsdataArticle {
-  article_id: string;
-  title: string;
-  description: string | null;
-  link: string;
-  image_url: string | null;
-  pubDate: string;
-}
-
-interface NewsdataResponse {
-  status: string;
-  results: NewsdataArticle[];
-}
+const BASE_URL = "/api/boca-news";
+const CACHE_VERSION = "v16_build_fix";
 
 export interface NoticiaRaw {
   id: string;
@@ -27,63 +10,81 @@ export interface NoticiaRaw {
   imagen: string;
   fecha: string;
   url: string | undefined;
+  fuente?: string;
 }
 
-/** FIX: Verify URL uses http/https protocol (prevents javascript:, data:, etc.) */
-function isSafeUrl(url: string | null | undefined): url is string {
-  if (!url) return false;
+export interface NewsResponse {
+  results: NoticiaRaw[];
+  total: number;
+  page: number;
+  limit: number;
+  pageCount: number;
+}
+
+/**
+ * BUFFER DE DESARROLLO (LIMITADO A 15 REALES)
+ */
+const NEWS_BUFFER_DEV: NoticiaRaw[] = [
+  { id: "1", titulo: "Velasco y su sueño de jugar en la Bombonera con la azul y oro", fuente: "Olé", imagen: "https://images.unsplash.com/photo-1543351611-58f69d7c1781?q=80&w=800", url: "https://ole.com.ar", fecha: "2026-04-25T18:00:00Z" },
+  { id: "2", titulo: "El 11 que planea Gago para el próximo partido por Copa", fuente: "TyC Sports", imagen: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=800", url: "https://tycsports.com", fecha: "2026-04-25T17:30:00Z" },
+  { id: "3", titulo: "La nueva joya de las inferiores que ya entrena con primera", fuente: "Planeta BJ", imagen: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=800", url: "https://planetabocajuniors.com.ar", fecha: "2026-04-25T17:00:00Z" },
+  { id: "4", titulo: "Riquelme y una charla clave con el plantel en Ezeiza", fuente: "Infobae", imagen: "https://images.unsplash.com/photo-1518091043644-c1d44575eaa2?q=80&w=800", url: "https://infobae.com", fecha: "2026-04-25T16:45:00Z" },
+  ...Array.from({ length: 11 }).map((_, i) => ({
+    id: `dev-news-${i}`,
+    titulo: `Boca Juniors: Novedades del entrenamiento matutino pensando en el domingo`,
+    imagen: `https://picsum.photos/seed/boca${i}/800/600`,
+    fecha: new Date(Date.now() - i * 3600000).toISOString(),
+    url: `https://la12digital.com/news/${i}`,
+    fuente: i % 2 === 0 ? "Olé" : "TyC Sports"
+  }))
+];
+
+export async function fetchBocaNews(page = 0, limit = 12): Promise<NewsResponse> {
+  const CACHE_KEY = `${CACHE_VERSION}_p${page}_l${limit}`;
+  const cached = getCachedData<NewsResponse>(CACHE_KEY, CACHE_DURATION.FIXTURES);
+  if (cached) return cached;
+
   try {
-    const parsed = new URL(url);
-    return parsed.protocol === "https:" || parsed.protocol === "http:";
-  } catch {
-    return false;
+    if (isDev) {
+      const total = 15; 
+      const start = page * limit;
+      const results = NEWS_BUFFER_DEV.slice(0, 15).slice(start, start + limit);
+      
+      const response = {
+        results,
+        total,
+        page,
+        limit,
+        pageCount: Math.ceil(total / limit)
+      };
+      
+      setCachedData(CACHE_KEY, response);
+      return response;
+    }
+
+    // LÓGICA DE PRODUCCIÓN (Worker)
+    const res = await fetch(`${BASE_URL}?page=${page}&limit=${limit}`);
+    if (!res.ok) throw new Error("Worker news failed");
+    const data: NewsResponse = await res.json();
+    
+    return {
+      ...data,
+      results: data.results.slice(0, 15),
+      total: Math.min(data.total, 15),
+      pageCount: Math.ceil(Math.min(data.total, 15) / data.limit)
+    };
+
+  } catch (error) {
+    console.error("News fetch error:", error);
+    return { results: [], total: 0, page, limit, pageCount: 0 };
   }
 }
 
-export async function fetchNewsdataNoticias(): Promise<NoticiaRaw[]> {
-  const CACHE_KEY = "v3_newsdata_boca_noticias";
-
-  const cached = getCachedData<NoticiaRaw[]>(CACHE_KEY, CACHE_DURATION.SQUAD);
-  if (cached) return cached;
-
-  const paramsObj: Record<string, string> = {
-    q: "Boca Juniors",
-    country: "ar",
-    language: "es",
-    category: "sports",
-    image: "1",
-    size: "9",
-  };
-  if (isDev) paramsObj.apikey = API_KEY;
-  const params = new URLSearchParams(paramsObj);
-
-  // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
-  const res = await fetchWithTimeout(`${BASE_URL}?${params}`);
-  if (!res.ok) throw new Error(`Newsdata error: ${res.status}`);
-
-  const data: NewsdataResponse = await res.json();
-  if (data.status !== "success") throw new Error("Newsdata API error");
-
-  const RIVER_RE = /river\s*plate|los\s*millonarios|el\s*millo\b/i;
-
-  const result: NoticiaRaw[] = data.results
-    .filter((a) => a.image_url)
-    .filter(
-      (a) => !RIVER_RE.test(a.title) && !RIVER_RE.test(a.description ?? ""),
-    )
-    .filter(
-      (a, i, arr) => arr.findIndex((b) => b.article_id === a.article_id) === i,
-    )
-    .map((a) => ({
-      id: a.article_id,
-      titulo: a.title,
-      // FIX: Validate external URLs to prevent javascript:/data: injection
-      imagen: isSafeUrl(a.image_url) ? a.image_url : "",
-      fecha: a.pubDate,
-      url: isSafeUrl(a.link) ? a.link : undefined,
-    }))
-    .filter((a) => a.imagen !== "");
-
-  if (result.length) setCachedData(CACHE_KEY, result);
-  return result;
-}
+/** 
+ * Mantengo por compatibilidad si algún componente viejo la usa,
+ * pero ahora llama internamente a fetchBocaNews.
+ */
+export const fetchNewsdataNoticias = async () => {
+  const res = await fetchBocaNews(0, 15);
+  return res.results;
+};

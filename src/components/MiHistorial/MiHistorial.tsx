@@ -83,6 +83,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
 
       {/* Register form */}
       <div className="mb-6 p-4 bg-boca-blue-light border border-boca-border rounded-sm">
+        <h2 className="sr-only">Agregar partido</h2>
         <div className="flex items-center gap-2 mb-3">
           <svg viewBox="0 0 16 16" fill="none" className="w-4 h-4 text-boca-gold shrink-0">
             <rect

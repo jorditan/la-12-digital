@@ -1,4 +1,4 @@
-export type GameState = "waiting" | "playing" | "won" | "timeout";
+export type GameState = "waiting" | "playing" | "correct" | "timeout";
 
 export interface PlayerState {
   name: string;

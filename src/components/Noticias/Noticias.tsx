@@ -1,45 +1,32 @@
-import {
-  Newspaper,
-  Star,
-  ArrowLeft,
-  ArrowRight,
-  ChevronRight,
-} from "lucide-react";
-import { useHorizontalScroll } from "../../hooks/useHorizontalScroll";
-import { type Noticia } from "../../services/apifootball";
-import { Button } from "../ui/Button";
-import { NoticiaCard } from "../NoticiaCard";
-import { useNoticias } from "./hooks/useNoticias";
+import { Newspaper, ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
+import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
+import { type Noticia } from '../../services/apifootball';
+import { Button } from '../ui/Button';
+import { NoticiaCard } from '../NoticiaCard';
+import { useNoticias } from './hooks/useNoticias';
+import { NoticiasPagination } from './NoticiasPagination';
 
+/**
+ * Mobile View: Slider táctil con snap
+ */
 function NoticiasMobileSlider({ noticias }: { noticias: Noticia[] }) {
-  const {
-    ref,
-    canScrollLeft,
-    canScrollRight,
-    onPointerDown,
-    onPointerMove,
-    stopDrag,
-  } = useHorizontalScroll();
+  const { ref, canScrollLeft, canScrollRight, onPointerDown, onPointerMove, stopDrag } =
+    useHorizontalScroll();
 
   return (
     <div className="md:hidden relative">
       <div
         ref={ref}
-        className="flex gap-3 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
-        style={
-          {
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          } as React.CSSProperties
-        }
+        className="flex gap-3 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none snap-x snap-mandatory overscroll-x-contain"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as any}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={stopDrag}
         onPointerLeave={stopDrag}
       >
         {noticias.map((noticia) => (
-          <div key={noticia.id} className="shrink-0 w-[65vw]">
-            <NoticiaCard noticia={noticia} className="h-[220px]" />
+          <div key={noticia.id} className="shrink-0 w-[75vw] snap-start">
+            <NoticiaCard noticia={noticia} className="h-[240px]" />
           </div>
         ))}
       </div>
@@ -57,6 +44,25 @@ function NoticiasMobileSlider({ noticias }: { noticias: Noticia[] }) {
   );
 }
 
+/**
+ * Loading Skeleton
+ */
+function NoticiasSkeleton() {
+  return (
+    <div className="flex gap-4 h-[340px]">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="flex-1 animate-pulse bg-boca-gold/5 border border-white/5 rounded-sm"
+        />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Main Component
+ */
 export function Noticias() {
   const {
     noticias,
@@ -73,125 +79,91 @@ export function Noticias() {
     irPagina,
   } = useNoticias();
 
-  if (estado === "loading")
+  if (estado === 'loading' && noticias.length === 0) {
     return (
-      <section aria-label="Noticias" className="w-full">
-        <div className="flex items-center gap-4 mb-4">
-          <Newspaper size={24} className="text-boca-gold shrink-0" />
-          <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight sm:leading-10 text-boca-gold tracking-tight">
-            Noticias
-          </h2>
-        </div>
-        <div className="w-full h-px bg-boca-gold/30 mb-4" />
-        <div className="flex gap-4 h-[260px] sm:h-[340px]">
-          {Array.from({ length: 3 }, (_, i) => (
-            <div
-              key={i}
-              className="flex-1 animate-pulse bg-boca-gold/10 border border-boca-gold/10 rounded-sm"
-            />
-          ))}
-        </div>
+      <section className="w-full">
+        <NoticiasHeader />
+        <NoticiasSkeleton />
       </section>
     );
+  }
 
-  if (estado === "error")
+  if (estado === 'error') {
     return (
-      <section aria-label="Noticias" className="w-full">
-        <div className="flex items-center gap-4 mb-4">
-          <Newspaper size={24} className="text-boca-gold shrink-0" />
-          <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight sm:leading-10 text-boca-gold tracking-tight">
-            Noticias
-          </h2>
-        </div>
-        <div className="w-full h-px bg-boca-gold/30 mb-4" />
-        <div className="flex items-center gap-3 py-8 px-4 border border-boca-gold/10 rounded-sm">
-          <p className="font-sans text-sm text-white/50 flex-1">
-            No se pudieron cargar las noticias
-          </p>
-          <Button
-            onClick={cargar}
-            variant="text"
-            className="text-sm text-boca-gold border border-boca-gold/30 rounded px-4 py-2 hover:bg-boca-gold/10 shrink-0"
-          >
+      <section className="w-full">
+        <NoticiasHeader />
+        <div className="flex flex-col items-center justify-center py-12 border border-white/5 rounded-sm bg-white/2">
+          <p className="text-white/40 mb-4">No se pudieron cargar las noticias</p>
+          <Button onClick={cargar} variant="outline" className="text-boca-gold border-boca-gold/30">
             Reintentar
           </Button>
         </div>
       </section>
     );
+  }
 
   if (noticias.length === 0) return null;
 
+  const currentNoticias = noticias.slice(idx, idx + VISIBLE);
+
   return (
     <section aria-label="Noticias" className="w-full">
-      {/* Header */}
+      <NoticiasHeader />
+
+      <NoticiasMobileSlider noticias={noticias} />
+
+      <div className="hidden md:flex flex-col">
+        <div className="flex items-stretch gap-4 h-[360px]">
+          <Button
+            onClick={irPrev}
+            disabled={!canPrev}
+            variant="ghost"
+            className="bg-white/2 px-2 shrink-0 disabled:opacity-10 hover:bg-white/5 transition-colors border-boca-gold-dark/30 border"
+          >
+            <ArrowLeft size={32} className="text-boca-gold" />
+          </Button>
+
+          <div className="flex flex-1 gap-4 min-w-0">
+            {currentNoticias.map((noticia) => (
+              <NoticiaCard key={noticia.id} noticia={noticia} className="flex-1" />
+            ))}
+            {/* Relleno para mantener layout */}
+            {currentNoticias.length < VISIBLE &&
+              Array.from({ length: VISIBLE - currentNoticias.length }).map((_, i) => (
+                <div key={`empty-${i}`} className="flex-1" />
+              ))}
+          </div>
+
+          <Button
+            onClick={irNext}
+            disabled={!canNext}
+            variant="ghost"
+            className="bg-white/2 px-2 shrink-0 disabled:opacity-10 hover:bg-white/5 transition-colors border-boca-gold-dark/30 border"
+          >
+            <ArrowRight size={32} className="text-boca-gold" />
+          </Button>
+        </div>
+
+        <NoticiasPagination
+          pageCount={pageCount}
+          currentPage={currentPage}
+          onPageChange={irPagina}
+        />
+      </div>
+    </section>
+  );
+}
+
+function NoticiasHeader() {
+  return (
+    <>
       <div className="flex items-center gap-4 mb-4">
         <Newspaper size={24} className="text-boca-gold shrink-0" />
         <h2 className="font-serif font-bold text-[32px] leading-10 text-boca-gold tracking-tight">
           Noticias
         </h2>
       </div>
-
-      {/* Separador dorado */}
-      <div className="w-full h-px bg-boca-gold/30 mb-4" />
-
-      {/* Mobile: slider con drag y fade */}
-      <NoticiasMobileSlider noticias={noticias} />
-
-      {/* Desktop: carrusel con botones */}
-      <div className="hidden md:flex flex-col gap-3">
-        {/* Fila: botón ← | cards | botón → */}
-        <div className="flex items-stretch gap-4 h-[340px]">
-          <Button
-            onClick={irPrev}
-            disabled={!canPrev}
-            aria-label="Noticia anterior"
-            variant="secondary"
-            className="bg-boca-blue-light px-2 shrink-0 disabled:opacity-25 hover:bg-boca-gold/10"
-          >
-            <ArrowLeft size={24} className="text-boca-gold" />
-          </Button>
-
-          <div className="flex flex-1 gap-4 min-w-0">
-            {noticias.slice(idx, idx + VISIBLE).map((noticia) => (
-              <NoticiaCard
-                key={noticia.id}
-                noticia={noticia}
-                className="flex-1 min-w-0"
-              />
-            ))}
-          </div>
-
-          <Button
-            onClick={irNext}
-            disabled={!canNext}
-            aria-label="Noticia siguiente"
-            variant="secondary"
-            className="bg-boca-blue-light px-2 shrink-0 disabled:opacity-25 hover:bg-boca-gold/10"
-          >
-            <ArrowRight size={24} className="text-boca-gold" />
-          </Button>
-        </div>
-
-        {/* Indicador de estrellas */}
-        <div className="flex items-center justify-center gap-2">
-          {Array.from({ length: pageCount }, (_, page) => (
-            <Button
-              key={page}
-              onClick={() => irPagina(page)}
-              aria-label={`Ir a página ${page + 1}`}
-              variant="ghost"
-              size="icon"
-              className="text-boca-gold hover:scale-110"
-            >
-              <Star
-                size={16}
-                fill={page === currentPage ? "currentColor" : "none"}
-                strokeWidth={page === currentPage ? 0 : 1.5}
-              />
-            </Button>
-          ))}
-        </div>
-      </div>
-    </section>
+      <div className="w-full h-px bg-white/10 mb-6" />
+    </>
   );
 }

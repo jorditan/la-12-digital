@@ -1,26 +1,26 @@
-import { useState, useEffect } from "react";
-import { Youtube } from "lucide-react";
-import { fetchVideos, type VideoYoutube } from "../../services/apifootball";
-import { CANAL_DEFAULT, CANALES_YOUTUBE } from "../../data/canalesYoutube";
-import { Badge } from "../ui/Badge";
-import { Button } from "../ui/Button";
-import { CardVideo } from "../CardVideo";
+import { useState, useEffect } from 'react';
+import { Youtube } from 'lucide-react';
+import { fetchVideos, type VideoYoutube } from '../../services/apifootball';
+import { CANAL_DEFAULT, CANALES_YOUTUBE } from '../../data/canalesYoutube';
+import { Badge } from '../ui/Badge';
+import { Button } from '../ui/Button';
+import { CardVideo } from '../CardVideo';
 
-type Estado = "loading" | "error" | "ok";
+type Estado = 'loading' | 'error' | 'ok';
 
 export function CanalYoutube() {
   const [canal, setCanal] = useState(CANAL_DEFAULT);
   const [videos, setVideos] = useState<VideoYoutube[]>([]);
-  const [estado, setEstado] = useState<Estado>("loading");
+  const [estado, setEstado] = useState<Estado>('loading');
 
   const cargar = (handle: string) => {
-    setEstado("loading");
+    setEstado('loading');
     fetchVideos(handle)
       .then((data) => {
         setVideos(data);
-        setEstado("ok");
+        setEstado('ok');
       })
-      .catch(() => setEstado("error"));
+      .catch(() => setEstado('error'));
   };
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export function CanalYoutube() {
       {/* Header: icono + título + pills de canal + link al canal */}
       <div className="flex flex-col gap-3 mb-4">
         <div className="flex items-center gap-3">
-          <Youtube size={20} className="text-boca-gold shrink-0" />
+          <Youtube size={32} className="text-boca-gold shrink-0" />
           <h2 className="font-serif font-bold text-[22px] sm:text-[32px] leading-tight text-boca-gold tracking-tight">
             Videos bosteros
           </h2>
@@ -56,13 +56,11 @@ export function CanalYoutube() {
       {/* Separador dorado */}
       <div className="w-full h-px bg-boca-gold/30 mb-4" />
 
-      {estado === "loading" && <SkeletonVideos />}
+      {estado === 'loading' && <SkeletonVideos />}
 
-      {estado === "error" && (
+      {estado === 'error' && (
         <div className="flex flex-col items-center gap-3 py-10 text-center">
-          <p className="font-sans text-sm text-text-secondary">
-            No se pudieron cargar los videos
-          </p>
+          <p className="font-sans text-sm text-text-secondary">No se pudieron cargar los videos</p>
           <Button
             onClick={() => cargar(canal.handle)}
             variant="text"
@@ -73,13 +71,13 @@ export function CanalYoutube() {
         </div>
       )}
 
-      {estado === "ok" && videos.length === 0 && (
+      {estado === 'ok' && videos.length === 0 && (
         <p className="font-sans text-sm text-white/50 py-8 text-center">
           No hay videos disponibles
         </p>
       )}
 
-      {estado === "ok" && videos.length > 0 && (
+      {estado === 'ok' && videos.length > 0 && (
         <>
           {/* Mobile: scroll horizontal con fade + hint */}
           <div className="sm:hidden">
@@ -110,8 +108,8 @@ function VideoStack({ videos }: { videos: VideoYoutube[] }) {
         className="max-h-[32rem] space-y-3 overflow-y-auto overscroll-contain pr-1 snap-y snap-mandatory"
         style={
           {
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
           } as React.CSSProperties
         }
       >

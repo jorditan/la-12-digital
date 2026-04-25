@@ -2,10 +2,8 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { IDOLOS, type Idolo } from "../../../data/idolos";
 import { type GameState, type Score, ROUND_SECS, RESULT_SECS } from "../types";
 import { normalize } from "../../../utils/stringMatch";
-import {
-  INPUT_FOCUS_DELAY_MS,
-  INPUT_ERROR_DURATION_MS,
-} from "../../../utils/gameConfig";
+import { INPUT_FOCUS_DELAY_MS } from "../../../utils/gameConfig";
+import { useInputError } from "../../../hooks/useInputError";
 
 // ── Helpers puros ─────────────────────────────────────────────────────────────
 
@@ -62,11 +60,11 @@ export function useIdolosGame(): IdolosGameState {
   const [timer, setTimer] = useState(ROUND_SECS);
   const [score, setScore] = useState<Score>({ correct: 0, total: 0 });
   const [usedIds, setUsedIds] = useState<Set<string>>(new Set());
-  const [inputError, setInputError] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(
     null,
   ) as React.RefObject<HTMLInputElement>;
+  const { inputError, triggerError } = useInputError(inputRef);
   const roundIv = useRef<ReturnType<typeof setInterval>>();
 
   const bgIdolo = useMemo(() => {
@@ -157,12 +155,7 @@ export function useIdolosGame(): IdolosGameState {
     if (isMatch(input, idolo)) {
       finishRound(true);
     } else {
-      setInputError(true);
-      setTimeout(() => {
-        setInputError(false);
-        setInput("");
-        inputRef.current?.focus();
-      }, INPUT_ERROR_DURATION_MS);
+      triggerError(() => setInput(""));
     }
   };
 

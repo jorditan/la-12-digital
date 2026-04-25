@@ -7,7 +7,7 @@ import {
   getLibertadoresNextFixtures,
   getLibertadoresStandingsData,
 } from "./footballApiService";
-import { fetchNewsdataNoticias } from "./newsdataService";
+import { fetchBocaNews } from "./newsdataService";
 import { fetchYoutubeVideos, type VideoItem } from "./youtubeService";
 
 // BOCA_ID exportado = 451 (coincide con lo que leen los componentes)
@@ -56,12 +56,13 @@ export interface ProximoPartido {
 }
 
 export interface Noticia {
-  id: number;
+  id: string | number;
   titulo: string;
   imagen: string;
   categoria: "mercado" | "informe" | "partido" | "seleccion";
   fecha: string;
   url?: string;
+  fuente?: string;
 }
 
 export type VideoYoutube = VideoItem;
@@ -105,8 +106,8 @@ function mapFixtureToMatchResult(
   f: import("../types/football").ProcessedFixture,
   competition: string,
 ): MatchResult {
-  const homeId = f.isBocaHome ? BOCA_ID_EXPORT : 0;
-  const awayId = f.isBocaHome ? 0 : BOCA_ID_EXPORT;
+  const homeId = f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId;
+  const awayId = f.isBocaHome ? f.awayTeamId : BOCA_ID_EXPORT;
 
   let homeWinner: boolean | null = null;
   let awayWinner: boolean | null = null;
@@ -189,6 +190,7 @@ function mapFixtureToProximoPartido(
   f: import("../types/football").ProcessedFixture,
   competition: string,
 ): ProximoPartido {
+  const isBocaAway = !f.isBocaHome;
   return {
     fixtureId: f.id,
     date: f.date.toISOString(),
@@ -198,12 +200,12 @@ function mapFixtureToProximoPartido(
       timeZone: "America/Argentina/Buenos_Aires",
     }),
     homeTeam: {
-      id: f.isBocaHome ? BOCA_ID_EXPORT : 0,
+      id: f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId,
       name: f.homeTeam,
       logo: teamLogoUrl(f.homeTeamId, f.homeLogo),
     },
     awayTeam: {
-      id: f.isBocaHome ? 0 : BOCA_ID_EXPORT,
+      id: isBocaAway ? BOCA_ID_EXPORT : f.awayTeamId,
       name: f.awayTeam,
       logo: teamLogoUrl(f.awayTeamId, f.awayLogo),
     },
@@ -233,16 +235,32 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
 
 // ── Noticias ─────────────────────────────────────────────────────────────────
 
-export async function fetchNoticias(): Promise<Noticia[]> {
-  const articles = await fetchNewsdataNoticias();
-  return articles.map((a, i) => ({
-    id: i,
-    titulo: a.titulo,
-    imagen: a.imagen,
-    categoria: "partido" as const,
-    fecha: a.fecha,
-    url: a.url,
-  }));
+export interface NoticiasResponse {
+  results: Noticia[];
+  total: number;
+  page: number;
+  limit: number;
+  pageCount: number;
+}
+
+export async function fetchNoticias(
+  page = 0,
+  limit = 12,
+): Promise<NoticiasResponse> {
+  const data = await fetchBocaNews(page, limit);
+
+  return {
+    ...data,
+    results: data.results.map((a) => ({
+      id: a.id,
+      titulo: a.titulo,
+      imagen: a.imagen,
+      categoria: "partido" as const,
+      fecha: a.fecha,
+      url: a.url,
+      fuente: a.fuente,
+    })),
+  };
 }
 
 // ── Canal de YouTube ──────────────────────────────────────────────────────────

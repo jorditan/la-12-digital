@@ -45,7 +45,7 @@ function ModalHeader({
   gameState,
   onClose,
 }: Pick<GameModalProps, "equipo" | "score" | "gameState" | "onClose">) {
-  const isFinished = gameState === "won" || gameState === "timeout";
+  const isFinished = gameState === "correct" || gameState === "timeout";
   return (
     <div className="flex items-start justify-between gap-3 px-4 py-3 border-b border-boca-gold/10">
       <div className="min-w-0">
@@ -91,7 +91,7 @@ function TimerSection({
   timer: number;
   gameState: GameState;
 }) {
-  if (gameState === "won" || gameState === "timeout") return null;
+  if (gameState === "correct" || gameState === "timeout") return null;
   return (
     <div className="px-4 pt-3 flex items-center gap-3">
       <TimerBar timer={timer} total={ROUND_SECS} />
@@ -130,10 +130,10 @@ function PlayingInput({
           className={[
             "flex-1 min-w-0 px-3 py-2 text-sm font-sans",
             "bg-boca-blue rounded-sm text-white placeholder:text-text-secondary",
-            "focus:outline-none transition-colors",
+            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors",
             inputError
-              ? "border border-red-500 focus:border-red-400"
-              : "border border-boca-gold/20 focus:border-boca-gold/50",
+              ? "border border-red-500 focus-visible:border-red-400"
+              : "border border-boca-gold/20 focus-visible:border-boca-gold/50",
           ].join(" ")}
         />
         <Button type="submit" size="sm" variant="primary">
@@ -159,7 +159,7 @@ function ResultFooter({
   onClose,
   onPlayNext,
 }: Pick<GameModalProps, "gameState" | "score" | "onClose" | "onPlayNext">) {
-  const won = gameState === "won";
+  const won = gameState === "correct";
   return (
     <div className="space-y-3 pt-1">
       <div
@@ -191,7 +191,7 @@ function ResultFooter({
 
 export function GameModal(props: GameModalProps) {
   const { gameState, equipo, players, onClose } = props;
-  const isFinished = gameState === "won" || gameState === "timeout";
+  const isFinished = gameState === "correct" || gameState === "timeout";
 
   useModalEffects(onClose);
 

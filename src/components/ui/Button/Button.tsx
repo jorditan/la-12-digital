@@ -22,7 +22,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
     "border border-boca-gold",
     "hover:bg-boca-gold-dark hover:border-boca-gold-dark",
     "active:brightness-90",
-    "disabled:opacity-40 disabled:cursor-not-allowed",
+    "disabled:opacity-60 disabled:cursor-not-allowed",
   ].join(" "),
 
   /** Contorno dorado, texto dorado — acción secundaria */
@@ -31,7 +31,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
     "border border-boca-gold",
     "hover:bg-boca-gold/10",
     "active:bg-boca-gold/20",
-    "disabled:opacity-40 disabled:cursor-not-allowed",
+    "disabled:opacity-60 disabled:cursor-not-allowed",
   ].join(" "),
 
   /** Sin borde, texto dorado — acción terciaria / sutil */
@@ -40,7 +40,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
     "border border-transparent",
     "hover:border-boca-gold/25 hover:bg-boca-gold/5",
     "active:bg-boca-gold/10",
-    "disabled:opacity-40 disabled:cursor-not-allowed",
+    "disabled:opacity-60 disabled:cursor-not-allowed",
   ].join(" "),
 
   /** Contorno blanco/neutro — acción de descarte */
@@ -49,7 +49,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
     "border border-white/30",
     "hover:border-white/60 hover:bg-white/5",
     "active:bg-white/10",
-    "disabled:opacity-40 disabled:cursor-not-allowed",
+    "disabled:opacity-60 disabled:cursor-not-allowed",
   ].join(" "),
 
   /** Fondo rojo — acción destructiva */
@@ -58,7 +58,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
     "border border-status-loss",
     "hover:brightness-110 hover:border-status-loss",
     "active:brightness-90",
-    "disabled:opacity-40 disabled:cursor-not-allowed",
+    "disabled:opacity-60 disabled:cursor-not-allowed",
   ].join(" "),
 
   /** Acción textual, sin caja visible por defecto */
@@ -67,7 +67,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
     "border border-transparent shadow-none",
     "hover:text-boca-gold hover:bg-transparent",
     "active:bg-transparent",
-    "disabled:opacity-40 disabled:cursor-not-allowed",
+    "disabled:opacity-60 disabled:cursor-not-allowed",
   ].join(" "),
 };
 

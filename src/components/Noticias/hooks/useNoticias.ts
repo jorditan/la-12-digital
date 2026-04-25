@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { fetchNoticias, type Noticia } from "../../../services/apifootball";
 
 type Estado = "loading" | "error" | "ok";
@@ -24,37 +24,62 @@ function useVisibleCards() {
 export function useNoticias() {
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [estado, setEstado] = useState<Estado>("loading");
-  const [idx, setIdx] = useState(0);
+  const [idx, setIdx] = useState(0); // Índice global de la primera noticia visible
+  const [total, setTotal] = useState(0);
+  
   const VISIBLE = useVisibleCards();
+  const PAGE_SIZE = 12; // Cuántas noticias pedimos al server por vez
 
-  const cargar = () => {
+  const cargarPagina = useCallback(async (serverPage: number) => {
+    try {
+      const data = await fetchNoticias(serverPage, PAGE_SIZE);
+      setTotal(data.total);
+      return data.results;
+    } catch (err) {
+      console.error("Error cargando noticias:", err);
+      throw err;
+    }
+  }, []);
+
+  // Carga inicial
+  useEffect(() => {
     setEstado("loading");
-    fetchNoticias()
-      .then((data) => {
-        setNoticias(data);
+    cargarPagina(0)
+      .then((results) => {
+        setNoticias(results);
         setEstado("ok");
       })
       .catch(() => setEstado("error"));
+  }, [cargarPagina]);
+
+  const irPagina = async (pageIdx: number) => {
+    const targetIdx = pageIdx * VISIBLE;
+    
+    // ¿Necesitamos cargar más noticias del servidor?
+    if (targetIdx + VISIBLE > noticias.length && noticias.length < total) {
+      setEstado("loading");
+      const nextServerPage = Math.floor(noticias.length / PAGE_SIZE);
+      try {
+        const nuevosItems = await cargarPagina(nextServerPage);
+        setNoticias(prev => [...prev, ...nuevosItems]);
+        setIdx(targetIdx);
+        setEstado("ok");
+      } catch {
+        setEstado("error");
+      }
+    } else {
+      setIdx(targetIdx);
+    }
   };
 
-  useEffect(() => {
-    cargar();
-  }, []);
-
-  useEffect(() => {
-    const maxIdx = Math.max(0, noticias.length - VISIBLE);
-    setIdx((i) => Math.min(i, maxIdx));
-  }, [VISIBLE, noticias.length]);
-
-  const pageCount = Math.ceil(noticias.length / VISIBLE);
+  const pageCount = Math.ceil(total / VISIBLE);
   const currentPage = Math.floor(idx / VISIBLE);
-  const canPrev = currentPage > 0;
-  const canNext = currentPage < pageCount - 1;
+  
+  const canPrev = idx > 0;
+  const canNext = idx + VISIBLE < total;
 
-  const irPrev = () => setIdx(Math.max(0, currentPage - 1) * VISIBLE);
-  const irNext = () =>
-    setIdx(Math.min(pageCount - 1, currentPage + 1) * VISIBLE);
-  const irPagina = (page: number) => setIdx(page * VISIBLE);
+  const irPrev = () => irPagina(currentPage - 1);
+  const irNext = () => irPagina(currentPage + 1);
 
   return {
     noticias,
@@ -65,7 +90,7 @@ export function useNoticias() {
     currentPage,
     canPrev,
     canNext,
-    cargar,
+    cargar: () => irPagina(0),
     irPrev,
     irNext,
     irPagina,

@@ -126,6 +126,11 @@ export default {
       return handleYoutubeProxy(request, url, env);
     }
 
+    // Route News aggregator: /api/boca-news?page=1&limit=12
+    if (url.pathname === '/api/boca-news') {
+      return handleBocaNews(request, url, env);
+    }
+
     // Route Newsdata.io API calls through the proxy (key stored as VITE_NEWS_API_KEY secret).
     if (url.pathname === '/api/newsdata') {
       return handleNewsdataProxy(request, url, env);
@@ -171,6 +176,199 @@ const ALLOWED_YOUTUBE_PARAMS = new Set([
   'id',
   'pageToken',
 ]);
+
+async function handleBocaNews(request, url, env) {
+  const corsHeaders = getCorsHeaders(request);
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  const cache = caches.default;
+  // Cambiamos a v2 para invalidar el caché viejo de 10 noticias
+  const cacheKey = new Request(new URL('http://internal/boca-news-v2'), request);
+  let cachedRes = await cache.match(cacheKey);
+
+  let allNews = [];
+
+  if (cachedRes) {
+    allNews = await cachedRes.json();
+  } else {
+    // 1. Define sources
+    const sources = [
+      { name: 'Olé', url: 'https://www.ole.com.ar/rss/boca-juniors/' },
+      { name: 'TyC Sports', url: 'https://www.tycsports.com/rss/boca-juniors.xml' },
+      { name: 'Planeta Boca Juniors', url: 'https://www.planetabocajuniors.com.ar/feed/' },
+    ];
+
+    // 2. Fetch RSS in parallel
+    const rssResults = await Promise.allSettled(
+      sources.map(async (s) => {
+        const res = await fetch(s.url, {
+          headers: { 'User-Agent': 'La12Digital-Bot/1.0' },
+          cf: { cacheTtl: 600 },
+        });
+        if (!res.ok) throw new Error(`RSS ${s.name} failed`);
+        const xml = await res.text();
+        return parseRSS(xml, s.name);
+      })
+    );
+
+    const sourceResults = rssResults
+      .filter((r) => r.status === 'fulfilled')
+      .map((r) => r.value);
+
+    const mergedNews = [];
+    const uniqueMap = new Map();
+    
+    // ALGORITMO ROUND-ROBIN: Una de cada fuente
+    let hasMore = true;
+    let i = 0;
+    while (hasMore && mergedNews.length < 40) { // Margen para filtrar
+      hasMore = false;
+      sourceResults.forEach(sourceGroup => {
+        if (sourceGroup[i]) {
+          const n = sourceGroup[i];
+          const cleanUrl = n.url.split('?')[0].replace(/\/$/, '');
+          if (!uniqueMap.has(cleanUrl)) {
+            uniqueMap.set(cleanUrl, true);
+            mergedNews.push(n);
+          }
+          hasMore = true;
+        }
+      });
+      i++;
+    }
+
+    // 3. Fallback a Newsdata solo si no hay casi nada
+    if (mergedNews.length < 5) {
+      try {
+        const params = new URLSearchParams({
+          q: 'Boca Juniors',
+          country: 'ar',
+          language: 'es',
+          category: 'sports',
+          apikey: env.VITE_NEWS_API_KEY ?? '',
+        });
+        const ndRes = await fetch(`https://newsdata.io/api/1/news?${params}`);
+        if (ndRes.ok) {
+          const ndData = await ndRes.json();
+          (ndData.results ?? []).forEach(a => {
+            if (mergedNews.length < 20) {
+              mergedNews.push({
+                id: a.article_id,
+                titulo: a.title,
+                imagen: a.image_url ?? '',
+                fecha: a.pubDate,
+                url: a.link,
+                fuente: 'Newsdata',
+              });
+            }
+          });
+        }
+      } catch (e) {
+        console.error('Newsdata fallback failed', e);
+      }
+    }
+
+    // Ordenar por fecha y limitar a 20 finales
+    allNews = mergedNews
+      .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+      .slice(0, 20);
+
+    // 5. Save to Cache API (15 mins)
+    const responseToCache = new Response(JSON.stringify(allNews), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 's-maxage=900' },
+    });
+    // cache.put requires a response that isn't already used
+    await cache.put(cacheKey, responseToCache.clone());
+  }
+
+  // 6. Server-side Pagination
+  const page = parseInt(url.searchParams.get('page') || '0');
+  const limit = parseInt(url.searchParams.get('limit') || '12');
+  const start = page * limit;
+  const end = start + limit;
+  const paginatedNews = allNews.slice(start, end);
+
+  return new Response(
+    JSON.stringify({
+      results: paginatedNews,
+      total: allNews.length,
+      page,
+      limit,
+      pageCount: Math.ceil(allNews.length / limit),
+    }),
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=600',
+        ...corsHeaders,
+      },
+    }
+  );
+}
+
+/** 
+ * Lightweight RSS Parser using Regex.
+ * Avoids heavy XML libraries for better Worker performance.
+ */
+function parseRSS(xml, sourceName) {
+  const items = [];
+  // Match <item> or <entry> blocks
+  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  let match;
+
+  while ((match = itemRegex.exec(xml)) !== null) {
+    const content = match[1];
+    const title = extractTag(content, 'title');
+    const link = extractTag(content, 'link');
+    const pubDate = extractTag(content, 'pubDate') || extractTag(content, 'dc:date');
+    
+    // Look for images in enclosure, media:content, or description
+    let image = '';
+    const enclosureMatch = content.match(/<enclosure[^>]+url=["']([^"']+)["']/i);
+    const mediaMatch = content.match(/<media:content[^>]+url=["']([^"']+)["']/i);
+    
+    if (enclosureMatch) image = enclosureMatch[1];
+    else if (mediaMatch) image = mediaMatch[1];
+    else {
+      // Try to find an <img> tag in description
+      const desc = extractTag(content, 'description');
+      const imgInDesc = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
+      if (imgInDesc) image = imgInDesc[1];
+    }
+
+    if (title && link) {
+      items.push({
+        id: `rss-${btoa(link).substring(0, 16)}`,
+        titulo: decodeEntities(title),
+        imagen: image,
+        fecha: pubDate || new Date().toISOString(),
+        url: link,
+        fuente: sourceName,
+      });
+    }
+  }
+
+  return items;
+}
+
+function extractTag(content, tag) {
+  const regex = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
+  const match = content.match(regex);
+  if (!match) return '';
+  return match[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim();
+}
+
+function decodeEntities(str) {
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec));
+}
 
 async function handleYoutubeProxy(request, url, env) {
   const corsHeaders = getCorsHeaders(request);
@@ -329,6 +527,7 @@ const ALLOWED_LIVESCORE_PARAMS = new Set([
   'from',
   'to',
   'team_id',
+  'team',
   'match_id',
   'season',
   'round',

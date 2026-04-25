@@ -44,7 +44,7 @@ export const NoteModal = ({
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[200] flex items-center justify-center px-4"
+      className="fixed inset-0 z-overlay flex items-center justify-center px-4"
       style={{ background: "rgba(0,0,0,0.78)", backdropFilter: "blur(4px)" }}
       onClick={(e) => {
         if (e.target === overlayRef.current) onClose();
@@ -67,7 +67,7 @@ export const NoteModal = ({
             onChange={(e) => setValue(e.target.value.slice(0, MAX_LENGTH))}
             rows={4}
             placeholder="Ej: Fui con mi viejo, llovió toda la noche..."
-            className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2.5 type-body text-white placeholder:text-text-muted/40 focus:outline-none focus:border-boca-gold transition-colors resize-none"
+            className="w-full bg-boca-blue border border-boca-border rounded-sm px-3 py-2.5 type-body text-white placeholder:text-text-muted/40 focus-visible:outline-none focus-visible:border-boca-gold focus-visible:ring-1 focus-visible:ring-boca-gold/50 transition-colors resize-none"
           />
           <span
             className={[
