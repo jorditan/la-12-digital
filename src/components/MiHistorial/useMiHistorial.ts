@@ -54,7 +54,27 @@ export const formatTableDate = (dateStr: string): string => {
 };
 
 export const formatFullDate = (dateStr: string): string => {
-  const d = new Date(dateStr + "T12:00:00");
+  if (!dateStr) return '–';
+  
+  // Si ya tiene formato DD/MM/AAAA, lo devolvemos tal cual
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) return dateStr;
+
+  // Extraemos solo la parte de la fecha (YYYY-MM-DD) por si viene con hora/ISO
+  const isoDate = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
+  
+  const d = new Date(isoDate + "T12:00:00");
+  
+  if (isNaN(d.getTime())) {
+    // Si falla, intentamos parsear la fecha cruda
+    const fallback = new Date(dateStr);
+    if (isNaN(fallback.getTime())) return dateStr; // Si todo falla, devolvemos el string original
+    return fallback.toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  }
+  
   return d.toLocaleDateString('es-AR', {
     day: '2-digit',
     month: '2-digit',
