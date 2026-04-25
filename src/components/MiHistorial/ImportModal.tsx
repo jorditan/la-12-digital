@@ -23,7 +23,6 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
     enriched,
     progress,
     total,
-    importedCount,
     importError,
     foundCount,
     duplicateCount,
@@ -36,13 +35,15 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-overlay flex items-center justify-center px-4"
+      className="fixed inset-0 z-overlay flex items-end justify-center p-0 sm:items-center sm:px-4"
       style={{ background: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(4px)' }}
       onClick={(e) => {
         if (e.target === overlayRef.current) onClose();
       }}
     >
-      <div className="w-full max-w-2xl bg-boca-blue-light border border-boca-border rounded-sm shadow-2xl animate-fade-in overflow-hidden">
+      <div className="relative w-full max-w-none bg-boca-blue-light border border-boca-border rounded-t-2xl sm:rounded-sm shadow-2xl animate-fade-in overflow-hidden max-h-[88dvh] sm:max-w-2xl sm:max-h-none flex flex-col">
+        <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1 sm:hidden" />
+        
         {/* Header compartido */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-boca-border/60">
           <h2 className="type-card-title text-boca-gold">Importar historial</h2>
@@ -55,7 +56,7 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
           </button>
         </div>
 
-        <div className="p-6 text-left">
+        <div className="p-6 text-left overflow-y-auto">
           {/* ── idle ── */}
           {step === 'idle' && (
             <>
@@ -193,28 +194,6 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
                 </Button>
               </div>
             </>
-          )}
-
-          {/* ── success ── */}
-          {step === 'success' && (
-            <div className="py-10 text-center">
-              <div className="w-16 h-16 bg-[#4ade80]/20 rounded-full flex items-center justify-center mx-auto mb-4 text-[#4ade80]">
-                <span className="text-3xl font-bold">✓</span>
-              </div>
-              <h3 className="type-card-title text-boca-gold mb-2 text-xl">
-                ¡Importación completada!
-              </h3>
-              <p className="type-body text-text-muted mb-8 max-w-xs mx-auto">
-                Se han añadido <strong>{importedCount}</strong> partidos a tu historial personal.
-              </p>
-              <Button
-                variant="primary"
-                onClick={onClose}
-                className="px-10 py-3 font-bold uppercase tracking-wider"
-              >
-                Cerrar y ver historial
-              </Button>
-            </div>
           )}
         </div>
       </div>

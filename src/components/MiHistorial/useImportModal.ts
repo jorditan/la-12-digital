@@ -1,5 +1,6 @@
 // src/components/MiHistorial/useImportModal.ts
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import type { MatchResult } from '@/services/apifootball';
 import type { UpsertAttendancePayload } from '@/types/attendance';
 import { useFileParser } from '@/hooks/useFileParser';
@@ -9,7 +10,7 @@ import type { EnrichedRow } from '@/hooks/useMatchEnricher';
 import { useMatchImport } from '@/hooks/useMatchImport';
 import { useTemplateDownload } from '@/hooks/useTemplateDownload';
 
-export type ImportStep = 'idle' | 'processing' | 'preview' | 'success';
+export type ImportStep = 'idle' | 'processing' | 'preview';
 
 export interface UseImportModalReturn {
   // Estado
@@ -18,7 +19,6 @@ export interface UseImportModalReturn {
   enriched: EnrichedRow[];
   progress: number;
   total: number;
-  importedCount: number;
   importError: string | null;
   // Conteos derivados
   foundCount: number;
@@ -41,7 +41,6 @@ export function useImportModal(
   const [enriched, setEnriched] = useState<EnrichedRow[]>([]);
   const [progress, setProgress] = useState(0);
   const [total, setTotal] = useState(0);
-  const [importedCount, setImportedCount] = useState(0);
   const [importError, setImportError] = useState<string | null>(null);
 
   const { downloadTemplate } = useTemplateDownload();
@@ -96,8 +95,12 @@ export function useImportModal(
       setImportError(result.error ?? 'Error al importar');
       return;
     }
-    setImportedCount(result.count);
-    setStep('success');
+    
+    toast.success('¡Importación completada!', {
+      description: `Se han añadido ${result.count} ${result.count === 1 ? 'partido' : 'partidos'} a tu historial.`
+    });
+    
+    onClose();
   };
 
   const foundCount     = enriched.filter(r => r.status === 'found').length;
@@ -110,7 +113,6 @@ export function useImportModal(
     enriched,
     progress,
     total,
-    importedCount,
     importError,
     foundCount,
     duplicateCount,

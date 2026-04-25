@@ -51,8 +51,9 @@ export const EditMatchModal = ({ match, initialNote, onSave, onClose }: EditMatc
   };
 
   return (
-    <div className="fixed inset-0 z-overlay flex items-center justify-center px-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-md bg-boca-blue-light border border-boca-border rounded-sm shadow-2xl animate-fade-in">
+    <div className="fixed inset-0 z-overlay flex items-end justify-center p-0 sm:items-center sm:px-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
+      <div className="relative w-full max-w-none bg-boca-blue-light border border-boca-border rounded-t-2xl sm:rounded-sm shadow-2xl animate-fade-in flex flex-col max-h-[88dvh] sm:max-w-md sm:max-h-none" onClick={e => e.stopPropagation()}>
+        <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1 sm:hidden" />
         <div className="flex items-center justify-between px-6 py-4 border-b border-boca-border/60">
           <h2 className="type-card-title text-boca-gold text-lg">Editar datos del partido</h2>
           <button onClick={onClose} className="text-text-muted hover:text-white transition-colors">
@@ -60,7 +61,7 @@ export const EditMatchModal = ({ match, initialNote, onSave, onClose }: EditMatc
           </button>
         </div>
 
-        <form onSubmit={handleSave} className="p-6 space-y-5 text-left">
+        <form onSubmit={handleSave} className="p-6 space-y-5 text-left overflow-y-auto">
           <DatePicker 
             label="Fecha"
             value={date}
