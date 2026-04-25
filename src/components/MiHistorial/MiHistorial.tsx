@@ -61,7 +61,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
       attended: true,
       note: note,
       matchData: {
-        date: match.date,
+        date: updatedData.date || match.date,
         homeTeamId: updatedData.homeTeam?.id ?? match.homeTeam.id,
         homeTeamName: updatedData.homeTeam?.name ?? match.homeTeam.name,
         homeTeamLogo: updatedData.homeTeam?.logo ?? match.homeTeam.logo,
@@ -76,11 +76,11 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="max-w-4xl mx-auto px-4 py-6">
       {/* Header */}
       <div className="mb-6 pl-3 border-l-2 border-boca-gold/50">
         <h1 className="type-section-title text-white mb-0.5">Mi Historial</h1>
-        <p className="type-body text-text-muted">{user.displayName ?? user.email}</p>
+        <p className="type-body text-text-muted lowercase">{user.displayName ?? user.email}</p>
       </div>
 
       {/* Stats */}
@@ -234,10 +234,10 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         </div>
       )}
 
-      {/* Table */}
-      <div className="bg-boca-blue-light border border-boca-border rounded-sm overflow-hidden">
-        <div className="px-4 py-3 border-b border-boca-border/60 flex items-center justify-between">
-          <p className="type-body text-text-nav">Partidos registrados</p>
+      {/* Table Section */}
+      <div className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col">
+        <div className="border-b border-boca-border-card px-4 py-3 sm:px-6 flex items-center justify-between">
+          <h2 className="type-section-title text-white text-sm sm:text-base">Partidos registrados</h2>
           {totalAttended > 0 && (
             <p className="type-caption text-text-muted">
               {hasActiveFilters
@@ -272,20 +272,26 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
             </Button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
+          <div className="overflow-x-auto pt-2 px-3 pb-3 sm:px-8 sm:pb-8">
+            <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b border-boca-border/60">
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Fecha</th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Rival</th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">
-                    Resultado
+                <tr className="border-b border-boca-border-card">
+                  <th className="px-2 sm:px-6 py-2 text-left font-sans font-medium text-sm text-text-muted">
+                    Día
                   </th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium hidden sm:table-cell">
+                  <th className="px-2 sm:px-3 py-2 text-left font-sans font-medium text-sm text-text-muted">
+                    Rival
+                  </th>
+                  <th className="hidden sm:table-cell px-2 py-2 text-left font-sans font-medium text-sm text-text-muted max-w-[70px]">
                     Competencia
                   </th>
-                  <th className="px-3 py-2 type-caption text-text-muted/70 font-medium">Nota</th>
-                  <th className="px-2 py-2" aria-label="Acciones" />
+                  <th className="px-2 sm:px-4 py-2 text-center font-sans font-medium text-sm text-text-muted">
+                    Resultado
+                  </th>
+                  <th className="px-2 py-2 text-left font-sans font-medium text-sm text-text-muted">
+                    Nota
+                  </th>
+                  <th className="px-2 sm:px-6 py-2 w-20" aria-label="Acciones" />
                 </tr>
               </thead>
               <tbody>
@@ -298,7 +304,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                       match={match}
                       note={entry.note}
                       isNew={justAdded === entry.matchId}
-                      onOpenNoteModal={() => {}} // Ya no se usa
+                      onOpenNoteModal={() => {}} 
                       onOpenEditModal={(m) => setEditModal({ match: m, note: entry.note })}
                       onOpenDeleteModal={(matchId, rival, matchDate) =>
                         setDeleteModal({ matchId, rival, matchDate })
@@ -308,6 +314,22 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                 })}
               </tbody>
             </table>
+
+            {/* Leyenda de colores (Mismo estilo que UltimosPartidos) */}
+            <div className="flex items-center gap-4 mt-4 text-[10px] sm:text-xs text-text-muted">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-green-400/70 inline-block shrink-0" />
+                <span>Victoria</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-slate-400/60 inline-block shrink-0" />
+                <span>Empate</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-red-400/70 inline-block shrink-0" />
+                <span>Derrota</span>
+              </div>
+            </div>
           </div>
         )}
       </div>

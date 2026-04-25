@@ -7,6 +7,25 @@ import type { AuthUser, AsyncState } from '@/types/attendance';
 
 // ── Pure helpers ──────────────────────────────────────────────────────────────
 
+export type ResultadoTipo = 'victoria' | 'derrota' | 'empate';
+
+export const getResultado = (match: MatchResult): ResultadoTipo => {
+  const bocaIsHome = match.homeTeam.id === BOCA_ID;
+  const bocaGoals = bocaIsHome ? match.goalsHome : match.goalsAway;
+  const rivalGoals = bocaIsHome ? match.goalsAway : match.goalsHome;
+  
+  if (bocaGoals === null || rivalGoals === null) return 'empate';
+  if (bocaGoals > rivalGoals) return 'victoria';
+  if (bocaGoals < rivalGoals) return 'derrota';
+  return 'empate';
+};
+
+export const ROW_STYLE: Record<ResultadoTipo, string> = {
+  victoria: 'border-l-2 border-l-green-400 bg-green-500/[0.08]',
+  derrota: 'border-l-2 border-l-red-400 bg-red-500/[0.08]',
+  empate: 'border-l-2 border-l-slate-400 bg-slate-500/[0.08]',
+};
+
 export const formatOptionLabel = (match: MatchResult): string => {
   const dateStr = new Date(match.date).toLocaleDateString('es-AR', {
     day: '2-digit',
@@ -22,42 +41,17 @@ export const formatOptionLabel = (match: MatchResult): string => {
   return `${dateStr} · Boca${score} vs ${rival} · ${comp}`;
 };
 
-export const getResultBadge = (match: MatchResult): { label: string; cls: string } => {
-  const bocaIsHome = match.homeTeam.id === BOCA_ID;
-  const bocaGoals = bocaIsHome ? match.goalsHome : match.goalsAway;
-  const rivalGoals = bocaIsHome ? match.goalsAway : match.goalsHome;
-  if (bocaGoals === null || rivalGoals === null) {
-    return { label: '–', cls: 'bg-boca-blue-mid text-text-muted' };
-  }
-  if (bocaGoals > rivalGoals) {
-    return {
-      label: `${bocaGoals}–${rivalGoals}`,
-      cls: 'bg-status-win text-[#4ade80]',
-    };
-  }
-  if (bocaGoals < rivalGoals) {
-    return {
-      label: `${bocaGoals}–${rivalGoals}`,
-      cls: 'bg-status-loss text-[#fca5a5]',
-    };
-  }
-  return {
-    label: `${bocaGoals}–${rivalGoals}`,
-    cls: 'bg-status-draw text-[#94a3b8]',
-  };
-};
-
 export const getRivalName = (match: MatchResult): string => {
   const bocaIsHome = match.homeTeam.id === BOCA_ID;
   return bocaIsHome ? match.awayTeam.name : match.homeTeam.name;
 };
 
-export const formatTableDate = (dateStr: string): string =>
-  new Date(dateStr).toLocaleDateString('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+export const formatTableDate = (dateStr: string): string => {
+  const d = new Date(dateStr);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  return `${day}/${month}`;
+};
 
 const getEarliestYear = (map: Record<string, { createdAt: string }>): number | null => {
   const entries = Object.values(map);
@@ -77,12 +71,10 @@ export const useMiHistorial = (user: AuthUser) => {
   const [justAdded, setJustAdded] = useState<string | null>(null);
   const [successMatchId, setSuccessMatchId] = useState<string | null>(null);
 
-  // ── Filters ──
   const [selectedCompetitions, setSelectedCompetitions] = useState<string[]>([]);
   const [dateFrom, setDateFrom] = useState<string | null>(null);
   const [dateTo, setDateTo] = useState<string | null>(null);
 
-  // 1. Cargar partidos recientes de la API
   useEffect(() => {
     fetchMatchesForHistorial()
       .then((data) => {
@@ -92,7 +84,6 @@ export const useMiHistorial = (user: AuthUser) => {
       .catch(() => setMatchEstado('error'));
   }, []);
 
-  // 2. Cargar partidos de la DB (manuales o históricos) que el usuario tiene registrados
   useEffect(() => {
     const attendedIds = Object.keys(attendanceMap);
     if (attendedIds.length === 0) return;
@@ -112,14 +103,12 @@ export const useMiHistorial = (user: AuthUser) => {
           goalsAway: m.goals_away,
           venueName: m.venue || '',
           competition: m.competition || undefined,
-          // Hack para que AttendanceRow.tsx encuentre el match por string ID si es manual
           _manualId: m.id,
         } as MatchResult & { _manualId?: string }));
         setDbMatches(mapped);
       });
   }, [attendanceMap]);
 
-  // Combinar ambos sets (prefiriendo API si hay colisión, aunque no debería haber)
   const allMatchesMap = new Map<string, MatchResult>();
   dbMatches.forEach(m => allMatchesMap.set((m as any)._manualId || m.fixtureId.toString(), m));
   apiMatches.forEach(m => allMatchesMap.set(m.fixtureId.toString(), m));
@@ -139,7 +128,6 @@ export const useMiHistorial = (user: AuthUser) => {
   const earliestYear = getEarliestYear(attendanceMap);
   const availableMatches = matches.filter((m) => !attendanceMap[(m as any)._manualId || m.fixtureId.toString()]?.attended);
 
-  // Unique competitions from attended entries (sorted)
   const availableCompetitions = [
     ...new Set(
       attendedEntries
@@ -148,25 +136,20 @@ export const useMiHistorial = (user: AuthUser) => {
     ),
   ].sort();
 
-  // Apply filters to attended entries
   const filteredEntries = attendedEntries.filter((entry) => {
     const match = allMatchesMap.get(entry.matchId);
-
     if (selectedCompetitions.length > 0) {
       if (!match?.competition || !selectedCompetitions.includes(match.competition)) return false;
     }
-
     if (match?.date) {
-      const matchDay = match.date.slice(0, 10); // YYYY-MM-DD
+      const matchDay = match.date.slice(0, 10);
       if (dateFrom && matchDay < dateFrom) return false;
       if (dateTo && matchDay > dateTo) return false;
     }
-
     return true;
   });
 
   const hasActiveFilters = selectedCompetitions.length > 0 || !!dateFrom || !!dateTo;
-
   const clearFilters = () => {
     setSelectedCompetitions([]);
     setDateFrom(null);
@@ -174,42 +157,61 @@ export const useMiHistorial = (user: AuthUser) => {
   };
 
   const handleMarkAttendance = async () => {
-    if (!selectedMatchId || adding) return;
+    if (!selectedMatchId) return;
+    const match = matches.find((m) => ((m as any)._manualId || m.fixtureId.toString()) === selectedMatchId);
+    if (!match) return;
+
     setAdding(true);
-    setSuccessMatchId(null);
     try {
-      const match = matches.find((m) => m.fixtureId.toString() === selectedMatchId);
       await upsert({
         matchId: selectedMatchId,
         attended: true,
-        matchData: match
-          ? {
-              date: match.date,
-              homeTeamId: match.homeTeam.id,
-              homeTeamName: match.homeTeam.name,
-              homeTeamLogo: match.homeTeam.logo,
-              awayTeamId: match.awayTeam.id,
-              awayTeamName: match.awayTeam.name,
-              awayTeamLogo: match.awayTeam.logo,
-              goalsHome: match.goalsHome,
-              goalsAway: match.goalsAway,
-              venue: match.venueName,
-              competition: match.competition,
-            }
-          : undefined,
+        matchData: {
+          date: match.date,
+          homeTeamId: match.homeTeam.id,
+          homeTeamName: match.homeTeam.name,
+          homeTeamLogo: match.homeTeam.logo,
+          awayTeamId: match.awayTeam.id,
+          awayTeamName: match.awayTeam.name,
+          awayTeamLogo: match.awayTeam.logo,
+          goalsHome: match.goalsHome,
+          goalsAway: match.goalsAway,
+          competition: match.competition,
+        },
       });
-      setJustAdded(selectedMatchId);
       setSuccessMatchId(selectedMatchId);
+      setJustAdded(selectedMatchId);
       setSelectedMatchId('');
       setTimeout(() => setSuccessMatchId(null), 2000);
+      setTimeout(() => setJustAdded(null), 3000);
+    } catch (err) {
+      console.error(err);
     } finally {
       setAdding(false);
     }
   };
 
   const handleUpdateNote = async (matchId: string, note: string | null) => {
-    const existing = attendanceMap[matchId];
-    if (existing) await upsert({ matchId, attended: existing.attended, note });
+    const match = matches.find((m) => ((m as any)._manualId || m.fixtureId.toString()) === matchId);
+    if (!match) return;
+
+    await upsert({
+      matchId,
+      attended: true,
+      note,
+      matchData: {
+        date: match.date,
+        homeTeamId: match.homeTeam.id,
+        homeTeamName: match.homeTeam.name,
+        homeTeamLogo: match.homeTeam.logo,
+        awayTeamId: match.awayTeam.id,
+        awayTeamName: match.awayTeam.name,
+        awayTeamLogo: match.awayTeam.logo,
+        goalsHome: match.goalsHome,
+        goalsAway: match.goalsAway,
+        competition: match.competition,
+      },
+    });
   };
 
   return {
