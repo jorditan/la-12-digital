@@ -145,9 +145,9 @@ function AppToaster() {
       position="bottom-center"
       toastOptions={{
         style: {
-          background: 'var(--color-boca-gold)',
-          border: '1px solid var(--color-boca-gold-dark)',
-          color: 'var(--color-boca-blue)',
+          background: '#ffd700',
+          border: '1px solid #ccac00',
+          color: '#001529',
           fontFamily: 'Geist, sans-serif',
           fontSize: '14px',
           fontWeight: '600',

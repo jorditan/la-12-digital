@@ -3,14 +3,10 @@
 @tailwind utilities;
 
 /* ── Sonner toasts ───────────────────────────────────────────────────────────
-   Fuerza contraste adecuado en título y descripción sobre fondo oscuro.
+   Estilos base para los mensajes flotantes.
    ──────────────────────────────────────────────────────────────────────────── */
-[data-sonner-toast] [data-title] {
-  color: #e0e7ff !important;
-  font-weight: 500;
-}
-[data-sonner-toast] [data-description] {
-  color: #94a3b8 !important;
+[data-sonner-toast] {
+  font-family: 'Geist', sans-serif !important;
 }
 
 /* Estilos base La 12 Digital */
