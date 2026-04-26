@@ -1,7 +1,7 @@
-import { useState, useRef } from "react";
-import { Button } from "../ui/Button";
-import { QuickFilter } from "./QuickFilter";
-import { useClickOutside } from "../../hooks/useClickOutside";
+import { useState, useRef } from 'react';
+import { Button } from '../ui/Button';
+import { QuickFilter } from './QuickFilter';
+import { useClickOutside } from '../../hooks/useClickOutside';
 
 interface MultiSelectProps {
   options: string[];
@@ -14,7 +14,7 @@ export const MultiSelect = ({
   options,
   selected,
   onChange,
-  placeholder = "Seleccioná",
+  placeholder = 'Seleccioná',
 }: MultiSelectProps) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,11 +22,7 @@ export const MultiSelect = ({
   useClickOutside(containerRef, () => setOpen(false));
 
   const toggle = (value: string) => {
-    onChange(
-      selected.includes(value)
-        ? selected.filter((v) => v !== value)
-        : [...selected, value],
-    );
+    onChange(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]);
   };
 
   const selectAll = () => onChange([...options]);
@@ -52,7 +48,7 @@ export const MultiSelect = ({
           isActive ? (
             <span
               className="w-4 h-4 rounded-full bg-boca-gold text-boca-blue type-ui-label flex items-center justify-center shrink-0"
-              style={{ fontSize: "9px" }}
+              style={{ fontSize: '9px' }}
             >
               {selected.length}
             </span>
@@ -72,10 +68,9 @@ export const MultiSelect = ({
         <svg
           viewBox="0 0 10 6"
           fill="none"
-          className={[
-            "w-2.5 h-2.5 shrink-0 transition-transform",
-            open ? "rotate-180" : "",
-          ].join(" ")}
+          className={['w-2.5 h-2.5 shrink-0 transition-transform', open ? 'rotate-180' : ''].join(
+            ' '
+          )}
         >
           <path
             d="M1 1l4 4 4-4"
@@ -102,11 +97,11 @@ export const MultiSelect = ({
                 >
                   <span
                     className={[
-                      "w-3.5 h-3.5 rounded-sm border flex items-center justify-center shrink-0 transition-colors",
+                      'w-3.5 h-3.5 rounded-sm border flex items-center justify-center shrink-0 transition-colors',
                       selected.includes(opt)
-                        ? "bg-boca-gold border-boca-gold"
-                        : "border-boca-border",
-                    ].join(" ")}
+                        ? 'bg-boca-gold border-boca-gold'
+                        : 'border-boca-border',
+                    ].join(' ')}
                   >
                     {selected.includes(opt) && (
                       <svg viewBox="0 0 10 8" fill="none" className="w-2.5 h-2">
@@ -132,7 +127,7 @@ export const MultiSelect = ({
               disabled={selected.length === options.length}
               variant="text"
               size="xs"
-              className="type-caption text-text-muted hover:text-boca-gold disabled:opacity-30"
+              className="type-caption w-max text-text-muted hover:text-boca-gold disabled:opacity-30"
             >
               Seleccionar todo
             </Button>

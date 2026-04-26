@@ -142,7 +142,7 @@ function AppInner() {
             <p className="font-sans text-xs text-text-muted">
               Creada por:{' '}
               <a
-                href="https://github.com/bocajuniors"
+                href="https://www.linkedin.com/in/matias-jordan/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-boca-gold/70 underline hover:text-boca-gold transition-colors"
