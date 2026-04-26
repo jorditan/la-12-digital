@@ -1,6 +1,6 @@
-import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { Button } from "../ui/Button";
+import { Modal } from "../ui/Modal";
 import { type BocaEquipo } from "../../data/bocaEquipos";
 import {
   type GameState,
@@ -9,7 +9,6 @@ import {
   ROUND_SECS,
 } from "./types";
 import { TimerBar } from "./TimerBar";
-import { useModalEffects } from "../../hooks/useModalEffects";
 import { FormacionPitch } from "./FormacionPitch";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -193,57 +192,45 @@ export function GameModal(props: GameModalProps) {
   const { gameState, equipo, players, onClose } = props;
   const isFinished = gameState === "correct" || gameState === "timeout";
 
-  useModalEffects(onClose);
-
-  return createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
-      style={{
-        background: "var(--color-modal-backdrop-dark)",
-        backdropFilter: "blur(4px)",
-      }}
-      onClick={onClose}
+  return (
+    <Modal
+      onClose={onClose}
+      backdrop="var(--color-modal-backdrop-dark)"
+      panelClassName="sm:max-w-md sm:max-h-[90dvh] flex flex-col"
     >
-      <div
-        className="relative w-full max-w-none bg-boca-blue-light border border-boca-gold/20 rounded-t-2xl sm:rounded-sm overflow-hidden shadow-2xl animate-fade-in flex flex-col max-h-[88dvh] sm:max-w-md sm:max-h-[90dvh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1 sm:hidden" />
-        <ModalHeader
-          equipo={equipo}
-          score={props.score}
-          gameState={gameState}
-          onClose={onClose}
-        />
+      <ModalHeader
+        equipo={equipo}
+        score={props.score}
+        gameState={gameState}
+        onClose={onClose}
+      />
 
-        <TimerSection timer={props.timer} gameState={gameState} />
+      <TimerSection timer={props.timer} gameState={gameState} />
 
-        <div className="flex-1 overflow-y-auto p-4">
-          <FormacionPitch players={players} gameState={gameState} />
-        </div>
-
-        <div className="p-4 border-t border-boca-gold/10 space-y-3">
-          {gameState === "playing" && (
-            <PlayingInput
-              input={props.input}
-              inputError={props.inputError}
-              inputRef={props.inputRef}
-              onInputChange={props.onInputChange}
-              onSubmit={props.onSubmit}
-              onPlayNext={props.onPlayNext}
-            />
-          )}
-          {isFinished && (
-            <ResultFooter
-              gameState={gameState}
-              score={props.score}
-              onClose={onClose}
-              onPlayNext={props.onPlayNext}
-            />
-          )}
-        </div>
+      <div className="flex-1 overflow-y-auto p-4">
+        <FormacionPitch players={players} gameState={gameState} />
       </div>
-    </div>,
-    document.body,
+
+      <div className="p-4 border-t border-boca-gold/10 space-y-3">
+        {gameState === "playing" && (
+          <PlayingInput
+            input={props.input}
+            inputError={props.inputError}
+            inputRef={props.inputRef}
+            onInputChange={props.onInputChange}
+            onSubmit={props.onSubmit}
+            onPlayNext={props.onPlayNext}
+          />
+        )}
+        {isFinished && (
+          <ResultFooter
+            gameState={gameState}
+            score={props.score}
+            onClose={onClose}
+            onPlayNext={props.onPlayNext}
+          />
+        )}
+      </div>
+    </Modal>
   );
 }

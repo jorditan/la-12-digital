@@ -2,6 +2,7 @@ import { ESCUDO_VACIO } from '../../data/equipos';
 import type { MatchForecast } from '../../services/weather';
 import type { ProximoPartido } from '../../services/apifootball';
 import { BOCA_ID } from '../../services/apifootball';
+import { SkeletonBox, SkeletonText, SkeletonAvatar } from '../ui/Skeleton';
 import { StatsGrid } from './StatsGrid';
 import { ForecastRows } from './ForecastRows';
 import { ConditionsBlock } from './ConditionsBlock';
@@ -104,19 +105,19 @@ export function ModoNormal({
           </div>
         ) : loading ? (
           /* Skeleton mientras carga */
-          <div className="flex items-stretch gap-4 animate-pulse">
-            <div className="bg-white/5 rounded-md min-w-[80px] min-h-[96px]" />
+          <div className="flex items-stretch gap-4">
+            <SkeletonBox className="min-w-[80px] min-h-[96px]" />
             <div className="flex flex-col justify-center gap-3 flex-1">
               <div className="flex items-center gap-2.5">
-                <div className="w-12 h-12 rounded-sm bg-white/5 flex-shrink-0" />
+                <SkeletonAvatar size="w-12 h-12" className="rounded-sm" />
                 <div className="flex flex-col gap-1.5">
-                  <div className="h-2 w-16 bg-white/5 rounded" />
-                  <div className="h-3.5 w-28 bg-white/5 rounded" />
+                  <SkeletonText width="w-16" height="h-2" />
+                  <SkeletonText width="w-28" height="h-3" />
                 </div>
               </div>
               <div className="flex gap-1.5">
-                <div className="h-5 w-24 bg-white/5 rounded-sm" />
-                <div className="h-5 w-14 bg-white/5 rounded-sm" />
+                <SkeletonBox className="h-5 w-24" />
+                <SkeletonBox className="h-5 w-14" />
               </div>
             </div>
           </div>
@@ -143,8 +144,8 @@ export function ModoNormal({
             </div>
           ) : (
             <div className="flex gap-2 h-[90px] mb-3">
-              <div className="bg-boca-gold/[0.07] border border-boca-gold/10 rounded-sm min-w-[88px] animate-pulse" />
-              <div className="bg-boca-gold/[0.07] border border-boca-gold/10 rounded-sm flex-1 animate-pulse" />
+              <SkeletonBox className="bg-boca-gold/[0.07] border border-boca-gold/10 min-w-[88px]" />
+              <SkeletonBox className="bg-boca-gold/[0.07] border border-boca-gold/10 flex-1" />
             </div>
           )}
 
