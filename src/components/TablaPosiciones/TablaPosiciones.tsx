@@ -3,6 +3,7 @@ import { ESCUDO_VACIO } from "../../data/equipos";
 import { Button } from "../ui/Button";
 import { SelectDropdown } from "../ui/SelectDropdown";
 import { Tab } from "../ui/Tab";
+import { SkeletonBox, SkeletonText } from "../ui/Skeleton";
 import { useTablaPosiciones, COMPETITION_OPTIONS } from "./useTablaPosiciones";
 
 type TablaPosicionesProps = {
@@ -188,20 +189,20 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
 
 function SkeletonTabla() {
   return (
-    <div className="animate-pulse py-2 space-y-0">
+    <div className="py-2 space-y-0">
       {Array.from({ length: 12 }, (_, i) => (
         <div
           key={i}
           className="flex items-center gap-3 py-2.5 border-b border-boca-gold/5 last:border-b-0"
         >
-          <div className="h-3 w-4 bg-white/10 rounded shrink-0" />
-          <div className="size-4 bg-white/10 rounded shrink-0" />
-          <div className="h-3 flex-1 bg-white/10 rounded" />
-          <div className="h-3 w-6 bg-white/10 rounded" />
-          <div className="h-3 w-5 bg-white/10 rounded" />
-          <div className="h-3 w-5 bg-white/10 rounded" />
-          <div className="h-3 w-5 bg-white/10 rounded" />
-          <div className="h-3 w-5 bg-white/10 rounded" />
+          <SkeletonText width="w-4" height="h-3" className="shrink-0" />
+          <SkeletonBox className="size-4 shrink-0" />
+          <SkeletonText width="flex-1" height="h-3" />
+          <SkeletonText width="w-6" height="h-3" />
+          <SkeletonText width="w-5" height="h-3" />
+          <SkeletonText width="w-5" height="h-3" />
+          <SkeletonText width="w-5" height="h-3" />
+          <SkeletonText width="w-5" height="h-3" />
         </div>
       ))}
     </div>

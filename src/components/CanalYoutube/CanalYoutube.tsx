@@ -4,6 +4,7 @@ import { fetchVideos, type VideoYoutube } from '../../services/apifootball';
 import { CANAL_DEFAULT, CANALES_YOUTUBE } from '../../data/canalesYoutube';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
+import { SkeletonBox, SkeletonText } from '../ui/Skeleton';
 import { CardVideo } from '../CardVideo';
 
 type Estado = 'loading' | 'error' | 'ok';
@@ -125,13 +126,13 @@ function VideoStack({ videos }: { videos: VideoYoutube[] }) {
 
 function SkeletonVideos() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 animate-pulse">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
       {Array.from({ length: 6 }, (_, i) => (
-        <div key={i} className="rounded-sm overflow-hidden bg-white/5">
-          <div className="aspect-video bg-white/10" />
+        <div key={i} className="rounded-sm overflow-hidden">
+          <SkeletonBox className="aspect-video bg-white/10" />
           <div className="p-3 space-y-2">
-            <div className="h-3 bg-white/10 rounded w-full" />
-            <div className="h-3 bg-white/10 rounded w-2/3" />
+            <SkeletonText width="w-full" height="h-3" />
+            <SkeletonText width="w-2/3" height="h-3" />
           </div>
         </div>
       ))}

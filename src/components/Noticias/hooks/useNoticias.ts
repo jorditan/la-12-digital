@@ -1,24 +1,15 @@
-import { useState, useEffect, useLayoutEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { fetchNoticias, type Noticia } from "../../../services/apifootball";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
 
 type Estado = "loading" | "error" | "ok";
 
 function useVisibleCards() {
-  const [visible, setVisible] = useState(1);
-
-  useLayoutEffect(() => {
-    const getVisible = () => {
-      if (window.innerWidth >= 1024) return 3;
-      if (window.innerWidth >= 768) return 2;
-      return 1;
-    };
-    setVisible(getVisible());
-    const handler = () => setVisible(getVisible());
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
-  }, []);
-
-  return visible;
+  const isLg = useMediaQuery("(min-width: 1024px)");
+  const isMd = useMediaQuery("(min-width: 768px)");
+  if (isLg) return 3;
+  if (isMd) return 2;
+  return 1;
 }
 
 export function useNoticias() {

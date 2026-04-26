@@ -3,6 +3,7 @@ import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 import { type Noticia } from '../../services/apifootball';
 import { Button } from '../ui/Button';
 import { NoticiaCard } from '../NoticiaCard';
+import { SkeletonBox } from '../ui/Skeleton';
 import { useNoticias } from './hooks/useNoticias';
 import { NoticiasPagination } from './NoticiasPagination';
 
@@ -51,9 +52,9 @@ function NoticiasSkeleton() {
   return (
     <div className="flex gap-4 h-[340px]">
       {[1, 2, 3].map((i) => (
-        <div
+        <SkeletonBox
           key={i}
-          className="flex-1 animate-pulse bg-boca-gold/5 border border-white/5 rounded-sm"
+          className="flex-1 bg-boca-gold/5 border border-white/5"
         />
       ))}
     </div>

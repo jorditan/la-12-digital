@@ -1,14 +1,13 @@
-import { createPortal } from "react-dom";
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "../ui/Button";
+import { Modal } from "../ui/Modal";
 import { type Idolo } from "../../data/idolos";
 import { ESCUDO_VACIO } from "../../data/equipos";
 import { type GameState, type Score, RESULT_SECS, ROUND_SECS } from "./types";
 import { TimerBar } from "./TimerBar";
 import { IdoloPlaceholder } from "./IdoloPlaceholder";
 import { DificultadBadge } from "./DificultadBadge";
-import { useModalEffects } from "../../hooks/useModalEffects";
 import { fetchIdolImage } from "../../services/wikipediaService";
 
 const TOTAL_CLUES = 6;
@@ -297,34 +296,21 @@ export function GameModal(props: GameModalProps) {
   const { state, idolo, onClose } = props;
   const revealed = state === "correct" || state === "timeout";
 
-  useModalEffects(onClose);
-
-  return createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
-      style={{
-        background: "var(--color-modal-backdrop)",
-        backdropFilter: "blur(4px)",
-      }}
-      onClick={onClose}
+  return (
+    <Modal
+      onClose={onClose}
+      panelClassName="sm:max-w-sm flex flex-col"
     >
-      <div
-        className="relative w-full max-w-none bg-boca-blue-light border border-boca-gold/20 rounded-t-2xl sm:rounded-sm overflow-hidden shadow-2xl animate-fade-in max-h-[88dvh] sm:max-w-sm sm:max-h-none"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1 sm:hidden" />
-        <ModalHeader idolo={idolo} score={props.score} onClose={onClose} />
+      <ModalHeader idolo={idolo} score={props.score} onClose={onClose} />
 
-        <IdoloImage idolo={idolo} revealed={revealed} state={state} />
+      <IdoloImage idolo={idolo} revealed={revealed} state={state} />
 
-        <div className="p-4 space-y-3">
-          {state === "playing" && (
-            <PlayingContent {...props} onPlayNext={props.onPlayNext} />
-          )}
-          {revealed && <RevealedContent {...props} />}
-        </div>
+      <div className="p-4 space-y-3">
+        {state === "playing" && (
+          <PlayingContent {...props} onPlayNext={props.onPlayNext} />
+        )}
+        {revealed && <RevealedContent {...props} />}
       </div>
-    </div>,
-    document.body,
+    </Modal>
   );
 }
