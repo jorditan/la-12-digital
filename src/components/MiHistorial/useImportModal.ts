@@ -25,7 +25,7 @@ export interface UseImportModalReturn {
   duplicateCount: number;
   notFoundCount: number;
   // Handlers
-  downloadTemplate: () => void;
+  downloadTemplate: () => Promise<void>;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleImport: () => Promise<void>;
 }

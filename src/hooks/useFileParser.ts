@@ -1,4 +1,68 @@
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+
+/**
+ * RFC 4180-compliant CSV parser.
+ * Handles commas inside double-quoted fields and escaped double-quotes ("").
+ * Skips empty lines.
+ */
+function parseCSV(text: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = '';
+  let inQuotes = false;
+  let i = 0;
+
+  while (i < text.length) {
+    const ch = text[i];
+
+    if (inQuotes) {
+      if (ch === '"') {
+        // Peek ahead: "" is an escaped quote inside a quoted field.
+        if (text[i + 1] === '"') {
+          field += '"';
+          i += 2;
+        } else {
+          // Closing quote
+          inQuotes = false;
+          i++;
+        }
+      } else {
+        field += ch;
+        i++;
+      }
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+        i++;
+      } else if (ch === ',') {
+        row.push(field.trim());
+        field = '';
+        i++;
+      } else if (ch === '\r' && text[i + 1] === '\n') {
+        row.push(field.trim());
+        field = '';
+        if (row.some((v) => v !== '')) rows.push(row);
+        row = [];
+        i += 2;
+      } else if (ch === '\n') {
+        row.push(field.trim());
+        field = '';
+        if (row.some((v) => v !== '')) rows.push(row);
+        row = [];
+        i++;
+      } else {
+        field += ch;
+        i++;
+      }
+    }
+  }
+
+  // Flush the last field/row
+  row.push(field.trim());
+  if (row.some((v) => v !== '')) rows.push(row);
+
+  return rows;
+}
 
 export interface ParsedRow {
   rowIndex: number;
@@ -48,11 +112,27 @@ export function useFileParser() {
       };
     }
 
-    // 3. Parsear con SheetJS
+    // 3. Parsear archivo
     const buffer = await file.arrayBuffer();
-    const wb = XLSX.read(buffer, { type: 'array', cellDates: false });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json<string[]>(ws, { header: 1, defval: '' });
+    let rows: string[][];
+
+    if (ext === 'csv') {
+      // RFC 4180-compliant CSV parser.
+      // Handles commas inside double-quoted fields and escaped double-quotes ("").
+      const text = new TextDecoder().decode(buffer);
+      rows = parseCSV(text);
+    } else {
+      // Parse XLSX with ExcelJS (no prototype-pollution or ReDoS risks)
+      const wb = new ExcelJS.Workbook();
+      await wb.xlsx.load(buffer);
+      const ws = wb.worksheets[0];
+      rows = [];
+      ws.eachRow({ includeEmpty: true }, (row) => {
+        // row.values is 1-indexed; index 0 is always null — drop it.
+        const values = (row.values as (ExcelJS.CellValue | null)[]).slice(1);
+        rows.push(values.map((v) => (v == null ? '' : String(v))));
+      });
+    }
 
     // 4. Detectar fila de header
     const startRow = rows[0]?.[0]?.toString().toLowerCase().trim() === 'fecha' ? 1 : 0;
