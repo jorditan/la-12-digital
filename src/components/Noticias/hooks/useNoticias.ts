@@ -5,10 +5,11 @@ import { useMediaQuery } from "../../../hooks/useMediaQuery";
 type Estado = "loading" | "error" | "ok";
 
 function useVisibleCards() {
-  const isLg = useMediaQuery("(min-width: 1024px)");
-  const isMd = useMediaQuery("(min-width: 768px)");
-  if (isLg) return 3;
-  if (isMd) return 2;
+  // Single breakpoint: lg ≥ 1024 → 3, md ≥ 768 → 2, else → 1
+  const isMdOrAbove = useMediaQuery("(min-width: 768px)");
+  const isLgOrAbove = useMediaQuery("(min-width: 1024px)");
+  if (isLgOrAbove) return 3;
+  if (isMdOrAbove) return 2;
   return 1;
 }
 

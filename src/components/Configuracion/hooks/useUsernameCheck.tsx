@@ -42,8 +42,8 @@ export function useUsernameCheck(
       .select("id")
       .eq("username", trimmed)
       .maybeSingle()
-      .then(({ data }) => {
-        if (!cancelled) setStatus(data ? "taken" : "available");
+      .then(({ data, error }) => {
+        if (!cancelled) setStatus(error ? "idle" : data ? "taken" : "available");
       });
     return () => {
       cancelled = true;
