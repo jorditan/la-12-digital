@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
-import { Trash2, Edit3, Plus, MoreHorizontal } from 'lucide-react';
-import { BOCA_ID } from '@/services/apifootball';
-import type { MatchResult } from '@/services/apifootball';
-import { Button } from '../ui/Button';
-import { TeamLogo } from '../ui/TeamLogo';
-import { Tooltip } from '../ui/Tooltip';
-import { Badge } from '../ui/Badge';
+import { useEffect, useRef, useState } from "react";
+import { Trash2, Edit3, Plus, MoreHorizontal } from "lucide-react";
+import { BOCA_ID } from "@/services/apifootball";
+import type { MatchResult } from "@/services/apifootball";
+import { Button } from "../ui/Button";
+import { TeamLogo } from "../ui/TeamLogo";
+import { Tooltip } from "../ui/Tooltip";
+import { Badge } from "../ui/Badge";
 import {
   getRivalName,
   formatTableDate,
