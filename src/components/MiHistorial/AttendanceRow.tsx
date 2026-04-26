@@ -12,7 +12,7 @@ import {
   formatFullDate,
   getResultado,
   ROW_STYLE,
-} from "./useMiHistorial";
+} from './useMiHistorial';
 
 interface AttendanceRowProps {
   matchId: string;
@@ -20,11 +20,7 @@ interface AttendanceRowProps {
   note: string | null;
   isNew: boolean;
   onOpenEditModal: (match: MatchResult) => void;
-  onOpenDeleteModal: (
-    matchId: string,
-    rival: string,
-    matchDate: string,
-  ) => void;
+  onOpenDeleteModal: (matchId: string, rival: string, matchDate: string) => void;
 }
 
 export const AttendanceRow = ({
@@ -41,11 +37,8 @@ export const AttendanceRow = ({
   useEffect(() => {
     if (isNew && rowRef.current) {
       const el = rowRef.current;
-      el.classList.add("animate-gold-pulse");
-      const t = setTimeout(
-        () => el.classList.remove("animate-gold-pulse"),
-        900,
-      );
+      el.classList.add('animate-gold-pulse');
+      const t = setTimeout(() => el.classList.remove('animate-gold-pulse'), 900);
       return () => clearTimeout(t);
     }
   }, [isNew]);
@@ -53,10 +46,7 @@ export const AttendanceRow = ({
   if (!match) {
     return (
       <tr className="border-b border-boca-border/40">
-        <td
-          colSpan={6}
-          className="px-3 py-2 type-caption text-text-muted/50 italic"
-        >
+        <td colSpan={6} className="px-3 py-2 type-caption text-text-muted/50 italic">
           Partido #{matchId}
         </td>
       </tr>
@@ -67,7 +57,7 @@ export const AttendanceRow = ({
   const matchDate = formatTableDate(match.date);
   const rivalLogo = match.homeTeam.id === BOCA_ID ? match.awayTeam.logo : match.homeTeam.logo;
   const resultado = getResultado(match);
-  
+
   const bocaIsHome = match.homeTeam.id === BOCA_ID;
   const golesBoca = bocaIsHome ? match.goalsHome : match.goalsAway;
   const golesRival = bocaIsHome ? match.goalsAway : match.goalsHome;
@@ -76,10 +66,10 @@ export const AttendanceRow = ({
     <tr
       ref={rowRef}
       className={[
-        "transition-colors border-b border-white/[0.04]",
+        'transition-colors border-b border-white/[0.04]',
         ROW_STYLE[resultado],
-        isNew ? "animate-slide-in-row" : "",
-      ].join(" ")}
+        isNew ? 'animate-slide-in-row' : '',
+      ].join(' ')}
     >
       {/* Fecha */}
       <td className="px-2 sm:px-6 py-2 sm:py-3 font-sans font-medium text-sm text-white whitespace-nowrap">
@@ -89,12 +79,7 @@ export const AttendanceRow = ({
       {/* Rival */}
       <td className="px-2 sm:px-3 py-2 sm:py-3">
         <div className="flex items-center gap-2">
-          <TeamLogo 
-            src={rivalLogo} 
-            alt={rival} 
-            size={18} 
-            className="shrink-0" 
-          />
+          <TeamLogo src={rivalLogo} alt={rival} size={18} className="shrink-0" />
           <span className="font-sans font-normal text-sm text-white truncate max-w-[110px] sm:max-w-[140px]">
             {rival}
           </span>
@@ -104,7 +89,10 @@ export const AttendanceRow = ({
       {/* Competencia */}
       <td className="hidden sm:table-cell px-2 py-2 sm:py-3 max-w-[70px]">
         {match.competition && (
-          <Badge variant={match.competition === 'Copa Libertadores' ? 'gold' : 'blue'} className="text-[10px] px-1.5 whitespace-nowrap">
+          <Badge
+            variant={match.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
+            className="text-[10px] px-1.5 whitespace-nowrap"
+          >
             {match.competition === 'Copa Libertadores' ? 'Libertadores' : 'Liga profesional'}
           </Badge>
         )}
@@ -125,9 +113,7 @@ export const AttendanceRow = ({
             className="w-full justify-start text-left group/note p-0 h-auto hover:bg-transparent"
           >
             {note ? (
-              <span className="text-[11px] italic text-text-muted truncate flex-1">
-                "{note}"
-              </span>
+              <span className="text-[11px] italic text-text-muted truncate flex-1">"{note}"</span>
             ) : (
               <span className="flex items-center gap-1 text-[11px] text-text-muted/40 group-hover:note:text-boca-gold transition-colors">
                 <Plus size={10} />
@@ -152,13 +138,10 @@ export const AttendanceRow = ({
           >
             <MoreHorizontal size={14} />
           </Button>
-          
+
           {showDropdown && (
             <>
-              <div 
-                className="fixed inset-0 z-10" 
-                onClick={() => setShowDropdown(false)}
-              />
+              <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)} />
               <div className="absolute right-2 top-full mt-1 z-20 w-max bg-boca-blue border border-boca-border rounded-sm shadow-lg overflow-hidden animate-fade-in">
                 <button
                   onClick={() => {
@@ -199,7 +182,7 @@ export const AttendanceRow = ({
               <Edit3 size={13} />
             </Button>
           </Tooltip>
-          
+
           <Tooltip content="Eliminar partido" position="top">
             <Button
               type="button"

@@ -122,7 +122,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
             </a>
 
             {/* Historial H2H */}
-            <Tooltip content={`Historial vs ${rival.name}`} position="top">
+            <Tooltip content={`Últimos partidos vs ${rival.name}`} position="top">
               <button
                 onClick={openH2h}
                 aria-label={`Ver historial vs ${rival.name}`}
