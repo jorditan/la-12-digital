@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Trash2, PenLine, Edit3, Plus, MoreHorizontal } from "lucide-react";
+import { Trash2, Edit3, Plus, MoreHorizontal } from "lucide-react";
 import { BOCA_ID } from "@/services/apifootball";
 import type { MatchResult } from "@/services/apifootball";
 import { Button } from "../ui/Button";
