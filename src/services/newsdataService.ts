@@ -27,7 +27,7 @@ export interface NewsResponse {
 const NEWS_BUFFER_DEV: NoticiaRaw[] = [
   { id: "1", titulo: "Velasco y su sueño de jugar en la Bombonera con la azul y oro", fuente: "Olé", imagen: "https://images.unsplash.com/photo-1543351611-58f69d7c1781?q=80&w=800", url: "https://ole.com.ar", fecha: "2026-04-25T18:00:00Z" },
   { id: "2", titulo: "El 11 que planea Gago para el próximo partido por Copa", fuente: "TyC Sports", imagen: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=800", url: "https://tycsports.com", fecha: "2026-04-25T17:30:00Z" },
-  { id: "3", titulo: "La nueva joya de las inferiores que ya entrena con primera", fuente: "Planeta BJ", imagen: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=800", url: "https://planetabocajuniors.com.ar", fecha: "2026-04-25T17:00:00Z" },
+  { id: "3", titulo: "La nueva joya de las inferiores que ya entrena con primera", fuente: "Planeta BJ", imagen: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=800", url: "https://planetabocajuniors.com.ar", fecha: "2026-04-25T17:00:00Z" },
   { id: "4", titulo: "Riquelme y una charla clave con el plantel en Ezeiza", fuente: "Infobae", imagen: "https://images.unsplash.com/photo-1518091043644-c1d44575eaa2?q=80&w=800", url: "https://infobae.com", fecha: "2026-04-25T16:45:00Z" },
   ...Array.from({ length: 11 }).map((_, i) => ({
     id: `dev-news-${i}`,

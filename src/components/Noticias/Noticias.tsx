@@ -18,7 +18,7 @@ function NoticiasMobileSlider({ noticias }: { noticias: Noticia[] }) {
     <div className="md:hidden relative">
       <div
         ref={ref}
-        className="flex gap-3 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none snap-x snap-mandatory overscroll-x-contain"
+        className="flex gap-3 overflow-x-auto pb-2 md:h-[30rem] h-[20rem] cursor-grab active:cursor-grabbing select-none snap-x snap-mandatory overscroll-x-contain"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as any}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -52,10 +52,7 @@ function NoticiasSkeleton() {
   return (
     <div className="flex gap-4 h-[340px]">
       {[1, 2, 3].map((i) => (
-        <SkeletonBox
-          key={i}
-          className="flex-1 bg-boca-gold/5 border border-white/5"
-        />
+        <SkeletonBox key={i} className="flex-1 bg-boca-gold/5 border border-white/5" />
       ))}
     </div>
   );
@@ -119,7 +116,7 @@ export function Noticias() {
             onClick={irPrev}
             disabled={!canPrev}
             variant="ghost"
-            className="bg-white/2 px-2 shrink-0 disabled:opacity-10 hover:bg-white/5 transition-colors border-boca-gold-dark/30 border"
+            className="bg-white/2 px-2 shrink-0 disabled:opacity-10 hover:bg-white/5 transition-colors border-boca-gold-dark border"
           >
             <ArrowLeft size={32} className="text-boca-gold" />
           </Button>
@@ -139,7 +136,7 @@ export function Noticias() {
             onClick={irNext}
             disabled={!canNext}
             variant="ghost"
-            className="bg-white/2 px-2 shrink-0 disabled:opacity-10 hover:bg-white/5 transition-colors border-boca-gold-dark/30 border"
+            className="bg-white/2 px-2 shrink-0 disabled:opacity-10 hover:bg-white/5 transition-colors border-boca-gold-dark border"
           >
             <ArrowRight size={32} className="text-boca-gold" />
           </Button>

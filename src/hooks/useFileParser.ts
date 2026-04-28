@@ -1,5 +1,3 @@
-import ExcelJS from 'exceljs';
-
 /**
  * RFC 4180-compliant CSV parser.
  * Handles commas inside double-quoted fields and escaped double-quotes ("").
@@ -122,16 +120,48 @@ export function useFileParser() {
       const text = new TextDecoder().decode(buffer);
       rows = parseCSV(text);
     } else {
-      // Parse XLSX with ExcelJS (no prototype-pollution or ReDoS risks)
-      const wb = new ExcelJS.Workbook();
-      await wb.xlsx.load(buffer);
-      const ws = wb.worksheets[0];
-      rows = [];
-      ws.eachRow({ includeEmpty: true }, (row) => {
-        // row.values is 1-indexed; index 0 is always null — drop it.
-        const values = (row.values as (ExcelJS.CellValue | null)[]).slice(1);
-        rows.push(values.map((v) => (v == null ? '' : String(v))));
-      });
+      // Parse XLSX with ExcelJS via CDN to bypass Vite's Node.js dependency issues
+      try {
+        const cdnUrl = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
+        
+        if (!(window as any).ExcelJS) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = cdnUrl;
+            script.onload = resolve;
+            script.onerror = () => reject(new Error('No se pudo cargar la librería ExcelJS desde el CDN'));
+            document.head.appendChild(script);
+          });
+        }
+        
+        const ExcelJS = (window as any).ExcelJS;
+        const wb = new ExcelJS.Workbook();
+        await wb.xlsx.load(buffer);
+        const ws = wb.worksheets[0];
+        
+        if (!ws) {
+          throw new Error('El archivo Excel no tiene hojas de trabajo');
+        }
+
+        rows = [];
+        ws.eachRow({ includeEmpty: true }, (row: { values: unknown[] }) => {
+          // row.values is 1-indexed; index 0 is always null — drop it.
+          const values = (row.values ?? []).slice(1);
+          rows.push(values.map((v) => (v == null ? '' : String(v))));
+        });
+      } catch (err) {
+        console.error('Error al procesar XLSX:', err);
+        return {
+          valid: [],
+          errors: [
+            {
+              rowIndex: 0,
+              field: 'file',
+              message: `No se pudo procesar el archivo .xlsx: ${err instanceof Error ? err.message : 'Error desconocido'}`,
+            },
+          ],
+        };
+      }
     }
 
     // 4. Detectar fila de header

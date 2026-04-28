@@ -10,11 +10,9 @@ export interface VideoItem {
   vistas: string;
 }
 
-// In production the Worker injects the key server-side (Cloudflare secret).
-// In dev we call Google directly using the VITE_ key from .env.
+// El Worker inyecta la clave en el servidor. En el cliente siempre usamos el proxy.
 const isDev = import.meta.env.DEV;
-const API_KEY = isDev ? (import.meta.env.VITE_YOUTUBE_KEY as string) : "";
-const BASE = isDev ? "https://www.googleapis.com/youtube/v3" : "/api/youtube";
+const BASE = "/api/youtube";
 
 // ── Helpers de formato ────────────────────────────────────────────────────────
 
@@ -53,16 +51,13 @@ function isShort(title: string, durationIso: string): boolean {
 
 async function getUploadsPlaylistId(handle: string): Promise<string> {
   const params = new URLSearchParams({
-    key: API_KEY,
     forHandle: handle.replace("@", ""),
     part: "contentDetails",
   });
-  // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
   const res = await fetchWithTimeout(`${BASE}/channels?${params}`);
   if (!res.ok) {
     const body = await res.text().catch(() => "");
-    // FIX: Only include response details in development to avoid leaking internal info
-    const detail = import.meta.env?.DEV ? ` — ${body.slice(0, 200)}` : "";
+    const detail = isDev ? ` — ${body.slice(0, 200)}` : "";
     throw new Error(`YouTube channels error: ${res.status}${detail}`);
   }
   const data = await res.json();
@@ -85,30 +80,20 @@ async function getPlaylistItems(
   maxResults = 12,
 ): Promise<PlaylistItem[]> {
   const params = new URLSearchParams({
-    key: API_KEY,
     playlistId,
     part: "snippet",
     maxResults: String(maxResults),
   });
-  // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
   const res = await fetchWithTimeout(`${BASE}/playlistItems?${params}`);
   if (!res.ok) {
     const body = await res.text().catch(() => "");
-    // FIX: Only include response details in development to avoid leaking internal info
-    const detail = import.meta.env?.DEV ? ` — ${body.slice(0, 200)}` : "";
+    const detail = isDev ? ` — ${body.slice(0, 200)}` : "";
     throw new Error(`YouTube playlistItems error: ${res.status}${detail}`);
   }
   const data = await res.json();
 
   return (data.items ?? []).map(
-    (item: {
-      snippet: {
-        title: string;
-        publishedAt: string;
-        thumbnails: { high?: { url: string }; medium?: { url: string } };
-        resourceId: { videoId: string };
-      };
-    }) => ({
+    (item: any) => ({
       title: item.snippet.title,
       publishedAt: item.snippet.publishedAt,
       thumbnail:
@@ -129,22 +114,16 @@ async function getVideoDetails(
   ids: string[],
 ): Promise<Map<string, VideoDetail>> {
   const params = new URLSearchParams({
-    key: API_KEY,
     id: ids.join(","),
     part: "contentDetails,statistics",
   });
-  // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
   const res = await fetchWithTimeout(`${BASE}/videos?${params}`);
   if (!res.ok) throw new Error(`YouTube videos error: ${res.status}`);
   const data = await res.json();
 
   return new Map(
     (data.items ?? []).map(
-      (v: {
-        id: string;
-        contentDetails: { duration: string };
-        statistics: { viewCount: string };
-      }) => [
+      (v: any) => [
         v.id,
         {
           duration: v.contentDetails.duration,
@@ -158,37 +137,42 @@ async function getVideoDetails(
 // ── Función principal ─────────────────────────────────────────────────────────
 
 export async function fetchYoutubeVideos(handle: string): Promise<VideoItem[]> {
-  if (!handle || (isDev && !API_KEY)) return [];
+  if (!handle) return [];
 
   const CACHE_KEY = `v4_yt_videos_${handle}`;
   const cached = getCachedData<VideoItem[]>(CACHE_KEY, CACHE_DURATION.FIXTURES);
   if (cached) return cached;
 
-  const playlistId = await getUploadsPlaylistId(handle);
-  const items = await getPlaylistItems(playlistId, 50);
+  try {
+    const playlistId = await getUploadsPlaylistId(handle);
+    const items = await getPlaylistItems(playlistId, 50);
 
-  if (items.length === 0) return [];
+    if (items.length === 0) return [];
 
-  const details = await getVideoDetails(items.map((i) => i.videoId));
+    const details = await getVideoDetails(items.map((i) => i.videoId));
 
-  const result: VideoItem[] = items
-    .filter((item) => {
-      const detail = details.get(item.videoId);
-      return detail ? !isShort(item.title, detail.duration) : false;
-    })
-    .slice(0, 12)
-    .map((item) => {
-      const detail = details.get(item.videoId)!;
-      return {
-        id: item.videoId,
-        titulo: item.title,
-        thumbnail: item.thumbnail,
-        duracion: parseDuration(detail.duration),
-        fecha: item.publishedAt,
-        vistas: formatViews(parseInt(detail.viewCount)),
-      };
-    });
+    const result: VideoItem[] = items
+      .filter((item) => {
+        const detail = details.get(item.videoId);
+        return detail ? !isShort(item.title, detail.duration) : false;
+      })
+      .slice(0, 12)
+      .map((item) => {
+        const detail = details.get(item.videoId)!;
+        return {
+          id: item.videoId,
+          titulo: item.title,
+          thumbnail: item.thumbnail,
+          duracion: parseDuration(detail.duration),
+          fecha: item.publishedAt,
+          vistas: formatViews(parseInt(detail.viewCount)),
+        };
+      });
 
-  if (result.length) setCachedData(CACHE_KEY, result);
-  return result;
+    if (result.length) setCachedData(CACHE_KEY, result);
+    return result;
+  } catch (err) {
+    console.error("YouTube fetch error:", err);
+    return [];
+  }
 }

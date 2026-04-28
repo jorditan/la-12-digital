@@ -31,6 +31,23 @@ export default defineConfig(({ mode }) => {
             });
           },
         },
+        "/api/youtube": {
+          target: "https://www.googleapis.com",
+          changeOrigin: true,
+          configure: (proxy) => {
+            proxy.on("proxyReq", (proxyReq, req) => {
+              const [pathname, search] = (req.url ?? "").split("?");
+              const params = new URLSearchParams(search ?? "");
+              params.set("key", env.VITE_YOUTUBE_KEY ?? "");
+              
+              // Seteamos un Referer que Google no bloquee (o lo vaciamos)
+              proxyReq.setHeader('Referer', 'https://www.googleapis.com/');
+              
+              const apiPath = pathname.replace(/^\/api\/youtube/, "/youtube/v3");
+              proxyReq.path = `${apiPath}?${params}`;
+            });
+          },
+        },
         // Open-Meteo (weather) is called directly from the browser — no proxy needed.
       },
     },

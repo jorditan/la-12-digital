@@ -1,9 +1,21 @@
 // src/hooks/useTemplateDownload.ts
-import ExcelJS from 'exceljs';
-
 export function useTemplateDownload() {
   const downloadTemplate = async () => {
-    const wb = new ExcelJS.Workbook();
+    try {
+      const cdnUrl = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
+      
+      if (!(window as any).ExcelJS) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = cdnUrl;
+          script.onload = resolve;
+          script.onerror = () => reject(new Error('No se pudo cargar la librería ExcelJS desde el CDN'));
+          document.head.appendChild(script);
+        });
+      }
+      
+      const ExcelJS = (window as any).ExcelJS;
+      const wb = new ExcelJS.Workbook();
 
     // Hoja 1 — datos editables
     const ws1 = wb.addWorksheet('Mis Partidos');
@@ -37,6 +49,9 @@ export function useTemplateDownload() {
     a.download = 'la12digital_template_import.xlsx';
     a.click();
     URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error al generar plantilla:', err);
+    }
   };
 
   return { downloadTemplate };

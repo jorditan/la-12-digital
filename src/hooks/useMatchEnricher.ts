@@ -56,7 +56,9 @@ export function useMatchEnricher(matches: MatchResult[], existingIds: string[]) 
 
       if (!matched) {
         // Si no hay match, usamos los datos del Excel para crear un "manual match"
-        const manualId = `manual-${row.fechaISO}-${normalize(row.rival)}`;
+        // Normalizamos el rival eliminando tildes, espacios extra y convirtiendo a minúsculas
+        const rivalNormalized = normalize(row.rival).replace(/\s+/g, '');
+        const manualId = `manual-${row.fechaISO}-${rivalNormalized}`;
         const isDuplicate = existingIds.includes(manualId);
 
         return {

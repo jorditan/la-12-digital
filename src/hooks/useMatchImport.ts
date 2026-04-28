@@ -26,7 +26,7 @@ export function useMatchImport(
         // Para partidos manuales, generamos un ID determinístico pero que no colisione con IDs de la API
         const matchId = row.status === 'found' 
           ? row.fixtureId!.toString() 
-          : `manual-${row.fechaISO}-${normalize(row.rival)}`;
+          : `manual-${row.fechaISO}-${normalize(row.rival).replace(/\s+/g, '')}`;
 
         await upsert({
           matchId,
