@@ -213,19 +213,18 @@ async function handleBocaNews(request, url, env) {
       })
     );
 
-    const sourceResults = rssResults
-      .filter((r) => r.status === 'fulfilled')
-      .map((r) => r.value);
+    const sourceResults = rssResults.filter((r) => r.status === 'fulfilled').map((r) => r.value);
 
     const mergedNews = [];
     const uniqueMap = new Map();
-    
+
     // ALGORITMO ROUND-ROBIN: Una de cada fuente
     let hasMore = true;
     let i = 0;
-    while (hasMore && mergedNews.length < 40) { // Margen para filtrar
+    while (hasMore && mergedNews.length < 40) {
+      // Margen para filtrar
       hasMore = false;
-      sourceResults.forEach(sourceGroup => {
+      sourceResults.forEach((sourceGroup) => {
         if (sourceGroup[i]) {
           const n = sourceGroup[i];
           const cleanUrl = n.url.split('?')[0].replace(/\/$/, '');
@@ -252,7 +251,7 @@ async function handleBocaNews(request, url, env) {
         const ndRes = await fetch(`https://newsdata.io/api/1/news?${params}`);
         if (ndRes.ok) {
           const ndData = await ndRes.json();
-          (ndData.results ?? []).forEach(a => {
+          (ndData.results ?? []).forEach((a) => {
             if (mergedNews.length < 20) {
               mergedNews.push({
                 id: a.article_id,
@@ -308,7 +307,7 @@ async function handleBocaNews(request, url, env) {
   );
 }
 
-/** 
+/**
  * Lightweight RSS Parser using Regex.
  * Avoids heavy XML libraries for better Worker performance.
  */
@@ -323,12 +322,12 @@ function parseRSS(xml, sourceName) {
     const title = extractTag(content, 'title');
     const link = extractTag(content, 'link');
     const pubDate = extractTag(content, 'pubDate') || extractTag(content, 'dc:date');
-    
+
     // Look for images in enclosure, media:content, or description
     let image = '';
     const enclosureMatch = content.match(/<enclosure[^>]+url=["']([^"']+)["']/i);
     const mediaMatch = content.match(/<media:content[^>]+url=["']([^"']+)["']/i);
-    
+
     if (enclosureMatch) image = enclosureMatch[1];
     else if (mediaMatch) image = mediaMatch[1];
     else {
@@ -396,11 +395,7 @@ async function handleYoutubeProxy(request, url, env) {
 
   let upstreamRes;
   try {
-    upstreamRes = await fetch(`https://www.googleapis.com/youtube/v3/${subpath}?${params}`, {
-      headers: {
-        Referer: 'https://la-12-digital.matiasowjordan.workers.dev/',
-      },
-    });
+    upstreamRes = await fetch(`https://www.googleapis.com/youtube/v3/${subpath}?${params}`);
   } catch (err) {
     console.error('[youtube-proxy] upstream fetch failed:', err);
     return new Response(JSON.stringify({ error: 'upstream_error' }), {
