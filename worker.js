@@ -396,11 +396,7 @@ async function handleYoutubeProxy(request, url, env) {
 
   let upstreamRes;
   try {
-    upstreamRes = await fetch(`https://www.googleapis.com/youtube/v3/${subpath}?${params}`, {
-      headers: {
-        Referer: 'https://la-12-digital.matiasowjordan.workers.dev/',
-      },
-    });
+    upstreamRes = await fetch(`https://www.googleapis.com/youtube/v3/${subpath}?${params}`);
   } catch (err) {
     console.error('[youtube-proxy] upstream fetch failed:', err);
     return new Response(JSON.stringify({ error: 'upstream_error' }), {
