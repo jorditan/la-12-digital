@@ -6,6 +6,7 @@ import { SkeletonBox, SkeletonText, SkeletonAvatar } from '../ui/Skeleton';
 import { StatsGrid } from './StatsGrid';
 import { ForecastRows } from './ForecastRows';
 import { ConditionsBlock } from './ConditionsBlock';
+import { Badge } from '../ui/Badge';
 
 function formatFechaLarga(iso: string): string {
   return new Date(iso).toLocaleDateString('es-AR', {
@@ -58,48 +59,51 @@ export function ModoNormal({
         {/* ── Contador + Rival ─────────────────────────────────────────── */}
         {proximoLocal && rival && diasHastaPartido !== null ? (
           <div className="flex gap-4 items-end">
-            {/* Contador de días — protagonista visual */}
-            <div className="bg-boca-gold-light/20 rounded-sm border-0.5 border-boca-gold  px-4 py-3 flex flex-col items-center justify-center flex-shrink-0 min-w-[80px]">
-              <p className="font-bold text-boca-gold font-serif leading-none text-7xl">
-                {diasHastaPartido}
-              </p>
-              <p className="type-ui-label text-text-secondary font-serif mt-2  text-lg">
-                {diasHastaPartido === 1 ? 'Día' : 'Días'}
-              </p>
-            </div>
-
             {/* Info del partido */}
             <div className="flex flex-col justify-center gap-2.5 flex-1 min-w-0">
               {/* Escudo + nombre del rival */}
               <div className="flex items-center gap-2.5">
-                <div className="w-12 h-12 rounded-sm bg-boca-border-card ring-1 ring-boca-border-card flex items-center justify-center overflow-hidden flex-shrink-0">
+                <div className="w-24 h-24 p-4 rounded-sm bg-boca-border-card ring-1 ring-boca-border-card flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     src={rival.logo}
                     alt={rival.name}
-                    className="w-8 h-8 object-contain"
+                    className="w-24 h-24 object-contain"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO;
                     }}
                   />
                 </div>
-                <div className="min-w-0">
-                  <p className="font-serif text-white font-semibold text-base leading-tight truncate">
-                    vs {rival.name}
-                  </p>
-                </div>
-              </div>
+                <div className="flex flex-col gap-2">
+                  <div className="min-w-0 flex items-center flex-row gap-4">
+                    <p className="font-serif text-white font-semibold text-lg leading-tight truncate">
+                      vs {rival.name} en
+                    </p>
 
-              {/* Fecha + hora como badges */}
-              <div className="flex flex-wrap gap-1.5">
-                <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-sm px-2 py-0.5 type-ui-label text-text-secondary tracking-[0.05em]">
-                  {formatFechaLarga(proximoLocal.date).toUpperCase()}
-                </span>
-                <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-sm px-2 py-0.5 type-ui-label text-boca-gold tracking-[0.05em]">
-                  {proximoLocal.time} HS
-                </span>
-                <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-sm px-2 py-0.5 type-ui-label text-text-secondary tracking-[0.05em]">
-                  {proximoLocal.competition}
-                </span>
+                    <div className="flex flex-row gap-4 items-center leading-none justify-center flex-shrink-0 min-w-[80px]">
+                      <p className="font-bold p-2 bg-boca-blue-dark/20 border border-boca-gold/40 rounded-sm text-boca-gold font-serif leading-none text-5xl">
+                        {diasHastaPartido}
+                      </p>
+                      <p className="type-ui-label text-white font-serif mt-2  text-lg">
+                        {diasHastaPartido === 1 ? 'Día' : 'Días'}
+                      </p>
+                    </div>
+                  </div>
+                  {/* Fecha + hora como badges */}
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-sm px-2 py-0.5 type-ui-label text-text-secondary tracking-[0.05em]">
+                      {formatFechaLarga(proximoLocal.date).toUpperCase()}
+                    </span>
+                    <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-sm px-2 py-0.5 type-ui-label text-boca-gold tracking-[0.05em]">
+                      {proximoLocal.time}
+                    </span>
+                    <Badge
+                      variant={proximoLocal.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
+                      className="px-1.5 whitespace-nowrap"
+                    >
+                      {proximoLocal.competition}
+                    </Badge>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
