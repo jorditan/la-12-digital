@@ -80,22 +80,21 @@ export function ModoNormal({
                     </p>
 
                     <div className="flex flex-row gap-4 items-center leading-none justify-center flex-shrink-0 min-w-[80px]">
-                      <p className="font-bold p-2 bg-boca-blue-dark/20 border border-boca-gold/40 rounded-sm text-boca-gold font-serif leading-none text-5xl">
+                      <p className="font-bold md:p-2 p-1 bg-boca-blue-dark/20 border border-boca-gold/40 rounded-sm text-boca-gold font-serif leading-none text-xl md:text-5xl">
                         {diasHastaPartido}
                       </p>
-                      <p className="type-ui-label text-white font-serif mt-2  text-lg">
+                      <p className="type-ui-label text-white font-serif mt-2 text-lg">
                         {diasHastaPartido === 1 ? 'Día' : 'Días'}
                       </p>
                     </div>
                   </div>
                   {/* Fecha + hora como badges */}
                   <div className="flex flex-wrap gap-1.5">
-                    <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-sm px-2 py-0.5 type-ui-label text-text-secondary tracking-[0.05em]">
-                      {formatFechaLarga(proximoLocal.date).toUpperCase()}
-                    </span>
-                    <span className="inline-flex items-center bg-boca-border-card/80 border border-boca-border rounded-sm px-2 py-0.5 type-ui-label text-boca-gold tracking-[0.05em]">
-                      {proximoLocal.time}
-                    </span>
+                    <Badge>
+                      {formatFechaLarga(proximoLocal.date).charAt(0).toUpperCase() +
+                        formatFechaLarga(proximoLocal.date).slice(1)}
+                    </Badge>
+                    <Badge>{proximoLocal.time}</Badge>
                     <Badge
                       variant={proximoLocal.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
                       className="px-1.5 whitespace-nowrap"

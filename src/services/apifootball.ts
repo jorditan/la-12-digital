@@ -6,9 +6,9 @@ import {
   getLibertadoresLastFixtures,
   getLibertadoresNextFixtures,
   getLibertadoresStandingsData,
-} from "./footballApiService";
-import { fetchBocaNews } from "./newsdataService";
-import { fetchYoutubeVideos, type VideoItem } from "./youtubeService";
+} from './footballApiService';
+import { fetchBocaNews } from './newsdataService';
+import { fetchYoutubeVideos, type VideoItem } from './youtubeService';
 
 // BOCA_ID exportado = 451 (coincide con lo que leen los componentes)
 // Live Score API usa un ID interno desconocido hasta el primer fetch;
@@ -17,9 +17,9 @@ const BOCA_ID_EXPORT = 451;
 const BOCA_NAME_RE = /boca/i;
 
 // Logo URLs: use direct CDN URL from API when available, fallback to constructed URL.
-function teamLogoUrl(teamId: number, directUrl?: string): string {
+function teamLogoUrl(_teamId: number, directUrl?: string): string {
   if (directUrl) return directUrl;
-  return `https://livescore-api.com/api-client/images/team/${teamId}.png`;
+  return '';
 }
 
 // ── Tipos públicos ───────────────────────────────────────────────────────────
@@ -59,7 +59,7 @@ export interface Noticia {
   id: string | number;
   titulo: string;
   imagen: string;
-  categoria: "mercado" | "informe" | "partido" | "seleccion";
+  categoria: 'mercado' | 'informe' | 'partido' | 'seleccion';
   fecha: string;
   url?: string;
   fuente?: string;
@@ -69,15 +69,13 @@ export type VideoYoutube = VideoItem;
 
 // ── Tabla de posiciones ──────────────────────────────────────────────────────
 
-function mapStandingData(
-  d: import("./footballApiService").StandingData,
-): StandingRow {
+function mapStandingData(d: import('./footballApiService').StandingData): StandingRow {
   return {
     rank: d.rank,
     team: {
       id: BOCA_NAME_RE.test(d.teamName) ? BOCA_ID_EXPORT : d.teamId,
       name: d.teamName,
-      logo: d.teamLogo,
+      logo: teamLogoUrl(d.teamId, d.teamLogo),
     },
     points: d.points,
     all: { played: d.played, win: d.win, draw: d.draw, lose: d.lose },
@@ -103,23 +101,23 @@ export async function fetchLibertadoresStandings(): Promise<StandingRow[]> {
 // ── Últimos partidos ─────────────────────────────────────────────────────────
 
 function mapFixtureToMatchResult(
-  f: import("../types/football").ProcessedFixture,
-  competition: string,
+  f: import('../types/football').ProcessedFixture,
+  competition: string
 ): MatchResult {
   const homeId = f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId;
   const awayId = f.isBocaHome ? f.awayTeamId : BOCA_ID_EXPORT;
 
   let homeWinner: boolean | null = null;
   let awayWinner: boolean | null = null;
-  if (f.result === "win") {
+  if (f.result === 'win') {
     homeWinner = f.isBocaHome;
     awayWinner = !f.isBocaHome;
   }
-  if (f.result === "loss") {
+  if (f.result === 'loss') {
     homeWinner = !f.isBocaHome;
     awayWinner = f.isBocaHome;
   }
-  if (f.result === "draw") {
+  if (f.result === 'draw') {
     homeWinner = false;
     awayWinner = false;
   }
@@ -153,12 +151,8 @@ export async function fetchLastMatches(): Promise<MatchResult[]> {
     getLibertadoresLastFixtures(10),
   ]);
 
-  const liga = ligaFixtures.map((f) =>
-    mapFixtureToMatchResult(f, "Liga Profesional"),
-  );
-  const lib = libFixtures.map((f) =>
-    mapFixtureToMatchResult(f, "Copa Libertadores"),
-  );
+  const liga = ligaFixtures.map((f) => mapFixtureToMatchResult(f, 'Liga Profesional'));
+  const lib = libFixtures.map((f) => mapFixtureToMatchResult(f, 'Copa Libertadores'));
 
   return [...liga, ...lib]
     .filter((m) => new Date(m.date).getFullYear() === currentYear)
@@ -172,32 +166,26 @@ export async function fetchMatchesForHistorial(): Promise<MatchResult[]> {
     getLibertadoresLastFixtures(25),
   ]);
 
-  const liga = ligaFixtures.map((f) =>
-    mapFixtureToMatchResult(f, "Liga Profesional"),
-  );
-  const lib = libFixtures.map((f) =>
-    mapFixtureToMatchResult(f, "Copa Libertadores"),
-  );
+  const liga = ligaFixtures.map((f) => mapFixtureToMatchResult(f, 'Liga Profesional'));
+  const lib = libFixtures.map((f) => mapFixtureToMatchResult(f, 'Copa Libertadores'));
 
-  return [...liga, ...lib].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
+  return [...liga, ...lib].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 // ── Próximos partidos ────────────────────────────────────────────────────────
 
 function mapFixtureToProximoPartido(
-  f: import("../types/football").ProcessedFixture,
-  competition: string,
+  f: import('../types/football').ProcessedFixture,
+  competition: string
 ): ProximoPartido {
   const isBocaAway = !f.isBocaHome;
   return {
     fixtureId: f.id,
     date: f.date.toISOString(),
-    time: f.date.toLocaleTimeString("es-AR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "America/Argentina/Buenos_Aires",
+    time: f.date.toLocaleTimeString('es-AR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'America/Argentina/Buenos_Aires',
     }),
     homeTeam: {
       id: f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId,
@@ -221,12 +209,8 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
     getLibertadoresNextFixtures(8),
   ]);
 
-  const liga = ligaFixtures.map((f) =>
-    mapFixtureToProximoPartido(f, "Liga Profesional"),
-  );
-  const lib = libFixtures.map((f) =>
-    mapFixtureToProximoPartido(f, "Copa Libertadores"),
-  );
+  const liga = ligaFixtures.map((f) => mapFixtureToProximoPartido(f, 'Liga Profesional'));
+  const lib = libFixtures.map((f) => mapFixtureToProximoPartido(f, 'Copa Libertadores'));
 
   return [...liga, ...lib]
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -243,10 +227,7 @@ export interface NoticiasResponse {
   pageCount: number;
 }
 
-export async function fetchNoticias(
-  page = 0,
-  limit = 12,
-): Promise<NoticiasResponse> {
+export async function fetchNoticias(page = 0, limit = 12): Promise<NoticiasResponse> {
   const data = await fetchBocaNews(page, limit);
 
   return {
@@ -255,7 +236,7 @@ export async function fetchNoticias(
       id: a.id,
       titulo: a.titulo,
       imagen: a.imagen,
-      categoria: "partido" as const,
+      categoria: 'partido' as const,
       fecha: a.fecha,
       url: a.url,
       fuente: a.fuente,

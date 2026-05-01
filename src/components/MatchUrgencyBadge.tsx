@@ -56,7 +56,7 @@ export function MatchUrgencyBadge({ matchDate }: MatchUrgencyBadgeProps) {
 
   if (info.level === 'tomorrow') {
     return (
-      <Badge variant="blue" className="bg-boca-gold border text-[#0052a3] px-1.5 text-xs">
+      <Badge variant="blue" className="bg-boca-gold border border-none text-black px-1.5 text-xs">
         {info.label}
       </Badge>
     );
