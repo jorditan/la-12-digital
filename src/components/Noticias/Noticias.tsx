@@ -1,47 +1,21 @@
-import { Newspaper, ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
-import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
+import { Newspaper, ArrowLeft, ArrowRight } from 'lucide-react';
 import { type Noticia } from '../../services/apifootball';
 import { Button } from '../ui/Button';
+import { HorizontalScrollRow } from '../ui/HorizontalScrollRow';
 import { NoticiaCard } from '../NoticiaCard';
 import { SkeletonBox } from '../ui/Skeleton';
 import { useNoticias } from './hooks/useNoticias';
 import { NoticiasPagination } from './NoticiasPagination';
 
-/**
- * Mobile View: Slider táctil con snap
- */
 function NoticiasMobileSlider({ noticias }: { noticias: Noticia[] }) {
-  const { ref, canScrollLeft, canScrollRight, onPointerDown, onPointerMove, stopDrag } =
-    useHorizontalScroll();
-
   return (
-    <div className="md:hidden relative">
-      <div
-        ref={ref}
-        className="flex gap-3 overflow-x-auto pb-2 md:h-[30rem] h-[20rem] cursor-grab active:cursor-grabbing select-none snap-x snap-mandatory overscroll-x-contain"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as any}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={stopDrag}
-        onPointerLeave={stopDrag}
-      >
-        {noticias.map((noticia) => (
-          <div key={noticia.id} className="shrink-0 w-[75vw] snap-start">
-            <NoticiaCard noticia={noticia} className="h-[240px]" />
-          </div>
-        ))}
-      </div>
-
-      {canScrollLeft && (
-        <div className="pointer-events-none absolute left-0 top-0 h-[calc(100%-8px)] w-10 bg-gradient-to-r from-boca-blue to-transparent" />
-      )}
-
-      {canScrollRight && (
-        <div className="pointer-events-none absolute right-0 top-0 h-[calc(100%-8px)] w-14 bg-gradient-to-l from-boca-blue to-transparent flex items-center justify-end pr-1">
-          <ChevronRight size={18} className="text-boca-gold/60 animate-pulse" />
+    <HorizontalScrollRow wrapperClassName="lg:hidden" className="h-[20rem]">
+      {noticias.map((noticia) => (
+        <div key={noticia.id} className="shrink-0 w-[75vw] snap-start">
+          <NoticiaCard noticia={noticia} className="h-[240px]" />
         </div>
-      )}
-    </div>
+      ))}
+    </HorizontalScrollRow>
   );
 }
 
@@ -110,7 +84,7 @@ export function Noticias() {
 
       <NoticiasMobileSlider noticias={noticias} />
 
-      <div className="hidden md:flex flex-col">
+      <div className="hidden lg:flex flex-col">
         <div className="flex items-stretch gap-4 h-[360px]">
           <Button
             onClick={irPrev}

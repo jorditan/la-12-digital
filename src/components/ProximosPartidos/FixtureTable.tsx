@@ -23,7 +23,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
 
   return (
     <>
-      <div className="overflow-x-auto -mx-0">
+      <div className="overflow-x-auto min-w-0">
         <table className="w-full border-collapse font-sans">
           {/* Cabecera */}
           <thead>
@@ -109,7 +109,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                   <td className="py-2.5 px-3 hidden md:table-cell">
                     <Badge
                       variant={p.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-                      className="px-1.5 whitespace-nowrap"
+                      className="text-xs px-1.5 whitespace-nowrap"
                     >
                       {p.competition}
                     </Badge>
@@ -171,31 +171,30 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
 
                     {/* Tablet+: botones completos (estilo CardPartido) */}
                     <div className="hidden sm:flex items-center justify-center gap-1">
-                      <a
-                        href={buildGCalLink(p)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Agregar ${p.homeTeam.name} vs ${p.awayTeam.name} a Google Calendar`}
-                        className="group flex h-6 items-center gap-1.5 px-2 rounded-sm bg-white/[0.04] border border-white/[0.08] hover:bg-[#1a73e8]/10 hover:border-[#1a73e8]/30 transition-all duration-200 shrink-0"
-                      >
-                        <img
-                          src="/google_calendar_icon.png"
-                          alt=""
-                          aria-hidden="true"
-                          className="w-3.5 h-3.5 object-contain shrink-0"
-                        />
-                        <span className="font-sans text-[10px] text-white/35 group-hover:text-white/70 transition-colors whitespace-nowrap">
-                          Agregar al calendario
-                        </span>
-                      </a>
+                      <Tooltip content="Agregar al calendario" position="top">
+                        <a
+                          href={buildGCalLink(p)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Agregar ${p.homeTeam.name} vs ${p.awayTeam.name} a Google Calendar`}
+                          className="group flex items-center justify-center h-8 w-8 rounded-sm bg-white/[0.04] border border-white/[0.08] hover:bg-[#1a73e8]/10 hover:border-[#1a73e8]/30 transition-all duration-200 shrink-0"
+                        >
+                          <img
+                            src="/google_calendar_icon.png"
+                            alt=""
+                            aria-hidden="true"
+                            className="w-4 h-4 object-contain shrink-0 opacity-100 transition-opacity"
+                          />
+                        </a>
+                      </Tooltip>
                       <Tooltip content={`Historial vs ${rival.name}`} position="top">
                         <button
                           type="button"
                           onClick={() => openH2H(p.rivalApiId, rival.name)}
                           aria-label={`Ver historial vs ${rival.name}`}
-                          className="flex items-center justify-center h-6 w-6 rounded-sm border bg-white/[0.04] border-white/[0.08] text-white/35 hover:bg-white/[0.07] hover:border-white/20 hover:text-white/60 transition-all duration-200"
+                          className="flex items-center justify-center h-8 w-8 rounded-sm border bg-white/[0.04] border-white/[0.08] text-white/35 hover:bg-white/[0.07] hover:border-white/20 hover:text-white/60 transition-all duration-200"
                         >
-                          <History size={12} />
+                          <History size={16} />
                         </button>
                       </Tooltip>
                     </div>

@@ -63,7 +63,7 @@ export function ProximosPartidos() {
             <Button
               onClick={cargar}
               variant="text"
-              className="type-button text-boca-gold border border-boca-gold/30 rounded px-3 py-1.5 hover:bg-boca-gold/10 shrink-0"
+              className="text-xs text-boca-gold border border-boca-gold/30 rounded px-4 py-2 hover:bg-boca-gold/10 shrink-0"
             >
               Reintentar
             </Button>

@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+import { ReactNode, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface TooltipProps {
   children: ReactNode;
@@ -7,26 +8,70 @@ interface TooltipProps {
   position?: 'top' | 'bottom' | 'left' | 'right';
 }
 
+const GAP = 8;
+
 export const Tooltip = ({ children, content, className = '', position = 'top' }: TooltipProps) => {
-  const positionClasses = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-    left: 'right-full top-1/2 -translate-y-1/2 mr-2',
-    right: 'left-full top-1/2 -translate-y-1/2 ml-2',
+  const [visible, setVisible] = useState(false);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+
+  const show = () => {
+    if (!triggerRef.current) return;
+    const r = triggerRef.current.getBoundingClientRect();
+    let top = 0;
+    let left = 0;
+    switch (position) {
+      case 'top':
+        top = r.top - GAP;
+        left = r.left + r.width / 2;
+        break;
+      case 'bottom':
+        top = r.bottom + GAP;
+        left = r.left + r.width / 2;
+        break;
+      case 'left':
+        top = r.top + r.height / 2;
+        left = r.left - GAP;
+        break;
+      case 'right':
+        top = r.top + r.height / 2;
+        left = r.right + GAP;
+        break;
+    }
+    setCoords({ top, left });
+    setVisible(true);
+  };
+
+  const transformMap: Record<string, string> = {
+    top: 'translateX(-50%) translateY(-100%)',
+    bottom: 'translateX(-50%)',
+    left: 'translateX(-100%) translateY(-50%)',
+    right: 'translateY(-50%)',
   };
 
   return (
-    <div className={`relative group/tooltip inline-block ${className}`}>
+    <div
+      ref={triggerRef}
+      className={`inline-block ${className}`}
+      onMouseEnter={show}
+      onMouseLeave={() => setVisible(false)}
+    >
       {children}
-      <div
-        className={`pointer-events-none absolute z-50 opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 ${positionClasses[position]}`}
-      >
-        <div className="bg-boca-gold border border-boca-gold px-2 py-1 rounded-sm shadow-xl whitespace-nowrap">
-          <span className="type-caption font-sans text-sm text-boca-blue font-semibold tracking-tight">
-            {content}
-          </span>
-        </div>
-      </div>
+      {visible &&
+        coords &&
+        createPortal(
+          <div
+            className="pointer-events-none fixed z-[9999]"
+            style={{ top: coords.top, left: coords.left, transform: transformMap[position] }}
+          >
+            <div className="bg-boca-gold border border-boca-gold px-2 py-1 rounded-sm shadow-xl whitespace-nowrap">
+              <span className="type-caption font-sans text-sm text-boca-blue font-semibold tracking-tight">
+                {content}
+              </span>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };
