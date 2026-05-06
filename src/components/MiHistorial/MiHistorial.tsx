@@ -151,14 +151,11 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
               value={selectedMatchId}
               onChange={setSelectedMatchId}
             />
-            <button
-              type="button"
-              onClick={() => setImportModalOpen(true)}
-              className="h-10 flex items-center gap-2 px-4 rounded-sm border border-boca-border text-text-muted hover:bg-boca-border/20 transition-colors type-caption whitespace-nowrap"
-            >
+
+            <Button onClick={() => setImportModalOpen(true)} variant="outline">
               <Upload className="w-4 h-4" />
               Importar
-            </button>
+            </Button>
             <Button
               onClick={handleMarkAttendance}
               disabled={!selectedMatchId || adding}
@@ -168,7 +165,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                 'flex items-center justify-center gap-2 whitespace-nowrap',
                 selectedMatchId && !adding
                   ? 'bg-boca-gold text-text-on-gold hover:opacity-90 cursor-pointer'
-                  : 'bg-boca-gold/30 text-text-on-gold/50 cursor-not-allowed',
+                  : 'opacity-20 text-text-on-gold cursor-not-allowed',
               ].join(' ')}
             >
               {adding ? (
@@ -241,9 +238,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
       {/* Table Section */}
       <div className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col">
         <div className="border-b border-boca-border-card px-4 py-3 sm:px-6 flex items-center justify-between">
-          <h2 className="type-section-title text-white text-sm sm:text-base">
-            Partidos registrados
-          </h2>
+          <h2 className="type-section-title text-white">Partidos registrados</h2>
           {totalAttended > 0 && (
             <p className="type-caption text-text-muted">
               {hasActiveFilters

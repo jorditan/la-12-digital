@@ -1,6 +1,6 @@
 // src/components/MiHistorial/ImportModal.tsx
 import { useRef } from 'react';
-import { Upload, Download, X } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 import type { MatchResult } from '@/services/apifootball';
 import type { UpsertAttendancePayload } from '@/types/attendance';
@@ -43,7 +43,7 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
     >
       <div className="relative w-full max-w-none bg-boca-blue-light border border-boca-border rounded-t-2xl sm:rounded-sm shadow-2xl animate-fade-in overflow-hidden max-h-[88dvh] sm:max-w-2xl sm:max-h-none flex flex-col">
         <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1 sm:hidden" />
-        
+
         {/* Header compartido */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-boca-border/60">
           <h2 className="type-card-title text-boca-gold">Importar historial</h2>
@@ -56,25 +56,25 @@ export const ImportModal = ({ matches, existingMatchIds, upsert, onClose }: Impo
           </button>
         </div>
 
-        <div className="p-6 text-left overflow-y-auto">
+        <div className="p-6 flex flex-col gap-4 text-left overflow-y-auto">
           {/* ── idle ── */}
           {step === 'idle' && (
             <>
-              <p className="type-body text-text-muted mb-5">
+              <p className="type-body text-text-muted ">
                 <b className="text-white">
                   Descargá la plantilla, completala y después volvé a cargarla
                 </b>{' '}
                 . Añadirás partidos a tu historial de forma masiva, el sistema identificará
                 automáticamente los resultados y competencias.
               </p>
-
-              <button
+              <Button
                 onClick={downloadTemplate}
-                className="h-9 flex items-center gap-2 px-4 rounded-sm border border-boca-border text-text-muted hover:bg-boca-border/20 transition-colors type-caption mb-6"
+                variant="outline"
+                className="flex items-center w-fit gap-2"
               >
-                <Download className="w-4 h-4" />
+                <Upload className="w-4 h-4" />
                 Descargar plantilla
-              </button>
+              </Button>
 
               <label className="block border-2 border-dashed border-boca-border rounded-sm p-10 text-center cursor-pointer hover:border-boca-gold/40 transition-colors">
                 <Upload className="w-10 h-10 text-text-muted mx-auto mb-3" />

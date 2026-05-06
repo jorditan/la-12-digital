@@ -1,13 +1,10 @@
-import { Link } from "react-router-dom";
-import { LogOut, Star, User } from "lucide-react";
-import { Button } from "../../ui/Button";
-import { UserAvatar } from "./UserAvatar";
-import type { HeaderProps } from "./types";
+import { Link } from 'react-router-dom';
+import { LogOut, Star, User } from 'lucide-react';
+import { Button } from '../../ui/Button';
+import { UserAvatar } from './UserAvatar';
+import type { HeaderProps } from './types';
 
-type HeaderUserSectionProps = Pick<
-  HeaderProps,
-  "user" | "onLoginClick" | "onLogout"
-> & {
+type HeaderUserSectionProps = Pick<HeaderProps, 'user' | 'onLoginClick' | 'onLogout'> & {
   isUserMenuOpen: boolean;
   setIsUserMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   userMenuRef: React.RefObject<HTMLDivElement>;
@@ -23,6 +20,21 @@ export function HeaderUserSection({
 }: HeaderUserSectionProps) {
   return (
     <div className="flex items-center gap-3">
+      <a
+        href="https://cafecito.app/la-12-digital"
+        rel="noopener"
+        target="_blank"
+        className="hidden sm:flex shrink-0"
+        aria-label="Invitame un café en cafecito.app"
+      >
+        <img
+          srcSet="https://cdn.cafecito.app/imgs/buttons/button_5.png 1x, https://cdn.cafecito.app/imgs/buttons/button_5_2x.png 2x, https://cdn.cafecito.app/imgs/buttons/button_5_3.75x.png 3.75x"
+          src="https://cdn.cafecito.app/imgs/buttons/button_5.png"
+          alt="Invitame un café en cafecito.app"
+          className="h-8 w-auto"
+        />
+      </a>
+
       <div
         className="flex items-center gap-1.5 text-boca-gold shrink-0"
         aria-label="3 Copas Libertadores"
@@ -62,13 +74,9 @@ export function HeaderUserSection({
             <div className="absolute right-0 top-full mt-1 w-52 bg-boca-blue-light border border-boca-border rounded-sm shadow-2xl z-userMenu overflow-hidden animate-fade-in">
               <div className="px-4 py-3 border-b border-boca-border">
                 {user.displayName && (
-                  <p className="type-body text-text-nav font-medium truncate">
-                    {user.displayName}
-                  </p>
+                  <p className="type-body text-text-nav font-medium truncate">{user.displayName}</p>
                 )}
-                <p className="type-caption text-text-muted truncate">
-                  {user.email}
-                </p>
+                <p className="type-caption text-text-muted truncate">{user.email}</p>
               </div>
               <Link
                 to="/configuracion"
