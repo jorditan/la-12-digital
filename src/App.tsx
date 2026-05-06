@@ -136,10 +136,8 @@ function AppInner() {
             . Hecha con amor bostero y sin fines de lucro.
           </p>
 
-          <hr className="border-0.5 border-white/20" />
-
           <div>
-            <p className="font-sans text-xs text-text-muted">
+            <p className="font-sans flex gap-2 justify-center text-xs text-text-muted">
               Creada por:{' '}
               <a
                 href="https://www.linkedin.com/in/matias-jordan/"
@@ -149,6 +147,7 @@ function AppInner() {
               >
                 Matías Owen Jordán
               </a>
+              @2026. Todos los derechos reservados.
             </p>
           </div>
         </div>

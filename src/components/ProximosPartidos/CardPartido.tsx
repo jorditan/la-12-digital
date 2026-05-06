@@ -20,7 +20,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
     <>
       <article
         className={[
-          'flex flex-col gap-3 p-4 w-max bg-boca-blue-light border rounded-sm shrink-0 transition-colors',
+          'flex flex-col gap-3 p-4 w-max max-w-[16.5rem] bg-boca-blue-light border rounded-sm shrink-0 transition-colors',
           cardBorderClass,
         ].join(' ')}
       >

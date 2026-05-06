@@ -59,7 +59,19 @@
       "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\('vite:', p.devDependencies.vite, 'node:', process.version\\)\")",
       "Bash(echo \"exit: $?\")",
       "Bash(git rm:*)",
-      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); s=d.get\\('scripts',{}\\); print\\(json.dumps\\(s, indent=2\\)\\)\")"
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); s=d.get\\('scripts',{}\\); print\\(json.dumps\\(s, indent=2\\)\\)\")",
+      "Bash(python -c \"from PIL import Image; img = Image.open\\('public/escudo_boca.png'\\); print\\(img.size\\)\")",
+      "Bash(powershell -c 'Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\('\\\\''__CMDSUB_OUTPUT__/public/escudo_boca.png'\\\\''\\); Write-Host \"$\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\)')",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"E:\\\\Desarrollo\\\\React\\\\la-12-digital\\\\public\\\\escudo_boca.png\"\\); Write-Host \"$\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\))",
+      "WebFetch(domain:www.tycsports.com)",
+      "WebFetch(domain:www.clarin.com)",
+      "WebFetch(domain:www.lanacion.com.ar)",
+      "WebFetch(domain:servicios.lanacion.com.ar)",
+      "WebFetch(domain:www.planetabocajuniors.com.ar)",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }

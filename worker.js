@@ -184,8 +184,7 @@ async function handleBocaNews(request, url, env) {
   }
 
   const cache = caches.default;
-  // Cambiamos a v2 para invalidar el caché viejo de 10 noticias
-  const cacheKey = new Request(new URL('http://internal/boca-news-v2'), request);
+  const cacheKey = new Request(new URL('http://internal/boca-news-v5'), request);
   let cachedRes = await cache.match(cacheKey);
 
   let allNews = [];
@@ -196,24 +195,53 @@ async function handleBocaNews(request, url, env) {
     // 1. Define sources
     const sources = [
       { name: 'Olé', url: 'https://www.ole.com.ar/rss/boca-juniors/' },
-      { name: 'TyC Sports', url: 'https://www.tycsports.com/rss/boca-juniors.xml' },
       { name: 'Planeta Boca Juniors', url: 'https://www.planetabocajuniors.com.ar/feed/' },
+      { name: 'La Nación', url: 'https://servicios.lanacion.com.ar/servicios/rss/deportes/futbol.xml' },
+      { name: 'TyC Sports', url: 'https://www.tycsports.com/rss/futbol-argentino' },
     ];
 
-    // 2. Fetch RSS in parallel
+    // 2. Fetch RSS in parallel (5s timeout each)
     const rssResults = await Promise.allSettled(
       sources.map(async (s) => {
-        const res = await fetch(s.url, {
-          headers: { 'User-Agent': 'La12Digital-Bot/1.0' },
-          cf: { cacheTtl: 600 },
-        });
-        if (!res.ok) throw new Error(`RSS ${s.name} failed`);
-        const xml = await res.text();
-        return parseRSS(xml, s.name);
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 5000);
+        try {
+          const res = await fetch(s.url, {
+            signal: controller.signal,
+            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; La12Digital-Bot/1.0)' },
+            cf: { cacheTtl: 600 },
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const xml = await res.text();
+          return parseRSS(xml, s.name);
+        } finally {
+          clearTimeout(timer);
+        }
       })
     );
 
-    const sourceResults = rssResults.filter((r) => r.status === 'fulfilled').map((r) => r.value);
+    rssResults.forEach((r, idx) => {
+      if (r.status === 'fulfilled') {
+        console.log(`[boca-news] RSS OK: ${sources[idx].name} → ${r.value.length} items`);
+      } else {
+        console.error(`[boca-news] RSS FAIL: ${sources[idx].name} → ${r.reason}`);
+      }
+    });
+
+    const GENERAL_SOURCES = new Set(['TyC Sports', 'La Nación']);
+    const BOCA_RE = /boca/i;
+
+    // Zip source metadata before filtering so idx always matches the right source
+    const sourceResults = rssResults
+      .map((r, idx) => ({ result: r, source: sources[idx] }))
+      .filter(({ result }) => result.status === 'fulfilled')
+      .map(({ result, source }) => {
+        const items = result.value;
+        if (GENERAL_SOURCES.has(source.name)) {
+          return items.filter((n) => BOCA_RE.test(n.titulo));
+        }
+        return items;
+      });
 
     const mergedNews = [];
     const uniqueMap = new Map();
@@ -222,7 +250,6 @@ async function handleBocaNews(request, url, env) {
     let hasMore = true;
     let i = 0;
     while (hasMore && mergedNews.length < 40) {
-      // Margen para filtrar
       hasMore = false;
       sourceResults.forEach((sourceGroup) => {
         if (sourceGroup[i]) {
@@ -274,6 +301,12 @@ async function handleBocaNews(request, url, env) {
       .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
       .slice(0, 20);
 
+    const countBySource = allNews.reduce((acc, n) => {
+      acc[n.fuente] = (acc[n.fuente] ?? 0) + 1;
+      return acc;
+    }, {});
+    console.log('[boca-news] Final mix:', countBySource, `→ total ${allNews.length}`);
+
     // 5. Save to Cache API (15 mins)
     const responseToCache = new Response(JSON.stringify(allNews), {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 's-maxage=900' },
@@ -308,38 +341,61 @@ async function handleBocaNews(request, url, env) {
 }
 
 /**
- * Lightweight RSS Parser using Regex.
- * Avoids heavy XML libraries for better Worker performance.
+ * Lightweight RSS/Atom Parser using Regex.
+ * Supports RSS 2.0 (<item>) and Atom 1.0 (<entry>) formats.
  */
 function parseRSS(xml, sourceName) {
   const items = [];
-  // Match <item> or <entry> blocks
-  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  // Support both RSS 2.0 (<item>) and Atom 1.0 (<entry>)
+  const itemRegex = /<(?:item|entry)>([\s\S]*?)<\/(?:item|entry)>/g;
   let match;
 
   while ((match = itemRegex.exec(xml)) !== null) {
     const content = match[1];
     const title = extractTag(content, 'title');
-    const link = extractTag(content, 'link');
-    const pubDate = extractTag(content, 'pubDate') || extractTag(content, 'dc:date');
 
-    // Look for images in enclosure, media:content, or description
+    // RSS 2.0: <link>url</link> or <guid>url</guid>
+    // Atom 1.0: <link href="url" rel="alternate"/> (self-closing, no text content)
+    let link = extractTag(content, 'link');
+    if (!link) {
+      // Try Atom self-closing <link href="...">
+      const atomLink = content.match(/<link[^>]+href=["']([^"']+)["'][^>]*\/?>/i);
+      if (atomLink) link = atomLink[1];
+    }
+    if (!link) link = extractTag(content, 'guid');
+
+    // Date: RSS pubDate, Atom updated/published, or dc:date
+    const pubDate =
+      extractTag(content, 'pubDate') ||
+      extractTag(content, 'updated') ||
+      extractTag(content, 'published') ||
+      extractTag(content, 'dc:date');
+
+    // Images: enclosure, media:content, or <img> in description/content
     let image = '';
     const enclosureMatch = content.match(/<enclosure[^>]+url=["']([^"']+)["']/i);
     const mediaMatch = content.match(/<media:content[^>]+url=["']([^"']+)["']/i);
+    const mediaThumbnail = content.match(/<media:thumbnail[^>]+url=["']([^"']+)["']/i);
 
     if (enclosureMatch) image = enclosureMatch[1];
     else if (mediaMatch) image = mediaMatch[1];
+    else if (mediaThumbnail) image = mediaThumbnail[1];
     else {
-      // Try to find an <img> tag in description
-      const desc = extractTag(content, 'description');
+      const desc = extractTag(content, 'description') || extractTag(content, 'content');
       const imgInDesc = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
       if (imgInDesc) image = imgInDesc[1];
     }
 
     if (title && link) {
+      // btoa can fail on non-Latin1 chars — use a safe fallback id
+      let id;
+      try {
+        id = `rss-${btoa(unescape(encodeURIComponent(link))).substring(0, 16)}`;
+      } catch {
+        id = `rss-${sourceName}-${items.length}`;
+      }
       items.push({
-        id: `rss-${btoa(link).substring(0, 16)}`,
+        id,
         titulo: decodeEntities(title),
         imagen: image,
         fecha: pubDate || new Date().toISOString(),

@@ -45,6 +45,22 @@ export function HeaderMobileMenu({
           </li>
         ))}
 
+        <li className="py-3 border-t border-boca-gold/10 mt-1">
+          <a
+            href="https://cafecito.app/la-12-digital"
+            rel="noopener"
+            target="_blank"
+            aria-label="Invitame un café en cafecito.app"
+          >
+            <img
+              srcSet="https://cdn.cafecito.app/imgs/buttons/button_5.png 1x, https://cdn.cafecito.app/imgs/buttons/button_5_2x.png 2x, https://cdn.cafecito.app/imgs/buttons/button_5_3.75x.png 3.75x"
+              src="https://cdn.cafecito.app/imgs/buttons/button_5.png"
+              alt="Invitame un café en cafecito.app"
+              className="h-9 w-auto"
+            />
+          </a>
+        </li>
+
         <li className="pt-2 pb-1 border-t border-boca-gold/10 mt-1">
           {!user ? (
             <Button

@@ -2,7 +2,7 @@ import { getCachedData, setCachedData, CACHE_DURATION } from "../utils/cache";
 
 const isDev = import.meta.env.DEV;
 const BASE_URL = "/api/boca-news";
-const CACHE_VERSION = "v16_build_fix";
+const CACHE_VERSION = "v18_atom_fix";
 
 export interface NoticiaRaw {
   id: string;
@@ -41,7 +41,7 @@ const NEWS_BUFFER_DEV: NoticiaRaw[] = [
 
 export async function fetchBocaNews(page = 0, limit = 12): Promise<NewsResponse> {
   const CACHE_KEY = `${CACHE_VERSION}_p${page}_l${limit}`;
-  const cached = getCachedData<NewsResponse>(CACHE_KEY, CACHE_DURATION.FIXTURES);
+  const cached = getCachedData<NewsResponse>(CACHE_KEY, CACHE_DURATION.NEWS);
   if (cached) return cached;
 
   try {
@@ -66,13 +66,8 @@ export async function fetchBocaNews(page = 0, limit = 12): Promise<NewsResponse>
     const res = await fetch(`${BASE_URL}?page=${page}&limit=${limit}`);
     if (!res.ok) throw new Error("Worker news failed");
     const data: NewsResponse = await res.json();
-    
-    return {
-      ...data,
-      results: data.results.slice(0, 15),
-      total: Math.min(data.total, 15),
-      pageCount: Math.ceil(Math.min(data.total, 15) / data.limit)
-    };
+    setCachedData(CACHE_KEY, data);
+    return data;
 
   } catch (error) {
     console.error("News fetch error:", error);

@@ -12,15 +12,9 @@
   "icons": [
     {
       "src": "/escudo_boca.png",
-      "sizes": "192x192",
+      "sizes": "40x40",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "/escudo_boca.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ],
   "categories": ["sports", "news", "entertainment"],
