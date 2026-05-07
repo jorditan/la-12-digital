@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export interface BadgeProps {
-  variant?: 'blue' | 'gold' | 'local' | 'visitante';
+  variant?: 'blue' | 'gold' | 'outline' | 'urgency' | 'local' | 'visitante';
   children: ReactNode;
   className?: string;
   selectable?: boolean;
@@ -13,6 +13,8 @@ export interface BadgeProps {
 const VARIANTS = {
   blue: 'bg-boca-border-card text-white',
   gold: 'bg-boca-blue text-boca-gold',
+  outline: 'bg-transparent border border-boca-border text-text-nav',
+  urgency: 'bg-boca-gold/20 text-boca-gold border border-boca-gold/40',
   local: 'bg-status-win-subtle text-green-500 border border-status-win',
   visitante: 'bg-boca-border/60 text-text-nav border border-boca-border',
 };

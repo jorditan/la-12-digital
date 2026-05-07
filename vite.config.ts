@@ -48,6 +48,11 @@ export default defineConfig(({ mode }) => {
             });
           },
         },
+        // /api/boca-news → proxied to the production Cloudflare Worker in dev
+        "/api/boca-news": {
+          target: "https://la-12-digital.matiasowjordan.workers.dev",
+          changeOrigin: true,
+        },
         // Open-Meteo (weather) is called directly from the browser — no proxy needed.
       },
     },
