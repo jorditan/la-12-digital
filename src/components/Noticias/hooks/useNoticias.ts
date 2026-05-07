@@ -1,17 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { fetchNoticias, type Noticia } from "../../../services/apifootball";
-import { useMediaQuery } from "../../../hooks/useMediaQuery";
 
 type Estado = "loading" | "error" | "ok";
 
-function useVisibleCards() {
-  // Single breakpoint: lg ≥ 1024 → 3, md ≥ 768 → 2, else → 1
-  const isMdOrAbove = useMediaQuery("(min-width: 768px)");
-  const isLgOrAbove = useMediaQuery("(min-width: 1024px)");
-  if (isLgOrAbove) return 3;
-  if (isMdOrAbove) return 2;
-  return 1;
-}
+const VISIBLE = 3;
 
 export function useNoticias() {
   const [noticias, setNoticias] = useState<Noticia[]>([]);
@@ -19,8 +11,7 @@ export function useNoticias() {
   const [idx, setIdx] = useState(0); // Índice global de la primera noticia visible
   const [total, setTotal] = useState(0);
   
-  const VISIBLE = useVisibleCards();
-  const PAGE_SIZE = 12; // Cuántas noticias pedimos al server por vez
+  const PAGE_SIZE = 12;
 
   const cargarPagina = useCallback(async (serverPage: number) => {
     try {

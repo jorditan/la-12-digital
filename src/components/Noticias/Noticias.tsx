@@ -86,12 +86,7 @@ export function Noticias() {
 
       <div className="hidden lg:flex flex-col">
         <div className="flex items-stretch gap-4 h-[360px]">
-          <Button
-            onClick={irPrev}
-            disabled={!canPrev}
-            variant="ghost"
-            className="bg-white/2 px-2 shrink-0 disabled:opacity-10 hover:bg-white/5 transition-colors border-boca-gold-dark border"
-          >
+          <Button onClick={irPrev} disabled={!canPrev} variant="secondary">
             <ArrowLeft size={32} className="text-boca-gold" />
           </Button>
 
@@ -106,12 +101,7 @@ export function Noticias() {
               ))}
           </div>
 
-          <Button
-            onClick={irNext}
-            disabled={!canNext}
-            variant="ghost"
-            className="bg-white/2 px-2 shrink-0 disabled:opacity-10 hover:bg-white/5 transition-colors border-boca-gold-dark border"
-          >
+          <Button onClick={irNext} disabled={!canNext} variant="secondary">
             <ArrowRight size={32} className="text-boca-gold" />
           </Button>
         </div>

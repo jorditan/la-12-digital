@@ -65,12 +65,12 @@ export const Tooltip = ({ children, content, className = '', position = 'top' }:
             style={{ top: coords.top, left: coords.left, transform: transformMap[position] }}
           >
             <div className="bg-boca-gold border border-boca-gold px-2 py-1 rounded-sm shadow-xl whitespace-nowrap">
-              <span className="type-caption font-sans text-sm text-boca-blue font-semibold tracking-tight">
+              <span className="type-caption font-sans text-sm text-boca-blue-light font-semibold tracking-tight">
                 {content}
               </span>
             </div>
           </div>,
-          document.body,
+          document.body
         )}
     </div>
   );

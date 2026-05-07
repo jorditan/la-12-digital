@@ -18,10 +18,10 @@
 
 // FIX: Restrict CORS to known origins instead of wildcard
 const ALLOWED_ORIGINS = [
-  'https://la12digital.com',
-  'https://www.la12digital.com',
+  'https://la12digital.dev',
+  'https://www.la12digital.dev',
   'https://la-12-digital.matiasowjordan.workers.dev',
-  'http://localhost:5173', // dev
+  'http://localhost:3000', // dev (vite)
   'http://localhost:4173', // preview
 ];
 
@@ -184,7 +184,7 @@ async function handleBocaNews(request, url, env) {
   }
 
   const cache = caches.default;
-  const cacheKey = new Request(new URL('http://internal/boca-news-v5'), request);
+  const cacheKey = new Request(new URL('http://internal/boca-news-v8'), request);
   let cachedRes = await cache.match(cacheKey);
 
   let allNews = [];
@@ -192,17 +192,15 @@ async function handleBocaNews(request, url, env) {
   if (cachedRes) {
     allNews = await cachedRes.json();
   } else {
-    // 1. Define sources
-    const sources = [
-      { name: 'Olé', url: 'https://www.ole.com.ar/rss/boca-juniors/' },
-      { name: 'Planeta Boca Juniors', url: 'https://www.planetabocajuniors.com.ar/feed/' },
-      { name: 'La Nación', url: 'https://servicios.lanacion.com.ar/servicios/rss/deportes/futbol.xml' },
-      { name: 'TyC Sports', url: 'https://www.tycsports.com/rss/futbol-argentino' },
+    // 1. RSS sources con límite por fuente
+    const rssSources = [
+      { name: 'Olé', url: 'https://www.ole.com.ar/rss/boca-juniors/', limit: 10 },
+      { name: 'Infobae', url: 'https://www.infobae.com/feeds/rss/deportes-arg/', limit: 5, filterBoca: true },
     ];
 
-    // 2. Fetch RSS in parallel (5s timeout each)
+    // 2. Fetch RSS en paralelo (5s timeout cada uno)
     const rssResults = await Promise.allSettled(
-      sources.map(async (s) => {
+      rssSources.map(async (s) => {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 5000);
         try {
@@ -213,114 +211,88 @@ async function handleBocaNews(request, url, env) {
           });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const xml = await res.text();
-          return parseRSS(xml, s.name);
+          const items = parseRSS(xml, s.name);
+          const filtered = s.filterBoca ? items.filter((n) => /boca/i.test(n.titulo)) : items;
+          return filtered.slice(0, s.limit);
         } finally {
           clearTimeout(timer);
         }
       })
     );
 
-    rssResults.forEach((r, idx) => {
+    rssResults.forEach((r, i) => {
       if (r.status === 'fulfilled') {
-        console.log(`[boca-news] RSS OK: ${sources[idx].name} → ${r.value.length} items`);
+        console.log(`[boca-news] RSS OK: ${rssSources[i].name} → ${r.value.length} items`);
       } else {
-        console.error(`[boca-news] RSS FAIL: ${sources[idx].name} → ${r.reason}`);
+        console.error(`[boca-news] RSS FAIL: ${rssSources[i].name} → ${r.reason}`);
       }
     });
 
-    const GENERAL_SOURCES = new Set(['TyC Sports', 'La Nación']);
-    const BOCA_RE = /boca/i;
-
-    // Zip source metadata before filtering so idx always matches the right source
-    const sourceResults = rssResults
-      .map((r, idx) => ({ result: r, source: sources[idx] }))
-      .filter(({ result }) => result.status === 'fulfilled')
-      .map(({ result, source }) => {
-        const items = result.value;
-        if (GENERAL_SOURCES.has(source.name)) {
-          return items.filter((n) => BOCA_RE.test(n.titulo));
-        }
-        return items;
-      });
-
+    const seenUrls = new Set();
+    const seenTitles = new Set();
     const mergedNews = [];
-    const uniqueMap = new Map();
 
-    // ALGORITMO ROUND-ROBIN: Una de cada fuente
-    let hasMore = true;
-    let i = 0;
-    while (hasMore && mergedNews.length < 40) {
-      hasMore = false;
-      sourceResults.forEach((sourceGroup) => {
-        if (sourceGroup[i]) {
-          const n = sourceGroup[i];
-          const cleanUrl = n.url.split('?')[0].replace(/\/$/, '');
-          if (!uniqueMap.has(cleanUrl)) {
-            uniqueMap.set(cleanUrl, true);
-            mergedNews.push(n);
-          }
-          hasMore = true;
-        }
+    const normalizeTitle = (t) =>
+      (t ?? '').toLowerCase().replace(/[^a-z0-9áéíóúñü\s]/g, '').replace(/\s+/g, ' ').trim().substring(0, 80);
+
+    const addItem = (n) => {
+      const cleanUrl = (n.url ?? '').split('?')[0].replace(/\/$/, '');
+      const normTitle = normalizeTitle(n.titulo);
+      if (!cleanUrl || seenUrls.has(cleanUrl) || (normTitle && seenTitles.has(normTitle))) return;
+      seenUrls.add(cleanUrl);
+      if (normTitle) seenTitles.add(normTitle);
+      mergedNews.push(n);
+    };
+
+    // Agregar RSS results
+    rssResults.forEach((r) => {
+      if (r.status === 'fulfilled') r.value.forEach(addItem);
+    });
+
+    // 3. NewsData.io — siempre fetchear, hasta 9 artículos
+    try {
+      const params = new URLSearchParams({
+        q: 'Boca Juniors',
+        country: 'ar',
+        language: 'es',
+        category: 'sports',
+        apikey: env.VITE_NEWS_API_KEY ?? '',
       });
-      i++;
-    }
-
-    // 3. Fallback a Newsdata solo si no hay casi nada
-    if (mergedNews.length < 5) {
-      try {
-        const params = new URLSearchParams({
-          q: 'Boca Juniors',
-          country: 'ar',
-          language: 'es',
-          category: 'sports',
-          apikey: env.VITE_NEWS_API_KEY ?? '',
-        });
-        const ndRes = await fetch(`https://newsdata.io/api/1/news?${params}`);
-        if (ndRes.ok) {
-          const ndData = await ndRes.json();
-          (ndData.results ?? []).forEach((a) => {
-            if (mergedNews.length < 20) {
-              mergedNews.push({
-                id: a.article_id,
-                titulo: a.title,
-                imagen: a.image_url ?? '',
-                fecha: a.pubDate,
-                url: a.link,
-                fuente: 'Newsdata',
-              });
-            }
-          });
+      const ndRes = await fetch(`https://newsdata.io/api/1/news?${params}`);
+      if (ndRes.ok) {
+        const ndData = await ndRes.json();
+        let ndCount = 0;
+        for (const a of ndData.results ?? []) {
+          if (ndCount >= 9) break;
+          if (!a.link) continue;
+          const before = mergedNews.length;
+          addItem({ id: a.article_id, titulo: a.title, imagen: a.image_url ?? '', fecha: a.pubDate, url: a.link, fuente: a.source_name || a.source_id || 'Newsdata' });
+          if (mergedNews.length > before) ndCount++;
         }
-      } catch (e) {
-        console.error('Newsdata fallback failed', e);
+        console.log(`[boca-news] Newsdata OK → ${ndCount} items`);
       }
+    } catch (e) {
+      console.error('[boca-news] Newsdata failed', e);
     }
 
-    // Ordenar por fecha y limitar a 20 finales
-    allNews = mergedNews
-      .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
-      .slice(0, 20);
+    // Ordenar por fecha descendente
+    allNews = mergedNews.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
 
-    const countBySource = allNews.reduce((acc, n) => {
-      acc[n.fuente] = (acc[n.fuente] ?? 0) + 1;
-      return acc;
-    }, {});
+    const countBySource = allNews.reduce((acc, n) => { acc[n.fuente] = (acc[n.fuente] ?? 0) + 1; return acc; }, {});
     console.log('[boca-news] Final mix:', countBySource, `→ total ${allNews.length}`);
 
-    // 5. Save to Cache API (15 mins)
+    // Cache 15 mins
     const responseToCache = new Response(JSON.stringify(allNews), {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 's-maxage=900' },
     });
-    // cache.put requires a response that isn't already used
     await cache.put(cacheKey, responseToCache.clone());
   }
 
-  // 6. Server-side Pagination
+  // Paginación server-side
   const page = parseInt(url.searchParams.get('page') || '0');
   const limit = parseInt(url.searchParams.get('limit') || '12');
   const start = page * limit;
-  const end = start + limit;
-  const paginatedNews = allNews.slice(start, end);
+  const paginatedNews = allNews.slice(start, start + limit);
 
   return new Response(
     JSON.stringify({

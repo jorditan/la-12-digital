@@ -24,7 +24,7 @@ function getUrgencyInfo(matchDate: string | Date): { level: UrgencyLevel; label:
     return { level: 'critical', label: hours <= 1 ? 'Ahora' : `En ${hours}h` };
   }
   if (diffHours <= URGENCY_HOURS.TODAY) return { level: 'today', label: 'Hoy' };
-  if (diffHours <= URGENCY_HOURS.TOMORROW) return { level: 'tomorrow', label: 'Mañana' };
+  if (diffHours <= URGENCY_HOURS.TOMORROW) return { level: 'tomorrow', label: '¡Mañana!' };
   const days = Math.round(diffHours / 24);
   if (days <= URGENCY_HOURS.MAX_DAYS) return { level: 'days', label: `En ${days} días` };
   return null;
@@ -44,19 +44,12 @@ export function MatchUrgencyBadge({ matchDate }: MatchUrgencyBadgeProps) {
   }
 
   if (info.level === 'today') {
-    return (
-      <Badge
-        variant="gold"
-        className="bg-transparent border border-boca-gold/40 text-boca-gold px-1.5 text-xs"
-      >
-        {info.label}
-      </Badge>
-    );
+    return <Badge variant="gold">{info.label}</Badge>;
   }
 
   if (info.level === 'tomorrow') {
     return (
-      <Badge variant="blue" className="bg-boca-gold border border-none text-black px-1.5 text-xs">
+      <Badge variant="urgency" className="animate-pulse">
         {info.label}
       </Badge>
     );
