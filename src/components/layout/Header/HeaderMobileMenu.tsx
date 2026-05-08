@@ -48,7 +48,7 @@ export function HeaderMobileMenu({
         <li className="py-3 border-t border-boca-gold/10 mt-1">
           <a
             href="https://cafecito.app/la-12-digital"
-            rel="noopener"
+            rel="noopener noreferrer"
             target="_blank"
             aria-label="Invitame un café en cafecito.app"
           >

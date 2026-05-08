@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Button } from "../../ui/Button";
 import { SectionCard } from "../../ui/SectionCard";
 import type { AuthUser } from "@/types/attendance";
+import { sanitizeImageSrc } from "@/utils/urlSafety";
 
 interface AvatarSectionProps {
   user: AuthUser | null;
@@ -13,6 +14,7 @@ interface AvatarSectionProps {
 export function AvatarSection({ user, onUploadAvatar }: AvatarSectionProps) {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const safeAvatar = sanitizeImageSrc(user?.avatarUrl);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,9 +34,9 @@ export function AvatarSection({ user, onUploadAvatar }: AvatarSectionProps) {
     <SectionCard title="Foto de perfil">
       <div className="flex items-center gap-5">
         <div className="relative shrink-0">
-          {user?.avatarUrl ? (
+          {safeAvatar ? (
             <img
-              src={user.avatarUrl}
+              src={safeAvatar}
               alt="Avatar"
               className="w-16 h-16 rounded-full object-cover bg-boca-blue-mid"
             />

@@ -1,5 +1,6 @@
 import type { Noticia } from '../../services/apifootball';
 import { Badge } from '../ui/Badge';
+import { sanitizeExternalHref, sanitizeImageSrc } from '@/utils/urlSafety';
 
 interface NoticiaCardProps {
   noticia: Noticia;
@@ -20,9 +21,11 @@ interface NoticiaCardProps {
  *       └── Título (serif regular 16px, leading-6, #e0e7ff)
  */
 export function NoticiaCard({ noticia, className = '' }: NoticiaCardProps) {
-  const Tag = noticia.url ? 'a' : 'article';
-  const linkProps = noticia.url
-    ? { href: noticia.url, target: '_blank', rel: 'noopener noreferrer' }
+  const safeHref = sanitizeExternalHref(noticia.url);
+  const safeImage = sanitizeImageSrc(noticia.imagen);
+  const Tag = safeHref ? 'a' : 'article';
+  const linkProps = safeHref
+    ? { href: safeHref, target: '_blank', rel: 'noopener noreferrer' }
     : {};
 
   return (
@@ -43,7 +46,7 @@ export function NoticiaCard({ noticia, className = '' }: NoticiaCardProps) {
       <div className="flex-1 min-h-0 px-4 flex flex-col">
         <div className="flex-1 relative min-h-0 w-full h-full">
           <img
-            src={noticia.imagen}
+            src={safeImage ?? '/escudo_boca.png'}
             alt={noticia.titulo}
             className="absolute inset-0 w-full h-full object-cover object-center"
             loading="lazy"

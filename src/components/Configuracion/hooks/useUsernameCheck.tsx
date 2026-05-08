@@ -38,12 +38,14 @@ export function useUsernameCheck(
     setStatus("checking");
     let cancelled = false;
     supabase
-      .from("profiles")
-      .select("id")
-      .eq("username", trimmed)
-      .maybeSingle()
+      .rpc("is_username_available", { candidate_username: trimmed })
       .then(({ data, error }) => {
-        if (!cancelled) setStatus(error ? "idle" : data ? "taken" : "available");
+        if (cancelled) return;
+        if (error || typeof data !== "boolean") {
+          setStatus("idle");
+          return;
+        }
+        setStatus(data ? "available" : "taken");
       });
     return () => {
       cancelled = true;
