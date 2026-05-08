@@ -33,7 +33,7 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.7",
+    "eslint-plugin-react-refresh": "^0.5.2",
     "http-server": "^14.1.1",
     "postcss": "^8.4.38",
     "prettier": "3.8.3",
