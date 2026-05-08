@@ -1,4 +1,5 @@
 import type { AuthUser } from "@/types/attendance";
+import { sanitizeImageSrc } from "@/utils/urlSafety";
 
 function getInitials(user: AuthUser): string {
   if (user.displayName) {
@@ -14,10 +15,12 @@ export function UserAvatar({
   user: AuthUser;
   size?: number;
 }) {
-  if (user.avatarUrl) {
+  const safeAvatar = sanitizeImageSrc(user.avatarUrl);
+
+  if (safeAvatar) {
     return (
       <img
-        src={user.avatarUrl}
+        src={safeAvatar}
         alt={user.displayName ?? user.email}
         width={size}
         height={size}

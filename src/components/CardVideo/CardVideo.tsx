@@ -1,4 +1,5 @@
 import type { VideoYoutube } from "../../services/apifootball";
+import { sanitizeExternalHref, sanitizeImageSrc } from "@/utils/urlSafety";
 
 interface CardVideoProps {
   video: VideoYoutube;
@@ -8,9 +9,14 @@ interface CardVideoProps {
 }
 
 export function CardVideo({ video, featured, compact }: CardVideoProps) {
+  const safeHref = sanitizeExternalHref(`https://www.youtube.com/watch?v=${video.id}`);
+  const safeThumb = sanitizeImageSrc(video.thumbnail) ?? "/escudo_boca.png";
+
+  if (!safeHref) return null;
+
   return (
     <a
-      href={`https://www.youtube.com/watch?v=${video.id}`}
+      href={safeHref}
       target="_blank"
       rel="noopener noreferrer"
       className={`
@@ -26,7 +32,7 @@ export function CardVideo({ video, featured, compact }: CardVideoProps) {
         className={`relative overflow-hidden ${featured ? "flex-1 min-h-0" : "aspect-video"}`}
       >
         <img
-          src={video.thumbnail}
+          src={safeThumb}
           alt={video.titulo}
           className="absolute inset-0 border-b-2 border-boca-border w-full h-full object-cover"
           loading="lazy"

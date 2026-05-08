@@ -22,7 +22,7 @@ export function HeaderUserSection({
     <div className="flex items-center gap-3">
       <a
         href="https://cafecito.app/la-12-digital"
-        rel="noopener"
+        rel="noopener noreferrer"
         target="_blank"
         className="hidden sm:flex shrink-0"
         aria-label="Invitame un café en cafecito.app"

@@ -108,6 +108,9 @@ export function useAuth(): UseAuthReturn {
       if (!safeExt) {
         return { error: 'Formato no permitido. Solo se aceptan JPG, PNG, WebP y GIF.' };
       }
+      if (file.size > 2 * 1024 * 1024) {
+        return { error: 'El archivo supera el límite de 2MB.' };
+      }
 
       const path = `${user.id}/avatar.${safeExt}`;
 

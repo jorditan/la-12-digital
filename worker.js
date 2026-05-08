@@ -69,38 +69,122 @@ const SECURITY_HEADERS = {
   ].join('; '),
 };
 
-/** FIX: Simple in-memory rate limiter (resets per worker isolate restart) */
 const _rlStore = new Map();
-
-// Maximum number of unique IPs to track at once. Entries beyond this limit are
-// dropped (the oldest entry is evicted), preventing unbounded memory growth under
-// high traffic / IP-spoofing DDoS scenarios.
 const RL_MAX_ENTRIES = 10_000;
+const RL_KEY_PREFIX = 'rl:v1';
+const RATE_LIMIT_RULES = [
+  { prefix: '/api/youtube/', bucket: 'youtube', limit: 120, windowMs: 60_000 },
+  { prefix: '/api/newsdata', bucket: 'newsdata', limit: 60, windowMs: 60_000 },
+  { prefix: '/api/livescore/', bucket: 'livescore', limit: 90, windowMs: 60_000 },
+  { prefix: '/api/h2h/', bucket: 'h2h', limit: 60, windowMs: 60_000 },
+  { prefix: '/api/boca-news', bucket: 'boca-news', limit: 40, windowMs: 60_000 },
+];
 
-/**
- * Returns true if the IP has exceeded the limit.
- * @param {string} ip
- * @param {number} limit - max requests per window
- * @param {number} windowMs - window in ms
- */
-function isRateLimited(ip, limit = 60, windowMs = 60_000) {
+const ALLOWED_NEWS_DOMAINS = new Set([
+  'ole.com.ar',
+  'infobae.com',
+  'tycsports.com',
+  'espn.com.ar',
+  'clarin.com',
+  'lanacion.com.ar',
+  'tn.com.ar',
+  'pagina12.com.ar',
+  'ambito.com',
+  'bolavip.com',
+  'as.com',
+  'diarioas.com',
+  'ole.com',
+]);
+
+const ALLOWED_IMAGE_DOMAINS = new Set([
+  ...ALLOWED_NEWS_DOMAINS,
+  'resizer.glanacion.com',
+  'cdn.jwplayer.com',
+  'media.tycsports.com',
+  'i.ytimg.com',
+]);
+
+function jsonError(status, code, message, corsHeaders = {}, extra = {}) {
+  return new Response(
+    JSON.stringify({ error: { code, message }, ...extra }),
+    {
+      status,
+      headers: {
+        'Content-Type': 'application/json',
+        ...corsHeaders,
+      },
+    },
+  );
+}
+
+function readRateLimitRule(pathname) {
+  return (
+    RATE_LIMIT_RULES.find((rule) => pathname.startsWith(rule.prefix)) ?? {
+      prefix: '/api/',
+      bucket: 'api',
+      limit: 60,
+      windowMs: 60_000,
+    }
+  );
+}
+
+async function isRateLimited(request, url, env) {
+  const clientIp = request.headers.get('CF-Connecting-IP') ?? 'unknown';
+  const rule = readRateLimitRule(url.pathname);
   const now = Date.now();
-  const entry = _rlStore.get(ip) ?? { count: 0, resetAt: now + windowMs };
+  const windowSlot = Math.floor(now / rule.windowMs);
+  const retryAfter = Math.ceil(rule.windowMs / 1000);
+  const key = `${RL_KEY_PREFIX}:${rule.bucket}:${clientIp}:${windowSlot}`;
+
+  // Prefer shared KV storage when configured (works across worker instances).
+  if (env.RATE_LIMIT_KV && typeof env.RATE_LIMIT_KV.get === 'function') {
+    const current = Number((await env.RATE_LIMIT_KV.get(key)) ?? '0');
+    const next = current + 1;
+    await env.RATE_LIMIT_KV.put(key, String(next), {
+      expirationTtl: retryAfter + 5,
+    });
+    return { limited: next > rule.limit, retryAfter };
+  }
+
+  // Fallback for environments without KV binding.
+  const localKey = `${rule.bucket}:${clientIp}`;
+  const entry = _rlStore.get(localKey) ?? { count: 0, resetAt: now + rule.windowMs };
   if (now > entry.resetAt) {
     entry.count = 0;
-    entry.resetAt = now + windowMs;
+    entry.resetAt = now + rule.windowMs;
   }
   entry.count++;
-  _rlStore.set(ip, entry);
+  _rlStore.set(localKey, entry);
 
-  // Evict the oldest entry before the Map exceeds the size cap so that size
-  // never grows beyond RL_MAX_ENTRIES even under rapid concurrent insertions.
   if (_rlStore.size >= RL_MAX_ENTRIES) {
     const oldestKey = _rlStore.keys().next().value;
     _rlStore.delete(oldestKey);
   }
 
-  return entry.count > limit;
+  return {
+    limited: entry.count > rule.limit,
+    retryAfter: Math.max(1, Math.ceil((entry.resetAt - now) / 1000)),
+  };
+}
+
+function isAllowedHost(hostname, allowedHosts) {
+  const host = hostname.toLowerCase();
+  for (const allowedHost of allowedHosts) {
+    if (host === allowedHost || host.endsWith(`.${allowedHost}`)) return true;
+  }
+  return false;
+}
+
+function sanitizeHttpsUrl(raw, allowedHosts) {
+  if (!raw) return null;
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== 'https:') return null;
+    if (allowedHosts && !isAllowedHost(parsed.hostname, allowedHosts)) return null;
+    return parsed.toString();
+  } catch {
+    return null;
+  }
 }
 
 export default {
@@ -109,14 +193,11 @@ export default {
 
     // FIX: Rate limiting for /api/* routes
     if (url.pathname.startsWith('/api/')) {
-      const clientIp = request.headers.get('CF-Connecting-IP') ?? 'unknown';
-      if (isRateLimited(clientIp)) {
-        return new Response('Too Many Requests', {
-          status: 429,
-          headers: {
-            'Retry-After': '60',
-            'Content-Type': 'text/plain',
-          },
+      const rateLimit = await isRateLimited(request, url, env);
+      if (rateLimit.limited) {
+        return jsonError(429, 'rate_limited', 'Too Many Requests', {
+          ...getCorsHeaders(request),
+          'Retry-After': String(rateLimit.retryAfter),
         });
       }
     }
@@ -182,6 +263,9 @@ async function handleBocaNews(request, url, env) {
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
+  if (request.method !== 'GET') {
+    return jsonError(405, 'method_not_allowed', 'Method Not Allowed', corsHeaders);
+  }
 
   const cache = caches.default;
   const cacheKey = new Request(new URL('http://internal/boca-news-v8'), request);
@@ -236,12 +320,14 @@ async function handleBocaNews(request, url, env) {
       (t ?? '').toLowerCase().replace(/[^a-z0-9áéíóúñü\s]/g, '').replace(/\s+/g, ' ').trim().substring(0, 80);
 
     const addItem = (n) => {
-      const cleanUrl = (n.url ?? '').split('?')[0].replace(/\/$/, '');
+      const safeUrl = sanitizeHttpsUrl(n.url, ALLOWED_NEWS_DOMAINS);
+      const safeImage = sanitizeHttpsUrl(n.imagen, ALLOWED_IMAGE_DOMAINS) ?? '';
+      const cleanUrl = (safeUrl ?? '').split('?')[0].replace(/\/$/, '');
       const normTitle = normalizeTitle(n.titulo);
       if (!cleanUrl || seenUrls.has(cleanUrl) || (normTitle && seenTitles.has(normTitle))) return;
       seenUrls.add(cleanUrl);
       if (normTitle) seenTitles.add(normTitle);
-      mergedNews.push(n);
+      mergedNews.push({ ...n, url: safeUrl, imagen: safeImage });
     };
 
     // Agregar RSS results
@@ -266,7 +352,14 @@ async function handleBocaNews(request, url, env) {
           if (ndCount >= 9) break;
           if (!a.link) continue;
           const before = mergedNews.length;
-          addItem({ id: a.article_id, titulo: a.title, imagen: a.image_url ?? '', fecha: a.pubDate, url: a.link, fuente: a.source_name || a.source_id || 'Newsdata' });
+          addItem({
+            id: a.article_id,
+            titulo: a.title,
+            imagen: a.image_url ?? '',
+            fecha: a.pubDate,
+            url: a.link,
+            fuente: a.source_name || a.source_id || 'Newsdata',
+          });
           if (mergedNews.length > before) ndCount++;
         }
         console.log(`[boca-news] Newsdata OK → ${ndCount} items`);
@@ -358,20 +451,22 @@ function parseRSS(xml, sourceName) {
       if (imgInDesc) image = imgInDesc[1];
     }
 
-    if (title && link) {
+    const safeLink = sanitizeHttpsUrl(link, ALLOWED_NEWS_DOMAINS);
+    const safeImage = sanitizeHttpsUrl(image, ALLOWED_IMAGE_DOMAINS) ?? '';
+    if (title && safeLink) {
       // btoa can fail on non-Latin1 chars — use a safe fallback id
       let id;
       try {
-        id = `rss-${btoa(unescape(encodeURIComponent(link))).substring(0, 16)}`;
+        id = `rss-${btoa(unescape(encodeURIComponent(safeLink))).substring(0, 16)}`;
       } catch {
         id = `rss-${sourceName}-${items.length}`;
       }
       items.push({
         id,
         titulo: decodeEntities(title),
-        imagen: image,
+        imagen: safeImage,
         fecha: pubDate || new Date().toISOString(),
-        url: link,
+        url: safeLink,
         fuente: sourceName,
       });
     }
@@ -403,13 +498,13 @@ async function handleYoutubeProxy(request, url, env) {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
   if (request.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405 });
+    return jsonError(405, 'method_not_allowed', 'Method Not Allowed', corsHeaders);
   }
 
   const subpath = url.pathname.replace(/^\/api\/youtube\//, '');
   // Only allow the specific YouTube API resources the app actually needs.
   if (!ALLOWED_YOUTUBE_SUBPATHS.has(subpath)) {
-    return new Response('Not Found', { status: 404, headers: corsHeaders });
+    return jsonError(404, 'not_found', 'Not Found', corsHeaders);
   }
 
   // Forward only explicitly allowed query parameters to prevent quota manipulation.
@@ -426,10 +521,7 @@ async function handleYoutubeProxy(request, url, env) {
     upstreamRes = await fetch(`https://www.googleapis.com/youtube/v3/${subpath}?${params}`);
   } catch (err) {
     console.error('[youtube-proxy] upstream fetch failed:', err);
-    return new Response(JSON.stringify({ error: 'upstream_error' }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
-    });
+    return jsonError(502, 'upstream_error', 'Upstream provider unavailable', corsHeaders);
   }
 
   const body = await upstreamRes.text();
@@ -460,7 +552,7 @@ async function handleNewsdataProxy(request, url, env) {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
   if (request.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405 });
+    return jsonError(405, 'method_not_allowed', 'Method Not Allowed', corsHeaders);
   }
 
   // Forward only explicitly allowed query parameters to prevent quota manipulation.
@@ -477,10 +569,7 @@ async function handleNewsdataProxy(request, url, env) {
     upstreamRes = await fetch(`https://newsdata.io/api/1/news?${params}`);
   } catch (err) {
     console.error('[newsdata-proxy] upstream fetch failed:', err);
-    return new Response(JSON.stringify({ error: 'upstream_error' }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
-    });
+    return jsonError(502, 'upstream_error', 'Upstream provider unavailable', corsHeaders);
   }
 
   const body = await upstreamRes.text();
@@ -506,13 +595,13 @@ async function handleH2HProxy(request, url, env) {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
   if (request.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405 });
+    return jsonError(405, 'method_not_allowed', 'Method Not Allowed', corsHeaders);
   }
 
   // Expect /api/h2h/{team1_id}/{team2_id}
   const parts = url.pathname.replace(/^\/api\/h2h\//, '').split('/');
   if (parts.length !== 2 || !/^\d+$/.test(parts[0]) || !/^\d+$/.test(parts[1])) {
-    return new Response('Invalid path', { status: 400 });
+    return jsonError(400, 'invalid_path', 'Invalid path', corsHeaders);
   }
   const [team1Id, team2Id] = parts;
 
@@ -527,10 +616,7 @@ async function handleH2HProxy(request, url, env) {
     );
   } catch (err) {
     console.error('[h2h-proxy] upstream fetch failed:', err);
-    return new Response(JSON.stringify({ error: 'upstream_error' }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
-    });
+    return jsonError(502, 'upstream_error', 'Upstream provider unavailable', corsHeaders);
   }
 
   const body = await upstreamRes.text();
@@ -567,13 +653,13 @@ async function handleLivescoreProxy(request, url, env) {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
   if (request.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405 });
+    return jsonError(405, 'method_not_allowed', 'Method Not Allowed', corsHeaders);
   }
 
   // Strip the /api/livescore prefix; the remainder is forwarded to the upstream API.
   const subpath = url.pathname.replace(/^\/api\/livescore/, '');
   if (!subpath || !SAFE_LIVESCORE_PATH.test(subpath)) {
-    return new Response('Invalid path', { status: 400 });
+    return jsonError(400, 'invalid_path', 'Invalid path', corsHeaders);
   }
 
   // Forward only explicitly allowed query parameters to prevent abuse.
@@ -592,10 +678,7 @@ async function handleLivescoreProxy(request, url, env) {
     upstreamRes = await fetch(`https://livescore-api.com/api-client${subpath}?${params}`);
   } catch (err) {
     console.error('[livescore-proxy] upstream fetch failed:', err);
-    return new Response(JSON.stringify({ error: 'upstream_error' }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
-    });
+    return jsonError(502, 'upstream_error', 'Upstream provider unavailable', corsHeaders);
   }
 
   const body = await upstreamRes.text();

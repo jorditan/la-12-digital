@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Shield } from 'lucide-react';
+import { sanitizeImageSrc } from '@/utils/urlSafety';
 
 interface TeamLogoProps {
   src?: string;
@@ -10,8 +11,9 @@ interface TeamLogoProps {
 
 export const TeamLogo = ({ src, alt, size = 16, className = '' }: TeamLogoProps) => {
   const [error, setError] = useState(false);
+  const safeSrc = sanitizeImageSrc(src);
 
-  if (!src || error) {
+  if (!safeSrc || error) {
     return (
       <div 
         className={`flex items-center justify-center bg-white/5 border border-white/10 rounded-full ${className}`}
@@ -24,7 +26,7 @@ export const TeamLogo = ({ src, alt, size = 16, className = '' }: TeamLogoProps)
 
   return (
     <img
-      src={src}
+      src={safeSrc}
       alt={alt}
       width={size}
       height={size}
