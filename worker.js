@@ -72,6 +72,10 @@ const SECURITY_HEADERS = {
 const _rlStore = new Map();
 const RL_MAX_ENTRIES = 10_000;
 const RL_KEY_PREFIX = 'rl:v1';
+// 80% margin: KV is eventually consistent, so concurrent reads can temporarily undercount.
+// We cap earlier to reduce burst leakage while keeping endpoints usable.
+// For strict limits under heavy concurrency, migrate to Durable Objects.
+const KV_LIMIT_MARGIN = 0.8;
 const RATE_LIMIT_RULES = [
   { prefix: '/api/youtube/', bucket: 'youtube', limit: 120, windowMs: 60_000 },
   { prefix: '/api/newsdata', bucket: 'newsdata', limit: 60, windowMs: 60_000 },
@@ -137,13 +141,17 @@ async function isRateLimited(request, url, env) {
   const key = `${RL_KEY_PREFIX}:${rule.bucket}:${clientIp}:${windowSlot}`;
 
   // Prefer shared KV storage when configured (works across worker instances).
+  // Note: KV increments here are eventually consistent and not strictly atomic.
+  // If strict enforcement under high concurrency is required, migrate this path
+  // to a Durable Object counter.
   if (env.RATE_LIMIT_KV && typeof env.RATE_LIMIT_KV.get === 'function') {
+    const effectiveLimit = Math.max(1, Math.floor(rule.limit * KV_LIMIT_MARGIN));
     const current = Number((await env.RATE_LIMIT_KV.get(key)) ?? '0');
     const next = current + 1;
     await env.RATE_LIMIT_KV.put(key, String(next), {
       expirationTtl: retryAfter + 5,
     });
-    return { limited: next > rule.limit, retryAfter };
+    return { limited: next > effectiveLimit, retryAfter };
   }
 
   // Fallback for environments without KV binding.
@@ -154,9 +162,13 @@ async function isRateLimited(request, url, env) {
     entry.resetAt = now + rule.windowMs;
   }
   entry.count++;
+  const isNewEntry = !_rlStore.has(localKey);
+  if (isNewEntry && _rlStore.size >= RL_MAX_ENTRIES) {
+    const oldestKey = _rlStore.keys().next().value;
+    _rlStore.delete(oldestKey);
+  }
   _rlStore.set(localKey, entry);
-
-  if (_rlStore.size >= RL_MAX_ENTRIES) {
+  while (_rlStore.size > RL_MAX_ENTRIES) {
     const oldestKey = _rlStore.keys().next().value;
     _rlStore.delete(oldestKey);
   }
@@ -175,14 +187,21 @@ function isAllowedHost(hostname, allowedHosts) {
   return false;
 }
 
-function sanitizeHttpsUrl(raw, allowedHosts) {
+function sanitizeHttpsUrl(raw, allowedHosts, context = 'external_url') {
   if (!raw) return null;
   try {
     const parsed = new URL(raw);
-    if (parsed.protocol !== 'https:') return null;
-    if (allowedHosts && !isAllowedHost(parsed.hostname, allowedHosts)) return null;
+    if (parsed.protocol !== 'https:') {
+      console.warn(`[security] blocked ${context}: non-https protocol`);
+      return null;
+    }
+    if (allowedHosts && !isAllowedHost(parsed.hostname, allowedHosts)) {
+      console.warn(`[security] blocked ${context}: host not allowed (${parsed.hostname})`);
+      return null;
+    }
     return parsed.toString();
   } catch {
+    console.warn(`[security] blocked ${context}: invalid URL`);
     return null;
   }
 }
@@ -320,8 +339,8 @@ async function handleBocaNews(request, url, env) {
       (t ?? '').toLowerCase().replace(/[^a-z0-9áéíóúñü\s]/g, '').replace(/\s+/g, ' ').trim().substring(0, 80);
 
     const addItem = (n) => {
-      const safeUrl = sanitizeHttpsUrl(n.url, ALLOWED_NEWS_DOMAINS);
-      const safeImage = sanitizeHttpsUrl(n.imagen, ALLOWED_IMAGE_DOMAINS) ?? '';
+      const safeUrl = sanitizeHttpsUrl(n.url, ALLOWED_NEWS_DOMAINS, 'news_link');
+      const safeImage = sanitizeHttpsUrl(n.imagen, ALLOWED_IMAGE_DOMAINS, 'news_image') ?? '';
       const cleanUrl = (safeUrl ?? '').split('?')[0].replace(/\/$/, '');
       const normTitle = normalizeTitle(n.titulo);
       if (!cleanUrl || seenUrls.has(cleanUrl) || (normTitle && seenTitles.has(normTitle))) return;
@@ -451,8 +470,8 @@ function parseRSS(xml, sourceName) {
       if (imgInDesc) image = imgInDesc[1];
     }
 
-    const safeLink = sanitizeHttpsUrl(link, ALLOWED_NEWS_DOMAINS);
-    const safeImage = sanitizeHttpsUrl(image, ALLOWED_IMAGE_DOMAINS) ?? '';
+    const safeLink = sanitizeHttpsUrl(link, ALLOWED_NEWS_DOMAINS, 'rss_link');
+    const safeImage = sanitizeHttpsUrl(image, ALLOWED_IMAGE_DOMAINS, 'rss_image') ?? '';
     if (title && safeLink) {
       // btoa can fail on non-Latin1 chars — use a safe fallback id
       let id;

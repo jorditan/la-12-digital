@@ -12,7 +12,36 @@ export function CardVideo({ video, featured, compact }: CardVideoProps) {
   const safeHref = sanitizeExternalHref(`https://www.youtube.com/watch?v=${video.id}`);
   const safeThumb = sanitizeImageSrc(video.thumbnail) ?? "/escudo_boca.png";
 
-  if (!safeHref) return null;
+  if (!safeHref) {
+    return (
+      <article
+        className={`
+          flex flex-col overflow-hidden rounded-sm bg-boca-blue-light border-boca-border border-2 opacity-70
+          ${featured ? "h-full" : ""}
+          ${compact ? "h-full" : ""}
+        `}
+      >
+        <div className={`relative overflow-hidden ${featured ? "flex-1 min-h-0" : "aspect-video"}`}>
+          <img
+            src={safeThumb}
+            alt={video.titulo}
+            className="absolute inset-0 border-b-2 border-boca-border w-full h-full object-cover"
+            loading="lazy"
+            draggable={false}
+          />
+        </div>
+        <div className={`${compact ? "px-3 py-2.5" : "px-3 py-3"} shrink-0`}>
+          <p className="sr-only">Video bloqueado por validación de seguridad en la URL.</p>
+          <p className="font-sans text-xs text-status-negative mb-1">Video no disponible</p>
+          <p
+            className={`font-serif font-medium leading-[1.35] uppercase tracking-wide text-white/85 ${compact ? "line-clamp-2 text-sm" : "line-clamp-3"} ${featured ? "text-xl" : ""}`}
+          >
+            {video.titulo}
+          </p>
+        </div>
+      </article>
+    );
+  }
 
   return (
     <a

@@ -1,5 +1,7 @@
 const PRIVATE_IPV4_RE =
   /^(10\.|127\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.)/;
+const SAFE_DATA_IMAGE_RE =
+  /^data:image\/(?:png|jpe?g|webp|gif);base64,[a-z0-9+/=\s]+$/i;
 
 function isSafeHostname(hostname: string): boolean {
   const host = hostname.toLowerCase();
@@ -23,6 +25,6 @@ export function sanitizeExternalHref(raw: string | null | undefined): string | n
 export function sanitizeImageSrc(raw: string | null | undefined): string | null {
   if (!raw) return null;
   if (raw.startsWith("/") || raw.startsWith("./")) return raw;
-  if (raw.startsWith("data:image/")) return raw;
+  if (SAFE_DATA_IMAGE_RE.test(raw)) return raw;
   return sanitizeExternalHref(raw);
 }
