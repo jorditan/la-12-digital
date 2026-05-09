@@ -1,7 +1,4 @@
-import { getCachedData, setCachedData, CACHE_DURATION } from "../utils/cache";
-
 const BASE_URL = "/api/boca-news";
-const CACHE_VERSION = "v21_dedup_fix";
 
 export interface NoticiaRaw {
   id: string;
@@ -15,34 +12,15 @@ export interface NoticiaRaw {
 export interface NewsResponse {
   results: NoticiaRaw[];
   total: number;
-  page: number;
-  limit: number;
-  pageCount: number;
 }
 
-export async function fetchBocaNews(page = 0, limit = 12): Promise<NewsResponse> {
-  const CACHE_KEY = `${CACHE_VERSION}_p${page}_l${limit}`;
-  const cached = getCachedData<NewsResponse>(CACHE_KEY, CACHE_DURATION.NEWS);
-  if (cached) return cached;
-
+export async function fetchBocaNews(): Promise<NewsResponse> {
   try {
-    const res = await fetch(`${BASE_URL}?page=${page}&limit=${limit}`);
+    const res = await fetch(BASE_URL);
     if (!res.ok) throw new Error("Worker news failed");
-    const data: NewsResponse = await res.json();
-    setCachedData(CACHE_KEY, data);
-    return data;
-
+    return await res.json();
   } catch (error) {
     console.error("News fetch error:", error);
-    return { results: [], total: 0, page, limit, pageCount: 0 };
+    return { results: [], total: 0 };
   }
 }
-
-/** 
- * Mantengo por compatibilidad si algún componente viejo la usa,
- * pero ahora llama internamente a fetchBocaNews.
- */
-export const fetchNewsdataNoticias = async () => {
-  const res = await fetchBocaNews(0, 15);
-  return res.results;
-};
