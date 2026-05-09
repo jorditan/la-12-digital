@@ -222,16 +222,12 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
 export interface NoticiasResponse {
   results: Noticia[];
   total: number;
-  page: number;
-  limit: number;
-  pageCount: number;
 }
 
-export async function fetchNoticias(page = 0, limit = 12): Promise<NoticiasResponse> {
-  const data = await fetchBocaNews(page, limit);
+export async function fetchNoticias(): Promise<NoticiasResponse> {
+  const data = await fetchBocaNews();
 
   return {
-    ...data,
     results: data.results.map((a) => ({
       id: a.id,
       titulo: a.titulo,
@@ -241,6 +237,7 @@ export async function fetchNoticias(page = 0, limit = 12): Promise<NoticiasRespo
       url: a.url,
       fuente: a.fuente,
     })),
+    total: data.total,
   };
 }
 

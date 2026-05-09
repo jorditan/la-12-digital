@@ -287,6 +287,65 @@ const ALLOWED_YOUTUBE_PARAMS = new Set([
   'pageToken',
 ]);
 
+// ── Fuentes de noticias ─────────────────────────────────────────────────────
+
+async function fetchOleRSS() {
+  const url = 'https://www.ole.com.ar/rss/boca-juniors/';
+  const res = await fetch(url, {
+    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; La12Digital-Bot/1.0)' },
+    cf: { cacheTtl: 600 },
+  });
+  if (!res.ok) throw new Error(`Olé RSS HTTP ${res.status}`);
+  const xml = await res.text();
+  return parseRSS(xml, 'Olé');
+}
+
+async function fetchNewsData(env) {
+  const params = new URLSearchParams({
+    q: 'Boca Juniors',
+    country: 'ar',
+    language: 'es',
+    category: 'sports',
+    apikey: env.VITE_NEWS_API_KEY ?? '',
+  });
+  const res = await fetch(`https://newsdata.io/api/1/news?${params}`);
+  if (!res.ok) throw new Error(`NewsData HTTP ${res.status}`);
+  const data = await res.json();
+  return (data.results ?? [])
+    .filter(a => a.link && a.title)
+    .map(a => ({
+      id: a.article_id,
+      titulo: a.title,
+      imagen: sanitizeHttpsUrl(a.image_url, null, 'news_image') ?? '',
+      fecha: a.pubDate,
+      url: a.link,
+      fuente: a.source_name || a.source_id || 'Newsdata',
+    }));
+}
+
+function mergeNews(rssItems, ndItems) {
+  const seenUrls = new Set();
+  const seenTitles = new Set();
+  const merged = [];
+
+  const normalize = (t) =>
+    (t ?? '').toLowerCase().replace(/[^a-z0-9áéíóúñü\s]/g, '').replace(/\s+/g, ' ').trim().substring(0, 80);
+
+  const add = (n) => {
+    const cleanUrl = (n.url ?? '').split('?')[0].replace(/\/$/, '');
+    const normTitle = normalize(n.titulo);
+    if (!cleanUrl || seenUrls.has(cleanUrl) || (normTitle && seenTitles.has(normTitle))) return;
+    seenUrls.add(cleanUrl);
+    if (normTitle) seenTitles.add(normTitle);
+    merged.push(n);
+  };
+
+  rssItems.forEach(add);
+  ndItems.forEach(add);
+
+  return merged.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+}
+
 async function handleBocaNews(request, url, env) {
   const corsHeaders = getCorsHeaders(request);
   if (request.method === 'OPTIONS') {
@@ -296,142 +355,30 @@ async function handleBocaNews(request, url, env) {
     return jsonError(405, 'method_not_allowed', 'Method Not Allowed', corsHeaders);
   }
 
-  const cache = caches.default;
-  const cacheKey = new Request(new URL('http://internal/boca-news-v8'), request);
-  let cachedRes = await cache.match(cacheKey);
+  try {
+    const [rssItems, ndItems] = await Promise.all([
+      fetchOleRSS().catch(() => []),
+      fetchNewsData(env).catch(() => []),
+    ]);
 
-  let allNews = [];
+    const allNews = mergeNews(rssItems, ndItems);
 
-  if (cachedRes) {
-    allNews = await cachedRes.json();
-  } else {
-    // 1. RSS sources con límite por fuente
-    const rssSources = [
-      { name: 'Olé', url: 'https://www.ole.com.ar/rss/boca-juniors/', limit: 10 },
-      { name: 'Infobae', url: 'https://www.infobae.com/feeds/rss/deportes-arg/', limit: 5, filterBoca: true },
-    ];
+    console.log('[boca-news] Olé:', rssItems.length, '| NewsData:', ndItems.length, '| Total:', allNews.length);
 
-    // 2. Fetch RSS en paralelo (5s timeout cada uno)
-    const rssResults = await Promise.allSettled(
-      rssSources.map(async (s) => {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 5000);
-        try {
-          const res = await fetch(s.url, {
-            signal: controller.signal,
-            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; La12Digital-Bot/1.0)' },
-            cf: { cacheTtl: 600 },
-          });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const xml = await res.text();
-          const items = parseRSS(xml, s.name);
-          const filtered = s.filterBoca ? items.filter((n) => /boca/i.test(n.titulo)) : items;
-          return filtered.slice(0, s.limit);
-        } finally {
-          clearTimeout(timer);
-        }
-      })
+    return new Response(
+      JSON.stringify({ results: allNews, total: allNews.length }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=600',
+          ...corsHeaders,
+        },
+      }
     );
-
-    rssResults.forEach((r, i) => {
-      if (r.status === 'fulfilled') {
-        console.log(`[boca-news] RSS OK: ${rssSources[i].name} → ${r.value.length} items`);
-      } else {
-        console.error(`[boca-news] RSS FAIL: ${rssSources[i].name} → ${r.reason}`);
-      }
-    });
-
-    const seenUrls = new Set();
-    const seenTitles = new Set();
-    const mergedNews = [];
-
-    const normalizeTitle = (t) =>
-      (t ?? '').toLowerCase().replace(/[^a-z0-9áéíóúñü\s]/g, '').replace(/\s+/g, ' ').trim().substring(0, 80);
-
-    const addItem = (n) => {
-      const safeUrl = sanitizeHttpsUrl(n.url, ALLOWED_NEWS_DOMAINS, 'news_link');
-      const safeImage = sanitizeHttpsUrl(n.imagen, ALLOWED_IMAGE_DOMAINS, 'news_image') ?? '';
-      const cleanUrl = (safeUrl ?? '').split('?')[0].replace(/\/$/, '');
-      const normTitle = normalizeTitle(n.titulo);
-      if (!cleanUrl || seenUrls.has(cleanUrl) || (normTitle && seenTitles.has(normTitle))) return;
-      seenUrls.add(cleanUrl);
-      if (normTitle) seenTitles.add(normTitle);
-      mergedNews.push({ ...n, url: safeUrl, imagen: safeImage });
-    };
-
-    // Agregar RSS results
-    rssResults.forEach((r) => {
-      if (r.status === 'fulfilled') r.value.forEach(addItem);
-    });
-
-    // 3. NewsData.io — siempre fetchear, hasta 9 artículos
-    try {
-      const params = new URLSearchParams({
-        q: 'Boca Juniors',
-        country: 'ar',
-        language: 'es',
-        category: 'sports',
-        apikey: env.VITE_NEWS_API_KEY ?? '',
-      });
-      const ndRes = await fetch(`https://newsdata.io/api/1/news?${params}`);
-      if (ndRes.ok) {
-        const ndData = await ndRes.json();
-        let ndCount = 0;
-        for (const a of ndData.results ?? []) {
-          if (ndCount >= 9) break;
-          if (!a.link) continue;
-          const before = mergedNews.length;
-          addItem({
-            id: a.article_id,
-            titulo: a.title,
-            imagen: a.image_url ?? '',
-            fecha: a.pubDate,
-            url: a.link,
-            fuente: a.source_name || a.source_id || 'Newsdata',
-          });
-          if (mergedNews.length > before) ndCount++;
-        }
-        console.log(`[boca-news] Newsdata OK → ${ndCount} items`);
-      }
-    } catch (e) {
-      console.error('[boca-news] Newsdata failed', e);
-    }
-
-    // Ordenar por fecha descendente
-    allNews = mergedNews.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
-
-    const countBySource = allNews.reduce((acc, n) => { acc[n.fuente] = (acc[n.fuente] ?? 0) + 1; return acc; }, {});
-    console.log('[boca-news] Final mix:', countBySource, `→ total ${allNews.length}`);
-
-    // Cache 15 mins
-    const responseToCache = new Response(JSON.stringify(allNews), {
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 's-maxage=900' },
-    });
-    await cache.put(cacheKey, responseToCache.clone());
+  } catch (e) {
+    console.error('[boca-news] Unexpected error:', e);
+    return jsonError(500, 'internal_error', 'Internal Server Error', corsHeaders);
   }
-
-  // Paginación server-side
-  const page = parseInt(url.searchParams.get('page') || '0');
-  const limit = parseInt(url.searchParams.get('limit') || '12');
-  const start = page * limit;
-  const paginatedNews = allNews.slice(start, start + limit);
-
-  return new Response(
-    JSON.stringify({
-      results: paginatedNews,
-      total: allNews.length,
-      page,
-      limit,
-      pageCount: Math.ceil(allNews.length / limit),
-    }),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=600',
-        ...corsHeaders,
-      },
-    }
-  );
 }
 
 /**
@@ -480,13 +427,13 @@ function parseRSS(xml, sourceName) {
       if (imgInDesc) image = imgInDesc[1];
     }
 
-    const safeLink = sanitizeHttpsUrl(link, ALLOWED_NEWS_DOMAINS, 'rss_link');
+    const safeLink = sanitizeHttpsUrl(link, null, 'rss_link');
     const safeImage = sanitizeHttpsUrl(image, ALLOWED_IMAGE_DOMAINS, 'rss_image') ?? '';
     if (title && safeLink) {
       // btoa can fail on non-Latin1 chars — use a safe fallback id
       let id;
       try {
-        id = `rss-${btoa(unescape(encodeURIComponent(safeLink))).substring(0, 16)}`;
+        id = `rss-${btoa(unescape(encodeURIComponent(safeLink)))}`;
       } catch {
         id = `rss-${sourceName}-${items.length}`;
       }
