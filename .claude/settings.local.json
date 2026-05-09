@@ -75,7 +75,16 @@
       "Bash(grep -oP \"\\(?:oe|=3[;,]|=5[;,]\\).{0,50}\" dist/assets/index-C3EjQzx4.js)",
       "Bash(grep -o \".\\\\{30\\\\}slice\\(o,o+s.\\\\{30\\\\}\" dist/assets/index-C3EjQzx4.js)",
       "Bash(grep -o \".\\\\{200\\\\}const p=a\\\\.slice\\(o,o+s\\).\\\\{400\\\\}\" dist/assets/index-C3EjQzx4.j)",
-      "Bash(gh pr create --title 'fix: corregir duplicados y comportamiento de noticias en dev/prod' --body ' *)"
+      "Bash(gh pr create --title 'fix: corregir duplicados y comportamiento de noticias en dev/prod' --body ' *)",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__workers_get_worker",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__kv_namespaces_list",
+      "Bash(npx wrangler *)",
+      "Bash(gh run *)",
+      "Bash(ls -la .env*)",
+      "Bash(dir .env*)",
+      "Bash(Get-Content package.json)",
+      "Bash(Select-String -Pattern \"wrangler\" -Context 0,0)",
+      "Bash(git log *)"
     ]
   }
 }

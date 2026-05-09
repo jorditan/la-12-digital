@@ -14,7 +14,7 @@
 
 ### Routing actual
 
-El proyecto **NO usa React Router**. `App.tsx` renderiza todos los componentes directamente sin lógica de rutas. El `wrangler.jsonc` tiene `"not_found_handling": "single-page-application"` lo que permite manejar rutas como `/mi-historial` client-side. La convención documentada es "SPA simple con `window.location.pathname`".
+El proyecto **NO usa React Router**. `App.tsx` renderiza todos los componentes directamente sin lógica de rutas. El `wrangler.json` tiene `"not_found_handling": "single-page-application"` lo que permite manejar rutas como `/mi-historial` client-side. La convención documentada es "SPA simple con `window.location.pathname`".
 
 ### API de partidos
 
@@ -1451,7 +1451,7 @@ Supabase permite requests desde cualquier origen por defecto. Para restringirlo,
 
 ### SPA routing
 
-`wrangler.jsonc` ya tiene `"not_found_handling": "single-page-application"` — cualquier path devuelve `index.html`. La ruta `/mi-historial` funciona sin cambios en el Worker.
+`wrangler.json` ya tiene `"not_found_handling": "single-page-application"` — cualquier path devuelve `index.html`. La ruta `/mi-historial` funciona sin cambios en el Worker.
 
 ---
 

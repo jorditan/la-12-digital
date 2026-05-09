@@ -97,13 +97,6 @@ export const VIDEO_CREATORS: Creator[] = [
     categories: ['análisis', 'opinión'],
   },
   {
-    id: 'bostero-sacado',
-    name: 'Bostero Sacado',
-    channelId: 'CHANNEL_ID_AQUI',
-    handle: '@BosteroSacado',
-    categories: ['reacción', 'opinión'],
-  },
-  {
     id: 'laboratorio-futbol',
     name: 'Laboratorio de Fútbol',
     channelId: 'CHANNEL_ID_AQUI',

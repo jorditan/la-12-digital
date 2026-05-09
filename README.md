@@ -78,7 +78,7 @@ Trabaja en tecnología, va a la cancha cuando puede. Sigue a Boca diariamente pe
 ```
 la-12-digital/
 ├── worker.js                    # Cloudflare Worker: proxy APIs + headers de seguridad
-├── wrangler.jsonc               # Configuración Cloudflare Workers
+├── wrangler.json                # Configuración Cloudflare Workers
 ├── design-system/tokens/        # Colores, tipografía, spacing, shadows
 ├── src/
 │   ├── App.tsx                  # Layout principal
