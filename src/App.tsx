@@ -6,7 +6,7 @@ import { UltimosPartidos } from './components/UltimosPartidos';
 import { BomboneraWidget } from './components/BomboneraWidget';
 import { ProximosPartidos } from './components/ProximosPartidos';
 import { Noticias } from './components/Noticias';
-import { CanalYoutube } from './components/CanalYoutube';
+import { VideosByCategory } from './components/VideosByCategory';
 import { IdolosGame } from './components/IdolosGame';
 import { EquiposGame } from './components/EquiposGame';
 import { Sidebar } from './components/layout/Sidebar';
@@ -40,7 +40,7 @@ function DashboardPage() {
             <IdolosGame />
             <EquiposGame />
           </div>
-          <CanalYoutube />
+          <VideosByCategory />
         </main>
 
         {/* Tabla Posiciones — sticky dentro del mismo contenedor que main */}
