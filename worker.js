@@ -247,20 +247,30 @@ export default {
     }
 
     // Everything else is served by Workers Assets (the React SPA in ./dist).
-    // Attach security headers to HTML responses so the SPA gets a proper security policy.
+    // Attach security headers to HTML responses and cache headers to static assets.
     const assetResponse = await env.ASSETS.fetch(request);
     const contentType = assetResponse.headers.get('Content-Type') ?? '';
+    const headers = new Headers(assetResponse.headers);
+
+    const { pathname } = url;
+    if (/^\/assets\/[^/]+\.(js|css)$/.test(pathname)) {
+      headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (/\.(png|webp|svg|ico)$/.test(pathname)) {
+      headers.set('Cache-Control', 'public, max-age=2592000, stale-while-revalidate=86400');
+    } else if (/\/(robots\.txt|sitemap\.xml|manifest\.json)$/.test(pathname)) {
+      headers.set('Cache-Control', 'public, max-age=86400');
+    }
+
     if (contentType.includes('text/html')) {
-      const headers = new Headers(assetResponse.headers);
       for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
         headers.set(name, value);
       }
-      return new Response(assetResponse.body, {
-        status: assetResponse.status,
-        headers,
-      });
     }
-    return assetResponse;
+
+    return new Response(assetResponse.body, {
+      status: assetResponse.status,
+      headers,
+    });
   },
 };
 

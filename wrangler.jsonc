@@ -23,35 +23,8 @@
     "directory": "./dist",
     // Serve index.html for any path not matched by a static file (SPA routing).
     "not_found_handling": "single-page-application",
-    // Cache headers para assets estáticos — mejoran Core Web Vitals (LCP/FID)
-    // Los assets de Vite tienen hash en el nombre → inmutable (1 año)
-    // index.html y archivos SEO no deben cachearse con TTL largo
-    "headers": {
-      // JS/CSS con content hash de Vite → inmutables, 1 año de cache
-      "/assets/*.js": {
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-      "/assets/*.css": {
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-      // Imágenes estáticas de /public → 30 días, revalidar
-      "/*.png": {
-        "Cache-Control": "public, max-age=2592000, stale-while-revalidate=86400",
-      },
-      "/*.webp": {
-        "Cache-Control": "public, max-age=2592000, stale-while-revalidate=86400",
-      },
-      // Archivos SEO — no cachear (deben reflejar cambios al instante)
-      "/robots.txt": {
-        "Cache-Control": "public, max-age=86400",
-      },
-      "/sitemap.xml": {
-        "Cache-Control": "public, max-age=86400",
-      },
-      "/manifest.json": {
-        "Cache-Control": "public, max-age=86400",
-      },
-    },
+    // Cache headers are applied in worker.js (assets handler) since the wrangler
+    // assets.headers field is not supported in current wrangler versions.
   },
   "compatibility_flags": ["nodejs_compat"],
   // API keys for the proxy handlers are stored as Cloudflare secrets (wrangler secret put).
