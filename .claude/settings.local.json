@@ -71,7 +71,11 @@
       "Bash(git checkout *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(grep -oP \"\\(?:oe|=3[;,]|=5[;,]\\).{0,50}\" dist/assets/index-C3EjQzx4.js)",
+      "Bash(grep -o \".\\\\{30\\\\}slice\\(o,o+s.\\\\{30\\\\}\" dist/assets/index-C3EjQzx4.js)",
+      "Bash(grep -o \".\\\\{200\\\\}const p=a\\\\.slice\\(o,o+s\\).\\\\{400\\\\}\" dist/assets/index-C3EjQzx4.j)",
+      "Bash(gh pr create --title 'fix: corregir duplicados y comportamiento de noticias en dev/prod' --body ' *)"
     ]
   }
 }

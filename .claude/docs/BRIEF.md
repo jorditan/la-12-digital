@@ -117,7 +117,7 @@
 
 ## ✅ Success Metrics
 
-- **Tiempo para obtener info clave:** < 30 segundos
+- **Tiempo para obtener info clave:**  30 segundos
 - **Satisfacción:** Usuario siente que "entiende" el momento del equipo
 - **Engagement con IA:** Al menos 2 preguntas por sesión
 - **Retención:** Usuario vuelve antes de cada partido
