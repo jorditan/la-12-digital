@@ -58,13 +58,17 @@ async function getUploadsPlaylistId(handle: string): Promise<string> {
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     const detail = isDev ? ` — ${body.slice(0, 200)}` : "";
-    throw new Error(`YouTube channels error: ${res.status}${detail}`);
+    throw new Error(`YouTube channels error (${handle}): ${res.status}${detail}`);
   }
   const data = await res.json();
   const playlistId: string | undefined =
     data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
-  if (!playlistId)
-    throw new Error(`No uploads playlist found for handle: ${handle}`);
+  if (!playlistId) {
+    const itemCount = data.items?.length ?? 0;
+    throw new Error(
+      `No uploads playlist found for handle: ${handle} (items returned: ${itemCount})`,
+    );
+  }
   return playlistId;
 }
 
@@ -88,7 +92,9 @@ async function getPlaylistItems(
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     const detail = isDev ? ` — ${body.slice(0, 200)}` : "";
-    throw new Error(`YouTube playlistItems error: ${res.status}${detail}`);
+    throw new Error(
+      `YouTube playlistItems error: ${res.status} (playlistId: ${playlistId})${detail}`,
+    );
   }
   const data = await res.json();
 
@@ -172,7 +178,7 @@ export async function fetchYoutubeVideos(handle: string): Promise<VideoItem[]> {
     if (result.length) setCachedData(CACHE_KEY, result);
     return result;
   } catch (err) {
-    console.error("YouTube fetch error:", err);
+    console.error(`YouTube fetch error (handle: ${handle}):`, err);
     return [];
   }
 }

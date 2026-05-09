@@ -55,7 +55,7 @@ const SECURITY_HEADERS = {
   // and Tailwind. Scripts are module-only (no inline scripts in the Vite build).
   // Note: these headers only run inside the Cloudflare Worker (production). In
   // development Vite serves without this worker, so no CSP applies there.
-  // Open-Meteo (weather) and Wikipedia are called directly from the browser.
+  // Open-Meteo (weather), Wikipedia and Supabase are called directly from the browser.
   // All other API calls are proxied through /api/* handlers on 'self'.
   'Content-Security-Policy': [
     "default-src 'self'",
@@ -63,7 +63,7 @@ const SECURITY_HEADERS = {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' https: data:",
-    "connect-src 'self' https://*.wikipedia.org https://api.open-meteo.com",
+    "connect-src 'self' https://*.supabase.co https://*.wikipedia.org https://api.open-meteo.com",
     "frame-ancestors 'none'",
     "object-src 'none'",
   ].join('; '),
