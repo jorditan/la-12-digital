@@ -122,8 +122,8 @@ function AppInner() {
         aria-label="Pie de página"
         className="border-t border-boca-border px-4 py-6 sm:px-10 text-center"
       >
-        <div className="flex flex-col gap-4">
-          <p className="font-sans text-xs text-text-muted">
+        <div className="flex flex-col items-center gap-4">
+          <p className="font-serif text-left text-sm text-text-muted">
             Esta plataforma busca recopilar y centraliza información del{' '}
             <a
               href="https://www.bocajuniors.com.ar"
@@ -137,7 +137,7 @@ function AppInner() {
           </p>
 
           <div>
-            <p className="font-sans flex gap-2 justify-center text-xs text-text-muted">
+            <p className="font-serif text-left flex gap-2 justify-start text-sm text-text-muted">
               Creada por:{' '}
               <a
                 href="https://www.linkedin.com/in/matias-jordan/"
@@ -147,7 +147,6 @@ function AppInner() {
               >
                 Matías Owen Jordán
               </a>
-              @2026. Todos los derechos reservados.
             </p>
           </div>
         </div>
