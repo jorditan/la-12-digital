@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useHeadToHead } from "../../../hooks/useHeadToHead";
 import { isFinishedH2HResult } from "../utils";
 
-export function useH2HModalData(rivalId: number) {
+export function useH2HModalData(rivalId: number | string) {
   const { status, data, error, retry } = useHeadToHead(rivalId);
 
   const finished = useMemo(

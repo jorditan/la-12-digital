@@ -9,10 +9,10 @@ export interface EnrichedRow extends ParsedRow {
   status: EnrichStatus;
   fixtureId?: number;
   homeTeam?: string;
-  homeTeamId?: number;
+  homeTeamId?: number | string;
   homeTeamLogo?: string;
   awayTeam?: string;
-  awayTeamId?: number;
+  awayTeamId?: number | string;
   awayTeamLogo?: string;
   homeGoals?: number | null;
   awayGoals?: number | null;

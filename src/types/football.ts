@@ -171,8 +171,8 @@ export interface ProcessedFixture {
   date: Date;
   homeTeam: string;
   awayTeam: string;
-  homeTeamId: number;
-  awayTeamId: number;
+  homeTeamId: number | string;
+  awayTeamId: number | string;
   homeLogo?: string;
   awayLogo?: string;
   homeScore: number | null;

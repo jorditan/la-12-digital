@@ -27,10 +27,10 @@ export interface MatchWithAttendance extends MatchResult {
 /** Datos del partido para cachear en la tabla matches */
 export interface MatchCacheData {
   date: string;
-  homeTeamId: number;
+  homeTeamId: number | string;
   homeTeamName: string;
   homeTeamLogo?: string;
-  awayTeamId: number;
+  awayTeamId: number | string;
   awayTeamName: string;
   awayTeamLogo?: string;
   goalsHome?: number | null;

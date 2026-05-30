@@ -17,7 +17,7 @@ const BOCA_ID_EXPORT = 451;
 const BOCA_NAME_RE = /boca/i;
 
 // Logo URLs: use direct CDN URL from API when available, fallback to constructed URL.
-function teamLogoUrl(_teamId: number, directUrl?: string): string {
+function teamLogoUrl(_teamId: number | string, directUrl?: string): string {
   if (directUrl) return directUrl;
   return '';
 }
@@ -26,17 +26,18 @@ function teamLogoUrl(_teamId: number, directUrl?: string): string {
 
 export interface StandingRow {
   rank: number;
-  team: { id: number; name: string; logo: string };
+  team: { id: number | string; name: string; logo: string };
   points: number;
   all: { played: number; win: number; draw: number; lose: number };
   zone?: string; // "Zona A" / "Zona B" — undefined = tabla única
+  goalDiff?: number;
 }
 
 export interface MatchResult {
   fixtureId: number;
   date: string;
-  homeTeam: { id: number; name: string; logo: string; winner: boolean | null };
-  awayTeam: { id: number; name: string; logo: string; winner: boolean | null };
+  homeTeam: { id: number | string; name: string; logo: string; winner: boolean | null };
+  awayTeam: { id: number | string; name: string; logo: string; winner: boolean | null };
   goalsHome: number | null;
   goalsAway: number | null;
   venueName: string;
@@ -47,12 +48,12 @@ export interface ProximoPartido {
   fixtureId: number;
   date: string; // ISO
   time: string; // "HH:MM" hora local
-  homeTeam: { id: number; name: string; logo: string };
-  awayTeam: { id: number; name: string; logo: string };
+  homeTeam: { id: number | string; name: string; logo: string };
+  awayTeam: { id: number | string; name: string; logo: string };
   venueName: string;
   competition: string;
   /** ID interno de LiveScore del equipo rival — necesario para fetchHeadToHead() */
-  rivalApiId: number;
+  rivalApiId: number | string;
 }
 
 export interface Noticia {
@@ -80,6 +81,7 @@ function mapStandingData(d: import('./footballApiService').StandingData): Standi
     points: d.points,
     all: { played: d.played, win: d.win, draw: d.draw, lose: d.lose },
     zone: d.zone,
+    goalDiff: d.goalDiff,
   };
 }
 
@@ -205,8 +207,8 @@ function mapFixtureToProximoPartido(
 
 export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
   const [ligaFixtures, libFixtures] = await Promise.all([
-    getNextFixtures(8),
-    getLibertadoresNextFixtures(8),
+    getNextFixtures(20),
+    getLibertadoresNextFixtures(20),
   ]);
 
   const liga = ligaFixtures.map((f) => mapFixtureToProximoPartido(f, 'Liga Profesional'));
@@ -214,7 +216,7 @@ export async function fetchUpcomingMatches(): Promise<ProximoPartido[]> {
 
   return [...liga, ...lib]
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(0, 12);
+    .slice(0, 24);
 }
 
 // ── Noticias ─────────────────────────────────────────────────────────────────

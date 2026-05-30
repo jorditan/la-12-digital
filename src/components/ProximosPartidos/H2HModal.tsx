@@ -6,7 +6,7 @@ import { formatH2HDate, formatH2HScore, RESULT_CFG } from './utils';
 
 interface H2HModalProps {
   onClose: () => void;
-  rivalId: number;
+  rivalId: number | string;
   rivalName: string;
 }
 

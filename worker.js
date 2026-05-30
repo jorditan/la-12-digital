@@ -109,16 +109,13 @@ const ALLOWED_IMAGE_DOMAINS = new Set([
 ]);
 
 function jsonError(status, code, message, corsHeaders = {}, extra = {}) {
-  return new Response(
-    JSON.stringify({ error: { code, message }, ...extra }),
-    {
-      status,
-      headers: {
-        'Content-Type': 'application/json',
-        ...corsHeaders,
-      },
+  return new Response(JSON.stringify({ error: { code, message }, ...extra }), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      ...corsHeaders,
     },
-  );
+  });
 }
 
 function readRateLimitRule(pathname) {
@@ -312,8 +309,8 @@ async function fetchNewsData(env) {
   if (!res.ok) throw new Error(`NewsData HTTP ${res.status}`);
   const data = await res.json();
   return (data.results ?? [])
-    .filter(a => a.link && a.title)
-    .map(a => ({
+    .filter((a) => a.link && a.title)
+    .map((a) => ({
       id: a.article_id,
       titulo: a.title,
       imagen: sanitizeHttpsUrl(a.image_url, null, 'news_image') ?? '',
@@ -329,7 +326,12 @@ function mergeNews(rssItems, ndItems) {
   const merged = [];
 
   const normalize = (t) =>
-    (t ?? '').toLowerCase().replace(/[^a-z0-9áéíóúñü\s]/g, '').replace(/\s+/g, ' ').trim().substring(0, 80);
+    (t ?? '')
+      .toLowerCase()
+      .replace(/[^a-z0-9áéíóúñü\s]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .substring(0, 80);
 
   const add = (n) => {
     const cleanUrl = (n.url ?? '').split('?')[0].replace(/\/$/, '');
@@ -363,18 +365,22 @@ async function handleBocaNews(request, url, env) {
 
     const allNews = mergeNews(rssItems, ndItems);
 
-    console.log('[boca-news] Olé:', rssItems.length, '| NewsData:', ndItems.length, '| Total:', allNews.length);
-
-    return new Response(
-      JSON.stringify({ results: allNews, total: allNews.length }),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=600',
-          ...corsHeaders,
-        },
-      }
+    console.log(
+      '[boca-news] Olé:',
+      rssItems.length,
+      '| NewsData:',
+      ndItems.length,
+      '| Total:',
+      allNews.length
     );
+
+    return new Response(JSON.stringify({ results: allNews, total: allNews.length }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=600',
+        ...corsHeaders,
+      },
+    });
   } catch (e) {
     console.error('[boca-news] Unexpected error:', e);
     return jsonError(500, 'internal_error', 'Internal Server Error', corsHeaders);
@@ -645,13 +651,19 @@ async function handleLivescoreProxy(request, url, env) {
     const val = incomingParams.get(key);
     if (val !== null) params.set(key, val);
   }
-  // Inject credentials server-side so they are never exposed to the browser.
-  params.set('key', env.LIVESCORE_KEY ?? '');
-  params.set('secret', env.LIVESCORE_SECRET ?? '');
+
+  // Use the new Render Scraper API URL and inject Bearer Token
+  const renderUrl = env.RENDER_BACKEND_URL;
+  const renderKey = env.RENDER_API_KEY;
 
   let upstreamRes;
   try {
-    upstreamRes = await fetch(`https://livescore-api.com/api-client${subpath}?${params}`);
+    upstreamRes = await fetch(`${renderUrl}${subpath}?${params}`, {
+      headers: {
+        Authorization: `Bearer ${renderKey}`,
+        'User-Agent': 'la12digital-cloudflare-worker',
+      },
+    });
   } catch (err) {
     console.error('[livescore-proxy] upstream fetch failed:', err);
     return jsonError(502, 'upstream_error', 'Upstream provider unavailable', corsHeaders);

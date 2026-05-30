@@ -95,33 +95,54 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
           <div className="flex-1 overflow-x-auto">
             <table className="w-full table-fixed caption-bottom text-sm">
               <thead>
-                <tr>
-                  <th className="h-10 w-8 px-2 text-left align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
-                    #
-                  </th>
-                  <th className="h-10 px-2 text-left align-middle font-sans text-xs font-medium tracking-wide text-text-secondary">
-                    Equipos
-                  </th>
-                  <th className="h-10 w-10 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-boca-gold">
-                    PTS
-                  </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
-                    PJ
-                  </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
-                    G
-                  </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
-                    E
-                  </th>
-                  <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
-                    P
-                  </th>
-                </tr>
+                {activeZoneLabel?.toLowerCase().includes("promedios") ? (
+                  <tr>
+                    <th className="h-10 w-8 px-2 text-left align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
+                      #
+                    </th>
+                    <th className="h-10 px-2 text-left align-middle font-sans text-xs font-medium tracking-wide text-text-secondary">
+                      Equipos
+                    </th>
+                    <th className="h-10 w-16 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-boca-gold">
+                      PROM
+                    </th>
+                    <th className="h-10 w-12 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
+                      PTS
+                    </th>
+                    <th className="h-10 w-10 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
+                      PJ
+                    </th>
+                  </tr>
+                ) : (
+                  <tr>
+                    <th className="h-10 w-8 px-2 text-left align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
+                      #
+                    </th>
+                    <th className="h-10 px-2 text-left align-middle font-sans text-xs font-medium tracking-wide text-text-secondary">
+                      Equipos
+                    </th>
+                    <th className="h-10 w-10 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-boca-gold">
+                      PTS
+                    </th>
+                    <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
+                      PJ
+                    </th>
+                    <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
+                      G
+                    </th>
+                    <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
+                      E
+                    </th>
+                    <th className="h-10 w-9 px-1 text-center align-middle font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
+                      P
+                    </th>
+                  </tr>
+                )}
               </thead>
               <tbody>
                 {displayRows.map((row) => {
                   const esBoca = /boca/i.test(row.team.name);
+                  const isPromedios = activeZoneLabel?.toLowerCase().includes("promedios");
                   return (
                     <tr
                       key={row.team.id}
@@ -158,23 +179,41 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
                           </span>
                         </div>
                       </td>
-                      <td
-                        className={`px-1 py-2.5 align-middle text-center font-sans text-sm font-semibold tabular-nums ${esBoca ? "text-boca-gold" : "text-white"}`}
-                      >
-                        {row.points}
-                      </td>
-                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
-                        {row.all.played}
-                      </td>
-                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
-                        {row.all.win}
-                      </td>
-                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
-                        {row.all.draw}
-                      </td>
-                      <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
-                        {row.all.lose}
-                      </td>
+                      {isPromedios ? (
+                        <>
+                          <td
+                            className={`px-1 py-2.5 align-middle text-center font-sans text-sm font-semibold tabular-nums ${esBoca ? "text-boca-gold" : "text-white"}`}
+                          >
+                            {row.goalDiff ? (row.goalDiff / 1000).toFixed(3) : "0.000"}
+                          </td>
+                          <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
+                            {row.points}
+                          </td>
+                          <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
+                            {row.all.played}
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td
+                            className={`px-1 py-2.5 align-middle text-center font-sans text-sm font-semibold tabular-nums ${esBoca ? "text-boca-gold" : "text-white"}`}
+                          >
+                            {row.points}
+                          </td>
+                          <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
+                            {row.all.played}
+                          </td>
+                          <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
+                            {row.all.win}
+                          </td>
+                          <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
+                            {row.all.draw}
+                          </td>
+                          <td className="px-1 py-2.5 align-middle text-center font-sans text-sm text-text-secondary tabular-nums">
+                            {row.all.lose}
+                          </td>
+                        </>
+                      )}
                     </tr>
                   );
                 })}

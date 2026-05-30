@@ -15,7 +15,7 @@ import { fetchHeadToHead, type H2HMatch } from "../services/footballApiService";
  *
  * Resultados siempre desde la perspectiva de Boca (result: 'win' | 'loss' | 'draw').
  */
-export function useHeadToHead(rivalId: number | null) {
+export function useHeadToHead(rivalId: number | string | null) {
   const fetcher = useMemo(
     () => (rivalId !== null ? () => fetchHeadToHead(rivalId) : null),
     [rivalId],

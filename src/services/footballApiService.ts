@@ -1,19 +1,13 @@
-import { getCachedData, setCachedData, CACHE_DURATION } from "../utils/cache";
-import { fetchWithTimeout } from "../utils/fetchWithTimeout";
-import type { ProcessedFixture, MatchResult } from "../types/football";
+import { getCachedData, setCachedData, CACHE_DURATION } from '../utils/cache';
+import { fetchWithTimeout } from '../utils/fetchWithTimeout';
+import type { ProcessedFixture, MatchResult, Squad, Player } from '../types/football';
 
-// Live Score API — https://livescore-api.com/
-// In production the Worker injects the credentials server-side (Cloudflare secrets).
-// In dev we call LiveScore directly using the VITE_ keys from .env.
-const isDev = import.meta.env.DEV;
-const BASE_URL = isDev
-  ? "https://livescore-api.com/api-client"
-  : "/api/livescore";
-const KEY = isDev ? (import.meta.env.VITE_LIVESCORE_KEY as string) : "";
-const SECRET = isDev ? (import.meta.env.VITE_LIVESCORE_SECRET as string) : "";
-const COMPETITION = "23"; // Liga Profesional Argentina
-const LIBERTADORES_COMPETITION = "329"; // Copa Libertadores
-const BOCA_ID = "934"; // Confirmed via API standings response
+// In production the Cloudflare Worker proxies requests to Render.
+// In development Vite proxies requests to http://localhost:3001.
+const BASE_URL = '/api/livescore';
+const COMPETITION = '23'; // Liga Profesional Argentina
+const LIBERTADORES_COMPETITION = '329'; // Copa Libertadores
+const BOCA_ID = '934'; // Confirmed via API standings response
 const BOCA_RE = /boca/i;
 
 // ── Interfaces de respuesta ───────────────────────────────────────────────────
@@ -101,7 +95,7 @@ interface LSAPIStage {
 
 export interface StandingData {
   rank: number;
-  teamId: number;
+  teamId: number | string;
   teamName: string;
   teamLogo: string;
   points: number;
@@ -110,6 +104,7 @@ export interface StandingData {
   draw: number;
   lose: number;
   zone?: string;
+  goalDiff?: number;
 }
 
 export interface AnnualStandingData extends StandingData {
@@ -128,64 +123,80 @@ export interface AnnualStandingData extends StandingData {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function auth(): Record<string, string> {
-  // In production the Worker proxy injects key+secret; nothing sent from the browser.
-  if (!isDev) return {};
-  return { key: KEY, secret: SECRET };
-}
+/**
+ * Retorna las credenciales de autenticación necesarias para las llamadas de la API.
+ * Nota: Los proxies del servidor las inyectan automáticamente en producción.
+ */
+const auth = (): Record<string, string> => ({});
 
-function n(v: number | string | undefined): number {
-  return v !== undefined ? Number(v) : 0;
-}
+/**
+ * Convierte un identificador de texto alfanumérico en un número único.
+ * Útil para mapear IDs alfanuméricos de equipos a IDs numéricos de tipo indexado.
+ */
+const hashStringToNumber = (str: string): number => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0; // Conversión a entero de 32 bits
+  }
+  return Math.abs(hash);
+};
 
-// Parses "X - X" score string into [home, away]
-function parseScoreStr(
-  score: string | undefined,
-): [number | null, number | null] {
+/**
+ * Convierte un valor (número o cadena) a tipo numérico de manera segura.
+ */
+const n = (v: number | string | undefined): number => (v !== undefined ? Number(v) : 0);
+
+/**
+ * Parsea un marcador en formato "G - P" a una tupla de valores numéricos de goles [local, visitante].
+ */
+const parseScoreStr = (score: string | undefined): [number | null, number | null] => {
   if (!score) return [null, null];
   const m = score.match(/^(\d+)\s*-\s*(\d+)$/);
   if (!m) return [null, null];
   return [parseInt(m[1], 10), parseInt(m[2], 10)];
-}
+};
 
-// Maps API stage names ("Phase 1", "Phase 2") to Argentine tournament names
-function mapStageName(name: string, index: number): string {
+/**
+ * Simplifica y estandariza los nombres de fases y zonas de torneos de fútbol argentino.
+ */
+const mapStageName = (name: string): string => {
   const lower = name.toLowerCase();
-  if (
-    lower.includes("1") ||
-    lower.includes("first") ||
-    lower.includes("apertura")
-  )
-    return "Apertura";
-  if (
-    lower.includes("2") ||
-    lower.includes("second") ||
-    lower.includes("clausura")
-  )
-    return "Clausura";
-  return index === 0 ? "Apertura" : index === 1 ? "Clausura" : name;
-}
+  if (lower.includes('zona a')) return 'Zona A';
+  if (lower.includes('zona b')) return 'Zona B';
+  if (lower.includes('promedios') || lower.includes('relegation')) return 'Promedios';
+  if (lower.includes('tabla anual') || lower.includes('anual')) return 'Tabla Anual';
+  if (lower.includes('1') || lower.includes('first') || lower.includes('apertura'))
+    return 'Apertura';
+  if (lower.includes('2') || lower.includes('second') || lower.includes('clausura'))
+    return 'Clausura';
+  return name;
+};
 
-function mapStandingRow(row: LSGroupStanding, zone?: string): StandingData {
-  return {
-    rank: n(row.rank),
-    teamId: Number(row.team.id),
-    teamName: row.team.name,
-    teamLogo: row.team.logo ?? "",
-    points: n(row.points),
-    played: n(row.matches ?? row.played),
-    win: n(row.won),
-    draw: n(row.drawn),
-    lose: n(row.lost),
-    zone,
-  };
-}
+/**
+ * Mapea una fila de posiciones cruda de la API al objeto unificado StandingData del frontend.
+ */
+const mapStandingRow = (row: LSGroupStanding, zone?: string): StandingData => ({
+  rank: n(row.rank),
+  teamId: row.team.id,
+  teamName: row.team.name,
+  teamLogo: row.team.logo ?? '',
+  points: n(row.points),
+  played: n(row.matches ?? row.played),
+  win: n(row.won),
+  draw: n(row.drawn),
+  lose: n(row.lost),
+  zone,
+  goalDiff: n(row.goal_diff),
+});
 
-function getStageRows(
-  apiStage: LSAPIStage,
-): Array<{ row: LSGroupStanding; zone?: string }> {
-  const stageName = apiStage.stage?.name ?? "";
-  const mappedStage = mapStageName(stageName, 0);
+/**
+ * Obtiene todas las filas de posiciones agrupadas por zona de forma aplanada.
+ */
+const getStageRows = (apiStage: LSAPIStage): Array<{ row: LSGroupStanding; zone?: string }> => {
+  const stageName = apiStage.stage?.name ?? '';
+  const mappedStage = mapStageName(stageName);
   const groups = apiStage.groups ?? [];
 
   if (groups.length > 0) {
@@ -198,33 +209,55 @@ function getStageRows(
 
   const rows = apiStage.table ?? apiStage.rows ?? [];
   return rows.map((row) => ({ row, zone: mappedStage || undefined }));
-}
+};
 
-function isAnnualStageCandidate(stageName: string): boolean {
+/**
+ * Evalúa si una fase/etapa es apta para agregarse en la tabla anual acumulada de puntos.
+ */
+const isAnnualStageCandidate = (stageName: string): boolean => {
   const lower = stageName.trim().toLowerCase();
   if (!lower) return true;
   return (
-    lower.includes("apertura") ||
-    lower.includes("clausura") ||
-    lower.includes("phase 1") ||
-    lower.includes("phase 2") ||
-    lower.includes("first") ||
-    lower.includes("second") ||
-    lower === "1" ||
-    lower === "2"
+    lower.includes('apertura') ||
+    lower.includes('clausura') ||
+    lower.includes('phase 1') ||
+    lower.includes('phase 2') ||
+    lower.includes('first') ||
+    lower.includes('second') ||
+    lower === '1' ||
+    lower === '2'
   );
-}
+};
 
-function mapLeagueStandings(data: {
+/**
+ * Procesa y ordena las posiciones de las diferentes etapas y grupos de la liga local.
+ */
+const mapLeagueStandings = (data: {
   stages?: LSAPIStage[];
   table?: LSGroupStanding[];
-}): StandingData[] {
+}): StandingData[] => {
   const result: StandingData[] = [];
-  const stages = data.stages ?? [];
+  const stages = [...(data.stages ?? [])];
 
-  for (const [stageIndex, apiStage] of stages.entries()) {
-    const stageName = apiStage.stage?.name ?? "";
-    const mappedStage = mapStageName(stageName, stageIndex);
+  const stageOrder: Record<string, number> = {
+    'Zona A': 1,
+    'Zona B': 2,
+    'Tabla Anual': 3,
+    'Promedios': 4,
+  };
+
+  // Ordenar las etapas según el orden solicitado para mostrarlas en ese orden en el selector
+  stages.sort((a, b) => {
+    const nameA = mapStageName(a.stage?.name ?? '');
+    const nameB = mapStageName(b.stage?.name ?? '');
+    const orderA = stageOrder[nameA] ?? 99;
+    const orderB = stageOrder[nameB] ?? 99;
+    return orderA - orderB;
+  });
+
+  for (const apiStage of stages) {
+    const stageName = apiStage.stage?.name ?? '';
+    const mappedStage = mapStageName(stageName);
     const groups = apiStage.groups ?? [];
 
     if (groups.length > 0) {
@@ -250,18 +283,24 @@ function mapLeagueStandings(data: {
   }
 
   return result;
-}
+};
 
-function formatLibertadoresGroupName(groupName: string): string {
+/**
+ * Formatea y normaliza el nombre del grupo para la Copa Libertadores.
+ */
+const formatLibertadoresGroupName = (groupName: string): string => {
   const trimmed = groupName.trim();
-  if (!trimmed) return "Grupo";
+  if (!trimmed) return 'Grupo';
   return /^grupo\b/i.test(trimmed) ? trimmed : `Grupo ${trimmed}`;
-}
+};
 
-function mapLibertadoresStandings(data: {
+/**
+ * Mapea y procesa las posiciones correspondientes a la fase de grupos de la Copa Libertadores.
+ */
+const mapLibertadoresStandings = (data: {
   stages?: LSAPIStage[];
   table?: LSGroupStanding[];
-}): StandingData[] {
+}): StandingData[] => {
   const result: StandingData[] = [];
   const stages = data.stages ?? [];
 
@@ -293,23 +332,25 @@ function mapLibertadoresStandings(data: {
   }
 
   return result;
-}
+};
 
-function mapAnnualStandings(data: {
+/**
+ * Genera la tabla acumulada anual a partir de las etapas jugadas (Apertura + Clausura).
+ */
+const mapAnnualStandings = (data: {
   stages?: LSAPIStage[];
   table?: LSGroupStanding[];
-}): AnnualStandingData[] {
+}): AnnualStandingData[] => {
   const stages = data.stages ?? [];
   const selectedStages = stages.filter((apiStage) =>
-    isAnnualStageCandidate(apiStage.stage?.name ?? ""),
+    isAnnualStageCandidate(apiStage.stage?.name ?? '')
   );
   const stagesToAggregate = selectedStages.length > 0 ? selectedStages : stages;
   const annualMap = new Map<number, AnnualStandingData>();
 
   for (const [stageIndex, apiStage] of stagesToAggregate.entries()) {
     const stageLabel =
-      mapStageName(apiStage.stage?.name ?? "", stageIndex) ||
-      `Etapa ${stageIndex + 1}`;
+      mapStageName(apiStage.stage?.name ?? '') || `Etapa ${stageIndex + 1}`;
     const stageRows = getStageRows(apiStage);
 
     for (const { row } of stageRows) {
@@ -348,7 +389,7 @@ function mapAnnualStandings(data: {
         rank: 0,
         teamId,
         teamName: row.team.name,
-        teamLogo: row.team.logo ?? "",
+        teamLogo: row.team.logo ?? '',
         points,
         played,
         win,
@@ -382,7 +423,7 @@ function mapAnnualStandings(data: {
         goalDiff: n(row.goal_diff),
         breakdown: [
           {
-            stage: "Tabla general",
+            stage: 'Tabla general',
             points: n(row.points),
             played: n(row.matches ?? row.played),
             win: n(row.won),
@@ -396,7 +437,7 @@ function mapAnnualStandings(data: {
           b.points - a.points ||
           b.goalDiff - a.goalDiff ||
           b.goalsFor - a.goalsFor ||
-          a.teamName.localeCompare(b.teamName),
+          a.teamName.localeCompare(b.teamName)
       )
       .map((row, index) => ({ ...row, rank: index + 1 }));
   }
@@ -407,105 +448,111 @@ function mapAnnualStandings(data: {
         b.points - a.points ||
         b.goalDiff - a.goalDiff ||
         b.goalsFor - a.goalsFor ||
-        a.teamName.localeCompare(b.teamName),
+        a.teamName.localeCompare(b.teamName)
     )
     .map((row, index) => ({
       ...row,
       rank: index + 1,
       breakdown: row.breakdown.sort((a, b) => a.stage.localeCompare(b.stage)),
     }));
-}
+};
 
-function matchResult(
+/**
+ * Evalúa y retorna el resultado de un partido (victoria, empate, derrota) desde la perspectiva de Boca.
+ */
+const matchResult = (
   homeScore: number | null,
   awayScore: number | null,
-  isBocaHome: boolean,
-): MatchResult {
-  if (homeScore === null || awayScore === null) return "scheduled";
-  if (homeScore === awayScore) return "draw";
+  isBocaHome: boolean
+): MatchResult => {
+  if (homeScore === null || awayScore === null) return 'scheduled';
+  if (homeScore === awayScore) return 'draw';
   const homeWon = homeScore > awayScore;
-  if (isBocaHome) return homeWon ? "win" : "loss";
-  return homeWon ? "loss" : "win";
-}
+  if (isBocaHome) return homeWon ? 'win' : 'loss';
+  return homeWon ? 'loss' : 'win';
+};
 
-// Maps history match — /matches/history.json uses same nested home/away as fixtures
-function mapMatch(m: LSMatch): ProcessedFixture {
-  const homeName = m.home?.name ?? "";
-  const awayName = m.away?.name ?? "";
-  const isBocaHome =
-    String(m.home?.id ?? "") === BOCA_ID || BOCA_RE.test(homeName);
+/**
+ * Convierte los datos crudos de un partido finalizado de la API a la interfaz ProcessedFixture del frontend.
+ */
+const mapMatch = (m: LSMatch): ProcessedFixture => {
+  const homeName = m.home?.name ?? '';
+  const awayName = m.away?.name ?? '';
+  const isBocaHome = String(m.home?.id ?? '') === BOCA_ID || BOCA_RE.test(homeName);
 
-  // Scores are in nested scores object: { score, ft_score, ht_score }
   const s = m.scores;
   const rawScore = s?.ft_score && /\d/.test(s.ft_score) ? s.ft_score : s?.score;
   const [homeScore, awayScore] = parseScoreStr(rawScore);
 
-  // time is "FT" for finished matches; use scheduled for actual kick-off time
   const timeStr =
     m.scheduled && m.scheduled.length >= 5
       ? m.scheduled.substring(0, 5)
       : m.time && m.time.length >= 5
         ? m.time.substring(0, 5)
-        : "00:00";
+        : '00:00';
   const dateStr = `${m.date}T${timeStr}:00Z`;
 
   return {
-    id: Number(m.id),
+    id: isNaN(Number(m.id)) ? hashStringToNumber(String(m.id)) : Number(m.id),
     date: new Date(dateStr),
     homeTeam: homeName,
     awayTeam: awayName,
-    homeTeamId: Number(m.home?.id ?? 0),
-    awayTeamId: Number(m.away?.id ?? 0),
-    homeLogo: m.home?.logo ?? "",
-    awayLogo: m.away?.logo ?? "",
+    homeTeamId: m.home?.id ?? 0,
+    awayTeamId: m.away?.id ?? 0,
+    homeLogo: m.home?.logo ?? '',
+    awayLogo: m.away?.logo ?? '',
     homeScore,
     awayScore,
     isBocaHome,
     result: matchResult(homeScore, awayScore, isBocaHome),
-    status: m.status === "FINISHED" ? "finished" : "scheduled",
-    venue: m.location ?? "",
+    status: m.status === 'FINISHED' ? 'finished' : 'scheduled',
+    venue: m.location ?? '',
   };
-}
+};
 
-// Maps nested fixture format (/fixtures/list.json)
-function mapFixture(f: LSFixture): ProcessedFixture {
-  const homeName = f.home?.name ?? "";
-  const awayName = f.away?.name ?? "";
-  const isBocaHome =
-    String(f.home?.id ?? "") === BOCA_ID || BOCA_RE.test(homeName);
+/**
+ * Convierte los datos crudos de un partido programado de la API a la interfaz ProcessedFixture del frontend.
+ */
+const mapFixture = (f: LSFixture): ProcessedFixture => {
+  const homeName = f.home?.name ?? '';
+  const awayName = f.away?.name ?? '';
+  const isBocaHome = String(f.home?.id ?? '') === BOCA_ID || BOCA_RE.test(homeName);
 
-  const timeStr =
-    f.time && f.time.length >= 5 ? f.time.substring(0, 5) : "00:00";
+  const timeStr = f.time && f.time.length >= 5 ? f.time.substring(0, 5) : '00:00';
   const dateStr = `${f.date}T${timeStr}:00Z`;
 
   return {
-    id: Number(f.id),
+    id: isNaN(Number(f.id)) ? hashStringToNumber(String(f.id)) : Number(f.id),
     date: new Date(dateStr),
     homeTeam: homeName,
     awayTeam: awayName,
-    homeTeamId: Number(f.home?.id ?? 0),
-    awayTeamId: Number(f.away?.id ?? 0),
-    homeLogo: f.home?.logo ?? "",
-    awayLogo: f.away?.logo ?? "",
+    homeTeamId: f.home?.id ?? 0,
+    awayTeamId: f.away?.id ?? 0,
+    homeLogo: f.home?.logo ?? '',
+    awayLogo: f.away?.logo ?? '',
     homeScore: null,
     awayScore: null,
     isBocaHome,
-    result: "scheduled",
-    status: "scheduled",
-    venue: f.location ?? "",
+    result: 'scheduled',
+    status: 'scheduled',
+    venue: f.location ?? '',
   };
-}
+};
 
 // ── Fetch genérico ────────────────────────────────────────────────────────────
 
 const pending = new Map<string, Promise<unknown>>();
 
-async function fetchLS<T>(
+/**
+ * Wrapper HTTP genérico para el cliente del scraper.
+ * Implementa un mecanismo de deduplicación de promesas concurrentes y caching en localStorage.
+ */
+const fetchLS = async <T>(
   endpoint: string,
   params: Record<string, string>,
   cacheKey: string,
-  cacheDuration: number,
-): Promise<T> {
+  cacheDuration: number
+): Promise<T> => {
   const cached = getCachedData<T>(cacheKey, cacheDuration);
   if (cached) return cached;
 
@@ -514,16 +561,14 @@ async function fetchLS<T>(
   const promise = (async () => {
     const qs = new URLSearchParams({ ...auth(), ...params }).toString();
     const url = `${BASE_URL}${endpoint}?${qs}`;
-    // FIX: fetchWithTimeout prevents hanging on slow/dead APIs
-    const res = await fetchWithTimeout(url);
-    if (!res.ok) throw new Error(`LiveScore error ${res.status}: ${endpoint}`);
+    const res = await fetchWithTimeout(url, {}, 60_000);
+    if (!res.ok) throw new Error(`Scraper API error ${res.status}: ${endpoint}`);
     const json = (await res.json()) as {
       success: boolean;
       data: T;
       error?: string;
     };
-    if (!json.success)
-      throw new Error(`LiveScore API error: ${json.error ?? "unknown"}`);
+    if (!json.success) throw new Error(`Scraper API error: ${json.error ?? 'unknown'}`);
     setCachedData(cacheKey, json.data);
     return json.data;
   })();
@@ -531,7 +576,7 @@ async function fetchLS<T>(
   pending.set(cacheKey, promise);
   promise.finally(() => pending.delete(cacheKey));
   return promise;
-}
+};
 
 // ── Tipos públicos adicionales ────────────────────────────────────────────────
 
@@ -547,51 +592,46 @@ export interface H2HMatch {
 
 // ── Funciones públicas ────────────────────────────────────────────────────────
 
-export async function getLastFixtures(
-  count: number = 8,
-): Promise<ProcessedFixture[]> {
-  // /matches/history.json supports team_id filter server-side
+/**
+ * Obtiene los últimos partidos finalizados de Boca Juniors en la liga local.
+ */
+export const getLastFixtures = async (count: number = 8): Promise<ProcessedFixture[]> => {
   const data = await fetchLS<{ match?: LSMatch[]; data?: LSMatch[] }>(
-    "/matches/history.json",
+    '/matches/history.json',
     { competition_id: COMPETITION, team_id: BOCA_ID },
     `ls_history_boca_${BOCA_ID}`,
-    CACHE_DURATION.FIXTURES,
+    CACHE_DURATION.FIXTURES
   );
 
   const matches = data.match ?? data.data ?? [];
-  // API returns newest first
   return matches.slice(0, count).map(mapMatch);
-}
+};
 
-export async function getNextFixtures(
-  count: number = 8,
-): Promise<ProcessedFixture[]> {
+/**
+ * Obtiene los próximos partidos programados (schedules) de Boca Juniors en la liga local.
+ */
+export const getNextFixtures = async (count: number = 8): Promise<ProcessedFixture[]> => {
   const data = await fetchLS<{ fixtures?: LSFixture[]; fixture?: LSFixture[] }>(
-    "/fixtures/list.json",
+    '/fixtures/list.json',
     { competition_id: COMPETITION, team: BOCA_ID },
     `ls_fixtures_boca_v2_${BOCA_ID}`,
-    CACHE_DURATION.FIXTURES,
+    CACHE_DURATION.FIXTURES
   );
 
   const fixtures = data.fixtures ?? data.fixture ?? [];
   return fixtures
     .map(mapFixture)
-    .filter(
-      (f) =>
-        f.isBocaHome ||
-        f.awayTeamId === Number(BOCA_ID) ||
-        BOCA_RE.test(f.awayTeam),
-    )
+    .filter((f) => f.isBocaHome || f.awayTeamId === Number(BOCA_ID) || BOCA_RE.test(f.awayTeam))
     .slice(0, count);
-}
+};
 
-function mapFlatMatch(m: LSFlatMatch): H2HMatch {
+/**
+ * Procesa un partido plano para el historial de enfrentamientos H2H directos.
+ */
+const mapFlatMatch = (m: LSFlatMatch): H2HMatch => {
   const isBocaHome = String(m.home_id) === BOCA_ID || BOCA_RE.test(m.home_name);
   const [homeScore, awayScore] = parseScoreStr(m.ft_score ?? m.score);
-  const timeStr =
-    m.scheduled && m.scheduled.length >= 5
-      ? m.scheduled.substring(0, 5)
-      : "00:00";
+  const timeStr = m.scheduled && m.scheduled.length >= 5 ? m.scheduled.substring(0, 5) : '00:00';
   const date = new Date(`${m.date}T${timeStr}:00Z`);
   return {
     date: date.toISOString(),
@@ -602,14 +642,12 @@ function mapFlatMatch(m: LSFlatMatch): H2HMatch {
     result: matchResult(homeScore, awayScore, isBocaHome),
     competition: m.competition?.name,
   };
-}
+};
 
 /**
- * Historial de enfrentamientos directos Boca vs rival.
- * Usa el endpoint api-client/teams/head2head.json.
- * En dev pasa por el proxy /api/livescore y en producción por el Worker.
+ * Obtiene el historial de enfrentamientos cara a cara (H2H) de Boca Juniors contra el rival seleccionado.
  */
-export async function fetchHeadToHead(rivalApiId: number): Promise<H2HMatch[]> {
+export const fetchHeadToHead = async (rivalApiId: number | string): Promise<H2HMatch[]> => {
   const cacheKey = `ls_h2h_v5_${BOCA_ID}_${rivalApiId}`;
   const data = await fetchLS<{
     h2h?: LSFlatMatch[];
@@ -619,88 +657,110 @@ export async function fetchHeadToHead(rivalApiId: number): Promise<H2HMatch[]> {
     team2_last_6?: LSFlatMatch[];
     fixture?: unknown;
   }>(
-    "/teams/head2head.json",
+    '/teams/head2head.json',
     { team1_id: BOCA_ID, team2_id: String(rivalApiId) },
     cacheKey,
-    CACHE_DURATION.FIXTURES,
+    CACHE_DURATION.FIXTURES
   );
 
   const matches = data.h2h ?? [];
   matches.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
   return matches.slice(0, 5).map(mapFlatMatch);
-}
+};
 
-export async function getStandingsData(): Promise<StandingData[]> {
+/**
+ * Obtiene las tablas de posiciones del torneo de liga local.
+ */
+export const getStandingsData = async (): Promise<StandingData[]> => {
   const data = await fetchLS<{
     stages?: LSAPIStage[];
     table?: LSGroupStanding[];
   }>(
-    "/competitions/table.json",
+    '/competitions/table.json',
     { competition_id: COMPETITION },
     `ls_table_${COMPETITION}`,
-    CACHE_DURATION.STANDINGS,
+    CACHE_DURATION.STANDINGS
   );
   return mapLeagueStandings(data);
-}
+};
 
-export async function getLibertadoresLastFixtures(
-  count: number = 8,
-): Promise<ProcessedFixture[]> {
+/**
+ * Obtiene los últimos partidos jugados por Boca Juniors en la Copa Libertadores.
+ */
+export const getLibertadoresLastFixtures = async (count: number = 8): Promise<ProcessedFixture[]> => {
   const data = await fetchLS<{ match?: LSMatch[]; data?: LSMatch[] }>(
-    "/matches/history.json",
+    '/matches/history.json',
     { competition_id: LIBERTADORES_COMPETITION, team_id: BOCA_ID },
     `ls_history_boca_lib_${BOCA_ID}`,
-    CACHE_DURATION.FIXTURES,
+    CACHE_DURATION.FIXTURES
   );
 
   const matches = data.match ?? data.data ?? [];
   return matches.slice(0, count).map(mapMatch);
-}
+};
 
-export async function getLibertadoresNextFixtures(
-  count: number = 8,
-): Promise<ProcessedFixture[]> {
+/**
+ * Obtiene los próximos partidos programados de Boca Juniors en la Copa Libertadores.
+ */
+export const getLibertadoresNextFixtures = async (count: number = 8): Promise<ProcessedFixture[]> => {
   const data = await fetchLS<{ fixtures?: LSFixture[]; fixture?: LSFixture[] }>(
-    "/fixtures/list.json",
+    '/fixtures/list.json',
     { competition_id: LIBERTADORES_COMPETITION, team: BOCA_ID },
     `ls_fixtures_boca_lib_v2_${BOCA_ID}`,
-    CACHE_DURATION.FIXTURES,
+    CACHE_DURATION.FIXTURES
   );
 
   const fixtures = data.fixtures ?? data.fixture ?? [];
   return fixtures
     .map(mapFixture)
-    .filter(
-      (f) =>
-        f.isBocaHome ||
-        f.awayTeamId === Number(BOCA_ID) ||
-        BOCA_RE.test(f.awayTeam),
-    )
+    .filter((f) => f.isBocaHome || f.awayTeamId === Number(BOCA_ID) || BOCA_RE.test(f.awayTeam))
     .slice(0, count);
-}
+};
 
-export async function getLibertadoresStandingsData(): Promise<StandingData[]> {
+/**
+ * Obtiene las tablas de posiciones de la fase de grupos de la Copa Libertadores.
+ */
+export const getLibertadoresStandingsData = async (): Promise<StandingData[]> => {
   const data = await fetchLS<{
     stages?: LSAPIStage[];
     table?: LSGroupStanding[];
   }>(
-    "/competitions/table.json",
+    '/competitions/table.json',
     { competition_id: LIBERTADORES_COMPETITION },
     `ls_table_${LIBERTADORES_COMPETITION}`,
-    CACHE_DURATION.STANDINGS,
+    CACHE_DURATION.STANDINGS
   );
   return mapLibertadoresStandings(data);
-}
+};
 
-export async function getAnnualStandingsData(): Promise<AnnualStandingData[]> {
+/**
+ * Obtiene la tabla anual acumulativa de puntos.
+ */
+export const getAnnualStandingsData = async (): Promise<AnnualStandingData[]> => {
   const data = await fetchLS<{
     stages?: LSAPIStage[];
     table?: LSGroupStanding[];
   }>(
-    "/competitions/table.json",
+    '/competitions/table.json',
     { competition_id: COMPETITION },
     `ls_annual_table_${COMPETITION}`,
-    CACHE_DURATION.STANDINGS,
+    CACHE_DURATION.STANDINGS
   );
   return mapAnnualStandings(data);
-}
+};
+
+/**
+ * Obtiene el plantel y staff técnico del equipo especificado (Boca Juniors por defecto).
+ */
+export const getTeamSquad = async (teamId: string = BOCA_ID): Promise<Squad> => {
+  const data = await fetchLS<{ team: any; players: Player[] }>(
+    '/teams/squad.json',
+    { team_id: teamId },
+    `ls_squad_${teamId}`,
+    CACHE_DURATION.SQUAD
+  );
+  return {
+    team: data.team,
+    players: data.players,
+  };
+};

@@ -17,17 +17,22 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       open: true,
       proxy: {
-        // In dev, proxy /api/livescore/* → livescore-api.com and inject credentials from .env
+        // In dev, proxy /api/livescore/* → local scraper or Render backend
         "/api/livescore": {
-          target: "https://livescore-api.com",
+          target: env.VITE_RENDER_BACKEND_URL || "http://localhost:3001",
           changeOrigin: true,
           configure: (proxy) => {
             proxy.on("proxyReq", (proxyReq, req) => {
               const [pathname, search] = (req.url ?? "").split("?");
               const params = new URLSearchParams(search ?? "");
-              params.set("key", env.VITE_LIVESCORE_KEY ?? "");
-              params.set("secret", env.VITE_LIVESCORE_SECRET ?? "");
-              proxyReq.path = `/api-client${pathname.replace(/^\/api\/livescore/, "")}?${params}`;
+              
+              // Inject the local/Render API key
+              const apiKey = env.VITE_RENDER_API_KEY ?? "tu-token-secreto-inventado-por-ti-ej-boca1234";
+              proxyReq.setHeader("Authorization", `Bearer ${apiKey}`);
+              
+              // Rewrite path from /api/livescore/X to /api/X
+              const cleanPath = pathname.replace(/^\/api\/livescore/, "/api");
+              proxyReq.path = `${cleanPath}?${params}`;
             });
           },
         },
