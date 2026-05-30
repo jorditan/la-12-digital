@@ -653,12 +653,12 @@ async function handleLivescoreProxy(request, url, env) {
   }
 
   // Use the new Render Scraper API URL and inject Bearer Token
-  let cleanRenderUrl = (env.RENDER_BACKEND_URL ?? '').replace(/\/$/, '');
+  let cleanRenderUrl = (env.RENDER_BACKEND_URL || 'https://scrapper-promiedos.onrender.com').replace(/\/$/, '');
   if (cleanRenderUrl.endsWith('/api')) {
     cleanRenderUrl = cleanRenderUrl.slice(0, -4);
   }
   const cleanSubpath = `/api${subpath}`;
-  const renderKey = env.RENDER_API_KEY;
+  const renderKey = env.RENDER_API_KEY || 'BocaScraperSecretPass2026';
 
   let upstreamRes;
   try {
