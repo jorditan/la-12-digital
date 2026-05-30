@@ -653,12 +653,16 @@ async function handleLivescoreProxy(request, url, env) {
   }
 
   // Use the new Render Scraper API URL and inject Bearer Token
-  const renderUrl = env.RENDER_BACKEND_URL;
+  let cleanRenderUrl = (env.RENDER_BACKEND_URL ?? '').replace(/\/$/, '');
+  if (cleanRenderUrl.endsWith('/api')) {
+    cleanRenderUrl = cleanRenderUrl.slice(0, -4);
+  }
+  const cleanSubpath = `/api${subpath}`;
   const renderKey = env.RENDER_API_KEY;
 
   let upstreamRes;
   try {
-    upstreamRes = await fetch(`${renderUrl}${subpath}?${params}`, {
+    upstreamRes = await fetch(`${cleanRenderUrl}${cleanSubpath}?${params}`, {
       headers: {
         Authorization: `Bearer ${renderKey}`,
         'User-Agent': 'la12digital-cloudflare-worker',
