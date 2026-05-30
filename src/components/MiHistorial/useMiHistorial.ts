@@ -123,17 +123,20 @@ export const useMiHistorial = (user: AuthUser) => {
       .in('id', attendedIds)
       .then(({ data, error }) => {
         if (error) return;
-        const mapped: MatchResult[] = (data || []).map((m) => ({
-          fixtureId: isNaN(parseInt(m.id)) ? 0 : parseInt(m.id),
-          date: m.date,
-          homeTeam: { id: m.home_team_id, name: m.home_team_name, logo: m.home_team_logo, winner: null },
-          awayTeam: { id: m.away_team_id, name: m.away_team_name, logo: m.away_team_logo, winner: null },
-          goalsHome: m.goals_home,
-          goalsAway: m.goals_away,
-          venueName: m.venue || '',
-          competition: m.competition || undefined,
-          _manualId: m.id,
-        } as MatchResult & { _manualId?: string }));
+        const mapped: MatchResult[] = (data || []).map((m) => {
+          const cleanTeamId = (id: string | number) => isNaN(Number(id)) ? id : Number(id);
+          return {
+            fixtureId: isNaN(parseInt(m.id)) ? 0 : parseInt(m.id),
+            date: m.date,
+            homeTeam: { id: cleanTeamId(m.home_team_id), name: m.home_team_name, logo: m.home_team_logo, winner: null },
+            awayTeam: { id: cleanTeamId(m.away_team_id), name: m.away_team_name, logo: m.away_team_logo, winner: null },
+            goalsHome: m.goals_home,
+            goalsAway: m.goals_away,
+            venueName: m.venue || '',
+            competition: m.competition || undefined,
+            _manualId: m.id,
+          } as MatchResult & { _manualId?: string };
+        });
         setDbMatches(mapped);
       });
   }, [attendanceMap]);
