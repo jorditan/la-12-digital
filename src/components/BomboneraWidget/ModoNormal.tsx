@@ -94,10 +94,18 @@ export function ModoNormal({
                       {formatFechaLarga(proximoLocal.date).charAt(0).toUpperCase() +
                         formatFechaLarga(proximoLocal.date).slice(1)}
                     </Badge>
-                    <Badge>{proximoLocal.time}</Badge>
+                    {proximoLocal.time === '12:00' ? (
+                      <Badge className="italic text-white/50">A confirmar</Badge>
+                    ) : (
+                      <Badge>{proximoLocal.time}</Badge>
+                    )}
                     <Badge
                       variant={proximoLocal.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-                      className="px-1.5 whitespace-nowrap"
+                      className={[
+                        'px-1.5 whitespace-nowrap',
+                        proximoLocal.competition === 'Copa Argentina' ? 'bg-[#0CF737]/10 text-[#0CF737] border border-[#0CF737]/20' : '',
+                        proximoLocal.competition === 'Copa Sudamericana' ? 'bg-[#23EBE4]/10 text-[#23EBE4] border border-[#23EBE4]/20' : '',
+                      ].join(' ')}
                     >
                       {proximoLocal.competition}
                     </Badge>

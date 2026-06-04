@@ -100,12 +100,18 @@ export async function fetchLibertadoresStandings(): Promise<StandingRow[]> {
   return data.map(mapStandingData);
 }
 
-// ── Últimos partidos ─────────────────────────────────────────────────────────
+const COMPETITION_NAMES: Record<number, string> = {
+  23: 'Liga Profesional',
+  329: 'Copa Libertadores',
+  14: 'Copa Argentina',
+  11: 'Copa Sudamericana',
+};
 
 function mapFixtureToMatchResult(
   f: import('../types/football').ProcessedFixture,
-  competition: string
+  defaultCompetition: string
 ): MatchResult {
+  const competition = f.competitionId ? (COMPETITION_NAMES[f.competitionId] || defaultCompetition) : defaultCompetition;
   const homeId = f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId;
   const awayId = f.isBocaHome ? f.awayTeamId : BOCA_ID_EXPORT;
 
@@ -178,9 +184,10 @@ export async function fetchMatchesForHistorial(): Promise<MatchResult[]> {
 
 function mapFixtureToProximoPartido(
   f: import('../types/football').ProcessedFixture,
-  competition: string
+  defaultCompetition: string
 ): ProximoPartido {
   const isBocaAway = !f.isBocaHome;
+  const competition = f.competitionId ? (COMPETITION_NAMES[f.competitionId] || defaultCompetition) : defaultCompetition;
   return {
     fixtureId: f.id,
     date: f.date.toISOString(),

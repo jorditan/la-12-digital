@@ -102,14 +102,22 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
 
                   {/* Hora */}
                   <td className="py-2.5 px-3 text-center whitespace-nowrap">
-                    <span className="text-sm text-white tabular-nums font-medium">{p.time}</span>
+                    {p.time === '12:00' ? (
+                      <span className="text-sm text-white/40 italic">A confirmar</span>
+                    ) : (
+                      <span className="text-sm text-white tabular-nums font-medium">{p.time}</span>
+                    )}
                   </td>
 
                   {/* Copa */}
                   <td className="py-2.5 px-3 hidden md:table-cell">
                     <Badge
                       variant={p.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-                      className="text-xs px-1.5 whitespace-nowrap"
+                      className={[
+                        'text-xs px-1.5 whitespace-nowrap',
+                        p.competition === 'Copa Argentina' ? 'bg-[#0CF737]/10 text-[#0CF737] border border-[#0CF737]/20' : '',
+                        p.competition === 'Copa Sudamericana' ? 'bg-[#23EBE4]/10 text-[#23EBE4] border border-[#23EBE4]/20' : '',
+                      ].join(' ')}
                     >
                       {p.competition}
                     </Badge>

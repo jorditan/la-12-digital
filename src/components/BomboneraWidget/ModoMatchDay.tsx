@@ -67,7 +67,7 @@ export function ModoMatchDay({
                   {rival.name}
                 </p>
                 <p className="type-ui-label text-text-secondary mt-0.5 text-sm">
-                  {isToday ? "Hoy" : "Mañana"} · {proximoLocal.time} hs ·{" "}
+                  {isToday ? "Hoy" : "Mañana"} · {proximoLocal.time === '12:00' ? <span className="italic">Horario a confirmar</span> : `${proximoLocal.time} hs`} ·{" "}
                   {proximoLocal.competition}
                 </p>
               </div>

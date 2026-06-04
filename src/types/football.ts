@@ -181,6 +181,7 @@ export interface ProcessedFixture {
   result: MatchResult;
   status: string;
   venue: string;
+  competitionId?: number;
 }
 
 export interface ProcessedStanding {

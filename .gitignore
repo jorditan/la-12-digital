@@ -49,3 +49,7 @@ Thumbs.db
 .wrangler
 .dev.vars
 !.dev.vars.example
+
+# Scratch scripts
+scratch/
+
