@@ -1,7 +1,8 @@
 import { useAsyncData } from '../../hooks/useAsyncData';
 import { fetchLastMatches, BOCA_ID, type MatchResult } from '../../services/apifootball';
-import { Badge } from '../ui/Badge';
+import { formatIsoDateEsArNumeric } from '../../lib/date';
 import { Button } from '../ui/Button';
+import { ESCUDO_VACIO } from '../../data/equipos';
 
 type Resultado = 'victoria' | 'derrota' | 'empate';
 
@@ -17,26 +18,11 @@ function getRival(match: MatchResult) {
   return match.homeTeam.id === BOCA_ID ? match.awayTeam : match.homeTeam;
 }
 
-function formatFecha(isoDate: string): string {
-  const d = new Date(isoDate);
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  return `${day}/${month}`;
-}
-
 const ROW_STYLE: Record<Resultado, string> = {
   victoria: 'border-l-2 border-l-green-400 bg-green-500/[0.2]',
   derrota: 'border-l-2 border-l-red-400 bg-red-500/[0.2]',
   empate: 'border-l-2 border-l-slate-400 bg-slate-500/[0.2]',
 };
-
-const COMPETITION_BADGE: Record<string, { variant: 'gold' | 'blue'; label: string }> = {
-  'Copa Libertadores': { variant: 'gold', label: 'Libertadores' },
-};
-
-function getCompetitionBadge(competition: string) {
-  return COMPETITION_BADGE[competition] ?? { variant: 'blue' as const, label: 'Liga profesional' };
-}
 
 export function UltimosPartidos() {
   const { data, status: estado, retry: cargar } = useAsyncData(fetchLastMatches);
@@ -92,9 +78,6 @@ export function UltimosPartidos() {
                   <th className="px-2 sm:px-3 py-2 text-left font-sans font-medium text-sm text-text-muted">
                     Rival
                   </th>
-                  <th className="hidden sm:table-cell px-2 py-2 text-left font-sans font-medium text-sm text-text-muted max-w-[70px]">
-                    Competencia
-                  </th>
                   <th className="px-2 sm:px-6 py-2 text-right font-sans font-medium text-sm text-text-muted">
                     Resultado
                   </th>
@@ -114,24 +97,29 @@ export function UltimosPartidos() {
                       className={`${ROW_STYLE[resultado]}${idx < partidos.length - 1 ? ' border-b border-white/[0.04]' : ''}`}
                     >
                       <td className="px-2 sm:px-6 py-2 sm:py-3 font-sans font-medium text-sm text-white whitespace-nowrap">
-                        {formatFecha(match.date)}
+                        {formatIsoDateEsArNumeric(match.date)}
                       </td>
                       <td
                         className="px-2 sm:px-3 py-2 sm:py-3 font-sans font-normal text-sm text-white max-w-[110px] truncate"
                         title={rival.name}
                       >
-                        {rival.name}
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={rival.logo}
+                            alt={rival.name}
+                            width={16}
+                            height={16}
+                            className="object-contain w-4 h-4"
+                            loading="lazy"
+                            draggable={false}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO;
+                            }}
+                          />
+                          <span>{rival.name}</span>
+                        </div>
                       </td>
-                      <td className="hidden sm:table-cell px-2 py-2 sm:py-3 max-w-[70px]">
-                        {match.competition && (() => {
-                          const { variant, label } = getCompetitionBadge(match.competition);
-                          return (
-                            <Badge variant={variant} className="text-xs px-1.5 whitespace-nowrap">
-                              {label}
-                            </Badge>
-                          );
-                        })()}
-                      </td>
+
                       <td className="px-2 sm:px-6 py-2 sm:py-3 font-sans font-normal text-sm text-white text-right whitespace-nowrap">
                         {golesBoca ?? '-'} - {golesRival ?? '-'}
                       </td>

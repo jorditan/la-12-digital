@@ -20,7 +20,7 @@ export const CACHE_DURATION = {
   SQUAD: 24 * 60 * 60 * 1000, // 24 horas (plantel casi no cambia)
 
   // Datos que cambian más
-  FIXTURES: 2 * 60 * 60 * 1000, // 2 horas (partidos pueden cambiar)
+  FIXTURES: 30 * 60 * 1000, // 30 minutos (partidos pueden cambiar)
   NEWS: 5 * 60 * 1000, // 5 minutos (noticias se actualizan seguido)
   INJURIES: 12 * 60 * 60 * 1000, // 12 horas (lesionados cambian poco)
 

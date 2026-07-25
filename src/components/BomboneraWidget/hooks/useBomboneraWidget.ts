@@ -8,13 +8,13 @@ import {
   type ProximoPartido,
   BOCA_ID,
 } from "../../../services/apifootball";
+import { getDaysUntilIsoDate } from "../../../lib/date";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 export function isMatchDayMode(date: string): boolean {
-  const diffMs = new Date(date).getTime() - Date.now();
-  const diffDays = diffMs / (1000 * 60 * 60 * 24);
-  return diffDays >= 0 && diffDays <= 1;
+  const days = getDaysUntilIsoDate(date);
+  return days >= 0 && days <= 1;
 }
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
@@ -85,13 +85,7 @@ export function useBomboneraWidget(): BomboneraWidgetData {
   }, [proximoLocal]);
 
   const diasHastaPartido = proximoLocal
-    ? Math.max(
-        0,
-        Math.ceil(
-          (new Date(proximoLocal.date).getTime() - Date.now()) /
-            (1000 * 60 * 60 * 24),
-        ),
-      )
+    ? getDaysUntilIsoDate(proximoLocal.date)
     : null;
 
   const matchDayMode = proximoLocal ? isMatchDayMode(proximoLocal.date) : false;

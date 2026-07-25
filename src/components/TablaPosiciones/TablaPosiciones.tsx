@@ -43,15 +43,15 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
       className="h-full bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col"
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-boca-border-card bg-boca-blue-mid px-4 pt-4 pb-3 sm:px-6 sm:pt-6 sm:pb-3 flex items-center justify-between gap-3">
+      <div className="sticky top-0 z-10 border-b border-boca-border-card bg-boca-blue-mid px-4 pt-4 pb-3 sm:px-6 sm:pt-6 sm:pb-3 flex items-start flex-col justify-between gap-3">
         <h2 className="type-section-title text-white shrink-0">Posiciones</h2>
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+        <div className="flex w-full items-left justify-end gap-2">
           <Tab
             options={COMPETITION_OPTIONS}
             value={competicion}
             onChange={handleCompeticionChange}
             fullWidth
-            className="min-w-0 flex-1 max-w-[11rem]"
+            className="w-full"
           />
           {headerAction}
         </div>
@@ -154,21 +154,24 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
                   const esBoca = /boca/i.test(row.team.name);
                   const isPromedios = activeZoneLabel?.toLowerCase().includes('promedios');
                   const isAnual = activeZoneLabel?.toLowerCase().includes('anual');
-                  const labelLower = activeZoneLabel?.toLowerCase() || "";
-                  const isRegularStage = labelLower.includes("apertura") ||
-                                         labelLower.includes("clausura") ||
-                                         labelLower.includes("zona");
+                  const labelLower = activeZoneLabel?.toLowerCase() || '';
+                  const isRegularStage =
+                    labelLower.includes('apertura') ||
+                    labelLower.includes('clausura') ||
+                    labelLower.includes('zona');
 
                   // Determine class based on rank and zone, matching Promiedos highlights
-                  let rankClass = "";
+                  let rankClass = '';
                   if (esBoca) {
-                    rankClass = "bg-boca-gold/[0.07] border-2 border-l-boca-gold hover:bg-boca-gold/[0.10]";
+                    rankClass =
+                      'bg-boca-gold/[0.07] border-2 border-l-boca-gold hover:bg-boca-gold/[0.10]';
                   } else if (isAnual) {
                     rankClass = getAnualRankClass(row.rank, displayRows.length);
                   } else if (isRegularStage && row.rank <= 8) {
-                    rankClass = "border-l-2 border-l-[#23EBE4] bg-[#23EBE4]/[0.05] hover:bg-[#23EBE4]/[0.08]";
+                    rankClass =
+                      'border-l-2 border-l-[#23EBE4] bg-[#23EBE4]/[0.05] hover:bg-[#23EBE4]/[0.08]';
                   } else if (isPromedios && row.rank === displayRows.length) {
-                    rankClass = "border-l-2 border-l-[#E61034] bg-[#E61034]/[0.02]";
+                    rankClass = 'border-l-2 border-l-[#E61034] bg-[#E61034]/[0.02]';
                   }
 
                   return (

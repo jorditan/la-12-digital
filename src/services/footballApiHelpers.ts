@@ -204,10 +204,12 @@ export const mapLeagueStandings = (data: {
   const stages = [...(data.stages ?? [])];
 
   const stageOrder: Record<string, number> = {
-    'Zona A': 1,
-    'Zona B': 2,
-    'Tabla Anual': 3,
-    'Promedios': 4,
+    'Clausura': 1,
+    'Apertura': 2,
+    'Zona A': 3,
+    'Zona B': 4,
+    'Tabla Anual': 5,
+    'Promedios': 6,
   };
 
   // Ordenar las etapas según el orden solicitado para mostrarlas en ese orden en el selector

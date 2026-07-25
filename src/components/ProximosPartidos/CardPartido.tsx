@@ -75,11 +75,18 @@ export function CardPartido({ partido }: CardPartidoProps) {
         </p>
 
         {/* Estadio */}
-        {partido.venueName && (
+        {partido.venueName ? (
           <div className="flex items-start gap-1">
             <MapPin size={11} className="shrink-0 text-white/40 mt-0.5" />
             <p className="font-sans text-xs text-white/50 leading-tight line-clamp-1">
               {partido.venueName}
+            </p>
+          </div>
+        ) : (
+          <div className="flex items-start gap-1">
+            <MapPin size={11} className="shrink-0 text-white/40 mt-0.5" />
+            <p className="font-sans text-xs text-white/50 leading-tight line-clamp-1">
+              Estadio a confirmar
             </p>
           </div>
         )}
@@ -90,7 +97,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
           {partido.time === '12:00' ? (
             <p className="font-sans text-xs text-white/40 italic">A confirmar</p>
           ) : (
-            <p className="font-sans text-xs text-white/60 tabular-nums">{partido.time}</p>
+            <p className="font-sans text-xs text-white/60 tabular-nums">{partido.time} hs</p>
           )}
         </div>
 
@@ -100,8 +107,12 @@ export function CardPartido({ partido }: CardPartidoProps) {
             variant={partido.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
             className={[
               'w-fit text-xs px-1.5',
-              partido.competition === 'Copa Argentina' ? 'bg-[#0CF737]/10 text-[#0CF737] border border-[#0CF737]/20' : '',
-              partido.competition === 'Copa Sudamericana' ? 'bg-[#23EBE4]/10 text-[#23EBE4] border border-[#23EBE4]/20' : '',
+              partido.competition === 'Copa Argentina'
+                ? 'bg-[#0CF737]/10 text-[#0CF737] border border-[#0CF737]/20'
+                : '',
+              partido.competition === 'Copa Sudamericana'
+                ? 'bg-[#23EBE4]/10 text-[#23EBE4] border border-[#23EBE4]/20'
+                : '',
             ].join(' ')}
           >
             {partido.competition}

@@ -1,4 +1,5 @@
 import { ESCUDO_VACIO } from "../../data/equipos";
+import { getDaysUntilIsoDate } from "../../lib/date";
 import type { MatchForecast } from "../../services/weather";
 import type { ProximoPartido } from "../../services/apifootball";
 import { BOCA_ID } from "../../services/apifootball";
@@ -18,12 +19,7 @@ export function ModoMatchDay({
       ? proximoLocal.awayTeam
       : proximoLocal.homeTeam;
 
-  const now = new Date();
-  const matchDate = new Date(proximoLocal.date);
-  const isToday =
-    matchDate.getFullYear() === now.getFullYear() &&
-    matchDate.getMonth() === now.getMonth() &&
-    matchDate.getDate() === now.getDate();
+  const isToday = getDaysUntilIsoDate(proximoLocal.date) === 0;
 
   const slotMatch = matchForecast?.slotMatch ?? null;
 

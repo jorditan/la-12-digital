@@ -150,6 +150,7 @@ function makeMockForecast(matchIso: string): MatchForecast {
     dateLabel: matchDate.toLocaleDateString("es-AR", {
       day: "numeric",
       month: "long",
+      timeZone: "America/Argentina/Buenos_Aires",
     }),
     timeLabel: matchDate.toLocaleTimeString("es-AR", {
       hour: "2-digit",
@@ -158,8 +159,6 @@ function makeMockForecast(matchIso: string): MatchForecast {
     }),
   };
 }
-
-// ── Fetch interno ──────────────────────────────────────────────────────────────
 
 // Evita reintentar si la request ya falló en esta sesión
 let sessionFailed = false;
@@ -201,6 +200,7 @@ export async function fetchMatchForecast(
   const dateLabel = matchDate.toLocaleDateString("es-AR", {
     day: "numeric",
     month: "long",
+    timeZone: "America/Argentina/Buenos_Aires",
   });
   const timeLabel = matchDate.toLocaleTimeString("es-AR", {
     hour: "2-digit",

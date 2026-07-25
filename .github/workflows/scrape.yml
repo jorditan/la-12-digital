@@ -1,0 +1,115 @@
+name: Weekly Scrape - Promiedos
+
+on:
+  schedule:
+    # Lunes 9:00 AM ART (12:00 UTC)
+    - cron: '0 12 * * 1'
+  workflow_dispatch:
+
+jobs:
+  wake-and-sync:
+    name: Wake Render + Trigger Scrape
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Wake Render (health check)
+        id: wake
+        run: |
+          echo "::group::Pinging Render to wake up..."
+          HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' \
+            --max-time 60 \
+            --connect-timeout 15 \
+            "https://scrapper-promiedos.onrender.com/health" || echo "000")
+          echo "HTTP status: $HTTP_CODE"
+          echo "http_code=$HTTP_CODE" >> "$GITHUB_OUTPUT"
+          echo "::endgroup::"
+
+      - name: Wait for Render boot
+        if: steps.wake.outputs.http_code != '200'
+        run: |
+          echo "Render is waking up, waiting 90s for cold start..."
+          sleep 90
+
+      - name: Trigger full sync
+        id: sync
+        run: |
+          echo "::group::Triggering sync via POST /api/sync..."
+          HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' \
+            -X POST \
+            --max-time 60 \
+            --connect-timeout 15 \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            "https://scrapper-promiedos.onrender.com/api/sync" || echo "000")
+          echo "HTTP status: $HTTP_CODE"
+          echo "http_code=$HTTP_CODE" >> "$GITHUB_OUTPUT"
+          echo "::endgroup::"
+
+      - name: Wait for sync to complete
+        run: |
+          echo "Waiting 120s for sync to finish..."
+          sleep 120
+
+      - name: Verify sync freshness
+        id: verify
+        run: |
+          echo "::group::Verifying sync in Supabase..."
+          TIMESTAMP=$(curl -s -X POST \
+            "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/ls_sync_meta?select=last_success_at&id=eq.default" \
+            -H "apikey: ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            -H "Content-Type: application/json" | \
+            jq -r '.[0].last_success_at // empty')
+
+          if [ -z "$TIMESTAMP" ]; then
+            echo "::error::No sync metadata found in Supabase"
+            echo "verified=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Last sync: $TIMESTAMP"
+          TIMESTAMP_EPOCH=$(date -d "$TIMESTAMP" +%s 2>/dev/null || echo 0)
+          NOW_EPOCH=$(date +%s)
+          AGE_HOURS=$(( (NOW_EPOCH - TIMESTAMP_EPOCH) / 3600 ))
+
+          echo "Sync age: ${AGE_HOURS}h"
+
+          if [ "$AGE_HOURS" -lt 6 ]; then
+            echo "Sync is fresh (within 6 hours)"
+            echo "verified=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Sync is stale: ${AGE_HOURS}h old"
+            echo "verified=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "::endgroup::"
+
+      - name: Notify failure via issue
+        if: steps.sync.outputs.http_code != '202' || steps.verify.outputs.verified != 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const body = `## Scrape semanal fallido
+
+            **Fecha:** ${new Date().toISOString()}
+            **Run:** [${context.runId}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+
+            ### Detalles
+            - Sync trigger HTTP: \`${{ steps.sync.outputs.http_code }}\`
+            - Sync verificado en Supabase: \`${{ steps.verify.outputs.verified }}\`
+
+            El scraper de Render no respondio o el sync no se completo. Revisar manualmente.`;
+
+            const { data: issues } = await github.rest.search.issuesAndPullRequests({
+              q: 'is:issue is:open label:scrape-fail repo:' + context.repo.owner + '/' + context.repo.repo,
+            });
+
+            if (issues.total_count === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: '[Scrape] Sync semanal fallo',
+                body,
+                labels: ['scrape-fail'],
+              });
+            }

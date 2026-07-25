@@ -1,3 +1,5 @@
+const ARGENTINA_TZ = "America/Argentina/Buenos_Aires";
+
 function parseIsoDate(value: string): Date {
   return new Date(value);
 }
@@ -7,7 +9,10 @@ export function formatIsoDate(
   locale: string,
   options: Intl.DateTimeFormatOptions,
 ): string {
-  return parseIsoDate(value).toLocaleDateString(locale, options);
+  return parseIsoDate(value).toLocaleDateString(locale, {
+    timeZone: ARGENTINA_TZ,
+    ...options,
+  });
 }
 
 export function formatIsoDateEsArLong(value: string): string {
@@ -39,13 +44,18 @@ export function formatIsoDateEsArNumeric(value: string): string {
 }
 
 export function getDaysUntilIsoDate(value: string): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: ARGENTINA_TZ });
 
-  const target = parseIsoDate(value);
-  target.setHours(0, 0, 0, 0);
+  const todayArgStr = fmt.format(new Date());
+  const targetArgStr = fmt.format(parseIsoDate(value));
+
+  const [ty, tm, td] = todayArgStr.split("-").map(Number);
+  const [ay, am, ad] = targetArgStr.split("-").map(Number);
+
+  const todayArg = new Date(ty, tm - 1, td);
+  const targetArg = new Date(ay, am - 1, ad);
 
   return Math.round(
-    (target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+    (targetArg.getTime() - todayArg.getTime()) / (1000 * 60 * 60 * 24),
   );
 }

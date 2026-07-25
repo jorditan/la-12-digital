@@ -1,4 +1,5 @@
 import { ESCUDO_VACIO } from '../../data/equipos';
+import { formatIsoDateEsArLong, formatIsoDateEsArShort } from '../../lib/date';
 import type { MatchForecast } from '../../services/weather';
 import type { ProximoPartido } from '../../services/apifootball';
 import { BOCA_ID } from '../../services/apifootball';
@@ -7,20 +8,6 @@ import { StatsGrid } from './StatsGrid';
 import { ForecastRows } from './ForecastRows';
 import { ConditionsBlock } from './ConditionsBlock';
 import { Badge } from '../ui/Badge';
-
-function formatFechaLarga(iso: string): string {
-  return new Date(iso).toLocaleDateString('es-AR', {
-    day: 'numeric',
-    month: 'long',
-  });
-}
-
-function formatFechaCorta(iso: string): string {
-  return new Date(iso).toLocaleDateString('es-AR', {
-    day: 'numeric',
-    month: 'short',
-  });
-}
 
 export function ModoNormal({
   proximoLocal,
@@ -63,27 +50,27 @@ export function ModoNormal({
             <div className="flex flex-col justify-center gap-2.5 flex-1 min-w-0">
               {/* Escudo + nombre del rival */}
               <div className="flex items-center gap-2.5">
-                <div className="w-24 h-24 p-4 rounded-sm bg-boca-border-card ring-1 ring-boca-border-card flex items-center justify-center overflow-hidden flex-shrink-0">
+                <div className="w-16 h-16 sm:w-24 sm:h-24 p-2 sm:p-4 rounded-sm bg-boca-border-card ring-1 ring-boca-border-card flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img
                     src={rival.logo}
                     alt={rival.name}
-                    className="w-24 h-24 object-contain"
+                    className="w-16 h-16 sm:w-24 sm:h-24 object-contain"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).src = ESCUDO_VACIO;
                     }}
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <div className="min-w-0 flex items-center flex-row gap-4">
+                  <div className="min-w-0 flex items-start flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                     <p className="font-serif text-white font-semibold text-lg leading-tight truncate">
                       vs {rival.name} en
                     </p>
 
-                    <div className="flex flex-row gap-4 items-center leading-none justify-center flex-shrink-0 min-w-[80px]">
-                      <p className="font-bold md:p-2 p-1 bg-boca-blue-dark/20 border border-boca-gold/40 rounded-sm text-boca-gold font-serif leading-none text-xl md:text-5xl">
+                    <div className="flex flex-row gap-2 sm:gap-4 items-center leading-none justify-center flex-shrink-0 sm:min-w-[80px]">
+                      <p className="font-bold sm:p-2 p-1 bg-boca-blue-dark/20 border border-boca-gold/40 rounded-sm text-boca-gold font-serif leading-none text-xl sm:text-5xl">
                         {diasHastaPartido}
                       </p>
-                      <p className="type-ui-label text-white font-serif mt-2 text-lg">
+                      <p className="type-ui-label text-white font-serif sm:mt-2 text-base sm:text-lg">
                         {diasHastaPartido === 1 ? 'Día' : 'Días'}
                       </p>
                     </div>
@@ -91,8 +78,8 @@ export function ModoNormal({
                   {/* Fecha + hora como badges */}
                   <div className="flex flex-wrap gap-1.5">
                     <Badge>
-                      {formatFechaLarga(proximoLocal.date).charAt(0).toUpperCase() +
-                        formatFechaLarga(proximoLocal.date).slice(1)}
+                      {formatIsoDateEsArLong(proximoLocal.date).charAt(0).toUpperCase() +
+                        formatIsoDateEsArLong(proximoLocal.date).slice(1)}
                     </Badge>
                     {proximoLocal.time === '12:00' ? (
                       <Badge className="italic text-white/50">A confirmar</Badge>
@@ -198,7 +185,7 @@ export function ModoNormal({
                       vs {rivalItem.name}
                     </p>
                     <p className="type-ui-label text-text-secondary tabular-nums flex-shrink-0">
-                      {formatFechaCorta(p.date)}
+                      {formatIsoDateEsArShort(p.date)}
                     </p>
                   </div>
                 );

@@ -6,6 +6,7 @@ import {
   getLibertadoresLastFixtures,
   getLibertadoresNextFixtures,
   getLibertadoresStandingsData,
+  getSudamericanaStandingsData,
 } from './footballApiService';
 import { fetchBocaNews } from './newsdataService';
 import { fetchYoutubeVideos, type VideoItem } from './youtubeService';
@@ -97,6 +98,11 @@ export async function fetchAnnualStandings(): Promise<StandingRow[]> {
 
 export async function fetchLibertadoresStandings(): Promise<StandingRow[]> {
   const data = await getLibertadoresStandingsData();
+  return data.map(mapStandingData);
+}
+
+export async function fetchSudamericanaStandings(): Promise<StandingRow[]> {
+  const data = await getSudamericanaStandingsData();
   return data.map(mapStandingData);
 }
 
@@ -194,6 +200,7 @@ function mapFixtureToProximoPartido(
     time: f.date.toLocaleTimeString('es-AR', {
       hour: '2-digit',
       minute: '2-digit',
+      hour12: false,
       timeZone: 'America/Argentina/Buenos_Aires',
     }),
     homeTeam: {

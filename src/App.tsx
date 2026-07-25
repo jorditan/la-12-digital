@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Header } from './components/layout/Header';
 import { BannerMensaje } from './components/BannerMensaje';
+import { DataFreshnessBanner } from './components/DataFreshnessBanner';
 import { UltimosPartidos } from './components/UltimosPartidos';
 import { BomboneraWidget } from './components/BomboneraWidget';
 import { ProximosPartidos } from './components/ProximosPartidos';
@@ -93,6 +94,7 @@ function AppInner() {
         onUploadAvatar={uploadAvatar}
       />
       <BannerMensaje />
+      <DataFreshnessBanner />
 
       <Routes>
         <Route path="/" element={<DashboardPage />} />

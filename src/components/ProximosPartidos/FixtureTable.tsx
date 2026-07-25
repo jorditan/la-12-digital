@@ -44,6 +44,9 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
               <th className="py-2 px-3 text-center font-sans font-medium text-sm text-text-muted w-14">
                 Hora
               </th>
+              <th className="py-2 px-3 text-left font-sans font-medium text-sm text-text-muted hidden sm:table-cell max-w-[120px]">
+                Estadio
+              </th>
               <th className="py-2 px-3 text-left font-sans font-medium text-sm text-text-muted hidden md:table-cell">
                 Competencia
               </th>
@@ -107,6 +110,13 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                     ) : (
                       <span className="text-sm text-white tabular-nums font-medium">{p.time}</span>
                     )}
+                  </td>
+
+                  {/* Estadio */}
+                  <td className="py-2.5 px-3 hidden sm:table-cell max-w-[120px]">
+                    <span className="text-sm text-text-secondary truncate block" title={p.venueName}>
+                      {p.venueName || '—'}
+                    </span>
                   </td>
 
                   {/* Copa */}

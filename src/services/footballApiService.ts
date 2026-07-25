@@ -16,6 +16,7 @@ import {
 
 const COMPETITION = '23'; // Liga Profesional Argentina
 const LIBERTADORES_COMPETITION = '329'; // Copa Libertadores
+const SUDAMERICANA_COMPETITION = '11'; // Copa Sudamericana
 
 /**
  * Obtiene los últimos partidos finalizados de Boca Juniors en la liga local.
@@ -230,6 +231,22 @@ export const getLibertadoresStandingsData = async (): Promise<StandingData[]> =>
   if (error) throw error;
 
   const data = reconstructStages(dbRows, Number(LIBERTADORES_COMPETITION));
+  return mapLibertadoresStandings(data);
+};
+
+/**
+ * Obtiene las tablas de posiciones de la fase de grupos de la Copa Sudamericana.
+ */
+export const getSudamericanaStandingsData = async (): Promise<StandingData[]> => {
+  const { data: dbRows, error } = await supabase
+    .from('ls_standings')
+    .select('*')
+    .eq('competition_id', Number(SUDAMERICANA_COMPETITION))
+    .order('rank', { ascending: true });
+
+  if (error) throw error;
+
+  const data = reconstructStages(dbRows, Number(SUDAMERICANA_COMPETITION));
   return mapLibertadoresStandings(data);
 };
 
