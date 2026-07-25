@@ -13,20 +13,47 @@ interface MatchUrgencyBadgeProps {
 
 type UrgencyLevel = 'critical' | 'today' | 'tomorrow' | 'days';
 
+const ARGENTINA_TZ = 'America/Argentina/Buenos_Aires';
+
 function getUrgencyInfo(matchDate: string | Date): { level: UrgencyLevel; label: string } | null {
   const now = new Date();
-  const date = new Date(matchDate);
-  const diffHours = (date.getTime() - now.getTime()) / (1000 * 60 * 60);
+  const target = new Date(matchDate);
+
+  const diffMs = target.getTime() - now.getTime();
+  const diffHours = diffMs / (1000 * 60 * 60);
 
   if (diffHours < 0) return null;
+
+  // Crítico: menos de 3 horas para el partido
   if (diffHours <= URGENCY_HOURS.CRITICAL) {
     const hours = Math.ceil(diffHours);
-    return { level: 'critical', label: hours <= 1 ? 'Ahora' : `En ${hours}h` };
+    return { level: 'critical', label: hours <= 1 ? 'En breve' : `En ${hours}h` };
   }
-  if (diffHours <= URGENCY_HOURS.TODAY) return { level: 'today', label: 'Hoy' };
-  if (diffHours <= URGENCY_HOURS.TOMORROW) return { level: 'tomorrow', label: '¡Mañana!' };
-  const days = Math.round(diffHours / 24);
-  if (days <= URGENCY_HOURS.MAX_DAYS) return { level: 'days', label: `En ${days} días` };
+
+  // Comparación por día calendario en zona horaria de Argentina
+  const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: ARGENTINA_TZ });
+  const todayStr = fmt.format(now);
+  const targetStr = fmt.format(target);
+
+  if (todayStr === targetStr) {
+    return { level: 'today', label: 'Hoy' };
+  }
+
+  const [ty, tm, td] = todayStr.split('-').map(Number);
+  const [ay, am, ad] = targetStr.split('-').map(Number);
+  const todayDate = new Date(ty, tm - 1, td);
+  const targetDate = new Date(ay, am - 1, ad);
+
+  const daysDiff = Math.round((targetDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (daysDiff === 1) {
+    return { level: 'tomorrow', label: '¡Mañana!' };
+  }
+
+  if (daysDiff > 1 && daysDiff <= URGENCY_HOURS.MAX_DAYS) {
+    return { level: 'days', label: `En ${daysDiff} días` };
+  }
+
   return null;
 }
 

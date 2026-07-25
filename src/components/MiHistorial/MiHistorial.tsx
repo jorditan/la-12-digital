@@ -80,7 +80,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="flex-1 min-w-0 px-3 py-3 sm:px-6 sm:py-8 lg:px-10 flex flex-col gap-4 sm:gap-8">
       {/* Header */}
       <div className="mb-6 pl-3 border-l-2 border-boca-gold/50">
         <h1 className="type-section-title text-white mb-0.5">Mi Historial</h1>
@@ -152,7 +152,11 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
               onChange={setSelectedMatchId}
             />
 
-            <Button onClick={() => setImportModalOpen(true)} variant="outline">
+            <Button
+              onClick={() => setImportModalOpen(true)}
+              variant="outline"
+              className="justify-start items-start"
+            >
               <Upload className="w-4 h-4" />
               Importar
             </Button>
