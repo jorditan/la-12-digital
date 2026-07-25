@@ -113,6 +113,8 @@ const COMPETITION_NAMES: Record<number, string> = {
   11: 'Copa Sudamericana',
 };
 
+import { resolveVenueName } from '../constants/stadiums';
+
 function mapFixtureToMatchResult(
   f: import('../types/football').ProcessedFixture,
   defaultCompetition: string
@@ -153,7 +155,7 @@ function mapFixtureToMatchResult(
     },
     goalsHome: f.homeScore,
     goalsAway: f.awayScore,
-    venueName: f.venue,
+    venueName: resolveVenueName(f.isBocaHome, f.venue, f.isBocaHome ? f.awayTeam : f.homeTeam),
     competition,
   };
 }
@@ -213,7 +215,7 @@ function mapFixtureToProximoPartido(
       name: f.awayTeam,
       logo: teamLogoUrl(f.awayTeamId, f.awayLogo),
     },
-    venueName: f.venue,
+    venueName: resolveVenueName(f.isBocaHome, f.venue, f.isBocaHome ? f.awayTeam : f.homeTeam),
     competition,
     rivalApiId: f.isBocaHome ? f.awayTeamId : f.homeTeamId,
   };
