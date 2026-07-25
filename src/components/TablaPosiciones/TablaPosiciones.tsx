@@ -4,7 +4,7 @@ import { Button } from '../ui/Button';
 import { SelectDropdown } from '../ui/SelectDropdown';
 import { Tab } from '../ui/Tab';
 import { SkeletonBox, SkeletonText } from '../ui/Skeleton';
-import { useTablaPosiciones, COMPETITION_OPTIONS } from './useTablaPosiciones';
+import { useTablaPosiciones, COMPETITION_OPTIONS, getFriendlyZoneLabel } from './useTablaPosiciones';
 
 type TablaPosicionesProps = {
   headerAction?: ReactNode;
@@ -77,7 +77,7 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
         {activeEstado === 'ok' && shouldShowZoneSelector && (
           <div className="pb-2">
             <SelectDropdown
-              options={zoneNames.map((z) => ({ value: z, label: z }))}
+              options={zoneNames.map((z) => ({ value: z, label: getFriendlyZoneLabel(z) }))}
               value={activeZone}
               onChange={setActiveZone}
               className="w-full"
@@ -88,7 +88,7 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
         {activeEstado === 'ok' && isLibertadores && activeZoneLabel && (
           <div className="pb-2">
             <div className="inline-flex items-center rounded-sm border border-boca-gold/20 bg-boca-gold/10 px-2.5 py-1 font-sans text-xs font-medium uppercase tracking-wide text-boca-gold">
-              {activeZoneLabel}
+              {getFriendlyZoneLabel(activeZoneLabel)}
             </div>
           </div>
         )}

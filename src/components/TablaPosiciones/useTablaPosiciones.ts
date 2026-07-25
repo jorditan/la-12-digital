@@ -13,6 +13,20 @@ export const COMPETITION_OPTIONS = [
   { value: "libertadores", label: "Copa Lib." },
 ] as const satisfies readonly { value: Competicion; label: string }[];
 
+export function getFriendlyZoneLabel(zoneName: string): string {
+  if (!zoneName) return "";
+  const lower = zoneName.toLowerCase();
+
+  if (lower.includes("grupo a")) return "Clausura — Grupo A";
+  if (lower.includes("grupo b")) return "Clausura — Grupo B";
+  if (lower.includes("zona a")) return "Apertura — Zona A";
+  if (lower.includes("zona b")) return "Apertura — Zona B";
+  if (lower.includes("anual")) return "Tabla Anual";
+  if (lower.includes("promedios")) return "Promedios";
+
+  return zoneName;
+}
+
 export function useTablaPosiciones() {
   const [rows, setRows] = useState<StandingRow[]>([]);
   const [estado, setEstado] = useState<Estado>("loading");
@@ -54,37 +68,60 @@ export function useTablaPosiciones() {
   const activeRows = competicion === "liga" ? rows : (libRows ?? []);
   const activeEstado = competicion === "liga" ? estado : libEstado;
 
-  const zoneNames = [
+  // Extraer y ordenar zonas: Clausura primero (Grupo), luego Apertura (Zona), Tabla Anual, Promedios
+  const rawZoneNames = [
     ...new Set(
       activeRows.map((r) => r.zone).filter((z): z is string => Boolean(z)),
     ),
   ];
+
+  const zoneWeight = (name: string) => {
+    const l = name.toLowerCase();
+    if (l.includes("grupo")) return 1; // Clausura
+    if (l.includes("zona")) return 2;  // Apertura
+    if (l.includes("anual")) return 3; // Tabla Anual
+    if (l.includes("promedios")) return 4; // Promedios
+    return 5;
+  };
+
+  const zoneNames = [...rawZoneNames].sort(
+    (a, b) => zoneWeight(a) - zoneWeight(b)
+  );
+
   const hasZones = zoneNames.length >= 2;
-  const bocaZone =
-    activeRows.find((r) => /boca/i.test(r.team.name))?.zone ?? "";
+
+  // Encontrar todas las zonas donde juega Boca
+  const bocaRows = activeRows.filter((r) => /boca/i.test(r.team.name));
+  const bocaZones = bocaRows.map((r) => r.zone).filter(Boolean) as string[];
+
+  // Priorizar la zona del torneo en curso de Boca (ej. Grupo A / Clausura)
+  const currentBocaZone =
+    bocaZones.find((z) => z.toLowerCase().includes("grupo")) ||
+    bocaZones[0] ||
+    "";
 
   const isLibertadores = competicion === "libertadores";
-  const shouldLockToBocaZone = isLibertadores && Boolean(bocaZone);
+  const shouldLockToBocaZone = isLibertadores && Boolean(currentBocaZone);
   const shouldShowZoneSelector = hasZones && !shouldLockToBocaZone;
 
   useEffect(() => {
-    if (hasZones && !zoneNames.includes(activeZone)) {
+    if (hasZones && (!activeZone || !zoneNames.includes(activeZone))) {
       setActiveZone(
-        bocaZone && zoneNames.includes(bocaZone)
-          ? bocaZone
-          : zoneNames[zoneNames.length - 1],
+        currentBocaZone && zoneNames.includes(currentBocaZone)
+          ? currentBocaZone
+          : zoneNames[0],
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeRows]);
 
   const displayRows = shouldLockToBocaZone
-    ? activeRows.filter((r) => r.zone === bocaZone)
+    ? activeRows.filter((r) => r.zone === currentBocaZone)
     : hasZones
       ? activeRows.filter((r) => r.zone === activeZone)
       : activeRows;
 
-  const activeZoneLabel = shouldLockToBocaZone ? bocaZone : activeZone;
+  const activeZoneLabel = shouldLockToBocaZone ? currentBocaZone : activeZone;
 
   const handleCompeticionChange = (comp: Competicion) => {
     setCompeticion(comp);
