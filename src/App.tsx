@@ -1,3 +1,5 @@
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { PlantelView } from './components/PlantelView';
 import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Header } from './components/layout/Header';
@@ -96,25 +98,27 @@ function AppInner() {
       <BannerMensaje />
       <DataFreshnessBanner />
 
-      <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/plantel" element={<DashboardPage />} />
-        <Route path="/mi-historial" element={<MiHistorial user={user} />} />
-        <Route
-          path="/configuracion"
-          element={
-            <Configuracion
-              user={user}
-              onUploadAvatar={uploadAvatar}
-              onUpdateEmail={updateEmail}
-              onUpdatePassword={updatePassword}
-              onUpdateDisplayName={updateDisplayName}
-              onUpdateBio={updateBio}
-            />
-          }
-        />
-        <Route path="*" element={<DashboardPage />} />
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/plantel" element={<PlantelView />} />
+          <Route path="/mi-historial" element={<MiHistorial user={user} />} />
+          <Route
+            path="/configuracion"
+            element={
+              <Configuracion
+                user={user}
+                onUploadAvatar={uploadAvatar}
+                onUpdateEmail={updateEmail}
+                onUpdatePassword={updatePassword}
+                onUpdateDisplayName={updateDisplayName}
+                onUpdateBio={updateBio}
+              />
+            }
+          />
+          <Route path="*" element={<DashboardPage />} />
+        </Routes>
+      </ErrorBoundary>
 
       {showLoginModal && (
         <AuthModal onLogin={login} onRegister={register} onClose={() => setShowLoginModal(false)} />

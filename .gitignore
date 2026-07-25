@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+ANALISIS_CODIGO.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

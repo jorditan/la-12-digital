@@ -98,8 +98,22 @@ async function getPlaylistItems(
   }
   const data = await res.json();
 
+  interface YoutubePlaylistItem {
+    snippet: {
+      title: string;
+      publishedAt: string;
+      thumbnails: {
+        high?: { url: string };
+        medium?: { url: string };
+      };
+      resourceId: {
+        videoId: string;
+      };
+    };
+  }
+
   return (data.items ?? []).map(
-    (item: any) => ({
+    (item: YoutubePlaylistItem) => ({
       title: item.snippet.title,
       publishedAt: item.snippet.publishedAt,
       thumbnail:
@@ -127,9 +141,19 @@ async function getVideoDetails(
   if (!res.ok) throw new Error(`YouTube videos error: ${res.status}`);
   const data = await res.json();
 
+  interface YoutubeVideoItem {
+    id: string;
+    contentDetails: {
+      duration: string;
+    };
+    statistics: {
+      viewCount?: string;
+    };
+  }
+
   return new Map(
     (data.items ?? []).map(
-      (v: any) => [
+      (v: YoutubeVideoItem) => [
         v.id,
         {
           duration: v.contentDetails.duration,

@@ -1,6 +1,7 @@
 import type { ProcessedFixture, Squad, Player } from '../types/football';
 import type { StandingData, AnnualStandingData, H2HMatch } from '../types/footballApi';
 export type { StandingData, AnnualStandingData, H2HMatch };
+import type { DbFixtureRow, DbStandingRow, DbH2HMatch, DbSquadRow } from '../types/database.types';
 import { supabase } from '../lib/supabase';
 import {
   BOCA_ID,
@@ -33,7 +34,7 @@ export const getLastFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
 
   if (error) throw error;
 
-  return dbMatches.map((m: any) => {
+  return (dbMatches as DbFixtureRow[]).map((m: DbFixtureRow) => {
     const isBocaHome = String(m.home_team_id) === BOCA_ID || BOCA_RE.test(m.home_team);
     const scoreHome = m.home_score;
     const scoreAway = m.away_score;
@@ -72,7 +73,7 @@ export const getNextFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
 
   if (error) throw error;
 
-  return dbFixtures.map((f: any) => {
+  return (dbFixtures as DbFixtureRow[]).map((f: DbFixtureRow) => {
     const isBocaHome = String(f.home_team_id) === BOCA_ID || BOCA_RE.test(f.home_team);
     return {
       id: isNaN(Number(f.id)) ? hashStringToNumber(String(f.id)) : Number(f.id),
@@ -107,8 +108,8 @@ export const fetchHeadToHead = async (rivalApiId: number | string): Promise<H2HM
   if (error) throw error;
   if (!dbH2H) return [];
 
-  const rawMatches = dbH2H.last_matches || [];
-  const mapped = rawMatches.map((m: any) => {
+  const rawMatches: DbH2HMatch[] = dbH2H.last_matches || [];
+  const mapped = rawMatches.map((m: DbH2HMatch) => {
     const isBocaHome = m.home_team.toLowerCase().includes('boca');
     const scoreHome = m.home_score;
     const scoreAway = m.away_score;
@@ -123,7 +124,7 @@ export const fetchHeadToHead = async (rivalApiId: number | string): Promise<H2HM
     };
   });
 
-  return mapped.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
+  return mapped.sort((a: { date: string }, b: { date: string }) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
 };
 
 /**
@@ -138,7 +139,7 @@ export const getStandingsData = async (): Promise<StandingData[]> => {
 
   if (error) throw error;
 
-  const data = reconstructStages(dbRows, Number(COMPETITION));
+  const data = reconstructStages(dbRows as DbStandingRow[], Number(COMPETITION));
   return mapLeagueStandings(data);
 };
 
@@ -157,7 +158,7 @@ export const getLibertadoresLastFixtures = async (count = 8): Promise<ProcessedF
 
   if (error) throw error;
 
-  return dbMatches.map((m: any) => {
+  return (dbMatches as DbFixtureRow[]).map((m: DbFixtureRow) => {
     const isBocaHome = String(m.home_team_id) === BOCA_ID || BOCA_RE.test(m.home_team);
     const scoreHome = m.home_score;
     const scoreAway = m.away_score;
@@ -196,7 +197,7 @@ export const getLibertadoresNextFixtures = async (count = 8): Promise<ProcessedF
 
   if (error) throw error;
 
-  return dbFixtures.map((f: any) => {
+  return (dbFixtures as DbFixtureRow[]).map((f: DbFixtureRow) => {
     const isBocaHome = String(f.home_team_id) === BOCA_ID || BOCA_RE.test(f.home_team);
     return {
       id: isNaN(Number(f.id)) ? hashStringToNumber(String(f.id)) : Number(f.id),
@@ -230,7 +231,7 @@ export const getLibertadoresStandingsData = async (): Promise<StandingData[]> =>
 
   if (error) throw error;
 
-  const data = reconstructStages(dbRows, Number(LIBERTADORES_COMPETITION));
+  const data = reconstructStages(dbRows as DbStandingRow[], Number(LIBERTADORES_COMPETITION));
   return mapLibertadoresStandings(data);
 };
 
@@ -246,7 +247,7 @@ export const getSudamericanaStandingsData = async (): Promise<StandingData[]> =>
 
   if (error) throw error;
 
-  const data = reconstructStages(dbRows, Number(SUDAMERICANA_COMPETITION));
+  const data = reconstructStages(dbRows as DbStandingRow[], Number(SUDAMERICANA_COMPETITION));
   return mapLibertadoresStandings(data);
 };
 
@@ -262,7 +263,7 @@ export const getAnnualStandingsData = async (): Promise<AnnualStandingData[]> =>
 
   if (error) throw error;
 
-  const data = reconstructStages(dbRows, Number(COMPETITION));
+  const data = reconstructStages(dbRows as DbStandingRow[], Number(COMPETITION));
   return mapAnnualStandings(data);
 };
 
@@ -279,7 +280,7 @@ export const getTeamSquad = async (teamId = BOCA_ID): Promise<Squad> => {
 
   if (error) throw error;
 
-  const players: Player[] = dbSquad.map((p: any) => {
+  const players: Player[] = (dbSquad as DbSquadRow[]).map((p: DbSquadRow) => {
     const nameParts = p.name.trim().split(/\s+/);
     const firstname = nameParts[0] || '';
     const lastname = nameParts.slice(1).join(' ') || '';

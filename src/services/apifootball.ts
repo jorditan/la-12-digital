@@ -240,6 +240,43 @@ export interface NoticiasResponse {
   total: number;
 }
 
+function inferNewsCategory(titulo: string): 'mercado' | 'informe' | 'partido' | 'seleccion' {
+  const lower = titulo.toLowerCase();
+  if (
+    lower.includes('pase') ||
+    lower.includes('refuerzo') ||
+    lower.includes('mercado') ||
+    lower.includes('fichaje') ||
+    lower.includes('refuerzos') ||
+    lower.includes('firmó') ||
+    lower.includes('oferta') ||
+    lower.includes('contrato')
+  ) {
+    return 'mercado';
+  }
+  if (
+    lower.includes('selección') ||
+    lower.includes('scaloni') ||
+    lower.includes('argentina') ||
+    lower.includes('sub-20') ||
+    lower.includes('convocado')
+  ) {
+    return 'seleccion';
+  }
+  if (
+    lower.includes('lesión') ||
+    lower.includes('estadio') ||
+    lower.includes('bombonera') ||
+    lower.includes('informe') ||
+    lower.includes('riquelme') ||
+    lower.includes('socio') ||
+    lower.includes('entradas')
+  ) {
+    return 'informe';
+  }
+  return 'partido';
+}
+
 export async function fetchNoticias(): Promise<NoticiasResponse> {
   const data = await fetchBocaNews();
 
@@ -248,7 +285,7 @@ export async function fetchNoticias(): Promise<NoticiasResponse> {
       id: a.id,
       titulo: a.titulo,
       imagen: a.imagen,
-      categoria: 'partido' as const,
+      categoria: inferNewsCategory(a.titulo),
       fecha: a.fecha,
       url: a.url,
       fuente: a.fuente,

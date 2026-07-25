@@ -75,24 +75,31 @@ export function clearExpiredCache(): void {
   let cleared = 0;
 
   keys.forEach((key) => {
-    if (!key.startsWith("api_")) return;
+    if (!key.startsWith("api_") && !key.startsWith("v4_") && !key.startsWith("yt_")) return;
 
     try {
       const cached = localStorage.getItem(key);
       if (!cached) return;
 
-      const { timestamp } = JSON.parse(cached);
-      // Si tiene más de 24 horas, eliminar
-      if (Date.now() - timestamp > 24 * 60 * 60 * 1000) {
-        localStorage.removeItem(key);
-        cleared++;
+      const parsed = JSON.parse(cached);
+      const timestamp = parsed?.timestamp;
+      if (typeof timestamp === "number") {
+        // Si tiene más de 24 horas, eliminar
+        if (Date.now() - timestamp > 24 * 60 * 60 * 1000) {
+          localStorage.removeItem(key);
+          cleared++;
+        }
       }
-    } catch (error) {
-      // Si hay error parseando, eliminar
+    } catch {
+      // Si hay error parseando, eliminar clave corrupta
       localStorage.removeItem(key);
       cleared++;
     }
   });
+
+  if (cleared > 0) {
+    console.log(`[Cache Cleanup] Removed ${cleared} expired/corrupted cache entries.`);
+  }
 }
 
 /**

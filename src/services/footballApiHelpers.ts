@@ -20,7 +20,10 @@ export const mapTeamIdToPromiedos = (liveScoreId: string): string =>
   TEAM_ID_MAP[liveScoreId] || liveScoreId;
 
 // Helper to construct team logo URLs from Promiedos
-export const getTeamLogoUrl = (liveScoreTeamId: string | number): string => {
+export const getTeamLogoUrl = (liveScoreTeamId: string | number, dbLogoUrl?: string | null): string => {
+  if (dbLogoUrl && dbLogoUrl.startsWith('http')) {
+    return dbLogoUrl;
+  }
   const promiedosId = mapTeamIdToPromiedos(String(liveScoreTeamId));
   return `https://api.promiedos.com.ar/images/team/${promiedosId}/1`;
 };
@@ -40,7 +43,7 @@ export const reconstructStages = (dbRows: any[], compId: number) => {
     team: {
       id: row.team_id,
       name: row.team_name,
-      logo: getTeamLogoUrl(row.team_id)
+      logo: getTeamLogoUrl(row.team_id, row.team_logo)
     }
   }));
 
