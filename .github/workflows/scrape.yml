@@ -11,6 +11,8 @@ jobs:
     name: Wake Render + Trigger Scrape
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      issues: write
 
     steps:
       - name: Wake Render (health check)
@@ -54,7 +56,7 @@ jobs:
         id: verify
         run: |
           echo "::group::Verifying sync in Supabase..."
-          TIMESTAMP=$(curl -s -X POST \
+          TIMESTAMP=$(curl -s -X GET \
             "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/ls_sync_meta?select=last_success_at&id=eq.default" \
             -H "apikey: ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
