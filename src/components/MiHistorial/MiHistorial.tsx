@@ -9,6 +9,7 @@ import { MultiSelect } from './MultiSelect';
 import { DateRangePicker } from './DateRangePicker';
 import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import { Button } from '../ui/Button';
+import { Badge } from '../ui/Badge';
 import { Upload } from 'lucide-react';
 import { ImportModal } from './ImportModal';
 import { EditMatchModal } from './EditMatchModal';
@@ -84,15 +85,15 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   return (
     <div className="flex-1 min-w-0 px-3 py-3 sm:px-6 sm:py-8 lg:px-10 flex flex-col gap-4 sm:gap-8">
       {/* Header */}
-      <div className="pl-3 border-l-2 border-boca-gold/50">
+      <div>
         <h1 className="type-section-title text-white mb-0.5">Mi Historial</h1>
         <p className="type-body text-text-muted lowercase">{user.displayName ?? user.email}</p>
       </div>
 
-      {/* Dashboard Section: Cards Prominentes */}
+      {/* Dashboard Section: Cards Prominentes del Design System */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 w-full">
         {/* Card 1: Registro de Presencia */}
-        <div className="p-5 sm:p-6 bg-boca-blue-light border border-boca-border rounded-sm flex flex-col justify-between shadow-lg">
+        <div className="p-5 sm:p-6 bg-boca-blue-light border border-boca-border rounded-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2.5 mb-2">
               <div className="p-2 rounded-sm bg-boca-gold/10 text-boca-gold shrink-0 border border-boca-gold/20">
@@ -125,8 +126,8 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                 <h2 className="font-serif text-lg font-bold text-white leading-tight">
                   Agregá el partido al que fuiste
                 </h2>
-                <p className="font-sans text-xs text-text-muted">
-                  Registrá tu presencia en La Bombonera o cualquier cancha
+                <p className="type-caption text-text-muted">
+                  Registrá tu presencia en La Bombonera o cualquier estadio
                 </p>
               </div>
             </div>
@@ -150,7 +151,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
           </div>
 
           {matchEstado === 'ok' && (
-            <div className="mt-6 flex flex-col sm:flex-row gap-2 pt-4 border-t border-white/[0.06]">
+            <div className="mt-6 flex flex-col sm:flex-row gap-2 pt-4 border-t border-boca-border-card/60">
               <Button
                 onClick={() => setImportModalOpen(true)}
                 variant="outline"
@@ -167,7 +168,7 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
                   'flex-1 type-button font-bold px-5 py-2.5 rounded-sm transition-all',
                   'flex items-center justify-center gap-2 whitespace-nowrap',
                   selectedMatchId && !adding
-                    ? 'bg-boca-gold text-text-on-gold hover:opacity-90 cursor-pointer shadow-md'
+                    ? 'bg-boca-gold text-text-on-gold hover:opacity-90 cursor-pointer'
                     : 'opacity-20 text-text-on-gold cursor-not-allowed',
                 ].join(' ')}
               >
@@ -208,40 +209,40 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
         </div>
 
         {/* Card 2: Panel de Métricas del Hincha */}
-        <div className="p-5 sm:p-6 bg-boca-blue-light border border-boca-border rounded-sm flex flex-col justify-between shadow-lg">
+        <div className="p-5 sm:p-6 bg-boca-blue-light border border-boca-border rounded-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-2 mb-4">
               <div>
-                <p className="font-sans text-xs uppercase tracking-wider font-semibold text-text-muted">
+                <p className="type-caption text-text-muted uppercase tracking-wider font-semibold">
                   Métricas de asistencia
                 </p>
                 <h2 className="font-serif text-xl font-bold text-white">Partidos Asistidos</h2>
               </div>
               {totalAttended > 0 && (
-                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-boca-gold/10 border border-boca-gold/30 text-boca-gold font-sans text-xs font-bold">
-                  <span>{efectividad}% Efectividad</span>
-                </div>
+                <Badge variant="gold" className="px-3 py-1 font-sans text-xs font-bold">
+                  {efectividad}% Efectividad
+                </Badge>
               )}
             </div>
 
             {/* Número Principal + Desde */}
             <div className="flex items-baseline gap-4 py-1">
-              <span className="font-serif text-5xl sm:text-6xl font-extrabold text-boca-gold tracking-tight leading-none">
+              <span className="font-serif text-5xl sm:text-6xl font-bold text-boca-gold tabular-nums leading-none">
                 {totalAttended}
               </span>
               {earliestYear && (
-                <div className="border-l border-white/10 pl-3">
-                  <p className="font-sans text-xs text-text-muted">Presencia desde</p>
-                  <p className="font-sans text-sm font-semibold text-white">{earliestYear}</p>
+                <div className="border-l border-boca-border pl-3">
+                  <p className="type-caption text-text-muted">Presencia desde</p>
+                  <p className="font-sans text-sm font-semibold text-text-nav">{earliestYear}</p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Sub-grid de Estadísticas de Resultados */}
-          <div className="mt-6 pt-4 border-t border-white/[0.06] grid grid-cols-4 gap-2">
-            <div className="bg-white/[0.03] border border-[#0CF737]/20 rounded p-2 text-center">
-              <span className="block font-sans text-[10px] uppercase font-bold text-[#0CF737] tracking-wider">
+          {/* Sub-grid de Estadísticas con Tokens de Estado del Design System */}
+          <div className="mt-6 pt-4 border-t border-boca-border-card/60 grid grid-cols-4 gap-2">
+            <div className="bg-status-win-subtle border border-status-win/25 rounded-sm p-2 text-center">
+              <span className="block type-caption text-status-win font-bold uppercase text-[10px] tracking-wider">
                 Victorias
               </span>
               <span className="font-sans text-lg font-bold text-white tabular-nums">
@@ -249,8 +250,8 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
               </span>
             </div>
 
-            <div className="bg-white/[0.03] border border-[#F5CB25]/20 rounded p-2 text-center">
-              <span className="block font-sans text-[10px] uppercase font-bold text-[#F5CB25] tracking-wider">
+            <div className="bg-status-draw-subtle border border-status-draw/25 rounded-sm p-2 text-center">
+              <span className="block type-caption text-status-draw font-bold uppercase text-[10px] tracking-wider">
                 Empates
               </span>
               <span className="font-sans text-lg font-bold text-white tabular-nums">
@@ -258,8 +259,8 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
               </span>
             </div>
 
-            <div className="bg-white/[0.03] border border-[#E61034]/20 rounded p-2 text-center">
-              <span className="block font-sans text-[10px] uppercase font-bold text-[#E61034] tracking-wider">
+            <div className="bg-status-loss-subtle border border-status-loss/25 rounded-sm p-2 text-center">
+              <span className="block type-caption text-status-loss font-bold uppercase text-[10px] tracking-wider">
                 Derrotas
               </span>
               <span className="font-sans text-lg font-bold text-white tabular-nums">
@@ -267,8 +268,8 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
               </span>
             </div>
 
-            <div className="bg-white/[0.03] border border-white/10 rounded p-2 text-center">
-              <span className="block font-sans text-[10px] uppercase font-bold text-text-muted tracking-wider">
+            <div className="bg-boca-border-card/40 border border-boca-border rounded-sm p-2 text-center">
+              <span className="block type-caption text-text-muted font-bold uppercase text-[10px] tracking-wider">
                 Goles
               </span>
               <span className="font-sans text-sm font-semibold text-white tabular-nums leading-snug">
