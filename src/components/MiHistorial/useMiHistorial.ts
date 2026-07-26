@@ -246,6 +246,32 @@ export const useMiHistorial = (user: AuthUser) => {
     });
   };
 
+  const stats = attendedEntries.reduce(
+    (acc, entry) => {
+      const match = allMatchesMap.get(entry.matchId);
+      if (!match) return acc;
+
+      const resultado = getResultado(match);
+      if (resultado === 'victoria') acc.victorias++;
+      else if (resultado === 'empate') acc.empates++;
+      else if (resultado === 'derrota') acc.derrotas++;
+
+      const bocaIsHome = match.homeTeam.id === BOCA_ID;
+      const bocaGoals = bocaIsHome ? match.goalsHome : match.goalsAway;
+      const rivalGoals = bocaIsHome ? match.goalsAway : match.goalsHome;
+
+      if (bocaGoals !== null) acc.golesFavor += bocaGoals;
+      if (rivalGoals !== null) acc.golesContra += rivalGoals;
+
+      return acc;
+    },
+    { victorias: 0, empates: 0, derrotas: 0, golesFavor: 0, golesContra: 0 }
+  );
+
+  const puntosObtenidos = stats.victorias * 3 + stats.empates * 1;
+  const puntosPosibles = totalAttended * 3;
+  const efectividad = puntosPosibles > 0 ? Math.round((puntosObtenidos / puntosPosibles) * 100) : 0;
+
   return {
     matches,
     matchEstado,
@@ -258,6 +284,8 @@ export const useMiHistorial = (user: AuthUser) => {
     filteredEntries,
     totalAttended,
     earliestYear,
+    stats,
+    efectividad,
     availableMatches,
     availableCompetitions,
     selectedCompetitions,

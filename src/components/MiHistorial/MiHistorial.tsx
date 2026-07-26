@@ -31,6 +31,8 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
     filteredEntries,
     totalAttended,
     earliestYear,
+    stats,
+    efectividad,
     availableMatches,
     availableCompetitions,
     selectedCompetitions,
@@ -82,130 +84,199 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   return (
     <div className="flex-1 min-w-0 px-3 py-3 sm:px-6 sm:py-8 lg:px-10 flex flex-col gap-4 sm:gap-8">
       {/* Header */}
-      <div className="mb-6 pl-3 border-l-2 border-boca-gold/50">
+      <div className="pl-3 border-l-2 border-boca-gold/50">
         <h1 className="type-section-title text-white mb-0.5">Mi Historial</h1>
         <p className="type-body text-text-muted lowercase">{user.displayName ?? user.email}</p>
       </div>
 
-      {/* Stats */}
-      <div className="flex items-center gap-4 mb-6 p-4 bg-boca-blue-light border border-boca-border rounded-sm">
-        <div className="flex-1">
-          <p className="type-caption text-text-muted mb-0.5">Partidos presenciados</p>
-          <p
-            className="type-stat text-boca-gold font-bold tabular-nums"
-            style={{ fontSize: '2rem', lineHeight: 1 }}
-          >
-            {totalAttended}
-          </p>
-        </div>
-        {earliestYear && (
-          <div className="border-l border-boca-border pl-4">
-            <p className="type-caption text-text-muted mb-0.5">Desde</p>
-            <p className="type-card-title text-text-nav">{earliestYear}</p>
+      {/* Dashboard Section: Cards Prominentes */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 w-full">
+        {/* Card 1: Registro de Presencia */}
+        <div className="p-5 sm:p-6 bg-boca-blue-light border border-boca-border rounded-sm flex flex-col justify-between shadow-lg">
+          <div>
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="p-2 rounded-sm bg-boca-gold/10 text-boca-gold shrink-0 border border-boca-gold/20">
+                <svg viewBox="0 0 16 16" fill="none" className="w-5 h-5">
+                  <rect
+                    x="2"
+                    y="3"
+                    width="12"
+                    height="11"
+                    rx="1.5"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                  />
+                  <path
+                    d="M5 1.5v3M11 1.5v3M2 7h12"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M5.5 10l1.5 1.5L10.5 9"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h2 className="font-serif text-lg font-bold text-white leading-tight">
+                  Agregá el partido al que fuiste
+                </h2>
+                <p className="font-sans text-xs text-text-muted">
+                  Registrá tu presencia en La Bombonera o cualquier cancha
+                </p>
+              </div>
+            </div>
+
+            {matchEstado === 'loading' && (
+              <p className="type-body text-text-muted py-4">Cargando partidos...</p>
+            )}
+            {matchEstado === 'error' && (
+              <p className="type-body text-[#fca5a5] py-4">No se pudieron cargar los partidos.</p>
+            )}
+
+            {matchEstado === 'ok' && (
+              <div className="mt-4 flex flex-col gap-3">
+                <MatchCombobox
+                  matches={availableMatches}
+                  value={selectedMatchId}
+                  onChange={setSelectedMatchId}
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {/* Register form */}
-      <div className="mb-6 p-4 bg-boca-blue-light border border-boca-border rounded-sm">
-        <h2 className="sr-only">Agregar partido</h2>
-        <div className="flex items-center gap-2 mb-3">
-          <svg viewBox="0 0 16 16" fill="none" className="w-4 h-4 text-boca-gold shrink-0">
-            <rect
-              x="2"
-              y="3"
-              width="12"
-              height="11"
-              rx="1.5"
-              stroke="currentColor"
-              strokeWidth="1.2"
-            />
-            <path
-              d="M5 1.5v3M11 1.5v3M2 7h12"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-            />
-            <path
-              d="M5.5 10l1.5 1.5L10.5 9"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <p className="type-body text-text-nav">Agregá el partido al que fuiste</p>
+          {matchEstado === 'ok' && (
+            <div className="mt-6 flex flex-col sm:flex-row gap-2 pt-4 border-t border-white/[0.06]">
+              <Button
+                onClick={() => setImportModalOpen(true)}
+                variant="outline"
+                className="justify-center items-center py-2.5"
+              >
+                <Upload className="w-4 h-4 mr-1.5" />
+                Importar
+              </Button>
+              <Button
+                onClick={handleMarkAttendance}
+                disabled={!selectedMatchId || adding}
+                variant="primary"
+                className={[
+                  'flex-1 type-button font-bold px-5 py-2.5 rounded-sm transition-all',
+                  'flex items-center justify-center gap-2 whitespace-nowrap',
+                  selectedMatchId && !adding
+                    ? 'bg-boca-gold text-text-on-gold hover:opacity-90 cursor-pointer shadow-md'
+                    : 'opacity-20 text-text-on-gold cursor-not-allowed',
+                ].join(' ')}
+              >
+                {adding ? (
+                  <>
+                    <svg className="animate-spin w-4 h-4" viewBox="0 0 16 16" fill="none">
+                      <circle
+                        cx="8"
+                        cy="8"
+                        r="6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeDasharray="28"
+                        strokeDashoffset="10"
+                      />
+                    </svg>
+                    Guardando...
+                  </>
+                ) : successMatchId ? (
+                  <span className="animate-check-bounce flex items-center gap-1.5">
+                    <svg viewBox="0 0 14 14" fill="none" className="w-4 h-4">
+                      <path
+                        d="M2 7l3.5 3.5L12 3"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    ¡Marcado!
+                  </span>
+                ) : (
+                  'Marcar presencia'
+                )}
+              </Button>
+            </div>
+          )}
         </div>
 
-        {matchEstado === 'loading' && (
-          <p className="type-body text-text-muted py-2">Cargando partidos...</p>
-        )}
-        {matchEstado === 'error' && (
-          <p className="type-body text-[#fca5a5] py-2">No se pudieron cargar los partidos.</p>
-        )}
-
-        {matchEstado === 'ok' && (
-          <div className="flex flex-col sm:flex-row gap-2">
-            <MatchCombobox
-              matches={availableMatches}
-              value={selectedMatchId}
-              onChange={setSelectedMatchId}
-            />
-
-            <Button
-              onClick={() => setImportModalOpen(true)}
-              variant="outline"
-              className="justify-start items-start"
-            >
-              <Upload className="w-4 h-4" />
-              Importar
-            </Button>
-            <Button
-              onClick={handleMarkAttendance}
-              disabled={!selectedMatchId || adding}
-              variant="primary"
-              className={[
-                'sm:w-auto w-full type-button font-bold px-5 py-2.5 rounded-sm transition-all',
-                'flex items-center justify-center gap-2 whitespace-nowrap',
-                selectedMatchId && !adding
-                  ? 'bg-boca-gold text-text-on-gold hover:opacity-90 cursor-pointer'
-                  : 'opacity-20 text-text-on-gold cursor-not-allowed',
-              ].join(' ')}
-            >
-              {adding ? (
-                <>
-                  <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
-                    <circle
-                      cx="8"
-                      cy="8"
-                      r="6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeDasharray="28"
-                      strokeDashoffset="10"
-                    />
-                  </svg>
-                  Guardando...
-                </>
-              ) : successMatchId ? (
-                <span className="animate-check-bounce flex items-center gap-1.5">
-                  <svg viewBox="0 0 14 14" fill="none" className="w-3.5 h-3.5">
-                    <path
-                      d="M2 7l3.5 3.5L12 3"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  ¡Marcado!
-                </span>
-              ) : (
-                'Marcar presencia'
+        {/* Card 2: Panel de Métricas del Hincha */}
+        <div className="p-5 sm:p-6 bg-boca-blue-light border border-boca-border rounded-sm flex flex-col justify-between shadow-lg">
+          <div>
+            <div className="flex items-center justify-between gap-2 mb-4">
+              <div>
+                <p className="font-sans text-xs uppercase tracking-wider font-semibold text-text-muted">
+                  Métricas de asistencia
+                </p>
+                <h2 className="font-serif text-xl font-bold text-white">Partidos Asistidos</h2>
+              </div>
+              {totalAttended > 0 && (
+                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-boca-gold/10 border border-boca-gold/30 text-boca-gold font-sans text-xs font-bold">
+                  <span>{efectividad}% Efectividad</span>
+                </div>
               )}
-            </Button>
+            </div>
+
+            {/* Número Principal + Desde */}
+            <div className="flex items-baseline gap-4 py-1">
+              <span className="font-serif text-5xl sm:text-6xl font-extrabold text-boca-gold tracking-tight leading-none">
+                {totalAttended}
+              </span>
+              {earliestYear && (
+                <div className="border-l border-white/10 pl-3">
+                  <p className="font-sans text-xs text-text-muted">Presencia desde</p>
+                  <p className="font-sans text-sm font-semibold text-white">{earliestYear}</p>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+
+          {/* Sub-grid de Estadísticas de Resultados */}
+          <div className="mt-6 pt-4 border-t border-white/[0.06] grid grid-cols-4 gap-2">
+            <div className="bg-white/[0.03] border border-[#0CF737]/20 rounded p-2 text-center">
+              <span className="block font-sans text-[10px] uppercase font-bold text-[#0CF737] tracking-wider">
+                Victorias
+              </span>
+              <span className="font-sans text-lg font-bold text-white tabular-nums">
+                {stats.victorias}
+              </span>
+            </div>
+
+            <div className="bg-white/[0.03] border border-[#F5CB25]/20 rounded p-2 text-center">
+              <span className="block font-sans text-[10px] uppercase font-bold text-[#F5CB25] tracking-wider">
+                Empates
+              </span>
+              <span className="font-sans text-lg font-bold text-white tabular-nums">
+                {stats.empates}
+              </span>
+            </div>
+
+            <div className="bg-white/[0.03] border border-[#E61034]/20 rounded p-2 text-center">
+              <span className="block font-sans text-[10px] uppercase font-bold text-[#E61034] tracking-wider">
+                Derrotas
+              </span>
+              <span className="font-sans text-lg font-bold text-white tabular-nums">
+                {stats.derrotas}
+              </span>
+            </div>
+
+            <div className="bg-white/[0.03] border border-white/10 rounded p-2 text-center">
+              <span className="block font-sans text-[10px] uppercase font-bold text-text-muted tracking-wider">
+                Goles
+              </span>
+              <span className="font-sans text-sm font-semibold text-white tabular-nums leading-snug">
+                {stats.golesFavor} - {stats.golesContra}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Filter bar — visible only when there are registered matches */}
