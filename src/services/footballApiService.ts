@@ -122,32 +122,60 @@ function safeParseIsoDate(dateStr: string): string {
  * Obtiene el historial de enfrentamientos cara a cara (H2H) de Boca Juniors contra el rival seleccionado.
  */
 export const fetchHeadToHead = async (rivalApiId: number | string): Promise<H2HMatch[]> => {
+  const rivalStr = String(rivalApiId);
   const { data: dbH2H, error } = await supabase
     .from('ls_h2h')
     .select('*')
-    .eq('rival_id', String(rivalApiId))
+    .eq('rival_id', rivalStr)
     .maybeSingle();
 
   if (error) throw error;
-  if (!dbH2H) return [];
 
-  const rawMatches: DbH2HMatch[] = dbH2H.last_matches || [];
-  const mapped = rawMatches.map((m: DbH2HMatch) => {
-    const isBocaHome = m.home_team.toLowerCase().includes('boca');
-    const scoreHome = m.home_score;
-    const scoreAway = m.away_score;
+  if (dbH2H && dbH2H.last_matches && dbH2H.last_matches.length > 0) {
+    const rawMatches: DbH2HMatch[] = dbH2H.last_matches;
+    const mapped = rawMatches.map((m: DbH2HMatch) => {
+      const isBocaHome = m.home_team.toLowerCase().includes('boca');
+      const scoreHome = m.home_score;
+      const scoreAway = m.away_score;
+      return {
+        date: safeParseIsoDate(m.date),
+        homeTeam: m.home_team,
+        awayTeam: m.away_team,
+        homeScore: scoreHome,
+        awayScore: scoreAway,
+        result: matchResult(scoreHome, scoreAway, isBocaHome),
+        competition: m.competition || 'Liga Profesional',
+      };
+    });
+
+    return mapped.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
+  }
+
+  // Fallback: Si no hay registro en ls_h2h, consultar ls_fixtures directamente
+  const { data: dbFixtures, error: fixError } = await supabase
+    .from('ls_fixtures')
+    .select('*')
+    .or(`and(home_team_id.eq.${BOCA_ID},away_team_id.eq.${rivalStr}),and(home_team_id.eq.${rivalStr},away_team_id.eq.${BOCA_ID})`)
+    .eq('status', 'finished')
+    .order('date', { ascending: false })
+    .limit(5);
+
+  if (fixError || !dbFixtures) return [];
+
+  return (dbFixtures as DbFixtureRow[]).map((f: DbFixtureRow) => {
+    const isBocaHome = String(f.home_team_id) === BOCA_ID || f.home_team.toLowerCase().includes('boca');
+    const scoreHome = f.home_score;
+    const scoreAway = f.away_score;
     return {
-      date: safeParseIsoDate(m.date),
-      homeTeam: m.home_team,
-      awayTeam: m.away_team,
+      date: safeParseIsoDate(f.date),
+      homeTeam: f.home_team,
+      awayTeam: f.away_team,
       homeScore: scoreHome,
       awayScore: scoreAway,
       result: matchResult(scoreHome, scoreAway, isBocaHome),
-      competition: m.competition || 'Liga Profesional',
+      competition: f.competition_id === 329 ? 'Copa Libertadores' : (f.competition_id === 11 ? 'Copa Sudamericana' : 'Liga Profesional'),
     };
   });
-
-  return mapped.sort((a: { date: string }, b: { date: string }) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
 };
 
 /**
