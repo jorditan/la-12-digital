@@ -95,6 +95,29 @@ export const getNextFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
   });
 };
 
+function safeParseIsoDate(dateStr: string): string {
+  if (!dateStr) return new Date().toISOString();
+  const d = new Date(dateStr);
+  if (!isNaN(d.getTime())) return d.toISOString();
+
+  const parts = dateStr.trim().split(/\s+/);
+  if (parts.length >= 1) {
+    const dmy = parts[0].split(/[-/.]/).map(Number);
+    if (dmy.length === 3) {
+      const [day, month, year] = dmy;
+      let hr = 12, min = 0;
+      if (parts[1] && parts[1].includes(':')) {
+        const [h, m] = parts[1].split(':').map(Number);
+        if (!isNaN(h) && !isNaN(m)) { hr = h; min = m; }
+      }
+      const utcDate = new Date(Date.UTC(year, month - 1, day, hr, min));
+      utcDate.setUTCHours(utcDate.getUTCHours() + 3);
+      return utcDate.toISOString();
+    }
+  }
+  return new Date().toISOString();
+}
+
 /**
  * Obtiene el historial de enfrentamientos cara a cara (H2H) de Boca Juniors contra el rival seleccionado.
  */
@@ -114,7 +137,7 @@ export const fetchHeadToHead = async (rivalApiId: number | string): Promise<H2HM
     const scoreHome = m.home_score;
     const scoreAway = m.away_score;
     return {
-      date: new Date(m.date).toISOString(),
+      date: safeParseIsoDate(m.date),
       homeTeam: m.home_team,
       awayTeam: m.away_team,
       homeScore: scoreHome,
