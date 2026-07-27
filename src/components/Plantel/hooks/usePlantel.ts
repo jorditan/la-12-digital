@@ -40,6 +40,13 @@ export function usePlantel() {
     });
   }, [squad]);
 
+  const averageAge = useMemo<number>(() => {
+    const validPlayers = jugadores.filter((j) => !j.isStaff && j.age > 0);
+    if (validPlayers.length === 0) return 0;
+    const sum = validPlayers.reduce((acc, j) => acc + j.age, 0);
+    return Math.round((sum / validPlayers.length) * 10) / 10;
+  }, [jugadores]);
+
   const tabs = useMemo<PositionTab[]>(() => {
     const counts: Record<PositionCategory, number> = {
       todos: jugadores.length,
@@ -80,6 +87,7 @@ export function usePlantel() {
     tabs,
     jugadores: jugadoresFiltrados,
     totalCount: jugadores.length,
+    averageAge,
     reload: loadSquad,
   };
 }
