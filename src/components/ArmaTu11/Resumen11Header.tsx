@@ -25,27 +25,27 @@ export function Resumen11Header({
   };
 
   return (
-    <div className="relative rounded-sm overflow-hidden bg-boca-blue border border-boca-gold/30 p-6 sm:p-8 mb-6 shadow-card">
-      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden mb-2 sm:mb-4 shadow-card">
+      <div className="border-b border-boca-border-card px-4 pt-4 pb-3 sm:px-6 sm:pt-6 sm:pb-3 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-boca-gold/10 border border-boca-gold flex items-center justify-center shrink-0 shadow-md">
-            <Shield className="w-8 h-8 sm:w-9 sm:h-9 text-boca-gold" />
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-boca-gold/10 border border-boca-gold/30 flex items-center justify-center shrink-0">
+            <Shield className="w-6 h-6 text-boca-gold" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-wide">
+            <h1 className="type-section-title text-white">
               Armá tu 11 Titular
             </h1>
-            <p className="text-boca-gold font-sans text-sm sm:text-base mt-0.5">
-              Esquema táctico seleccionado: <strong>{formationLabel}</strong>
+            <p className="font-sans text-xs sm:text-sm text-text-muted mt-0.5">
+              Esquema táctico: <strong className="text-boca-gold font-semibold">{formationLabel}</strong>
             </p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
-          {/* Insights de 11 elegidos y promedio edad */}
-          <div className="flex items-center gap-6 bg-boca-blue-light px-5 py-2.5 rounded border border-white/10 shrink-0">
+          {/* Insights */}
+          <div className="flex items-center gap-6 bg-boca-blue px-5 py-2.5 rounded-sm border border-boca-border-card shrink-0">
             <div className="text-center">
-              <span className="block text-2xl font-bold font-serif text-boca-gold leading-tight">
+              <span className="block font-serif font-bold text-xl text-boca-gold leading-tight">
                 {assignedCount}/11
               </span>
               <span className="text-xs font-sans text-text-muted uppercase tracking-wider font-semibold">
@@ -55,10 +55,10 @@ export function Resumen11Header({
 
             {averageAge > 0 && (
               <>
-                <div className="w-px h-8 bg-white/10" />
+                <div className="w-px h-7 bg-white/10" />
                 <div className="text-center">
-                  <span className="block text-2xl font-bold font-serif text-boca-gold leading-tight">
-                    {averageAge} <span className="text-sm font-sans font-normal text-white/70">años</span>
+                  <span className="block font-serif font-bold text-xl text-boca-gold leading-tight">
+                    {averageAge} <span className="text-xs font-sans font-normal text-white/70">años</span>
                   </span>
                   <span className="text-xs font-sans text-text-muted uppercase tracking-wider font-semibold">
                     Promedio Edad
@@ -74,10 +74,10 @@ export function Resumen11Header({
               <button
                 type="button"
                 onClick={onClear}
-                className="p-2.5 rounded border border-white/10 bg-boca-blue-light text-text-muted hover:text-white hover:bg-white/10 transition-colors"
+                className="p-2 rounded-sm border border-boca-border-card bg-boca-blue text-text-muted hover:text-white hover:border-white/20 transition-colors"
                 title="Limpiar alineación"
               >
-                <RotateCcw size={18} />
+                <RotateCcw size={16} />
               </button>
             )}
 
@@ -86,10 +86,10 @@ export function Resumen11Header({
               onClick={handleShareClick}
               disabled={assignedCount === 0}
               className={`
-                px-4 py-2.5 rounded text-sm font-sans font-bold flex items-center gap-2 transition-all
+                px-4 py-2 rounded-sm text-sm font-sans font-bold flex items-center gap-2 transition-all
                 ${
                   assignedCount > 0
-                    ? 'bg-boca-gold text-boca-blue hover:bg-boca-gold-hover shadow-sm'
+                    ? 'bg-boca-gold text-boca-blue hover:opacity-90 shadow-sm'
                     : 'bg-white/10 text-text-muted cursor-not-allowed'
                 }
               `}

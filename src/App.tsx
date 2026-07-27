@@ -30,8 +30,6 @@ function DashboardPage() {
           id="main-content"
           className="flex-1 min-w-0 px-3 py-3 sm:px-6 sm:py-8 lg:px-10 flex flex-col gap-4 sm:gap-8"
         >
-          <BannerMensaje />
-          <DataFreshnessBanner />
           <ProximosPartidos />
           <div className="flex flex-col gap-4 xl:flex-row sm:gap-8 sm:items-stretch">
             <div className="min-w-0 sm:flex-1 flex flex-col">
@@ -98,6 +96,8 @@ function AppInner() {
         onLogout={logout}
         onUploadAvatar={uploadAvatar}
       />
+      <BannerMensaje />
+      <DataFreshnessBanner />
 
       <ErrorBoundary>
         <Routes>

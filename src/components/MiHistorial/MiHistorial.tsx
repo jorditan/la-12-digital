@@ -85,9 +85,13 @@ const MiHistorialContent = ({ user }: { user: AuthUser }) => {
   return (
     <div className="flex-1 min-w-0 px-3 py-3 sm:px-6 sm:py-8 lg:px-10 flex flex-col gap-4 sm:gap-8">
       {/* Header */}
-      <div>
-        <h1 className="type-section-title text-white mb-0.5">Mi Historial</h1>
-        <p className="type-body text-text-muted lowercase">{user.displayName ?? user.email}</p>
+      <div className="bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden shadow-card">
+        <div className="border-b border-boca-border-card px-4 pt-4 pb-3 sm:px-6 sm:pt-6 sm:pb-3 flex items-center justify-between gap-4">
+          <div>
+            <h1 className="type-section-title text-white">Mi Historial</h1>
+            <p className="font-sans text-xs sm:text-sm text-text-muted mt-0.5 lowercase">{user.displayName ?? user.email}</p>
+          </div>
+        </div>
       </div>
 
       {/* Dashboard Section: Cards Prominentes del Design System */}
