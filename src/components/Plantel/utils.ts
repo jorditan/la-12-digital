@@ -70,3 +70,31 @@ export function formatHeight(height?: string): string {
   }
   return `${num.toFixed(2)} m`;
 }
+
+const FLAG_MAP: Record<string, string> = {
+  argentina: '🇦🇷',
+  uruguay: '🇺🇾',
+  chile: '🇨🇱',
+  colombia: '🇨🇴',
+  peru: '🇵🇪',
+  perú: '🇵🇪',
+  paraguay: '🇵🇾',
+  brasil: '🇧🇷',
+  brazil: '🇧🇷',
+  ecuador: '🇪🇨',
+  venezuela: '🇻🇪',
+  bolivia: '🇧🇴',
+  espana: '🇪🇸',
+  españa: '🇪🇸',
+  italia: '🇮🇹',
+  francia: '🇫🇷',
+  inglaterra: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+  eeuu: '🇺🇸',
+  usa: '🇺🇸',
+};
+
+export function getCountryFlag(nationality?: string): string {
+  if (!nationality) return '🇦🇷';
+  const clean = nationality.trim().toLowerCase();
+  return FLAG_MAP[clean] || '🇦🇷';
+}

@@ -6,21 +6,33 @@ import { JugadorCard } from './JugadorCard';
 import { JugadorSkeleton } from './JugadorSkeleton';
 import type { PlantelJugador, PositionCategory } from './types';
 import { Badge } from '../ui/Badge';
-import { Activity, RotateCcw } from 'lucide-react';
+import {
+  Shield,
+  ShieldAlert,
+  Activity,
+  Flame,
+  Briefcase,
+  RotateCcw,
+} from 'lucide-react';
+import type { ComponentType } from 'react';
 
 interface PositionSection {
   id: PositionCategory;
   title: string;
-  icon: string;
+  IconComponent: ComponentType<{ size?: number | string; className?: string }>;
   players: PlantelJugador[];
 }
 
-const SECTION_CONFIG: Array<{ id: PositionCategory; title: string; icon: string }> = [
-  { id: 'arqueros', title: 'Arqueros', icon: '🧤' },
-  { id: 'defensores', title: 'Defensores', icon: '🛡️' },
-  { id: 'mediocampistas', title: 'Mediocampistas', icon: '⚽' },
-  { id: 'delanteros', title: 'Delanteros', icon: '🎯' },
-  { id: 'cuerpo_tecnico', title: 'Cuerpo Técnico', icon: '📋' },
+const SECTION_CONFIG: Array<{
+  id: PositionCategory;
+  title: string;
+  IconComponent: ComponentType<{ size?: number | string; className?: string }>;
+}> = [
+  { id: 'arqueros', title: 'Arqueros', IconComponent: Shield },
+  { id: 'defensores', title: 'Defensores', IconComponent: ShieldAlert },
+  { id: 'mediocampistas', title: 'Mediocampistas', IconComponent: Activity },
+  { id: 'delanteros', title: 'Delanteros', IconComponent: Flame },
+  { id: 'cuerpo_tecnico', title: 'Cuerpo Técnico', IconComponent: Briefcase },
 ];
 
 export function PlantelView() {
@@ -66,44 +78,45 @@ export function PlantelView() {
       ) : error ? (
         /* Estado de error */
         <div className="bg-boca-blue-light border border-red-500/30 rounded-sm p-8 text-center max-w-md mx-auto my-8 shadow-card">
-          <Activity className="w-10 h-10 text-red-400 mx-auto mb-3" />
+          <Activity size={32} className="text-red-400 mx-auto mb-3" />
           <p className="text-white font-serif text-base mb-4">{error}</p>
           <button
             onClick={reload}
             className="inline-flex items-center gap-2 px-4 py-2 bg-boca-gold text-boca-blue font-sans text-xs font-bold rounded-sm hover:bg-boca-gold-hover transition-colors"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw size={14} />
             Reintentar
           </button>
         </div>
       ) : sections.length > 0 ? (
-        /* Contenedores agrupados por posición */
+        /* Contenedores agrupados por posición con encabezados de sección del Dashboard */
         <div className="flex flex-col gap-10">
-          {sections.map((section) => (
-            <section key={section.id} className="flex flex-col gap-4">
-              {/* Encabezado de sección */}
-              <div className="flex items-center justify-between pb-2 border-b border-boca-border">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-xl" role="img" aria-label={section.title}>
-                    {section.icon}
-                  </span>
-                  <h2 className="font-serif font-bold text-lg text-white tracking-wide">
-                    {section.title}
-                  </h2>
+          {sections.map((section) => {
+            const Icon = section.IconComponent;
+            return (
+              <section key={section.id} className="flex flex-col gap-4">
+                {/* Encabezado de sección tipo Dashboard (size={24}, text-boca-gold, font-serif 32px/2xl) */}
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <div className="flex items-center gap-3">
+                    <Icon size={24} className="text-boca-gold shrink-0" />
+                    <h2 className="font-serif font-bold text-xl sm:text-2xl text-white tracking-tight">
+                      {section.title}
+                    </h2>
+                  </div>
+                  <Badge variant="blue" className="font-sans text-xs font-semibold px-2.5 py-0.5">
+                    {section.players.length} {section.players.length === 1 ? 'integrante' : 'integrantes'}
+                  </Badge>
                 </div>
-                <Badge variant="blue" className="font-sans text-xs font-semibold px-2 py-0.5">
-                  {section.players.length} {section.players.length === 1 ? 'integrante' : 'integrantes'}
-                </Badge>
-              </div>
 
-              {/* Grid de jugadores de la posición */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {section.players.map((jugador) => (
-                  <JugadorCard key={jugador.id} jugador={jugador} />
-                ))}
-              </div>
-            </section>
-          ))}
+                {/* Grid de jugadores de la posición */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {section.players.map((jugador) => (
+                    <JugadorCard key={jugador.id} jugador={jugador} />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
         </div>
       ) : (
         /* Estado vacío */
