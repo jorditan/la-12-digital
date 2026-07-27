@@ -16,7 +16,8 @@ const BASE = "/api/youtube";
 
 // ── Helpers de formato ────────────────────────────────────────────────────────
 
-function parseDuration(iso: string): string {
+function parseDuration(iso: string | undefined | null): string {
+  if (!iso) return "0:00";
   const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
   if (!match) return "0:00";
   const h = parseInt(match[1] ?? "0");
@@ -27,7 +28,8 @@ function parseDuration(iso: string): string {
   return `${m}:${ss}`;
 }
 
-function totalSeconds(iso: string): number {
+function totalSeconds(iso: string | undefined | null): number {
+  if (!iso) return 0;
   const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
   if (!match) return 0;
   return (
@@ -43,7 +45,7 @@ function formatViews(n: number): string {
   return n.toString();
 }
 
-function isShort(title: string, durationIso: string): boolean {
+function isShort(title: string, durationIso: string | undefined | null): boolean {
   return title.includes("#") || totalSeconds(durationIso) < 300;
 }
 
