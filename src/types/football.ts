@@ -87,10 +87,12 @@ export interface StandingStats {
 // ============================================
 
 export interface Player {
-  id: number;
+  id: number | string;
   name: string;
   firstname: string;
   lastname: string;
+  number?: string;
+  position?: string;
   age: number;
   birth: {
     date: string;
@@ -102,6 +104,7 @@ export interface Player {
   weight: string;
   injured: boolean;
   photo: string;
+  isStaff?: boolean;
 }
 
 export interface Squad {
