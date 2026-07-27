@@ -15,14 +15,19 @@ export function parseMatchDate(value: string | Date | null | undefined): Date {
   // Si no especifica timezone (Z, z, +HH:MM, -HH:MM), asumir Argentina (-03:00)
   const hasTimezone = /[Zz]|[+-]\d{2}:?\d{2}$/.test(trimmed);
 
+  let date: Date;
   if (!hasTimezone) {
     const isoBase = trimmed.includes("T") ? trimmed : trimmed.replace(" ", "T");
-    const parsed = new Date(`${isoBase}-03:00`);
-    if (!isNaN(parsed.getTime())) return parsed;
+    date = new Date(`${isoBase}-03:00`);
+    if (isNaN(date.getTime())) date = new Date(trimmed);
+  } else {
+    date = new Date(trimmed);
   }
 
-  const d = new Date(trimmed);
-  return isNaN(d.getTime()) ? new Date() : d;
+  if (isNaN(date.getTime())) return new Date();
+
+  // Compensación del desfase de +1 hora (3,600,000 ms) derivado del scraper de Promiedos en Supabase
+  return new Date(date.getTime() + 60 * 60 * 1000);
 }
 
 export function formatMatchTime(value: string | Date): string {
