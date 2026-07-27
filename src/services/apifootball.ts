@@ -190,6 +190,8 @@ export async function fetchMatchesForHistorial(): Promise<MatchResult[]> {
 
 // ── Próximos partidos ────────────────────────────────────────────────────────
 
+import { formatMatchTime } from '../lib/date';
+
 function mapFixtureToProximoPartido(
   f: import('../types/football').ProcessedFixture,
   defaultCompetition: string
@@ -199,12 +201,7 @@ function mapFixtureToProximoPartido(
   return {
     fixtureId: f.id,
     date: f.date.toISOString(),
-    time: f.date.toLocaleTimeString('es-AR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-      timeZone: 'America/Argentina/Buenos_Aires',
-    }),
+    time: formatMatchTime(f.date),
     homeTeam: {
       id: f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId,
       name: f.homeTeam,

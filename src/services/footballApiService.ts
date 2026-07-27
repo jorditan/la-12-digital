@@ -3,6 +3,7 @@ import type { StandingData, AnnualStandingData, H2HMatch } from '../types/footba
 export type { StandingData, AnnualStandingData, H2HMatch };
 import type { DbFixtureRow, DbStandingRow, DbH2HMatch, DbSquadRow } from '../types/database.types';
 import { supabase } from '../lib/supabase';
+import { parseMatchDate } from '../lib/date';
 import {
   BOCA_ID,
   BOCA_RE,
@@ -40,7 +41,7 @@ export const getLastFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
     const scoreAway = m.away_score;
     return {
       id: isNaN(Number(m.id)) ? hashStringToNumber(String(m.id)) : Number(m.id),
-      date: new Date(m.date),
+      date: parseMatchDate(m.date),
       homeTeam: m.home_team,
       awayTeam: m.away_team,
       homeTeamId: m.home_team_id,
@@ -77,7 +78,7 @@ export const getNextFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
     const isBocaHome = String(f.home_team_id) === BOCA_ID || BOCA_RE.test(f.home_team);
     return {
       id: isNaN(Number(f.id)) ? hashStringToNumber(String(f.id)) : Number(f.id),
-      date: new Date(f.date),
+      date: parseMatchDate(f.date),
       homeTeam: f.home_team,
       awayTeam: f.away_team,
       homeTeamId: f.home_team_id,
@@ -96,26 +97,7 @@ export const getNextFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
 };
 
 function safeParseIsoDate(dateStr: string): string {
-  if (!dateStr) return new Date().toISOString();
-  const d = new Date(dateStr);
-  if (!isNaN(d.getTime())) return d.toISOString();
-
-  const parts = dateStr.trim().split(/\s+/);
-  if (parts.length >= 1) {
-    const dmy = parts[0].split(/[-/.]/).map(Number);
-    if (dmy.length === 3) {
-      const [day, month, year] = dmy;
-      let hr = 12, min = 0;
-      if (parts[1] && parts[1].includes(':')) {
-        const [h, m] = parts[1].split(':').map(Number);
-        if (!isNaN(h) && !isNaN(m)) { hr = h; min = m; }
-      }
-      const utcDate = new Date(Date.UTC(year, month - 1, day, hr, min));
-      utcDate.setUTCHours(utcDate.getUTCHours() + 3);
-      return utcDate.toISOString();
-    }
-  }
-  return new Date().toISOString();
+  return parseMatchDate(dateStr).toISOString();
 }
 
 /**
@@ -215,7 +197,7 @@ export const getLibertadoresLastFixtures = async (count = 8): Promise<ProcessedF
     const scoreAway = m.away_score;
     return {
       id: isNaN(Number(m.id)) ? hashStringToNumber(String(m.id)) : Number(m.id),
-      date: new Date(m.date),
+      date: parseMatchDate(m.date),
       homeTeam: m.home_team,
       awayTeam: m.away_team,
       homeTeamId: m.home_team_id,
@@ -252,7 +234,7 @@ export const getLibertadoresNextFixtures = async (count = 8): Promise<ProcessedF
     const isBocaHome = String(f.home_team_id) === BOCA_ID || BOCA_RE.test(f.home_team);
     return {
       id: isNaN(Number(f.id)) ? hashStringToNumber(String(f.id)) : Number(f.id),
-      date: new Date(f.date),
+      date: parseMatchDate(f.date),
       homeTeam: f.home_team,
       awayTeam: f.away_team,
       homeTeamId: f.home_team_id,
