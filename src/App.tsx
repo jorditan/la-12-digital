@@ -1,5 +1,6 @@
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { PlantelView } from './components/PlantelView';
+import { ArmaTu11View } from './components/ArmaTu11';
 import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Header } from './components/layout/Header';
@@ -102,6 +103,7 @@ function AppInner() {
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/plantel" element={<PlantelView />} />
+          <Route path="/arma-tu-11" element={<ArmaTu11View />} />
           <Route path="/mi-historial" element={<MiHistorial user={user} />} />
           <Route
             path="/configuracion"

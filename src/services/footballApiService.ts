@@ -320,21 +320,24 @@ export const getTeamSquad = async (teamId = BOCA_ID): Promise<Squad> => {
     const nationality = 'Argentina';
 
     return {
-      id: Number(p.id),
+      id: isNaN(Number(p.id)) ? (p.id || p.name) : Number(p.id),
       name: p.name,
       firstname,
       lastname,
+      number: p.num ? String(p.num) : undefined,
+      position: p.position || undefined,
       age: Number(p.age) || 0,
       birth: {
         date: p.birthdate ? p.birthdate.split('/').reverse().join('-') : '',
-        place: '',
+        place: p.position || '',
         country: nationality
       },
       nationality,
-      height: String(p.height || ''),
-      weight: String(p.weight || ''),
+      height: p.height ? String(p.height) : '',
+      weight: p.weight ? String(p.weight) : '',
       injured: false,
-      photo: ''
+      photo: '',
+      isStaff: Boolean(p.is_staff)
     };
   });
 
