@@ -34,28 +34,29 @@ export function useArmaTu11() {
     }));
   }, [squad]);
 
-  // IDs de jugadores ya asignados en la cancha
+  // IDs de jugadores ya asignados en la cancha activa
   const assignedPlayerIds = useMemo<Set<number | string>>(() => {
     const set = new Set<number | string>();
-    Object.values(lineup).forEach((player) => {
+    currentFormation.slots.forEach((slot) => {
+      const player = lineup[slot.id];
       if (player) set.add(player.id);
     });
     return set;
-  }, [lineup]);
+  }, [lineup, currentFormation]);
 
-  // Promedio de edad de los 11 elegidos
+  // Promedio de edad de los elegidos en la formación activa
   const averageAge = useMemo<number>(() => {
-    const selected = Object.values(lineup).filter(
-      (p): p is PlantelJugador => p !== null && p.age > 0
-    );
+    const selected = currentFormation.slots
+      .map((slot) => lineup[slot.id])
+      .filter((p): p is PlantelJugador => Boolean(p && p.age > 0));
     if (selected.length === 0) return 0;
     const sum = selected.reduce((acc, p) => acc + p.age, 0);
     return Math.round((sum / selected.length) * 10) / 10;
-  }, [lineup]);
+  }, [lineup, currentFormation]);
 
   const assignedCount = useMemo<number>(() => {
-    return Object.values(lineup).filter(Boolean).length;
-  }, [lineup]);
+    return currentFormation.slots.filter((slot) => Boolean(lineup[slot.id])).length;
+  }, [lineup, currentFormation]);
 
   const assignPlayer = useCallback(
     (slotId: string, player: PlantelJugador) => {

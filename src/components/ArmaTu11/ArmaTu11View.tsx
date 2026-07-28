@@ -57,12 +57,9 @@ export function ArmaTu11View() {
       {/* Selector de Esquema Táctico */}
       {!loading && !error && (
         <div className="flex items-center justify-between bg-boca-blue-mid border border-boca-border p-4 rounded-sm">
-          <FormacionSelector
-            formationId={formationId}
-            onChange={setFormationId}
-          />
+          <FormacionSelector formationId={formationId} onChange={setFormationId} />
           <span className="text-xs font-sans text-text-muted hidden sm:inline-block">
-            Haz clic en un puesto para asignar un jugador
+            Hacé clic en un puesto para asignar un jugador
           </span>
         </div>
       )}
