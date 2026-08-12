@@ -1,107 +1,494 @@
-export interface DbFixtureRow {
-  id: string | number;
-  competition_id: number;
-  date: string;
-  home_team: string;
-  away_team: string;
-  home_team_id: string;
-  away_team_id: string;
-  home_score: number | null;
-  away_score: number | null;
-  status: 'finished' | 'scheduled' | 'live' | string;
-  venue?: string | null;
-  created_at?: string;
-  updated_at?: string;
-}
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-export interface DbStandingRow {
-  competition_id: number;
-  rank: number;
-  team_id: string;
-  team_name: string;
-  team_logo?: string | null;
-  points: number;
-  played: number;
-  won: number;
-  drawn: number;
-  lost: number;
-  goals_for: number;
-  goals_against: number;
-  goal_diff: number;
-  zone: string | null;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface DbH2HMatch {
-  id?: string;
-  date: string;
-  home_team: string;
-  away_team: string;
-  home_score: number | null;
-  away_score: number | null;
-  status?: string;
-  competition?: string;
-}
-
-export interface DbH2HRow {
-  rival_id: string;
-  stats?: {
-    boca_wins: number;
-    rival_wins: number;
-    draws: number;
-  };
-  last_matches: DbH2HMatch[];
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface DbSquadRow {
-  id?: number | string;
-  team_id: string;
-  name: string;
-  sname?: string;
-  num?: string;
-  position?: string;
-  formation_position?: string;
-  age?: number | string | null;
-  height?: string | null;
-  weight?: string | null;
-  country_id?: string;
-  birthdate?: string | null;
-  is_staff: boolean;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       ls_fixtures: {
-        Row: DbFixtureRow;
-        Insert: DbFixtureRow;
-        Update: Partial<DbFixtureRow>;
-      };
-      ls_matches: {
-        Row: DbFixtureRow;
-        Insert: DbFixtureRow;
-        Update: Partial<DbFixtureRow>;
-      };
-      ls_standings: {
-        Row: DbStandingRow;
-        Insert: DbStandingRow;
-        Update: Partial<DbStandingRow>;
+        Row: {
+          away_score: number | null;
+          away_team: string;
+          away_team_id: string;
+          competition_id: number;
+          date: string;
+          home_score: number | null;
+          home_team: string;
+          home_team_id: string;
+          id: string;
+          status: string;
+          updated_at: string;
+          venue: string | null;
+        };
+        Insert: {
+          away_score?: number | null;
+          away_team: string;
+          away_team_id: string;
+          competition_id: number;
+          date: string;
+          home_score?: number | null;
+          home_team: string;
+          home_team_id: string;
+          id: string;
+          status: string;
+          updated_at?: string;
+          venue?: string | null;
+        };
+        Update: {
+          away_score?: number | null;
+          away_team?: string;
+          away_team_id?: string;
+          competition_id?: number;
+          date?: string;
+          home_score?: number | null;
+          home_team?: string;
+          home_team_id?: string;
+          id?: string;
+          status?: string;
+          updated_at?: string;
+          venue?: string | null;
+        };
+        Relationships: [];
       };
       ls_h2h: {
-        Row: DbH2HRow;
-        Insert: DbH2HRow;
-        Update: Partial<DbH2HRow>;
+        Row: {
+          last_matches: Json;
+          rival_id: string;
+          stats: Json;
+          updated_at: string;
+        };
+        Insert: {
+          last_matches: Json;
+          rival_id: string;
+          stats: Json;
+          updated_at?: string;
+        };
+        Update: {
+          last_matches?: Json;
+          rival_id?: string;
+          stats?: Json;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       ls_squad: {
-        Row: DbSquadRow;
-        Insert: DbSquadRow;
-        Update: Partial<DbSquadRow>;
+        Row: {
+          age: number | null;
+          birthdate: string | null;
+          country_id: string | null;
+          formation_position: string | null;
+          height: string | null;
+          id: number;
+          is_staff: boolean;
+          name: string;
+          num: string | null;
+          position: string;
+          sname: string | null;
+          team_id: string;
+          updated_at: string;
+          weight: string | null;
+        };
+        Insert: {
+          age?: number | null;
+          birthdate?: string | null;
+          country_id?: string | null;
+          formation_position?: string | null;
+          height?: string | null;
+          id?: number;
+          is_staff?: boolean;
+          name: string;
+          num?: string | null;
+          position: string;
+          sname?: string | null;
+          team_id: string;
+          updated_at?: string;
+          weight?: string | null;
+        };
+        Update: {
+          age?: number | null;
+          birthdate?: string | null;
+          country_id?: string | null;
+          formation_position?: string | null;
+          height?: string | null;
+          id?: number;
+          is_staff?: boolean;
+          name?: string;
+          num?: string | null;
+          position?: string;
+          sname?: string | null;
+          team_id?: string;
+          updated_at?: string;
+          weight?: string | null;
+        };
+        Relationships: [];
+      };
+      ls_standings: {
+        Row: {
+          competition_id: number;
+          drawn: number;
+          goal_diff: number;
+          goals_against: number;
+          goals_for: number;
+          id: number;
+          lost: number;
+          played: number;
+          points: number;
+          rank: number;
+          team_id: string;
+          team_name: string;
+          updated_at: string;
+          won: number;
+          zone: string | null;
+        };
+        Insert: {
+          competition_id: number;
+          drawn: number;
+          goal_diff: number;
+          goals_against: number;
+          goals_for: number;
+          id?: number;
+          lost: number;
+          played: number;
+          points: number;
+          rank: number;
+          team_id: string;
+          team_name: string;
+          updated_at?: string;
+          won: number;
+          zone?: string | null;
+        };
+        Update: {
+          competition_id?: number;
+          drawn?: number;
+          goal_diff?: number;
+          goals_against?: number;
+          goals_for?: number;
+          id?: number;
+          lost?: number;
+          played?: number;
+          points?: number;
+          rank?: number;
+          team_id?: string;
+          team_name?: string;
+          updated_at?: string;
+          won?: number;
+          zone?: string | null;
+        };
+        Relationships: [];
+      };
+      ls_sync_dataset_meta: {
+        Row: {
+          dataset: string;
+          last_attempt_at: string | null;
+          last_duration_ms: number | null;
+          last_error: string | null;
+          last_record_count: number | null;
+          last_source: string | null;
+          last_success_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          dataset: string;
+          last_attempt_at?: string | null;
+          last_duration_ms?: number | null;
+          last_error?: string | null;
+          last_record_count?: number | null;
+          last_source?: string | null;
+          last_success_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          dataset?: string;
+          last_attempt_at?: string | null;
+          last_duration_ms?: number | null;
+          last_error?: string | null;
+          last_record_count?: number | null;
+          last_source?: string | null;
+          last_success_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      ls_sync_meta: {
+        Row: {
+          id: string;
+          last_attempt_at: string | null;
+          last_error: string | null;
+          last_source: string | null;
+          last_success_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          last_attempt_at?: string | null;
+          last_error?: string | null;
+          last_source?: string | null;
+          last_success_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          last_attempt_at?: string | null;
+          last_error?: string | null;
+          last_source?: string | null;
+          last_success_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      match_attendance: {
+        Row: {
+          attended: boolean;
+          created_at: string;
+          id: string;
+          match_id: string;
+          note: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          attended?: boolean;
+          created_at?: string;
+          id?: string;
+          match_id: string;
+          note?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          attended?: boolean;
+          created_at?: string;
+          id?: string;
+          match_id?: string;
+          note?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'fk_match_attendance_match';
+            columns: ['match_id'];
+            isOneToOne: false;
+            referencedRelation: 'matches';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      matches: {
+        Row: {
+          away_team_id: string;
+          away_team_logo: string | null;
+          away_team_name: string;
+          competition: string | null;
+          date: string;
+          goals_away: number | null;
+          goals_home: number | null;
+          home_team_id: string;
+          home_team_logo: string | null;
+          home_team_name: string;
+          id: string;
+          synced_at: string;
+          venue: string | null;
+        };
+        Insert: {
+          away_team_id: string;
+          away_team_logo?: string | null;
+          away_team_name: string;
+          competition?: string | null;
+          date: string;
+          goals_away?: number | null;
+          goals_home?: number | null;
+          home_team_id: string;
+          home_team_logo?: string | null;
+          home_team_name: string;
+          id: string;
+          synced_at?: string;
+          venue?: string | null;
+        };
+        Update: {
+          away_team_id?: string;
+          away_team_logo?: string | null;
+          away_team_name?: string;
+          competition?: string | null;
+          date?: string;
+          goals_away?: number | null;
+          goals_home?: number | null;
+          home_team_id?: string;
+          home_team_logo?: string | null;
+          home_team_name?: string;
+          id?: string;
+          synced_at?: string;
+          venue?: string | null;
+        };
+        Relationships: [];
+      };
+      profiles: {
+        Row: {
+          bio: string | null;
+          created_at: string;
+          id: string;
+          updated_at: string;
+          username: string | null;
+        };
+        Insert: {
+          bio?: string | null;
+          created_at?: string;
+          id: string;
+          updated_at?: string;
+          username?: string | null;
+        };
+        Update: {
+          bio?: string | null;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          username?: string | null;
+        };
+        Relationships: [];
       };
     };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      acquire_ls_sync_lock: {
+        Args: { p_owner: string; p_ttl_seconds?: number };
+        Returns: boolean;
+      };
+      is_username_available: {
+        Args: { candidate_username: string };
+        Returns: boolean;
+      };
+      release_ls_sync_lock: { Args: { p_owner: string }; Returns: boolean };
+      replace_ls_standings: {
+        Args: { p_competition_id: number; p_rows: Json };
+        Returns: number;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
+};
+
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>;
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>];
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
 }
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R;
+      }
+      ? R
+      : never
+    : never;
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema['Tables']
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I;
+      }
+      ? I
+      : never
+    : never;
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema['Tables']
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U;
+      }
+      ? U
+      : never
+    : never;
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema['Enums']
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
+    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+    : never;
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema['CompositeTypes']
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
+    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+    : never;
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const;

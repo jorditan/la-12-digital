@@ -1,4 +1,4 @@
-import { fetchWithTimeout } from "../utils/fetchWithTimeout";
+import { fetchWithTimeout } from '../utils/fetchWithTimeout';
 
 /**
  * WEATHER SERVICE — La 12 Digital
@@ -9,12 +9,12 @@ import { fetchWithTimeout } from "../utils/fetchWithTimeout";
  */
 
 const OPEN_METEO_URL =
-  "https://api.open-meteo.com/v1/forecast" +
-  "?latitude=-34.6345&longitude=-58.3699" +
-  "&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,windspeed_10m,winddirection_10m,weathercode" +
-  "&forecast_days=16&timezone=America%2FArgentina%2FBuenos_Aires";
+  'https://api.open-meteo.com/v1/forecast' +
+  '?latitude=-34.6345&longitude=-58.3699' +
+  '&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,windspeed_10m,winddirection_10m,weathercode' +
+  '&forecast_days=16&timezone=America%2FArgentina%2FBuenos_Aires';
 
-const CACHE_KEY = "cache:openmeteo";
+const CACHE_KEY = 'cache:openmeteo';
 const CACHE_TTL = 60 * 60 * 1000; // 1 hora
 
 // ── Tipos públicos ─────────────────────────────────────────────────────────────
@@ -54,19 +54,19 @@ interface OpenMeteoHourly {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function windDirFromDeg(deg: number): string {
-  const dirs = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"];
+  const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
   return dirs[Math.round(deg / 45) % 8];
 }
 
 function wmoDescription(code: number): string {
-  if (code === 0) return "Cielo despejado";
-  if (code <= 3) return "Parcialmente nublado";
-  if (code <= 48) return "Niebla";
-  if (code <= 55) return "Llovizna";
-  if (code <= 65) return "Lluvia";
-  if (code <= 82) return "Chaparrones";
-  if (code === 95) return "Tormenta";
-  return "Variable";
+  if (code === 0) return 'Cielo despejado';
+  if (code <= 3) return 'Parcialmente nublado';
+  if (code <= 48) return 'Niebla';
+  if (code <= 55) return 'Llovizna';
+  if (code <= 65) return 'Lluvia';
+  if (code <= 82) return 'Chaparrones';
+  if (code === 95) return 'Tormenta';
+  return 'Variable';
 }
 
 function mapSlot(i: number, h: OpenMeteoHourly): HourlyForecast {
@@ -88,7 +88,7 @@ function mapSlot(i: number, h: OpenMeteoHourly): HourlyForecast {
 
 // Timestamp UTC de un slot (su time + offset fijo Argentina -03:00)
 function slotTs(time: string): number {
-  return new Date(time + ":00-03:00").getTime();
+  return new Date(time + ':00-03:00').getTime();
 }
 
 // ── Caché (localStorage) ─────────────────────────────────────────────────────
@@ -128,18 +128,18 @@ function makeMockForecast(matchIso: string): MatchForecast {
   const makeSlot = (offsetH: number): HourlyForecast => {
     const d = new Date(matchDate.getTime() + offsetH * 3600_000);
     const time = d
-      .toLocaleString("sv-SE", { timeZone: "America/Argentina/Buenos_Aires" })
+      .toLocaleString('sv-SE', { timeZone: 'America/Argentina/Buenos_Aires' })
       .slice(0, 16)
-      .replace(" ", "T");
+      .replace(' ', 'T');
     return {
       time,
       tempC: 22 - Math.abs(offsetH),
       humidityPct: 55,
       precipitationProbPct: 5,
       windSpeedKmh: 12,
-      windDir: "NE",
+      windDir: 'NE',
       weatherCode: 0,
-      description: "Cielo despejado",
+      description: 'Cielo despejado',
       isGoodConditions: true,
     };
   };
@@ -147,15 +147,15 @@ function makeMockForecast(matchIso: string): MatchForecast {
     slotBefore: makeSlot(-2),
     slotMatch: makeSlot(0),
     slotAfter: makeSlot(2),
-    dateLabel: matchDate.toLocaleDateString("es-AR", {
-      day: "numeric",
-      month: "long",
-      timeZone: "America/Argentina/Buenos_Aires",
+    dateLabel: matchDate.toLocaleDateString('es-AR', {
+      day: 'numeric',
+      month: 'long',
+      timeZone: 'America/Argentina/Buenos_Aires',
     }),
-    timeLabel: matchDate.toLocaleTimeString("es-AR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "America/Argentina/Buenos_Aires",
+    timeLabel: matchDate.toLocaleTimeString('es-AR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'America/Argentina/Buenos_Aires',
     }),
   };
 }
@@ -174,7 +174,6 @@ async function fetchAllSlots(): Promise<HourlyForecast[]> {
     const res = await fetchWithTimeout(OPEN_METEO_URL);
     if (!res.ok) throw new Error(`Open-Meteo error ${res.status}`);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json = (await res.json()) as { hourly: OpenMeteoHourly };
     const h = json.hourly;
 
@@ -183,29 +182,24 @@ async function fetchAllSlots(): Promise<HourlyForecast[]> {
     return slots;
   } catch (err) {
     sessionFailed = true;
-    console.warn(
-      "[open-meteo] request falló — usando mock hasta recargar",
-      err,
-    );
+    console.warn('[open-meteo] request falló — usando mock hasta recargar', err);
     return [];
   }
 }
 
 // ── API pública ────────────────────────────────────────────────────────────────
 
-export async function fetchMatchForecast(
-  matchIso: string,
-): Promise<MatchForecast> {
+export async function fetchMatchForecast(matchIso: string): Promise<MatchForecast> {
   const matchDate = new Date(matchIso);
-  const dateLabel = matchDate.toLocaleDateString("es-AR", {
-    day: "numeric",
-    month: "long",
-    timeZone: "America/Argentina/Buenos_Aires",
+  const dateLabel = matchDate.toLocaleDateString('es-AR', {
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'America/Argentina/Buenos_Aires',
   });
-  const timeLabel = matchDate.toLocaleTimeString("es-AR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "America/Argentina/Buenos_Aires",
+  const timeLabel = matchDate.toLocaleTimeString('es-AR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'America/Argentina/Buenos_Aires',
   });
 
   const slots = await fetchAllSlots();
@@ -218,11 +212,10 @@ export async function fetchMatchForecast(
   const matchTs = matchDate.getTime();
   const matchIdx = slots.reduce(
     (best, _, i) =>
-      Math.abs(slotTs(slots[i].time) - matchTs) <
-      Math.abs(slotTs(slots[best].time) - matchTs)
+      Math.abs(slotTs(slots[i].time) - matchTs) < Math.abs(slotTs(slots[best].time) - matchTs)
         ? i
         : best,
-    0,
+    0
   );
 
   return {

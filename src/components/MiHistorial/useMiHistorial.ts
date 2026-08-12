@@ -13,7 +13,7 @@ export const getResultado = (match: MatchResult): ResultadoTipo => {
   const bocaIsHome = match.homeTeam.id === BOCA_ID;
   const bocaGoals = bocaIsHome ? match.goalsHome : match.goalsAway;
   const rivalGoals = bocaIsHome ? match.goalsAway : match.goalsHome;
-  
+
   if (bocaGoals === null || rivalGoals === null) return 'empate';
   if (bocaGoals > rivalGoals) return 'victoria';
   if (bocaGoals < rivalGoals) return 'derrota';
@@ -55,15 +55,15 @@ export const formatTableDate = (dateStr: string): string => {
 
 export const formatFullDate = (dateStr: string): string => {
   if (!dateStr) return '–';
-  
+
   // Si ya tiene formato DD/MM/AAAA, lo devolvemos tal cual
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) return dateStr;
 
   // Extraemos solo la parte de la fecha (YYYY-MM-DD) por si viene con hora/ISO
   const isoDate = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
-  
-  const d = new Date(isoDate + "T12:00:00");
-  
+
+  const d = new Date(isoDate + 'T12:00:00');
+
   if (isNaN(d.getTime())) {
     // Si falla, intentamos parsear la fecha cruda
     const fallback = new Date(dateStr);
@@ -74,7 +74,7 @@ export const formatFullDate = (dateStr: string): string => {
       year: 'numeric',
     });
   }
-  
+
   return d.toLocaleDateString('es-AR', {
     day: '2-digit',
     month: '2-digit',
@@ -108,7 +108,7 @@ export const useMiHistorial = (user: AuthUser) => {
     fetchMatchesForHistorial()
       .then((data) => {
         setApiMatches(data);
-        if (matchEstado === 'loading') setMatchEstado('ok');
+        setMatchEstado((current) => (current === 'loading' ? 'ok' : current));
       })
       .catch(() => setMatchEstado('error'));
   }, []);
@@ -124,12 +124,22 @@ export const useMiHistorial = (user: AuthUser) => {
       .then(({ data, error }) => {
         if (error) return;
         const mapped: MatchResult[] = (data || []).map((m) => {
-          const cleanTeamId = (id: string | number) => isNaN(Number(id)) ? id : Number(id);
+          const cleanTeamId = (id: string | number) => (isNaN(Number(id)) ? id : Number(id));
           return {
             fixtureId: isNaN(parseInt(m.id)) ? 0 : parseInt(m.id),
             date: m.date,
-            homeTeam: { id: cleanTeamId(m.home_team_id), name: m.home_team_name, logo: m.home_team_logo, winner: null },
-            awayTeam: { id: cleanTeamId(m.away_team_id), name: m.away_team_name, logo: m.away_team_logo, winner: null },
+            homeTeam: {
+              id: cleanTeamId(m.home_team_id),
+              name: m.home_team_name,
+              logo: m.home_team_logo,
+              winner: null,
+            },
+            awayTeam: {
+              id: cleanTeamId(m.away_team_id),
+              name: m.away_team_name,
+              logo: m.away_team_logo,
+              winner: null,
+            },
             goalsHome: m.goals_home,
             goalsAway: m.goals_away,
             venueName: m.venue || '',
@@ -142,8 +152,8 @@ export const useMiHistorial = (user: AuthUser) => {
   }, [attendanceMap]);
 
   const allMatchesMap = new Map<string, MatchResult>();
-  dbMatches.forEach(m => allMatchesMap.set((m as any)._manualId || m.fixtureId.toString(), m));
-  apiMatches.forEach(m => allMatchesMap.set(m.fixtureId.toString(), m));
+  dbMatches.forEach((m) => allMatchesMap.set((m as any)._manualId || m.fixtureId.toString(), m));
+  apiMatches.forEach((m) => allMatchesMap.set(m.fixtureId.toString(), m));
   const matches = Array.from(allMatchesMap.values());
 
   const attendedEntries = Object.values(attendanceMap)
@@ -158,7 +168,9 @@ export const useMiHistorial = (user: AuthUser) => {
 
   const totalAttended = attendedEntries.length;
   const earliestYear = getEarliestYear(attendanceMap);
-  const availableMatches = matches.filter((m) => !attendanceMap[(m as any)._manualId || m.fixtureId.toString()]?.attended);
+  const availableMatches = matches.filter(
+    (m) => !attendanceMap[(m as any)._manualId || m.fixtureId.toString()]?.attended
+  );
 
   const availableCompetitions = [
     ...new Set(
@@ -190,7 +202,9 @@ export const useMiHistorial = (user: AuthUser) => {
 
   const handleMarkAttendance = async () => {
     if (!selectedMatchId) return;
-    const match = matches.find((m) => ((m as any)._manualId || m.fixtureId.toString()) === selectedMatchId);
+    const match = matches.find(
+      (m) => ((m as any)._manualId || m.fixtureId.toString()) === selectedMatchId
+    );
     if (!match) return;
 
     setAdding(true);

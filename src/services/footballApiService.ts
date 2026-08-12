@@ -1,7 +1,33 @@
 import type { ProcessedFixture, Squad, Player } from '../types/football';
 import type { StandingData, AnnualStandingData, H2HMatch } from '../types/footballApi';
 export type { StandingData, AnnualStandingData, H2HMatch };
-import type { DbFixtureRow, DbStandingRow, DbH2HMatch, DbSquadRow } from '../types/database.types';
+import type { Database } from '../types/database.types';
+
+type DbFixtureRow = Database['public']['Tables']['ls_fixtures']['Row'];
+type DbStandingRow = Database['public']['Tables']['ls_standings']['Row'];
+type DbSquadRow = Database['public']['Tables']['ls_squad']['Row'];
+type DbH2HMatch = {
+  id?: string;
+  date: string;
+  home_team: string;
+  away_team: string;
+  home_score: number | null;
+  away_score: number | null;
+  status?: string;
+  competition?: string;
+};
+
+function isDbH2HMatch(value: unknown): value is DbH2HMatch {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const row = value as Record<string, unknown>;
+  return (
+    typeof row.date === 'string' &&
+    typeof row.home_team === 'string' &&
+    typeof row.away_team === 'string' &&
+    (typeof row.home_score === 'number' || row.home_score === null) &&
+    (typeof row.away_score === 'number' || row.away_score === null)
+  );
+}
 import { supabase } from '../lib/supabase';
 import { parseMatchDate } from '../lib/date';
 import {
@@ -13,7 +39,7 @@ import {
   mapLeagueStandings,
   mapLibertadoresStandings,
   mapAnnualStandings,
-  matchResult
+  matchResult,
 } from './footballApiHelpers';
 
 const COMPETITION = '23'; // Liga Profesional Argentina
@@ -54,7 +80,7 @@ export const getLastFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
       result: matchResult(scoreHome, scoreAway, isBocaHome),
       status: 'finished',
       venue: m.venue || '',
-      competitionId: m.competition_id
+      competitionId: m.competition_id,
     };
   });
 };
@@ -91,7 +117,7 @@ export const getNextFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
       result: 'scheduled',
       status: 'scheduled',
       venue: f.venue || '',
-      competitionId: f.competition_id
+      competitionId: f.competition_id,
     };
   });
 };
@@ -113,9 +139,12 @@ export const fetchHeadToHead = async (rivalApiId: number | string): Promise<H2HM
 
   if (error) throw error;
 
-  if (dbH2H && dbH2H.last_matches && dbH2H.last_matches.length > 0) {
-    const rawMatches: DbH2HMatch[] = dbH2H.last_matches;
-    const mapped = rawMatches.map((m: DbH2HMatch) => {
+  const rawMatches = Array.isArray(dbH2H?.last_matches)
+    ? dbH2H.last_matches.filter(isDbH2HMatch)
+    : [];
+
+  if (rawMatches.length > 0) {
+    const mapped = rawMatches.map((m) => {
       const isBocaHome = m.home_team.toLowerCase().includes('boca');
       const scoreHome = m.home_score;
       const scoreAway = m.away_score;
@@ -130,14 +159,18 @@ export const fetchHeadToHead = async (rivalApiId: number | string): Promise<H2HM
       };
     });
 
-    return mapped.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
+    return mapped
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5);
   }
 
   // Fallback: Si no hay registro en ls_h2h, consultar ls_fixtures directamente
   const { data: dbFixtures, error: fixError } = await supabase
     .from('ls_fixtures')
     .select('*')
-    .or(`and(home_team_id.eq.${BOCA_ID},away_team_id.eq.${rivalStr}),and(home_team_id.eq.${rivalStr},away_team_id.eq.${BOCA_ID})`)
+    .or(
+      `and(home_team_id.eq.${BOCA_ID},away_team_id.eq.${rivalStr}),and(home_team_id.eq.${rivalStr},away_team_id.eq.${BOCA_ID})`
+    )
     .eq('status', 'finished')
     .order('date', { ascending: false })
     .limit(5);
@@ -145,7 +178,8 @@ export const fetchHeadToHead = async (rivalApiId: number | string): Promise<H2HM
   if (fixError || !dbFixtures) return [];
 
   return (dbFixtures as DbFixtureRow[]).map((f: DbFixtureRow) => {
-    const isBocaHome = String(f.home_team_id) === BOCA_ID || f.home_team.toLowerCase().includes('boca');
+    const isBocaHome =
+      String(f.home_team_id) === BOCA_ID || f.home_team.toLowerCase().includes('boca');
     const scoreHome = f.home_score;
     const scoreAway = f.away_score;
     return {
@@ -155,7 +189,12 @@ export const fetchHeadToHead = async (rivalApiId: number | string): Promise<H2HM
       homeScore: scoreHome,
       awayScore: scoreAway,
       result: matchResult(scoreHome, scoreAway, isBocaHome),
-      competition: f.competition_id === 329 ? 'Copa Libertadores' : (f.competition_id === 11 ? 'Copa Sudamericana' : 'Liga Profesional'),
+      competition:
+        f.competition_id === 329
+          ? 'Copa Libertadores'
+          : f.competition_id === 11
+            ? 'Copa Sudamericana'
+            : 'Liga Profesional',
     };
   });
 };
@@ -210,7 +249,7 @@ export const getLibertadoresLastFixtures = async (count = 8): Promise<ProcessedF
       result: matchResult(scoreHome, scoreAway, isBocaHome),
       status: 'finished',
       venue: m.venue || '',
-      competitionId: m.competition_id
+      competitionId: m.competition_id,
     };
   });
 };
@@ -247,7 +286,7 @@ export const getLibertadoresNextFixtures = async (count = 8): Promise<ProcessedF
       result: 'scheduled',
       status: 'scheduled',
       venue: f.venue || '',
-      competitionId: f.competition_id
+      competitionId: f.competition_id,
     };
   });
 };
@@ -320,7 +359,7 @@ export const getTeamSquad = async (teamId = BOCA_ID): Promise<Squad> => {
     const nationality = 'Argentina';
 
     return {
-      id: isNaN(Number(p.id)) ? (p.id || p.name) : Number(p.id),
+      id: isNaN(Number(p.id)) ? p.id || p.name : Number(p.id),
       name: p.name,
       firstname,
       lastname,
@@ -330,14 +369,14 @@ export const getTeamSquad = async (teamId = BOCA_ID): Promise<Squad> => {
       birth: {
         date: p.birthdate ? p.birthdate.split('/').reverse().join('-') : '',
         place: p.position || '',
-        country: nationality
+        country: nationality,
       },
       nationality,
       height: p.height ? String(p.height) : '',
       weight: p.weight ? String(p.weight) : '',
       injured: false,
       photo: '',
-      isStaff: Boolean(p.is_staff)
+      isStaff: Boolean(p.is_staff),
     };
   });
 
@@ -345,8 +384,8 @@ export const getTeamSquad = async (teamId = BOCA_ID): Promise<Squad> => {
     team: {
       id: Number(teamId) || 0,
       name: teamId === BOCA_ID ? 'Boca Juniors' : 'Rival Team',
-      logo: getTeamLogoUrl(teamId)
+      logo: getTeamLogoUrl(teamId),
     },
-    players
+    players,
   };
 };

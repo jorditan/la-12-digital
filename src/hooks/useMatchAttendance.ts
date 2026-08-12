@@ -1,10 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/lib/supabase";
-import type {
-  MatchAttendance,
-  UpsertAttendancePayload,
-  AsyncState,
-} from "@/types/attendance";
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/lib/supabase';
+import type { MatchAttendance, UpsertAttendancePayload, AsyncState } from '@/types/attendance';
 
 type DBRow = {
   id: string;
@@ -37,31 +33,27 @@ export interface UseMatchAttendanceReturn {
   totalAttended: number;
 }
 
-export function useMatchAttendance(
-  userId: string | null,
-): UseMatchAttendanceReturn {
-  const [attendanceMap, setAttendanceMap] = useState<
-    Record<string, MatchAttendance>
-  >({});
-  const [estado, setEstado] = useState<AsyncState>("loading");
+export function useMatchAttendance(userId: string | null): UseMatchAttendanceReturn {
+  const [attendanceMap, setAttendanceMap] = useState<Record<string, MatchAttendance>>({});
+  const [estado, setEstado] = useState<AsyncState>('loading');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!userId) {
       setAttendanceMap({});
-      setEstado("ok");
+      setEstado('ok');
       return;
     }
 
-    setEstado("loading");
+    setEstado('loading');
     supabase
-      .from("match_attendance")
-      .select("*")
-      .eq("user_id", userId)
+      .from('match_attendance')
+      .select('*')
+      .eq('user_id', userId)
       .then(({ data, error: fetchError }) => {
         if (fetchError) {
           setError(fetchError.message);
-          setEstado("error");
+          setEstado('error');
           return;
         }
         const map: Record<string, MatchAttendance> = {};
@@ -70,7 +62,7 @@ export function useMatchAttendance(
           map[attendance.matchId] = attendance;
         }
         setAttendanceMap(map);
-        setEstado("ok");
+        setEstado('ok');
       });
   }, [userId]);
 
@@ -83,14 +75,14 @@ export function useMatchAttendance(
       // Esto garantiza integridad referencial con el FK y que los datos estén disponibles
       // aunque la API externa esté caída.
       if (matchData) {
-        await supabase.from("matches").upsert(
+        const { error: matchCacheError } = await supabase.from('matches').upsert(
           {
             id: matchId,
             date: matchData.date,
-            home_team_id: matchData.homeTeamId,
+            home_team_id: String(matchData.homeTeamId),
             home_team_name: matchData.homeTeamName,
             home_team_logo: matchData.homeTeamLogo ?? null,
-            away_team_id: matchData.awayTeamId,
+            away_team_id: String(matchData.awayTeamId),
             away_team_name: matchData.awayTeamName,
             away_team_logo: matchData.awayTeamLogo ?? null,
             goals_home: matchData.goalsHome ?? null,
@@ -99,15 +91,19 @@ export function useMatchAttendance(
             competition: matchData.competition ?? null,
             synced_at: new Date().toISOString(),
           },
-          { onConflict: "id" },
+          { onConflict: 'id', ignoreDuplicates: true }
         );
+        if (matchCacheError) {
+          setError(matchCacheError.message);
+          return;
+        }
       }
 
       const { data, error: upsertError } = await supabase
-        .from("match_attendance")
+        .from('match_attendance')
         .upsert(
           { user_id: userId, match_id: matchId, attended, note: note ?? null },
-          { onConflict: "user_id,match_id" },
+          { onConflict: 'user_id,match_id' }
         )
         .select()
         .single();
@@ -122,7 +118,7 @@ export function useMatchAttendance(
         [matchId]: rowToAttendance(data as DBRow),
       }));
     },
-    [userId],
+    [userId]
   );
 
   const remove = useCallback(
@@ -131,10 +127,10 @@ export function useMatchAttendance(
       setError(null);
 
       const { error: deleteError } = await supabase
-        .from("match_attendance")
+        .from('match_attendance')
         .delete()
-        .eq("user_id", userId)
-        .eq("match_id", matchId);
+        .eq('user_id', userId)
+        .eq('match_id', matchId);
 
       if (deleteError) {
         setError(deleteError.message);
@@ -147,12 +143,10 @@ export function useMatchAttendance(
         return next;
       });
     },
-    [userId],
+    [userId]
   );
 
-  const totalAttended = Object.values(attendanceMap).filter(
-    (a) => a.attended,
-  ).length;
+  const totalAttended = Object.values(attendanceMap).filter((a) => a.attended).length;
 
   return { attendanceMap, estado, error, upsert, remove, totalAttended };
 }

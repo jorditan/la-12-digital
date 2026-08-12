@@ -26,6 +26,7 @@ export function DataFreshnessBanner() {
             ageHours: null,
             isStale: true,
             usedFallback: true,
+            staleDatasets: [],
           });
         }
       });
@@ -51,7 +52,7 @@ export function DataFreshnessBanner() {
       ].join(' ')}
       title={
         freshness.lastSource
-          ? `Fuente: ${freshness.lastSource}${freshness.lastError ? ` · ${freshness.lastError}` : ''}`
+          ? `Fuente: ${freshness.lastSource}${freshness.staleDatasets.length ? ` · Desactualizados: ${freshness.staleDatasets.join(', ')}` : ''}${freshness.lastError ? ` · ${freshness.lastError}` : ''}`
           : undefined
       }
     >
