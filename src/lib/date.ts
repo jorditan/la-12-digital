@@ -1,4 +1,4 @@
-const ARGENTINA_TZ = "America/Argentina/Buenos_Aires";
+const ARGENTINA_TZ = 'America/Argentina/Buenos_Aires';
 
 /**
  * Parsea una fecha de partido garantizando una zona horaria determinista.
@@ -17,7 +17,7 @@ export function parseMatchDate(value: string | Date | null | undefined): Date {
 
   let date: Date;
   if (!hasTimezone) {
-    const isoBase = trimmed.includes("T") ? trimmed : trimmed.replace(" ", "T");
+    const isoBase = trimmed.includes('T') ? trimmed : trimmed.replace(' ', 'T');
     date = new Date(`${isoBase}-03:00`);
     if (isNaN(date.getTime())) date = new Date(trimmed);
   } else {
@@ -26,15 +26,14 @@ export function parseMatchDate(value: string | Date | null | undefined): Date {
 
   if (isNaN(date.getTime())) return new Date();
 
-  // Compensación del desfase de +1 hora (3,600,000 ms) derivado del scraper de Promiedos en Supabase
-  return new Date(date.getTime() + 60 * 60 * 1000);
+  return date;
 }
 
 export function formatMatchTime(value: string | Date): string {
   const date = parseMatchDate(value);
-  return date.toLocaleTimeString("es-AR", {
-    hour: "2-digit",
-    minute: "2-digit",
+  return date.toLocaleTimeString('es-AR', {
+    hour: '2-digit',
+    minute: '2-digit',
     hour12: false,
     timeZone: ARGENTINA_TZ,
   });
@@ -47,7 +46,7 @@ function parseIsoDate(value: string): Date {
 export function formatIsoDate(
   value: string,
   locale: string,
-  options: Intl.DateTimeFormatOptions,
+  options: Intl.DateTimeFormatOptions
 ): string {
   return parseIsoDate(value).toLocaleDateString(locale, {
     timeZone: ARGENTINA_TZ,
@@ -56,47 +55,44 @@ export function formatIsoDate(
 }
 
 export function formatIsoDateEsArLong(value: string): string {
-  return formatIsoDate(value, "es-AR", { day: "numeric", month: "long" });
+  return formatIsoDate(value, 'es-AR', { day: 'numeric', month: 'long' });
 }
 
 export function formatIsoDateEsArShort(value: string): string {
-  return formatIsoDate(value, "es-AR", { day: "numeric", month: "short" });
+  return formatIsoDate(value, 'es-AR', { day: 'numeric', month: 'short' });
 }
 
 export function formatIsoWeekdayEsArShort(value: string): string {
-  return formatIsoDate(value, "es-AR", { weekday: "short" }).replace(".", "");
+  return formatIsoDate(value, 'es-AR', { weekday: 'short' }).replace('.', '');
 }
 
 export function formatIsoDateEsArWithYear(value: string): string {
-  return formatIsoDate(value, "es-AR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
+  return formatIsoDate(value, 'es-AR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
   });
 }
 
 export function formatIsoDateEsArNumeric(value: string): string {
-  return formatIsoDate(value, "es-AR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
+  return formatIsoDate(value, 'es-AR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
   });
 }
 
 export function getDaysUntilIsoDate(value: string): number {
-  const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: ARGENTINA_TZ });
+  const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: ARGENTINA_TZ });
 
   const todayArgStr = fmt.format(new Date());
   const targetArgStr = fmt.format(parseIsoDate(value));
 
-  const [ty, tm, td] = todayArgStr.split("-").map(Number);
-  const [ay, am, ad] = targetArgStr.split("-").map(Number);
+  const [ty, tm, td] = todayArgStr.split('-').map(Number);
+  const [ay, am, ad] = targetArgStr.split('-').map(Number);
 
   const todayArg = new Date(ty, tm - 1, td);
   const targetArg = new Date(ay, am - 1, ad);
 
-  return Math.round(
-    (targetArg.getTime() - todayArg.getTime()) / (1000 * 60 * 60 * 24),
-  );
+  return Math.round((targetArg.getTime() - todayArg.getTime()) / (1000 * 60 * 60 * 24));
 }
-

@@ -10,7 +10,10 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "deploy": "npm run build && npx wrangler deploy"
+    "deploy": "npm run build && npx wrangler deploy",
+    "test:db": "supabase db query --local --file supabase/tests/hardening_assertions.sql",
+    "check": "npm run lint && npm run test && npm run build && npm run test:db",
+    "test": "vitest run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",
@@ -37,9 +40,11 @@
     "http-server": "^14.1.1",
     "postcss": "^8.4.38",
     "prettier": "3.8.3",
+    "supabase": "2.113.0",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.2.2",
     "vite": "^6.4.2",
+    "vitest": "4.1.10",
     "wrangler": "^4.90.0"
   },
   "keywords": [

@@ -63,3 +63,31 @@ jobs:
 
       - name: Analyze
         uses: github/codeql-action/analyze@v3
+  supabase-integration:
+    name: Supabase Integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start local Supabase
+        run: npx supabase start
+
+      - name: Run database assertions
+        run: npm run test:db
+
+      - name: Lint database schema
+        run: npx supabase db lint --local
+
+      - name: Run database advisors
+        run: npx supabase db advisors --local

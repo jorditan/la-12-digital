@@ -123,22 +123,23 @@ export function useFileParser() {
       // Parse XLSX with ExcelJS via CDN to bypass Vite's Node.js dependency issues
       try {
         const cdnUrl = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
-        
+
         if (!(window as any).ExcelJS) {
           await new Promise((resolve, reject) => {
             const script = document.createElement('script');
             script.src = cdnUrl;
             script.onload = resolve;
-            script.onerror = () => reject(new Error('No se pudo cargar la librería ExcelJS desde el CDN'));
+            script.onerror = () =>
+              reject(new Error('No se pudo cargar la librería ExcelJS desde el CDN'));
             document.head.appendChild(script);
           });
         }
-        
+
         const ExcelJS = (window as any).ExcelJS;
         const wb = new ExcelJS.Workbook();
         await wb.xlsx.load(buffer);
         const ws = wb.worksheets[0];
-        
+
         if (!ws) {
           throw new Error('El archivo Excel no tiene hojas de trabajo');
         }
@@ -201,8 +202,8 @@ export function useFileParser() {
         fechaRaw = `${dd}/${mm}/${yyyy}`;
       } else {
         // 2. Intentar parsear como texto (permite D/M/YY, DD/MM/YYYY, con / o -)
-        const dateMatch = fechaRaw.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2}|\d{4})$/);
-        
+        const dateMatch = fechaRaw.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{2}|\d{4})$/);
+
         if (!dateMatch) {
           errors.push({
             rowIndex: realIdx,
@@ -226,7 +227,7 @@ export function useFileParser() {
         mm = mRaw.padStart(2, '0');
         yyyy = yRaw;
       }
-      
+
       const dateObj = new Date(`${yyyy}-${mm}-${dd}`);
       if (isNaN(dateObj.getTime())) {
         errors.push({
