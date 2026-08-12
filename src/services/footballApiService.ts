@@ -1,4 +1,4 @@
-import type { ProcessedFixture, Squad, Player } from '../types/football';
+import type { ProcessedFixture, Squad, Player, FixtureTimeStatus } from '../types/football';
 import type { StandingData, AnnualStandingData, H2HMatch } from '../types/footballApi';
 export type { StandingData, AnnualStandingData, H2HMatch };
 import type { Database } from '../types/database.types';
@@ -43,6 +43,10 @@ import {
 } from './footballApiHelpers';
 
 const COMPETITION = '23'; // Liga Profesional Argentina
+function fixtureTimeStatus(value: string): FixtureTimeStatus {
+  return value === 'pending' ? 'pending' : 'confirmed';
+}
+
 const LIBERTADORES_COMPETITION = '329'; // Copa Libertadores
 const SUDAMERICANA_COMPETITION = '11'; // Copa Sudamericana
 
@@ -81,6 +85,7 @@ export const getLastFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
       status: 'finished',
       venue: m.venue || '',
       competitionId: m.competition_id,
+      timeStatus: fixtureTimeStatus(m.time_status),
     };
   });
 };
@@ -118,6 +123,7 @@ export const getNextFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
       status: 'scheduled',
       venue: f.venue || '',
       competitionId: f.competition_id,
+      timeStatus: fixtureTimeStatus(f.time_status),
     };
   });
 };
@@ -250,6 +256,7 @@ export const getLibertadoresLastFixtures = async (count = 8): Promise<ProcessedF
       status: 'finished',
       venue: m.venue || '',
       competitionId: m.competition_id,
+      timeStatus: fixtureTimeStatus(m.time_status),
     };
   });
 };
@@ -287,6 +294,7 @@ export const getLibertadoresNextFixtures = async (count = 8): Promise<ProcessedF
       status: 'scheduled',
       venue: f.venue || '',
       competitionId: f.competition_id,
+      timeStatus: fixtureTimeStatus(f.time_status),
     };
   });
 };
