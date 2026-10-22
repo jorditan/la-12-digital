@@ -6,25 +6,28 @@ const ARGENTINA_TZ = 'America/Argentina/Buenos_Aires';
  * se interpreta explícitamente como hora local de Argentina (-03:00).
  */
 export function parseMatchDate(value: string | Date | null | undefined): Date {
-  if (!value) return new Date();
-  if (value instanceof Date) return value;
+  if (value instanceof Date) {
+    if (!Number.isFinite(value.getTime())) throw new RangeError('Invalid match date');
+    return value;
+  }
 
-  const trimmed = String(value).trim();
-  if (!trimmed) return new Date();
+  const trimmed = String(value ?? '').trim();
+  if (!trimmed) throw new RangeError('Missing match date');
 
   // Si no especifica timezone (Z, z, +HH:MM, -HH:MM), asumir Argentina (-03:00)
   const hasTimezone = /[Zz]|[+-]\d{2}:?\d{2}$/.test(trimmed);
 
   let date: Date;
   if (!hasTimezone) {
-    const isoBase = trimmed.includes('T') ? trimmed : trimmed.replace(' ', 'T');
+    const isoBase = /^\d{4}-\d{2}-\d{2}$/.test(trimmed)
+      ? `${trimmed}T00:00:00`
+      : trimmed.replace(' ', 'T');
     date = new Date(`${isoBase}-03:00`);
-    if (isNaN(date.getTime())) date = new Date(trimmed);
   } else {
     date = new Date(trimmed);
   }
 
-  if (isNaN(date.getTime())) return new Date();
+  if (isNaN(date.getTime())) throw new RangeError(`Invalid match date: ${trimmed}`);
 
   return date;
 }
@@ -91,8 +94,8 @@ export function getDaysUntilIsoDate(value: string): number {
   const [ty, tm, td] = todayArgStr.split('-').map(Number);
   const [ay, am, ad] = targetArgStr.split('-').map(Number);
 
-  const todayArg = new Date(ty, tm - 1, td);
-  const targetArg = new Date(ay, am - 1, ad);
+  const todayArg = Date.UTC(ty, tm - 1, td);
+  const targetArg = Date.UTC(ay, am - 1, ad);
 
-  return Math.round((targetArg.getTime() - todayArg.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.round((targetArg - todayArg) / (1000 * 60 * 60 * 24));
 }

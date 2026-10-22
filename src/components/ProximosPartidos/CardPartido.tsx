@@ -94,7 +94,7 @@ export function CardPartido({ partido }: CardPartidoProps) {
         {/* Hora */}
         <div className="flex items-center gap-1.5">
           <Clock size={14} className="shrink-0 text-white/40" />
-          {partido.time === '12:00' ? (
+          {partido.timeStatus === 'pending' ? (
             <p className="font-sans text-xs text-white/40 italic">A confirmar</p>
           ) : (
             <p className="font-sans text-xs text-white/60 tabular-nums">{partido.time} hs</p>
@@ -104,16 +104,16 @@ export function CardPartido({ partido }: CardPartidoProps) {
         {/* Competición + urgencia */}
         <div className="flex items-center gap-1.5 flex-wrap">
           <Badge
-            variant={partido.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-            className={[
-              'w-fit text-xs px-1.5',
-              partido.competition === 'Copa Argentina'
-                ? 'bg-[#0CF737]/10 text-[#0CF737] border border-[#0CF737]/20'
-                : '',
-              partido.competition === 'Copa Sudamericana'
-                ? 'bg-[#23EBE4]/10 text-[#23EBE4] border border-[#23EBE4]/20'
-                : '',
-            ].join(' ')}
+            variant={
+              partido.competition?.includes('Copa Argentina')
+                ? 'copaArgentina'
+                : partido.competition?.includes('Sudamericana')
+                  ? 'sudamericana'
+                  : partido.competition?.trim() === 'Copa Libertadores'
+                    ? 'gold'
+                    : 'blue'
+            }
+            className={['w-fit text-xs px-1.5'].join(' ')}
           >
             {partido.competition}
           </Badge>

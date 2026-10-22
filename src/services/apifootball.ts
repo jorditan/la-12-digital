@@ -206,7 +206,7 @@ function mapFixtureToProximoPartido(
   return {
     fixtureId: f.id,
     date: f.date.toISOString(),
-    time: f.timeStatus === 'pending' ? '12:00' : formatMatchTime(f.date),
+    time: formatMatchTime(f.date),
     timeStatus: f.timeStatus,
     homeTeam: {
       id: f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId,

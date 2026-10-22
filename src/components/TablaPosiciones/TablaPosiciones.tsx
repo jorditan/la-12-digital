@@ -2,9 +2,8 @@ import type { ReactNode } from 'react';
 import { ESCUDO_VACIO } from '../../data/equipos';
 import { Button } from '../ui/Button';
 import { SelectDropdown } from '../ui/SelectDropdown';
-import { Tab } from '../ui/Tab';
 import { SkeletonBox, SkeletonText } from '../ui/Skeleton';
-import { useTablaPosiciones, COMPETITION_OPTIONS, getFriendlyZoneLabel } from './useTablaPosiciones';
+import { useTablaPosiciones, getFriendlyZoneLabel } from './useTablaPosiciones';
 
 type TablaPosicionesProps = {
   headerAction?: ReactNode;
@@ -24,15 +23,12 @@ const getAnualRankClass = (rank: number, totalRows: number): string => {
 
 export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
   const {
-    competicion,
-    handleCompeticionChange,
     activeEstado,
     displayRows,
     shouldShowZoneSelector,
     zoneNames,
     activeZone,
     setActiveZone,
-    isLibertadores,
     activeZoneLabel,
     retry,
   } = useTablaPosiciones();
@@ -43,18 +39,9 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
       className="h-full bg-boca-blue-mid border border-boca-border rounded-sm overflow-hidden flex flex-col"
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-boca-border-card bg-boca-blue-mid px-4 pt-4 pb-3 sm:px-6 sm:pt-6 sm:pb-3 flex items-start flex-col justify-between gap-3">
+      <div className="sticky top-0 z-10 border-b border-boca-border-card bg-boca-blue-mid px-4 pt-4 pb-3 sm:px-6 sm:pt-6 sm:pb-3 flex items-center justify-between gap-3">
         <h2 className="type-section-title text-white shrink-0">Posiciones</h2>
-        <div className="flex w-full items-left justify-end gap-2">
-          <Tab
-            options={COMPETITION_OPTIONS}
-            value={competicion}
-            onChange={handleCompeticionChange}
-            fullWidth
-            className="w-full"
-          />
-          {headerAction}
-        </div>
+        {headerAction}
       </div>
 
       {/* Contenido */}
@@ -85,19 +72,9 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
           </div>
         )}
 
-        {activeEstado === 'ok' && isLibertadores && activeZoneLabel && (
-          <div className="pb-2">
-            <div className="inline-flex items-center rounded-sm border border-boca-gold/20 bg-boca-gold/10 px-2.5 py-1 font-sans text-xs font-medium uppercase tracking-wide text-boca-gold">
-              {getFriendlyZoneLabel(activeZoneLabel)}
-            </div>
-          </div>
-        )}
-
         {activeEstado === 'ok' && displayRows.length === 0 && (
           <p className="font-sans text-sm text-white/50 py-8 text-center px-4">
-            {isLibertadores
-              ? 'Todavía no hay datos del grupo de Boca en la Libertadores'
-              : 'No hay datos de posiciones disponibles'}
+            No hay datos de posiciones disponibles
           </p>
         )}
 
@@ -158,6 +135,7 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
                   const isRegularStage =
                     labelLower.includes('apertura') ||
                     labelLower.includes('clausura') ||
+                    labelLower.includes('grupo') ||
                     labelLower.includes('zona');
 
                   // Determine class based on rank and zone, matching Promiedos highlights
@@ -281,6 +259,7 @@ export function TablaPosiciones({ headerAction }: TablaPosicionesProps) {
             {activeZoneLabel &&
               (activeZoneLabel.includes('Apertura') ||
                 activeZoneLabel.includes('Clausura') ||
+                activeZoneLabel.includes('Grupo') ||
                 activeZoneLabel.includes('Zona')) && (
                 <div className="mt-4 border-t border-boca-border-card pt-3 px-2 flex items-center gap-1.5 text-xs text-text-secondary font-sans">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#23EBE4] inline-block shrink-0" />
