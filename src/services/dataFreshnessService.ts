@@ -19,7 +19,7 @@ type DatasetMetaRow = {
   last_error: string | null;
 };
 
-const STALE_HOURS = 36;
+export const STALE_HOURS = 36;
 const CORE_DATASETS = [
   'league_liga',
   'league_libertadores',
@@ -30,6 +30,16 @@ const CORE_DATASETS = [
 function hoursSince(date: Date | null): number | null {
   if (!date) return null;
   return (Date.now() - date.getTime()) / (1000 * 60 * 60);
+}
+
+export function isDatasetStale(
+  lastSuccessAt: string | null | undefined,
+  now = Date.now()
+): boolean {
+  if (!lastSuccessAt) return true;
+  const timestamp = new Date(lastSuccessAt).getTime();
+  if (!Number.isFinite(timestamp)) return true;
+  return (now - timestamp) / (1000 * 60 * 60) > STALE_HOURS;
 }
 
 function newestDate(values: Array<string | null>): Date | null {
@@ -50,8 +60,7 @@ export async function getDataFreshness(): Promise<DataFreshness> {
     const byDataset = new Map((datasetRows as DatasetMetaRow[]).map((row) => [row.dataset, row]));
     const staleDatasets = CORE_DATASETS.filter((dataset) => {
       const row = byDataset.get(dataset);
-      const age = hoursSince(row?.last_success_at ? new Date(row.last_success_at) : null);
-      return age == null || age > STALE_HOURS || Boolean(row?.last_error);
+      return isDatasetStale(row?.last_success_at);
     });
 
     const successfulDates = CORE_DATASETS.map(
@@ -103,7 +112,7 @@ export async function getDataFreshness(): Promise<DataFreshness> {
       lastSource: meta.last_source ?? null,
       lastError: meta.last_error ?? datasetError?.message ?? null,
       ageHours,
-      isStale: ageHours == null || ageHours > STALE_HOURS || Boolean(meta.last_error),
+      isStale: ageHours == null || ageHours > STALE_HOURS,
       usedFallback: true,
       staleDatasets: [],
     };

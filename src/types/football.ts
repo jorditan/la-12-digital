@@ -167,10 +167,10 @@ export interface APIResponse<T> {
 // TIPOS HELPER
 // ============================================
 
-export type MatchResult = "win" | "loss" | "draw" | "scheduled";
+export type MatchResult = 'win' | 'loss' | 'draw' | 'scheduled';
+export type FixtureTimeStatus = 'pending' | 'confirmed';
 
 export interface ProcessedFixture {
-  timeStatus?: 'pending' | 'confirmed';
   id: number;
   date: Date;
   homeTeam: string;
@@ -186,6 +186,7 @@ export interface ProcessedFixture {
   status: string;
   venue: string;
   competitionId?: number;
+  timeStatus: FixtureTimeStatus;
 }
 
 export interface ProcessedStanding {

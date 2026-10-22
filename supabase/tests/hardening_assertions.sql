@@ -27,6 +27,24 @@ BEGIN
     RAISE EXCEPTION 'matches team identifiers must be text';
   END IF;
 
+  SELECT count(*) INTO column_count
+  FROM information_schema.columns
+  WHERE table_schema = 'public'
+    AND table_name = 'ls_fixtures'
+    AND column_name = 'time_status'
+    AND is_nullable = 'NO'
+    AND column_default = '''confirmed''::text';
+
+  IF column_count <> 1 THEN
+    RAISE EXCEPTION 'ls_fixtures.time_status must be non-null with confirmed default';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'ls_fixtures_time_status_check'
+  ) THEN
+    RAISE EXCEPTION 'ls_fixtures.time_status check constraint is missing';
+  END IF;
+
   IF NOT public.acquire_ls_sync_lock('integration-owner-a', 60) THEN
     RAISE EXCEPTION 'first lock acquisition failed';
   END IF;

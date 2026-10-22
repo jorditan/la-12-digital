@@ -46,11 +46,11 @@ export interface MatchResult {
 }
 
 export interface ProximoPartido {
-  timeStatus?: 'pending' | 'confirmed';
   fixtureId: number;
   date: string; // ISO
   time: string; // "HH:MM" hora local
   homeTeam: { id: number | string; name: string; logo: string };
+  timeStatus: 'pending' | 'confirmed';
   awayTeam: { id: number | string; name: string; logo: string };
   venueName: string;
   competition: string;
@@ -120,7 +120,9 @@ function mapFixtureToMatchResult(
   f: import('../types/football').ProcessedFixture,
   defaultCompetition: string
 ): MatchResult {
-  const competition = f.competitionId ? (COMPETITION_NAMES[f.competitionId] || defaultCompetition) : defaultCompetition;
+  const competition = f.competitionId
+    ? COMPETITION_NAMES[f.competitionId] || defaultCompetition
+    : defaultCompetition;
   const homeId = f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId;
   const awayId = f.isBocaHome ? f.awayTeamId : BOCA_ID_EXPORT;
 
@@ -198,7 +200,9 @@ function mapFixtureToProximoPartido(
   defaultCompetition: string
 ): ProximoPartido {
   const isBocaAway = !f.isBocaHome;
-  const competition = f.competitionId ? (COMPETITION_NAMES[f.competitionId] || defaultCompetition) : defaultCompetition;
+  const competition = f.competitionId
+    ? COMPETITION_NAMES[f.competitionId] || defaultCompetition
+    : defaultCompetition;
   return {
     fixtureId: f.id,
     date: f.date.toISOString(),
