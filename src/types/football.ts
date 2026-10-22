@@ -170,6 +170,7 @@ export interface APIResponse<T> {
 export type MatchResult = "win" | "loss" | "draw" | "scheduled";
 
 export interface ProcessedFixture {
+  timeStatus?: 'pending' | 'confirmed';
   id: number;
   date: Date;
   homeTeam: string;

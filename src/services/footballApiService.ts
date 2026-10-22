@@ -36,7 +36,6 @@ import {
   getTeamLogoUrl,
   reconstructStages,
   hashStringToNumber,
-  mapLeagueStandings,
   mapLibertadoresStandings,
   mapAnnualStandings,
   matchResult,
@@ -105,6 +104,7 @@ export const getNextFixtures = async (count = 8): Promise<ProcessedFixture[]> =>
     return {
       id: isNaN(Number(f.id)) ? hashStringToNumber(String(f.id)) : Number(f.id),
       date: parseMatchDate(f.date),
+      timeStatus: f.time_status ?? undefined,
       homeTeam: f.home_team,
       awayTeam: f.away_team,
       homeTeamId: f.home_team_id,
@@ -207,12 +207,25 @@ export const getStandingsData = async (): Promise<StandingData[]> => {
     .from('ls_standings')
     .select('*')
     .eq('competition_id', Number(COMPETITION))
-    .order('rank', { ascending: true });
+    .order('id', { ascending: true });
 
   if (error) throw error;
 
-  const data = reconstructStages(dbRows as DbStandingRow[], Number(COMPETITION));
-  return mapLeagueStandings(data);
+  // The scraper inserts tables in Promiedos order. Keep their original names;
+  // reconstructing stages here turns "Grupo A" into a synthetic "Zona A".
+  return (dbRows ?? []).map((row) => ({
+    rank: row.rank,
+    teamId: row.team_id,
+    teamName: row.team_name,
+    teamLogo: getTeamLogoUrl(row.team_id),
+    points: row.points,
+    played: row.played,
+    win: row.won,
+    draw: row.drawn,
+    lose: row.lost,
+    zone: row.zone ?? undefined,
+    goalDiff: row.goal_diff,
+  }));
 };
 
 /**
@@ -274,6 +287,7 @@ export const getLibertadoresNextFixtures = async (count = 8): Promise<ProcessedF
     return {
       id: isNaN(Number(f.id)) ? hashStringToNumber(String(f.id)) : Number(f.id),
       date: parseMatchDate(f.date),
+      timeStatus: f.time_status ?? undefined,
       homeTeam: f.home_team,
       awayTeam: f.away_team,
       homeTeamId: f.home_team_id,

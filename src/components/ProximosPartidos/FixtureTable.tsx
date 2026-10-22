@@ -105,7 +105,7 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
 
                   {/* Hora */}
                   <td className="py-2.5 px-3 text-center whitespace-nowrap">
-                    {p.time === '12:00' ? (
+                    {p.timeStatus === 'pending' ? (
                       <span className="text-sm text-white/40 italic">A confirmar</span>
                     ) : (
                       <span className="text-sm text-white tabular-nums font-medium">{p.time}</span>
@@ -114,7 +114,10 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
 
                   {/* Estadio */}
                   <td className="py-2.5 px-3 hidden sm:table-cell max-w-[120px]">
-                    <span className="text-sm text-text-secondary truncate block" title={p.venueName}>
+                    <span
+                      className="text-sm text-text-secondary truncate block"
+                      title={p.venueName}
+                    >
                       {p.venueName || '—'}
                     </span>
                   </td>
@@ -122,12 +125,16 @@ export function FixtureTable({ partidos }: FixtureTableProps) {
                   {/* Copa */}
                   <td className="py-2.5 px-3 hidden md:table-cell">
                     <Badge
-                      variant={p.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-                      className={[
-                        'text-xs px-1.5 whitespace-nowrap',
-                        p.competition === 'Copa Argentina' ? 'bg-[#0CF737]/10 text-[#0CF737] border border-[#0CF737]/20' : '',
-                        p.competition === 'Copa Sudamericana' ? 'bg-[#23EBE4]/10 text-[#23EBE4] border border-[#23EBE4]/20' : '',
-                      ].join(' ')}
+                      variant={
+                        p.competition?.includes('Copa Argentina')
+                          ? 'copaArgentina'
+                          : p.competition?.includes('Sudamericana')
+                            ? 'sudamericana'
+                            : p.competition === 'Copa Libertadores'
+                              ? 'gold'
+                              : 'blue'
+                      }
+                      className={['text-xs px-1.5 whitespace-nowrap'].join(' ')}
                     >
                       {p.competition}
                     </Badge>

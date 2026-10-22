@@ -1,7 +1,15 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export interface BadgeProps {
-  variant?: 'blue' | 'gold' | 'outline' | 'urgency' | 'local' | 'visitante';
+  variant?:
+    | 'blue'
+    | 'gold'
+    | 'outline'
+    | 'urgency'
+    | 'local'
+    | 'visitante'
+    | 'sudamericana'
+    | 'copaArgentina';
   children: ReactNode;
   className?: string;
   selectable?: boolean;
@@ -17,6 +25,8 @@ const VARIANTS = {
   urgency: 'bg-boca-gold/20 text-boca-gold border border-boca-gold/40',
   local: 'bg-status-win-subtle text-green-500 border border-status-win',
   visitante: 'bg-boca-border/60 text-text-nav border border-boca-border',
+  sudamericana: 'bg-[#23EBE4]/10 text-[#23EBE4] border border-[#23EBE4]/20',
+  copaArgentina: 'bg-white/10 text-boca-gold border border-white/30',
 };
 
 export function Badge({

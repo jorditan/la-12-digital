@@ -81,18 +81,22 @@ export function ModoNormal({
                       {formatIsoDateEsArLong(proximoLocal.date).charAt(0).toUpperCase() +
                         formatIsoDateEsArLong(proximoLocal.date).slice(1)}
                     </Badge>
-                    {proximoLocal.time === '12:00' ? (
+                    {proximoLocal.timeStatus === 'pending' ? (
                       <Badge className="italic text-white/50">A confirmar</Badge>
                     ) : (
                       <Badge>{proximoLocal.time}</Badge>
                     )}
                     <Badge
-                      variant={proximoLocal.competition === 'Copa Libertadores' ? 'gold' : 'blue'}
-                      className={[
-                        'px-1.5 whitespace-nowrap',
-                        proximoLocal.competition === 'Copa Argentina' ? 'bg-[#0CF737]/10 text-[#0CF737] border border-[#0CF737]/20' : '',
-                        proximoLocal.competition === 'Copa Sudamericana' ? 'bg-[#23EBE4]/10 text-[#23EBE4] border border-[#23EBE4]/20' : '',
-                      ].join(' ')}
+                      variant={
+                        proximoLocal.competition?.includes('Copa Argentina')
+                          ? 'copaArgentina'
+                          : proximoLocal.competition?.includes('Sudamericana')
+                            ? 'sudamericana'
+                            : proximoLocal.competition?.trim() === 'Copa Libertadores'
+                              ? 'gold'
+                              : 'blue'
+                      }
+                      className={['px-1.5 whitespace-nowrap'].join(' ')}
                     >
                       {proximoLocal.competition}
                     </Badge>

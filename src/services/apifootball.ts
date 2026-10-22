@@ -46,6 +46,7 @@ export interface MatchResult {
 }
 
 export interface ProximoPartido {
+  timeStatus?: 'pending' | 'confirmed';
   fixtureId: number;
   date: string; // ISO
   time: string; // "HH:MM" hora local
@@ -202,6 +203,7 @@ function mapFixtureToProximoPartido(
     fixtureId: f.id,
     date: f.date.toISOString(),
     time: formatMatchTime(f.date),
+    timeStatus: f.timeStatus,
     homeTeam: {
       id: f.isBocaHome ? BOCA_ID_EXPORT : f.homeTeamId,
       name: f.homeTeam,

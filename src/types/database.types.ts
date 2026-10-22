@@ -5,6 +5,7 @@ export type Database = {
     Tables: {
       ls_fixtures: {
         Row: {
+          time_status: 'pending' | 'confirmed' | null;
           away_score: number | null;
           away_team: string;
           away_team_id: string;
@@ -19,6 +20,7 @@ export type Database = {
           venue: string | null;
         };
         Insert: {
+          time_status?: 'pending' | 'confirmed' | null;
           away_score?: number | null;
           away_team: string;
           away_team_id: string;
@@ -33,6 +35,7 @@ export type Database = {
           venue?: string | null;
         };
         Update: {
+          time_status?: 'pending' | 'confirmed' | null;
           away_score?: number | null;
           away_team?: string;
           away_team_id?: string;
